@@ -1,10 +1,6 @@
 import { useId } from "react";
 import { Button } from "../button/Button";
-import type {
-  ActionArgs,
-  UploadHandler,
-  writeAsyncIterableToWritable,
-} from "@remix-run/node"; // or cloudflare/deno
+import type { ActionArgs } from "@remix-run/node"; // or cloudflare/deno
 import {
   unstable_composeUploadHandlers,
   unstable_createMemoryUploadHandler,
@@ -12,7 +8,7 @@ import {
 } from "@remix-run/node"; // or cloudflare/deno
 import { getUserId } from "~/session.server";
 
-const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
+const CLAW_UPLOAD = "http://44.214.117.70:5001/claw/upload";
 
 async function uploadToClaw(data: any) {
   return fetch(CLAW_UPLOAD, {
