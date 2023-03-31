@@ -1,6 +1,6 @@
-# BearClaw
+# BearClaw UI
 
-Software analysis tool
+Browser-based UI to interact with the BearClaw software analysis tool.
 
 ## What's in the stack
 
@@ -33,6 +33,36 @@ Software analysis tool
   ```
 
 This starts your app in development mode with hot module reload, rebuilding assets on file changes.
+
+### Language: Typescript
+
+[Typescript Docs](https://www.typescriptlang.org/docs/)
+
+This project is built in Typescript, which should make it easier to deal with the complex data models produced by the BearClaw system.
+
+### Framework: Remix
+
+Remix is a full-stack framework from the creator of React Router. Remix advantages:
+
+- Fast and SEO-friendly server-side rendering of page content.
+- Backend-for-frontend (BFF) architecture means Remix can orchestrate and combine BearClaw requests into a single interaction with the browser and eliminate React request-waterfall delays.
+- Code is only sent to the browser if the user has access to use that code, reducing the ability to reverse-engineer the application.
+
+### Database: Prisma ORM
+
+This project uses Prisma to manage and interact with the database. Use migrations to make changes to the database and Prisma will setup type-safe interfaces to access the data.
+
+[Prisma Docs](https://www.prisma.io/docs/concepts/components/prisma-migrate/get-started)
+
+### Styling: TBD
+
+[Tailwind](https://tailwindcss.com/docs/) for now
+
+### Automation: Husky
+
+[Husky Docs](https://typicode.github.io/husky/#/)
+
+Husky hooks can add automated checks to various development steps. Currently, validation (lint, test, etc) will run when creating a commit. If the validation step fails, the commit will be blocked.
 
 ## Deployment
 

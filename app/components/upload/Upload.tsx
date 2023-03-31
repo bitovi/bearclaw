@@ -25,10 +25,7 @@ export const uploadAction = async ({ request }: ActionArgs) => {
 
   const uploadHandler = unstable_composeUploadHandlers(
     // our custom upload handler
-    async ({ name, contentType, data, filename }) => {
-      if (name !== "img") {
-        return undefined;
-      }
+    async ({ data }) => {
       const uploadedFile = await uploadToClaw(data);
       return uploadedFile.url;
     },
@@ -40,6 +37,7 @@ export const uploadAction = async ({ request }: ActionArgs) => {
     request,
     uploadHandler
   );
+  console.log(formData);
 
   // because our uploadHandler returns a string, that's what the imageUrl will be.
   // ... etc
@@ -52,7 +50,7 @@ export const Upload: React.FC<Props> = () => {
   const id = useId();
 
   return (
-    <form>
+    <form className="mx-auto w-64">
       <div className="flex flex-col gap-4">
         <label htmlFor={id}>Upload a file</label>
         <input id={id} type="file" />
