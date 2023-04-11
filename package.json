@@ -22,7 +22,8 @@
     "typecheck": "tsc && tsc -p cypress",
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
     "storybook": "storybook dev -p 6006",
-    "build:storybook": "storybook build"
+    "build:storybook": "storybook build",
+    "prepare": "husky install"
   },
   "prettier": {},
   "eslintIgnore": [
@@ -95,7 +96,8 @@
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
     "vite-tsconfig-paths": "^3.6.0",
-    "vitest": "^0.29.3"
+    "vitest": "^0.29.3",
+    "husky": "^8.0.0"
   },
   "engines": {
     "node": ">=14"
