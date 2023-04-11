@@ -1,3 +1,4 @@
+
 import type { LinkProps } from "@remix-run/react";
 import { Link } from "@remix-run/react";
 
@@ -5,14 +6,15 @@ interface AProps extends LinkProps {
   type: "link";
 }
 
-type Props = (React.ComponentPropsWithRef<"button"> | AProps) & {
-  variant?: "primary";
-};
-
 const styles = {
   primary: "text-white bg-blue-700 hover:bg-blue-800 focus:bg-blue-600",
   secondary: "text-blue-800 bg-white hover:bg-blue-50 border",
 };
+
+type Props = (React.ComponentPropsWithRef<"button"> | AProps) & {
+  variant?: keyof typeof styles;
+};
+
 
 export const Button: React.FC<Props> = ({
   children,
