@@ -1,5 +1,5 @@
 interface Props extends React.ComponentPropsWithRef<"button"> {
-  variant?: "primary";
+  variant?: keyof typeof styles;
 }
 
 const styles = {
