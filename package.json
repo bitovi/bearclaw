@@ -22,7 +22,7 @@
     "typecheck": "tsc && tsc -p cypress",
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
     "storybook": "storybook dev -p 6006",
-    "build:storybook": "storybook build -o docs-build"
+    "build:storybook": "storybook build"
   },
   "prettier": {},
   "eslintIgnore": [
