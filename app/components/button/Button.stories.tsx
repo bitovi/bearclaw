@@ -19,4 +19,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const _Button: Story = {};
+export const _Button: Story = {
+  args: {
+    variant: "primary", // default value
+  },
+};
