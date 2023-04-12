@@ -1,7 +1,7 @@
 import type { LinkProps } from "@remix-run/react";
-import { AnchorHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes } from "react";
 
-import { Link as _Link } from "@remix-run/react";
+import { Link as RemixLink } from "@remix-run/react";
 
 /**
  * returns either a Link component or anchor element,
@@ -18,9 +18,9 @@ export const Link: React.FC<
 
   if ("to" in props) {
     return (
-      <_Link {...props} className={classes} data-testid={"internal-link"}>
+      <RemixLink {...props} className={classes} data-testid={"internal-link"}>
         {children}
-      </_Link>
+      </RemixLink>
     );
   }
 
