@@ -2,15 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { Button } from "./Button";
 
-const ButtonText = () => <div>Button</div>;
-
 const meta = {
   title: "Components/Button",
   component: Button,
   tags: ["component", "button"],
-  args: {
-    children: <ButtonText />,
-  },
   parameters: {
     layout: "centered",
   },
@@ -19,4 +14,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const _Button: Story = {};
+export const _Button: Story = {
+  render: (args) => <Button {...args}>Button</Button>,
+  args: {
+    variant: "primary",
+  },
+};
