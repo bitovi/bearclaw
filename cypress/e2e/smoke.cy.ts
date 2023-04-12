@@ -48,8 +48,10 @@ describe("smoke tests", () => {
     cy.findByText(/user already exists with this email/i);
     cy.findByRole("link", { name: /log in/i });
   });
-
-  it("should fail on short passwords (less than 8 characters)", () => {
+});
+  
+describe ("Non-authenticated users", () => {
+  it("should fail creating short passwords (less than 8 characters)", () => {
     cy.viewport(1280, 800);
     cy.visitAndCheck("/join");
     const loginForm = {
@@ -63,5 +65,11 @@ describe("smoke tests", () => {
     cy.findByLabelText(/password/i).type(loginForm.password);
     cy.findByRole("button", { name: /create account/i }).click();
     cy.findByText(/too short/i);
+  });
+
+  it("should not be able to access authenticated page if not logged in", () => {
+    cy.viewport(1280, 800);
+    cy.visit("/analysis");
+    cy.url().should("include", "/home");
   });
 });
