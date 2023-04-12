@@ -1,20 +1,11 @@
-
-import type { LinkProps } from "@remix-run/react";
-import { Link } from "@remix-run/react";
-
-interface AProps extends LinkProps {
-  type: "link";
-}
-
 const styles = {
   primary: "text-white bg-blue-700 hover:bg-blue-800 focus:bg-blue-600",
   secondary: "text-blue-800 bg-white hover:bg-blue-50 border",
 };
 
-type Props = (React.ComponentPropsWithRef<"button"> | AProps) & {
+type Props = React.ComponentPropsWithRef<"button"> & {
   variant?: keyof typeof styles;
 };
-
 
 export const Button: React.FC<Props> = ({
   children,
@@ -33,14 +24,6 @@ export const Button: React.FC<Props> = ({
     ${styles[variant || "primary"]} 
     ${className || ""}
   `;
-
-  if (props.type === "link") {
-    return (
-      <Link {...props} className={classes}>
-        {children}
-      </Link>
-    );
-  }
 
   return (
     <button {...props} className={classes}>
