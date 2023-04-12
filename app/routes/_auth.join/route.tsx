@@ -1,13 +1,14 @@
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import * as React from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { getUserId, createUserSession } from "~/session.server";
 
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
+import { getPasswordStrength, PasswordStrengthMeter } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -78,12 +79,13 @@ export const meta: V2_MetaFunction = () => [{ title: "Sign Up" }];
 
 export default function Join() {
   const [searchParams] = useSearchParams();
+  const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const redirectTo = searchParams.get("redirectTo") ?? undefined;
   const actionData = useActionData<typeof action>();
-  const emailRef = React.useRef<HTMLInputElement>(null);
-  const passwordRef = React.useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionData?.errors?.email) {
       emailRef.current?.focus();
     } else if (actionData?.errors?.password) {
@@ -130,10 +132,13 @@ export default function Join() {
             >
               Password
             </label>
-            <div className="mt-1">
+            <div className="my-1">
               <input
                 id="password"
                 ref={passwordRef}
+                onChange={(value) => {
+                  setPasswordStrength(getPasswordStrength(value.target.value));
+                }}
                 name="password"
                 type="password"
                 autoComplete="new-password"
@@ -147,6 +152,7 @@ export default function Join() {
                 </div>
               )}
             </div>
+            <PasswordStrengthMeter strength={passwordStrength} />
           </div>
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
