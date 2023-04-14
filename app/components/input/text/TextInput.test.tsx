@@ -1,5 +1,7 @@
 import { TextInput } from "./TextInput";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
 import { useState } from "react";
 
 describe("Input -> Text", () => {
@@ -19,13 +21,15 @@ describe("Input -> Text", () => {
     expect(screen.getByLabelText("test")).toBeInTheDocument();
   });
 
-  it("passes value and change handler to input", () => {
+  it("passes value and change handler to input", async () => {
     render(<TestWrapper />);
 
     const input = screen.getByLabelText("test");
     expect(input).toHaveValue("Hello World");
 
-    fireEvent.change(input, { target: { value: "Goodbye World" } });
+    await userEvent.clear(input);
+    await userEvent.type(input, "Goodbye World");
+
     expect(input).toHaveValue("Goodbye World");
   });
 });
