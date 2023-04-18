@@ -7,6 +7,5 @@ export async function action({ request }: ActionArgs) {
 }
 
 export async function loader({ request }: LoaderArgs) {
-  console.log("logout");
   return logout(request);
 }

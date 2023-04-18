@@ -2,6 +2,8 @@ import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
+import { sendMail } from "~/services/mail/sendMail";
+import { createId } from '@paralleldrive/cuid2';
 
 export type { User } from "@prisma/client";
 
@@ -13,10 +15,26 @@ export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }
 
+function sendEmailVerificationEmail(user: User) {
+  return sendMail({
+    to: user.email,
+    from: "noreply@example.com",
+    subject: "Welcome to BearClaw! Please verify your email address.",
+    html: `
+      <p>Hi ${user.email},</p>
+      <p>Thanks for signing up for BearClaw! Please verify your email address by clicking the link below. The link will expire in 24 hours.</p>
+      <p><a href="/verifyEmail?token=${user.emailVerificationToken}">Verify your email address</a></p>
+      <p>Thanks,</p>
+      <p>The BearClaw Team</p>
+      <p><small>If you didn't sign up for BearClaw, please ignore this email.</small></p>
+    `,
+  })
+}
+
 export async function createUser(email: User["email"], password: string) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  return prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       email,
       password: {
@@ -26,7 +44,58 @@ export async function createUser(email: User["email"], password: string) {
       },
     },
   });
+
+  await sendEmailVerificationEmail(user);
+
+  return user
 }
+
+export async function resetEmailValidationToken(user: User) {
+  const updatedUser = await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      emailVerifiedAt: null,
+      emailTokenCreatedAt: new Date(),
+      emailVerificationToken: createId(),
+    },
+  });
+  await sendEmailVerificationEmail(updatedUser);
+
+  return updatedUser
+}
+
+export type EmailValidationResult = {
+  status: 'success' | 'notFound' | 'alreadyVerified' | 'expired',
+  error?: boolean,
+}
+
+export async function validateUserEmailByToken(token: string): Promise<EmailValidationResult> {
+  const user = await prisma.user.findFirst({
+    where: { emailVerificationToken: token },
+  });
+
+  if (!user) {
+    return { status: 'notFound', error: true };
+  }
+  if (user.emailVerifiedAt) {
+    return { status: 'alreadyVerified' };
+  }
+  const oneDay = 1000 * 60 * 60 * 24;
+  const timestamp = Math.floor(new Date(user.emailTokenCreatedAt).getTime() / 1000)
+  if ((timestamp + oneDay) > Date.now()) {
+    return { status: 'expired', error: true };
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      emailVerifiedAt: new Date(),
+    },
+  });
+
+  return { status: 'success' };
+}
+
 
 export async function deleteUserByEmail(email: User["email"]) {
   return prisma.user.delete({ where: { email } });
