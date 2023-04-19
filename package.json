@@ -34,6 +34,7 @@
     "/docs"
   ],
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.0",
     "@prisma/client": "^4.11.0",
     "@remix-run/node": "^1.14.3",
     "@remix-run/react": "^1.14.3",
