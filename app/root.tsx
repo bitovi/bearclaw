@@ -30,7 +30,6 @@ declare global {
   interface Window {
     ENV: {
       SENTRY_DSN: string;
-      STRIPE_SECRET_KEY: string;
     };
   }
 }

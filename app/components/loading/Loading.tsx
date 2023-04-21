@@ -2,14 +2,14 @@
 
 const speed = "1.2s";
 
-export function Loading() {
+export function Loading({ color }: { color?: string }) {
   return (
     <svg
       width="60"
       height="15"
       viewBox="0 0 120 30"
       xmlns="http://www.w3.org/2000/svg"
-      fill="#1e3a8a"
+      fill={color || "#1e3a8a"}
     >
       <circle cx="15" cy="15" r="15">
         <animate

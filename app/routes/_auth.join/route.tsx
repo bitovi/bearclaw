@@ -28,7 +28,7 @@ export async function action({ request }: ActionArgs) {
 
   if (!validateEmail(email)) {
     return json(
-      { errors: { email: "Email is invalid", password: null, name: null } },
+      { errors: { email: "Email is invalid", password: null } },
       { status: 400 }
     );
   }
@@ -41,7 +41,6 @@ export async function action({ request }: ActionArgs) {
         errors: {
           email: "Email is not in approved list",
           password: null,
-          name: null,
         },
       },
       { status: 400 }
@@ -50,7 +49,7 @@ export async function action({ request }: ActionArgs) {
 
   if (typeof password !== "string" || password.length === 0) {
     return json(
-      { errors: { email: null, password: "Password is required", name: null } },
+      { errors: { email: null, password: "Password is required" } },
       { status: 400 }
     );
   }
@@ -58,7 +57,7 @@ export async function action({ request }: ActionArgs) {
   if (password.length < 8) {
     return json(
       {
-        errors: { email: null, password: "Password is too short", name: null },
+        errors: { email: null, password: "Password is too short" },
       },
       { status: 400 }
     );
@@ -71,7 +70,6 @@ export async function action({ request }: ActionArgs) {
         errors: {
           email: "A user already exists with this email",
           password: null,
-          name: null,
         },
       },
       { status: 400 }
