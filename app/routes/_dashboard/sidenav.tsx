@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "~/components/link";
 
 export function Sidenav() {
   return (
@@ -6,6 +6,9 @@ export function Sidenav() {
       <ul>
         <li>
           <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/subscriptions">Subscriptions</Link>
         </li>
         <li>
           <Link to="/analysis">Analysis</Link>

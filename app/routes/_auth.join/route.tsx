@@ -8,7 +8,10 @@ import { getUserId, createUserSession } from "~/session.server";
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
-import { getPasswordStrength, PasswordStrengthMeter } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
+import {
+  getPasswordStrength,
+  PasswordStrengthMeter,
+} from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -20,11 +23,12 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
+
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
   if (!validateEmail(email)) {
     return json(
-      { errors: { email: "Email is invalid", password: null } },
+      { errors: { email: "Email is invalid", password: null, name: null } },
       { status: 400 }
     );
   }
@@ -33,21 +37,29 @@ export async function action({ request }: ActionArgs) {
   // TODO: Remove this in production
   if (!email.match(/@(bigbear.ai|verybigthings.com|bitovi.com)$/)) {
     return json(
-      { errors: { email: "Email is not in approved list", password: null } },
+      {
+        errors: {
+          email: "Email is not in approved list",
+          password: null,
+          name: null,
+        },
+      },
       { status: 400 }
     );
   }
 
   if (typeof password !== "string" || password.length === 0) {
     return json(
-      { errors: { email: null, password: "Password is required" } },
+      { errors: { email: null, password: "Password is required", name: null } },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
     return json(
-      { errors: { email: null, password: "Password is too short" } },
+      {
+        errors: { email: null, password: "Password is too short", name: null },
+      },
       { status: 400 }
     );
   }
@@ -59,6 +71,7 @@ export async function action({ request }: ActionArgs) {
         errors: {
           email: "A user already exists with this email",
           password: null,
+          name: null,
         },
       },
       { status: 400 }

@@ -19,6 +19,15 @@ model User {
   updatedAt DateTime @updatedAt
 
   password Password?
+
+  businessAccount BusinessAccount?
+}
+
+model BusinessAccount {
+  accountId String
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
 }
 
 model Password {

@@ -30,6 +30,7 @@ declare global {
   interface Window {
     ENV: {
       SENTRY_DSN: string;
+      STRIPE_SECRET_KEY: string;
     };
   }
 }
@@ -39,7 +40,7 @@ export async function loader({ request }: LoaderArgs) {
     user: await getUser(request),
     ENV: {
       SENTRY_DSN: process.env.SENTRY_DSN,
-    }
+    },
   });
 }
 
