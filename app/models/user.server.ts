@@ -129,3 +129,78 @@ export async function verifyLogin(
 
   return userWithoutPassword;
 }
+
+function sendPasswordResetEmail(user: User, token: string) {
+  return sendMail({
+    to: user.email,
+    from: "noreply@example.com",
+    subject: "Reset your BearClaw password",
+    html: `
+      <p>Hi ${user.email},</p>
+      <p>Someone requested a password reset for your BearClaw account. If this was you, please click the link below to reset your password. The link will expire in 24 hours.</p>
+      <p><a href="/resetPassword?token=${token}">Reset your password</a></p>
+      <p>Thanks,</p>
+      <p>The BearClaw Team</p>
+      <p><small>If you didn't request a password reset, please ignore this email.</small></p>
+    `,
+  })
+}
+
+export async function forgotPassword(email: User["email"]) {
+  const user = await prisma.user.findUnique({ where: { email } })
+  if (!user) {
+    return null;
+  }
+
+  const reset = await prisma.resetPasswordToken.upsert({
+    where: { userId: user.id },
+    create: {
+      userId: user.id,
+      token: createId(),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    },
+    update: {
+      token: createId(),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    },
+  })
+
+  reset.token && await sendPasswordResetEmail(user, reset.token);
+
+  return user;
+}
+
+export async function resetPasswordByToken(token: string, newPassword: string) {
+  const reset = await prisma.resetPasswordToken.findFirst({
+    where: { token },
+    include: {
+      user: true,
+    },
+  });
+
+  if (
+    !reset ||
+    !reset.user ||
+    !reset.expiresAt
+  ) {
+    return null;
+  }
+
+  if (reset.expiresAt < new Date()) {
+    return null;
+  }
+
+  return prisma.user.update({
+    where: { id: reset.user.id },
+    data: {
+      password: {
+        update: {
+          hash: bcrypt.hashSync(newPassword, 10),
+        },
+      },
+      resetPasswordToken: {
+        delete: true
+      }
+    },
+  });
+}

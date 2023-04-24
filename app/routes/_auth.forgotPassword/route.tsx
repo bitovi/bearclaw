@@ -3,10 +3,10 @@ import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
 
-import { createUserSession, getUserId } from "~/session.server";
-import { verifyLogin } from "~/models/user.server";
-import { safeRedirect, validateEmail } from "~/utils";
+import { getUserId } from "~/session.server";
+import { validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
+import { forgotPassword } from "~/models/user.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -17,64 +17,50 @@ export async function loader({ request }: LoaderArgs) {
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
-  const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
-  const remember = formData.get("remember");
 
   if (!validateEmail(email)) {
     return json(
-      { errors: { email: "Email is invalid", password: null } },
+      { errors: { email: "Email is invalid" }, success: false },
       { status: 400 }
     );
   }
 
-  if (typeof password !== "string" || password.length === 0) {
-    return json(
-      { errors: { email: null, password: "Password is required" } },
-      { status: 400 }
-    );
-  }
+  // if email is valid, send email with reset link
+  // if email is invalid, do nothing. This is to prevent email enumeration
+  await forgotPassword(email);
 
-  if (password.length < 8) {
-    return json(
-      { errors: { email: null, password: "Password is too short" } },
-      { status: 400 }
-    );
-  }
-
-  const user = await verifyLogin(email, password);
-
-  if (!user) {
-    return json(
-      { errors: { email: "Invalid email or password", password: null } },
-      { status: 400 }
-    );
-  }
-
-  return createUserSession({
-    request,
-    userId: user.id,
-    remember: remember === "on" ? true : false,
-    redirectTo,
-  });
+  return json(
+    { errors: { email: null }, success: true }
+  );
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 
-export default function LoginPage() {
+export default function ForgotPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/";
   const actionData = useActionData<typeof action>();
   const emailRef = React.useRef<HTMLInputElement>(null);
-  const passwordRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     if (actionData?.errors?.email) {
       emailRef.current?.focus();
-    } else if (actionData?.errors?.password) {
-      passwordRef.current?.focus();
     }
   }, [actionData]);
+
+  if (actionData?.success) {
+    return (
+      <div className="flex min-h-full flex-col justify-center">
+        <div className="mx-auto w-full max-w-md px-8">
+          <p className="text-lg text-center">
+            If an account with that email exists, we've sent you an email with a link to reset your password.
+          </p>
+          <p className="text-lg text-gray-500 mt-4">
+            TESTING: Email messaging is not connected yet. <Link to="/fakeMail">View emails here</Link>
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-full flex-col justify-center">
@@ -108,51 +94,10 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <div className="mt-1">
-              <input
-                id="password"
-                ref={passwordRef}
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                aria-invalid={actionData?.errors?.password ? true : undefined}
-                aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
-              />
-              {actionData?.errors?.password && (
-                <div className="pt-1 text-red-700" id="password-error">
-                  {actionData.errors.password}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <input type="hidden" name="redirectTo" value={redirectTo} />
           <Button type="submit" className="w-full">
-            Log in
+            Send password reset email
           </Button>
           <div className="flex items-center flex-col gap-2">
-            <div className="flex items-center">
-              <input
-                id="remember"
-                name="remember"
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
             <div className="text-center text-sm text-gray-500">
               Don't have an account?{" "}
               <Link
@@ -165,15 +110,16 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </div>
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-gray-500">
+              Know your password?{" "}
               <Link
                 className="text-blue-500 underline"
                 to={{
-                  pathname: "/forgotPassword",
+                  pathname: "/login",
                   search: searchParams.toString(),
                 }}
               >
-                Forgot password?
+                Login
               </Link>
             </div>
           </div>
