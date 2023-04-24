@@ -9,6 +9,7 @@ export default defineConfig({
         baseUrl: `http://localhost:${port}`,
         video: !process.env.CI,
         screenshotOnRunFailure: !process.env.CI,
+        chromeWebSecurity: false, // needed in order to assert against Stripe elements within iFrame
       };
 
       // To use this:
