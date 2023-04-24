@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-export const createUserInBrowserAndLogin = () => {
+const createUserInBrowserAndLogin = () => {
   const loginForm = {
     email: `${faker.internet.userName()}-test@bigbear.ai`,
     password: faker.internet.password(),

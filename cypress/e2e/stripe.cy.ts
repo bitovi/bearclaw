@@ -1,4 +1,4 @@
-import { createUserInBrowserAndLogin } from "./smoke.cy";
+import { faker } from "@faker-js/faker";
 
 describe("Stripe", () => {
   describe("Add subscription", () => {
@@ -20,8 +20,39 @@ describe("Stripe", () => {
         });
       });
 
-      createUserInBrowserAndLogin();
+      //  // Create user, Login, and navigate to Home page
+      const loginForm = {
+        email: `${faker.internet.userName()}-test@bigbear.ai`,
+        password: faker.internet.password(),
+      };
 
+      cy.then(() => ({ email: loginForm.email })).as("user");
+
+      cy.viewport(1280, 800);
+      cy.visitAndCheck("/home");
+
+      // Sign up
+      cy.findByRole("link", { name: /sign up/i }).click();
+
+      cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
+      cy.findByLabelText(/password/i).type(loginForm.password);
+      cy.findByRole("button", { name: /create account/i }).click();
+
+      // Need to verify email
+      cy.findByText(/Please verify your email address/i);
+      cy.visitAndCheck("/fakeMail");
+      cy.findByTestId(loginForm.email)
+        .findByRole("link", { name: /Verify your email address/i })
+        .click();
+      cy.findByText(/verified successfully/i);
+
+      // Automatically logged in after sign up
+      cy.findByRole("link", { name: /analysis/i });
+      cy.findByRole("link", { name: /supply chain/i });
+
+      // //
+
+      // Navigate to subscriptions page
       cy.findByRole("link", { name: /Subscriptions/i })
         .should("be.visible")
         .click({ force: true });
@@ -35,6 +66,7 @@ describe("Stripe", () => {
 
       cy.get("h1").contains("Subscribe");
 
+      // input into Stripe iFrame
       cy.getStripeElement("Field-numberInput").type("4000056655665556");
       cy.getStripeElement("Field-expiryInput").type("0824");
       cy.getStripeElement("Field-cvcInput").type("123");
