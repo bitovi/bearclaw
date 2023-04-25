@@ -10,6 +10,8 @@ import {
 } from "./models/businessAccount.server";
 import { isNumber } from "./utils";
 
+require("dotenv").config();
+
 // Expanded______ types, as Stripe interfaces don't seem capable of detecting use of the "expand" parameter in their query operations.
 export type ExpandedPrice = Omit<Stripe.Price, "product"> & {
   product: Stripe.Product;

@@ -34,6 +34,7 @@ async function seed() {
  * For local development purposes, to keep our data tables synced with Stripe, clears out any created Stripe customers in the Stripe test table whenever we initially seed our database.
  */
 async function clearStripeCustomers() {
+  if (process.env.NODE_ENV === "production") return;
   const { data: customers } = await serverStripe.customers.list();
   const removeCustomers = customers.map((c) => {
     return serverStripe.customers.del(c.id);
