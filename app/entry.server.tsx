@@ -19,9 +19,7 @@ if (process.env.SENTRY_DSN !== undefined) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     tracesSampleRate: 1,
-    integrations: [
-      new Sentry.Integrations.Prisma({ client: prisma })
-    ],
+    integrations: [new Sentry.Integrations.Prisma({ client: prisma })],
   });
 }
 
@@ -33,17 +31,17 @@ export default function handleRequest(
 ) {
   return isbot(request.headers.get("user-agent"))
     ? handleBotRequest(
-      request,
-      responseStatusCode,
-      responseHeaders,
-      remixContext
-    )
+        request,
+        responseStatusCode,
+        responseHeaders,
+        remixContext
+      )
     : handleBrowserRequest(
-      request,
-      responseStatusCode,
-      responseHeaders,
-      remixContext
-    );
+        request,
+        responseStatusCode,
+        responseHeaders,
+        remixContext
+      );
 }
 
 function handleBotRequest(

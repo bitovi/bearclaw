@@ -10,7 +10,7 @@ import { getUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
 
 export async function loader({ request, params }: LoaderArgs) {
-  const user = await getUser(request)
+  const user = await getUser(request);
   if (!user) {
     return redirect(`/login?redirectTo=${encodeURIComponent(request.url)}`);
   }
@@ -54,14 +54,17 @@ export default function Index() {
               {isVerified ? (
                 <Outlet />
               ) : (
-                <div className="flex flex-col gap-2 h-full w-full items-center justify-center">
+                <div className="flex h-full w-full flex-col items-center justify-center gap-2">
                   <p className="text-lg text-gray-500">
                     Please verify your email address. Check your inbox for a
                     verification link.
                   </p>
-                  <Link to="/verificationEmailResend">Resend verification email</Link>
-                  <p className="text-lg text-gray-500 mt-4">
-                    TESTING: Email messaging is not connected yet. <Link to="/fakeMail">View verification emails here</Link>
+                  <Link to="/verificationEmailResend">
+                    Resend verification email
+                  </Link>
+                  <p className="mt-4 text-lg text-gray-500">
+                    TESTING: Email messaging is not connected yet.{" "}
+                    <Link to="/fakeMail">View verification emails here</Link>
                   </p>
                 </div>
               )}

@@ -6,7 +6,7 @@ const meta = {
   title: "Components/PasswordStrengthMeter",
   component: (props) => {
     return (
-      <div style={{ width: '300px' }}>
+      <div style={{ width: "300px" }}>
         <PasswordStrengthMeter strength={props.strength} />
       </div>
     );
