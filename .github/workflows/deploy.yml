@@ -5,11 +5,13 @@ on:
       - main
       - dev
   pull_request: {}
-
 permissions:
   actions: write
   contents: read
-
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+  SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 jobs:
   lint:
     name: ⬣ ESLint
@@ -83,10 +85,6 @@ jobs:
   cypress:
     name: ⚫️ Cypress
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -115,22 +113,12 @@ jobs:
         with:
           start: npm run start:mocks
           wait-on: "http://localhost:8811"
-        env:
-          PORT: "8811"
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
   build:
     name: 🐳 Build
     # only build/deploy main branch on pushes
     if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && github.event_name == 'push' }}
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -191,10 +179,6 @@ jobs:
     needs: [lint, typecheck, vitest, cypress, build]
     # only build/deploy main branch on pushes
     if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && github.event_name == 'push' }}
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
     steps:
       - name: 🛑 Cancel Previous Runs
