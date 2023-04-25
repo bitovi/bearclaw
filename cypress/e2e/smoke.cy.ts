@@ -1,16 +1,16 @@
 import { faker } from "@faker-js/faker";
 
-Cypress.on('uncaught:exception', (err, runnable) => {
+Cypress.on("uncaught:exception", (err, runnable) => {
   // returning false here prevents Cypress from failing the test on uncaught exceptions
   // Our server throws for certain errors like invalid password, but it should not fail the test
-  return false
-})
+  return false;
+});
 
 type LoginData = {
   email: string;
   password: string;
   resetPassword: string;
-}
+};
 
 function createLoginData(): LoginData {
   return {
@@ -20,12 +20,14 @@ function createLoginData(): LoginData {
   };
 }
 
-function createAndVerifyAccount({email, password}: LoginData) {
+function createAndVerifyAccount({ email, password }: LoginData) {
   cy.findByRole("textbox", { name: /email/i }).type(email);
   cy.findByLabelText(/password/i).type(password);
   cy.findByRole("button", { name: /create account/i }).click();
   cy.findByRole("link", { name: /View verification emails here/i }).click();
-  cy.findByTestId(email).findByRole("link", { name: /verify your email/i }).click();
+  cy.findByTestId(email)
+    .findByRole("link", { name: /verify your email/i })
+    .click();
   cy.findByText(/verified successfully/i);
 }
 
@@ -35,7 +37,7 @@ describe("join and authenticate tests", () => {
   });
 
   it("should allow you to register, login, and navigate", () => {
-    const loginForm = createLoginData()
+    const loginForm = createLoginData();
 
     cy.then(() => ({ email: loginForm.email })).as("user");
 
@@ -62,7 +64,7 @@ describe("join and authenticate tests", () => {
     cy.findByRole("button", { name: /log in/i }).click();
     cy.findByRole("button", { name: /Upload/i });
     cy.findByRole("link", { name: /logout/i }).click();
-    
+
     // Creating an account with an existing email fails and prompts user to login
     cy.visitAndCheck("/join");
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
@@ -87,30 +89,35 @@ describe("join and authenticate tests", () => {
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByRole("button", { name: /password reset/i }).click();
     cy.findByRole("link", { name: /View emails here/i }).click();
-    cy.findAllByTestId(loginForm.email).first().findAllByRole("link", { name: /reset your password/i }).click();
-    
-    cy.wait(100)
+    cy.findAllByTestId(loginForm.email)
+      .first()
+      .findAllByRole("link", { name: /reset your password/i })
+      .click();
+
+    cy.wait(100);
     cy.findByLabelText(/create new password/i).type(loginForm.resetPassword);
     cy.findByRole("button", { name: /reset password/i }).click();
     cy.findByText(/your password has been reset/i);
     cy.findByRole("link", { name: /login/i }).click();
-    
+
     // Old password no longer works
-    cy.wait(100)
+    cy.wait(100);
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
     cy.findByRole("button", { name: /log in/i }).click();
     cy.findByText(/invalid email or password/i);
-    
+
     // New password works
-    cy.wait(100)
-    cy.findByLabelText(/password/i).clear().type(loginForm.resetPassword);
+    cy.wait(100);
+    cy.findByLabelText(/password/i)
+      .clear()
+      .type(loginForm.resetPassword);
     cy.findByRole("button", { name: /log in/i }).click();
     cy.findByRole("link", { name: /analysis/i });
-  })
+  });
 });
-  
-describe ("Non-authenticated users", () => {
+
+describe("Non-authenticated users", () => {
   it("should fail creating short passwords (less than 8 characters)", () => {
     cy.viewport(1280, 800);
     cy.visitAndCheck("/join");

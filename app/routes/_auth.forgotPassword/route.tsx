@@ -29,9 +29,7 @@ export async function action({ request }: ActionArgs) {
   // if email is invalid, do nothing. This is to prevent email enumeration
   await forgotPassword(email);
 
-  return json(
-    { errors: { email: null }, success: true }
-  );
+  return json({ errors: { email: null }, success: true });
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Login" }];
@@ -51,15 +49,17 @@ export default function ForgotPage() {
     return (
       <div className="flex min-h-full flex-col justify-center">
         <div className="mx-auto w-full max-w-md px-8">
-          <p className="text-lg text-center">
-            If an account with that email exists, we've sent you an email with a link to reset your password.
+          <p className="text-center text-lg">
+            If an account with that email exists, we've sent you an email with a
+            link to reset your password.
           </p>
-          <p className="text-lg text-gray-500 mt-4">
-            TESTING: Email messaging is not connected yet. <Link to="/fakeMail">View emails here</Link>
+          <p className="mt-4 text-lg text-gray-500">
+            TESTING: Email messaging is not connected yet.{" "}
+            <Link to="/fakeMail">View emails here</Link>
           </p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -97,7 +97,7 @@ export default function ForgotPage() {
           <Button type="submit" className="w-full">
             Send password reset email
           </Button>
-          <div className="flex items-center flex-col gap-2">
+          <div className="flex flex-col items-center gap-2">
             <div className="text-center text-sm text-gray-500">
               Don't have an account?{" "}
               <Link

@@ -8,7 +8,10 @@ import { getUserId, createUserSession } from "~/session.server";
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
-import { getPasswordStrength, PasswordStrengthMeter } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
+import {
+  getPasswordStrength,
+  PasswordStrengthMeter,
+} from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);

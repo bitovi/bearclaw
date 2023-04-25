@@ -20,5 +20,5 @@ export default function Route() {
         <p>There was an error verifying your email.</p>
       )}
     </div>
-  )
+  );
 }

@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail";
-import { createId } from '@paralleldrive/cuid2';
+import { createId } from "@paralleldrive/cuid2";
 
 export type { User } from "@prisma/client";
 
@@ -28,7 +28,7 @@ function sendEmailVerificationEmail(user: User) {
       <p>The BearClaw Team</p>
       <p><small>If you didn't sign up for BearClaw, please ignore this email.</small></p>
     `,
-  })
+  });
 }
 
 export async function createUser(email: User["email"], password: string) {
@@ -47,7 +47,7 @@ export async function createUser(email: User["email"], password: string) {
 
   await sendEmailVerificationEmail(user);
 
-  return user
+  return user;
 }
 
 export async function resetEmailValidationToken(user: User) {
@@ -61,29 +61,33 @@ export async function resetEmailValidationToken(user: User) {
   });
   await sendEmailVerificationEmail(updatedUser);
 
-  return updatedUser
+  return updatedUser;
 }
 
 export type EmailValidationResult = {
-  status: 'success' | 'notFound' | 'alreadyVerified' | 'expired',
-  error?: boolean,
-}
+  status: "success" | "notFound" | "alreadyVerified" | "expired";
+  error?: boolean;
+};
 
-export async function validateUserEmailByToken(token: string): Promise<EmailValidationResult> {
+export async function validateUserEmailByToken(
+  token: string
+): Promise<EmailValidationResult> {
   const user = await prisma.user.findFirst({
     where: { emailVerificationToken: token },
   });
 
   if (!user) {
-    return { status: 'notFound', error: true };
+    return { status: "notFound", error: true };
   }
   if (user.emailVerifiedAt) {
-    return { status: 'alreadyVerified' };
+    return { status: "alreadyVerified" };
   }
   const oneDay = 1000 * 60 * 60 * 24;
-  const timestamp = Math.floor(new Date(user.emailTokenCreatedAt).getTime() / 1000)
-  if ((timestamp + oneDay) > Date.now()) {
-    return { status: 'expired', error: true };
+  const timestamp = Math.floor(
+    new Date(user.emailTokenCreatedAt).getTime() / 1000
+  );
+  if (timestamp + oneDay > Date.now()) {
+    return { status: "expired", error: true };
   }
 
   await prisma.user.update({
@@ -93,9 +97,8 @@ export async function validateUserEmailByToken(token: string): Promise<EmailVali
     },
   });
 
-  return { status: 'success' };
+  return { status: "success" };
 }
-
 
 export async function deleteUserByEmail(email: User["email"]) {
   return prisma.user.delete({ where: { email } });
@@ -143,11 +146,11 @@ function sendPasswordResetEmail(user: User, token: string) {
       <p>The BearClaw Team</p>
       <p><small>If you didn't request a password reset, please ignore this email.</small></p>
     `,
-  })
+  });
 }
 
 export async function forgotPassword(email: User["email"]) {
-  const user = await prisma.user.findUnique({ where: { email } })
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     return null;
   }
@@ -163,9 +166,9 @@ export async function forgotPassword(email: User["email"]) {
       token: createId(),
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     },
-  })
+  });
 
-  reset.token && await sendPasswordResetEmail(user, reset.token);
+  reset.token && (await sendPasswordResetEmail(user, reset.token));
 
   return user;
 }
@@ -178,11 +181,7 @@ export async function resetPasswordByToken(token: string, newPassword: string) {
     },
   });
 
-  if (
-    !reset ||
-    !reset.user ||
-    !reset.expiresAt
-  ) {
+  if (!reset || !reset.user || !reset.expiresAt) {
     return null;
   }
 
@@ -199,8 +198,8 @@ export async function resetPasswordByToken(token: string, newPassword: string) {
         },
       },
       resetPasswordToken: {
-        delete: true
-      }
+        delete: true,
+      },
     },
   });
 }

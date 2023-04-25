@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderArgs) {
     user: await getUser(request),
     ENV: {
       SENTRY_DSN: process.env.SENTRY_DSN,
-    }
+    },
   });
 }
 
