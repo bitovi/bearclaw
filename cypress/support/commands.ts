@@ -38,6 +38,18 @@ declare global {
        *    cy.visitAndCheck('/', 500)
        */
       visitAndCheck: typeof visitAndCheck;
+
+      /**
+       * Searches within Stripe loaded Iframe for specific input
+       *
+       * @returns {typeof getStripeElement}
+       * @memberof Chainable
+       * @example
+       *    getStripeElement("Field-numberInput").type('test')
+       *  @example
+       *    getStripeElement("Field-numberOpt", combobox).select();
+       */
+      getStripeElement: typeof getStripeElement;
     }
   }
 }
@@ -90,6 +102,24 @@ function visitAndCheck(url: string, waitTime: number = 1000) {
   cy.location("pathname").should("contain", url).wait(waitTime);
 }
 
+function getStripeElement(fieldName: string, type?: string) {
+  if (Cypress.config("chromeWebSecurity")) {
+    throw new Error(
+      "To get stripe element `chromeWebSecurity` must be disabled"
+    );
+  }
+
+  const selector = `${type || "input"}[id=${fieldName}]`;
+
+  return cy
+    .get("iframe")
+    .its("0.contentDocument.body")
+    .should("not.be.empty")
+    .then(cy.wrap)
+    .find(selector);
+}
+
 Cypress.Commands.add("login", login);
 Cypress.Commands.add("cleanupUser", cleanupUser);
 Cypress.Commands.add("visitAndCheck", visitAndCheck);
+Cypress.Commands.add("getStripeElement", getStripeElement);

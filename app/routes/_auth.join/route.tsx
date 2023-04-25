@@ -23,6 +23,7 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
+
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
   if (!validateEmail(email)) {
@@ -36,7 +37,12 @@ export async function action({ request }: ActionArgs) {
   // TODO: Remove this in production
   if (!email.match(/@(bigbear.ai|verybigthings.com|bitovi.com)$/)) {
     return json(
-      { errors: { email: "Email is not in approved list", password: null } },
+      {
+        errors: {
+          email: "Email is not in approved list",
+          password: null,
+        },
+      },
       { status: 400 }
     );
   }
@@ -50,7 +56,9 @@ export async function action({ request }: ActionArgs) {
 
   if (password.length < 8) {
     return json(
-      { errors: { email: null, password: "Password is too short" } },
+      {
+        errors: { email: null, password: "Password is too short" },
+      },
       { status: 400 }
     );
   }

@@ -69,3 +69,9 @@ export function useUser(): User {
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
+
+export function isNumber(number: unknown) {
+  if (typeof number !== "number") return false;
+  if (isNaN(number)) return false;
+  return true;
+}
