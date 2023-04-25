@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import Stripe from "stripe";
-require("dotenv").config();
+import { serverStripe } from "~/payment.server";
 
 const prisma = new PrismaClient();
 
@@ -37,14 +36,10 @@ async function seed() {
 async function clearStripeCustomers() {
   if (process.env.NODE_ENV === "production") return;
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-    apiVersion: "2022-11-15",
-  });
-
-  const { data: customers } = await stripe.customers.list();
+  const { data: customers } = await serverStripe.customers.list();
 
   const removeCustomers = customers.map((c) => {
-    return stripe.customers.del(c.id);
+    return serverStripe.customers.del(c.id);
   });
 
   await Promise.all(removeCustomers).then((r) => {

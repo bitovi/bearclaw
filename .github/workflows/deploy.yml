@@ -116,6 +116,8 @@ jobs:
           wait-on: "http://localhost:8811"
         env:
           PORT: "8811"
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
 
   build:
     name: 🐳 Build
