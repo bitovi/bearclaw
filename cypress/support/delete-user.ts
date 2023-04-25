@@ -20,7 +20,9 @@ async function deleteUser(email: string) {
 
   try {
     await prisma.user.delete({ where: { email } });
-    await prisma.fakeEmail.deleteMany({ where: { to: { contains: '-test@bigbear.ai' } } })
+    await prisma.fakeEmail.deleteMany({
+      where: { to: { contains: "-test@bigbear.ai" } },
+    });
   } catch (error) {
     if (
       error instanceof PrismaClientKnownRequestError &&

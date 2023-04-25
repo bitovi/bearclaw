@@ -3,5 +3,5 @@ export default function Route() {
     <div>
       <p>Email verified successfully!</p>
     </div>
-  )
+  );
 }

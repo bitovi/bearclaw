@@ -6,5 +6,8 @@ import { prisma } from "~/db.server";
 import type { FakeEmail } from "@prisma/client";
 
 export async function listMail(): Promise<Array<FakeEmail>> {
-  return await prisma.fakeEmail.findMany({ orderBy: { createdAt: 'desc' }, take: 50 })
+  return await prisma.fakeEmail.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
 }
