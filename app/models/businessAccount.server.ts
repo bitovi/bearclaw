@@ -19,3 +19,14 @@ export async function getBusinessAccountByUserId(userId: string) {
   });
   return businessAccount;
 }
+
+export async function updateBusinessAccountByUserId(
+  userId: string,
+  accountId: string
+) {
+  const updatedBussinessAccount = await prisma.businessAccount.update({
+    where: { userId },
+    data: { accountId },
+  });
+  return updatedBussinessAccount;
+}
