@@ -27,14 +27,14 @@ export async function loader({ params, request }: LoaderArgs) {
   }
   if (!process.env.STRIPE_PUBLISHABLE_KEY) {
     console.error("No Stripe Publishable Key found");
-    return redirect("subscriptions");
+    return redirect("/subscriptions");
   }
 
   const { error, stripeCustomer } = await retrieveStripeCustomer(request);
 
   if (error) {
     console.error(error);
-    redirect("/subscription");
+    redirect("/subscriptions");
   }
 
   if (priceId && stripeCustomer) {
