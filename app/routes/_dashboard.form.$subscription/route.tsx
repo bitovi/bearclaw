@@ -16,18 +16,26 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "~/components/button";
 import { useState } from "react";
 
-import { STRIPE_PUBLISHABLE_KEY_TEST } from "globals";
 import { getActiveSubscriptions } from "~/services/subscriptions/getActiveSubscriptions";
 import { Loading } from "~/components/loading/Loading";
 
-const clientStripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY_TEST);
-
 export async function loader({ params, request }: LoaderArgs) {
   const { subscription: priceId } = params;
+  if (!priceId) {
+    console.error("No subscription Price ID found");
+    return redirect("/subscriptions");
+  }
+  if (!process.env.STRIPE_PUBLISHABLE_KEY) {
+    console.error("No Stripe Publishable Key found");
+    return redirect("subscriptions");
+  }
 
-  if (!priceId) return redirect("/subscriptions");
+  const { error, stripeCustomer } = await retrieveStripeCustomer(request);
 
-  const stripeCustomer = await retrieveStripeCustomer(request);
+  if (error) {
+    console.error(error);
+    redirect("/subscription");
+  }
 
   if (priceId && stripeCustomer) {
     const { subscriptionId, clientSecret, paymentIntentId } =
@@ -37,6 +45,7 @@ export async function loader({ params, request }: LoaderArgs) {
         clientSecret,
         customerId: stripeCustomer.accountId,
         paymentIntentId,
+        STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
       });
   }
 
@@ -106,7 +115,10 @@ function FormComponent() {
 }
 
 export default function Index() {
-  const { clientSecret } = useLoaderData<typeof loader>();
+  const { clientSecret, STRIPE_PUBLIC_KEY } = useLoaderData<typeof loader>();
+
+  const clientStripePromise = loadStripe(STRIPE_PUBLIC_KEY);
+
   return (
     <Elements stripe={clientStripePromise} options={{ clientSecret }}>
       <FormComponent />

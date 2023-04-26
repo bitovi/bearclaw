@@ -7,6 +7,7 @@ import { getUser } from "./session.server";
 import {
   createPaymentAccount,
   getBusinessAccountByUserId,
+  updateBusinessAccountByUserId,
 } from "./models/businessAccount.server";
 import { isNumber } from "./utils";
 
@@ -94,25 +95,87 @@ export const createBusinessAccount = async (
 
   return businessAccount;
 };
+
 /**
- * Returns businessAccount after pulling Customer ID from User information in the request object. If no businessAccount is found BUT a user email is found, creates and returns business account. Otherwise returns null
+ * Updates the BusinessAccount for a particular user to point to a new Stripe accountId
+ */
+export async function updateBusinessAccount({
+  id,
+  email,
+  name,
+}: {
+  id: string;
+  email: string;
+  name: string;
+}) {
+  const customer = await serverStripe.customers.create({
+    email,
+    name,
+  });
+  return updateBusinessAccountByUserId(id, customer.id);
+}
+
+/**
+ * Returns businessAccount after pulling Customer ID from User information in the request object. If no businessAccount is found BUT a user email is found, creates and returns business account. If Stripe account is no longer valid (deleted or non-existent) on found BusinessAccount, creates a new Stripe account and updates BusinessAccount accordingly.
  */
 export const retrieveStripeCustomer = async (request: Request) => {
-  const user = await getUser(request);
+  try {
+    const user = await getUser(request);
+    if (!user) {
+      throw new Error("No user found");
+    }
 
-  // lookup businessAccount with user.id
-  const stripeCustomer = user ? await retrieveBusinessAccount(user.id) : null;
+    // lookup businessAccount with user.id
+    const businessAccount = user
+      ? await retrieveBusinessAccount(user.id)
+      : null;
 
-  // if no businessAccount found, create and return one
-  if (!stripeCustomer && user?.email) {
-    return createBusinessAccount(
+    if (businessAccount) {
+      // confirm user account is still active on Stripe
+      let stripeAccount;
+
+      try {
+        stripeAccount = await serverStripe.customers.retrieve(
+          businessAccount.accountId
+        );
+      } catch (e) {
+        // There is no longer a Stripe account associated with the provided ID
+        console.error(e);
+      }
+
+      if (!stripeAccount || stripeAccount.deleted) {
+        // if Stripe account has been formally deleted or is not found, create a new one and associate it with User
+        const stripeCustomer = await updateBusinessAccount({
+          id: user.id,
+          email: user.email,
+          name: "Travis Draper" /* to become user.name*/,
+        });
+        return {
+          error: undefined,
+          stripeCustomer,
+        };
+      }
+      return { stripeCustomer: businessAccount, error: undefined };
+    }
+
+    // if no businessAccount found, create and return one
+    const stripeCustomer = await createBusinessAccount(
       user.id,
       user.email,
       "Travis Draper" /* to become user.name*/
     );
-  }
 
-  return stripeCustomer;
+    return {
+      error: undefined,
+      stripeCustomer,
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      stripeCustomer: undefined,
+      error: "Failed to retrieve Stripe Customer, see console for more details",
+    };
+  }
 };
 
 /**
