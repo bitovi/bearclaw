@@ -1,4 +1,4 @@
-import { Form, useLoaderData, useNavigate } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 
 import {
   PaymentElement,
@@ -21,8 +21,14 @@ import { Loading } from "~/components/loading/Loading";
 
 export async function loader({ params, request }: LoaderArgs) {
   const { subscription: priceId } = params;
-
-  if (!priceId) return redirect("/subscriptions");
+  if (!priceId) {
+    console.error("No subscription Price ID found");
+    return redirect("/subscriptions");
+  }
+  if (!process.env.STRIPE_PUBLISHABLE_KEY) {
+    console.error("No Stripe Publishable Key found");
+    return redirect("subscriptions");
+  }
 
   const { error, stripeCustomer } = await retrieveStripeCustomer(request);
 
@@ -110,12 +116,7 @@ function FormComponent() {
 
 export default function Index() {
   const { clientSecret, STRIPE_PUBLIC_KEY } = useLoaderData<typeof loader>();
-  const navigate = useNavigate();
 
-  if (!STRIPE_PUBLIC_KEY) {
-    console.error("No provided Stripe Public Key Provided");
-    return navigate("/subscriptions");
-  }
   const clientStripePromise = loadStripe(STRIPE_PUBLIC_KEY);
 
   return (
