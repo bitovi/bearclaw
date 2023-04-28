@@ -2,8 +2,8 @@ import { faker } from "@faker-js/faker";
 
 describe("Stripe", () => {
   describe("Add subscription", () => {
-    afterEach(() => {
-      cy.cleanupUser();
+    beforeEach(() => {
+      cy.resetDB();
     });
 
     it("works", () => {
@@ -94,7 +94,7 @@ describe("Stripe", () => {
       cy.findByRole("button").click();
 
       // We have not navigated away from the page -- the subscription was not successful
-      cy.wait(3000).get("h1").contains("Subscribe");
+      cy.findByText("User already has an active subscription");
     });
   });
 });

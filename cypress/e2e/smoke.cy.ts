@@ -32,6 +32,10 @@ function createAndVerifyAccount({ email, password }: LoginData) {
 }
 
 describe("join and authenticate tests", () => {
+  beforeEach(() => {
+    cy.resetDB();
+  });
+
   afterEach(() => {
     cy.cleanupUser();
   });

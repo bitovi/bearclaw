@@ -28,7 +28,13 @@ export async function action({ request }: ActionArgs) {
 
   if (!validateEmail(email)) {
     return json(
-      { errors: { email: "Email is invalid", password: null } },
+      {
+        errors: {
+          email: "Email is invalid",
+          password: null,
+          userCreation: null,
+        },
+      },
       { status: 400 }
     );
   }
@@ -41,6 +47,7 @@ export async function action({ request }: ActionArgs) {
         errors: {
           email: "Email is not in approved list",
           password: null,
+          userCreation: null,
         },
       },
       { status: 400 }
@@ -49,7 +56,13 @@ export async function action({ request }: ActionArgs) {
 
   if (typeof password !== "string" || password.length === 0) {
     return json(
-      { errors: { email: null, password: "Password is required" } },
+      {
+        errors: {
+          email: null,
+          password: "Password is required",
+          userCreation: null,
+        },
+      },
       { status: 400 }
     );
   }
@@ -57,7 +70,11 @@ export async function action({ request }: ActionArgs) {
   if (password.length < 8) {
     return json(
       {
-        errors: { email: null, password: "Password is too short" },
+        errors: {
+          email: null,
+          password: "Password is too short",
+          userCreation: null,
+        },
       },
       { status: 400 }
     );
@@ -70,17 +87,35 @@ export async function action({ request }: ActionArgs) {
         errors: {
           email: "A user already exists with this email",
           password: null,
+          userCreation: null,
         },
       },
       { status: 400 }
     );
   }
 
-  const user = await createUser(email, password);
+  const { user, orgId, error } = await createUser(email, password);
+
+  if (error || !orgId) {
+    return json(
+      {
+        errors: {
+          email: null,
+          password: null,
+          userCreation:
+            typeof error === "string"
+              ? error
+              : "An error occured creating new user",
+        },
+      },
+      { status: 405 }
+    );
+  }
 
   return createUserSession({
     request,
     userId: user.id,
+    orgId,
     remember: false,
     redirectTo,
   });
@@ -107,6 +142,9 @@ export default function Join() {
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
+        {actionData?.errors.userCreation && (
+          <div>{actionData?.errors.userCreation}</div>
+        )}
         <Form method="post" className="space-y-6">
           <div>
             <label

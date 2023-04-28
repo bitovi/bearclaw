@@ -10,7 +10,7 @@ import { json, redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import {
   createBusinessSubscription,
-  retrieveStripeCustomer,
+  retrieveStripeCustomerId,
 } from "~/payment.server";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "~/components/button";
@@ -30,20 +30,26 @@ export async function loader({ params, request }: LoaderArgs) {
     return redirect("/subscriptions");
   }
 
-  const { error, stripeCustomer } = await retrieveStripeCustomer(request);
+  const { error, paymentAccountId } = await retrieveStripeCustomerId(request);
 
   if (error) {
-    console.error(error);
-    redirect("/subscriptions");
+    return json(
+      {
+        error: error,
+      },
+      { status: 400 }
+    );
   }
 
-  if (priceId && stripeCustomer) {
+  if (priceId && paymentAccountId) {
     const { subscriptionId, clientSecret, paymentIntentId } =
-      await createBusinessSubscription(stripeCustomer.accountId, priceId);
+      await createBusinessSubscription(paymentAccountId, priceId);
+
     if (subscriptionId && clientSecret)
       return json({
+        subscriptionId,
         clientSecret,
-        customerId: stripeCustomer.accountId,
+        paymentAccountId,
         paymentIntentId,
         STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
       });
@@ -53,20 +59,30 @@ export async function loader({ params, request }: LoaderArgs) {
 }
 
 function FormComponent() {
-  const { clientSecret, customerId, paymentIntentId } =
-    useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+
   const [loading, setLoading] = useState(false);
   const [paymentMounted, setPaymentMounted] = useState(false);
+  const [submissionError, setSubmissionError] = useState("");
 
   const elements = useElements();
   const stripe = useStripe();
 
+  if ("error" in data) {
+    return null;
+  }
+  const { paymentAccountId, clientSecret, paymentIntentId, subscriptionId } =
+    data;
+
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if (elements && stripe) {
+    setSubmissionError("");
+    if (elements && stripe && paymentAccountId) {
       try {
-        const activeSubscription = await getActiveSubscriptions(customerId);
+        const activeSubscription = await getActiveSubscriptions(
+          paymentAccountId
+        );
         if (activeSubscription)
           throw new Error("User already has an active subscription");
 
@@ -79,13 +95,21 @@ function FormComponent() {
           elements,
           clientSecret,
           confirmParams: {
-            return_url: `${window.location.origin}/pay/success?payment_intent=${paymentIntentId}`,
+            return_url: `${window.location.origin}/pay/success?subscription_id=${subscriptionId}&payment_intent=${paymentIntentId}`,
           },
         });
         if (error) throw new Error(error.message);
       } catch (e) {
-        setLoading(false);
         console.error(e);
+        const error =
+          typeof e === "string"
+            ? e
+            : typeof (e as Error).message === "string"
+            ? (e as Error).message
+            : "An error occured processing the Subscription payment";
+        setSubmissionError(error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -93,6 +117,7 @@ function FormComponent() {
   return (
     <div className="mx-auto w-6/12 flex-row justify-center ">
       {paymentMounted && <h1 className="pb-4 text-center">Subscribe</h1>}
+      {submissionError && <div>{submissionError}</div>}
       <Form onSubmit={handleSubmit}>
         <PaymentElement
           onReady={() => setPaymentMounted(true)}
@@ -115,12 +140,18 @@ function FormComponent() {
 }
 
 export default function Index() {
-  const { clientSecret, STRIPE_PUBLIC_KEY } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
 
-  const clientStripePromise = loadStripe(STRIPE_PUBLIC_KEY);
+  if ("error" in data) {
+    return <div>{data.error}</div>;
+  }
+  const clientStripePromise = loadStripe(data.STRIPE_PUBLIC_KEY);
 
   return (
-    <Elements stripe={clientStripePromise} options={{ clientSecret }}>
+    <Elements
+      stripe={clientStripePromise}
+      options={{ clientSecret: data.clientSecret }}
+    >
       <FormComponent />
     </Elements>
   );

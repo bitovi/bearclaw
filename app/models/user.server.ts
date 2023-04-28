@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail";
 import { createId } from "@paralleldrive/cuid2";
+import { createOrganization } from "./organization.server";
 
 export type { User } from "@prisma/client";
 
@@ -45,9 +46,16 @@ export async function createUser(email: User["email"], password: string) {
     },
   });
 
+  // For the time being, whenever we create a user we create an organization associated with that user, of which they are the owner. This will likely be expanded so that users created through invitation links can skip this step and register with a pre-existing organization
+  const { organization, error } = await createOrganization({
+    email,
+    userId: user.id,
+    name: "New Organization", //TODO figure out best way to manage naming the Org
+  });
+
   await sendEmailVerificationEmail(user);
 
-  return user;
+  return { user, orgId: organization?.id, error };
 }
 
 export async function resetEmailValidationToken(user: User) {

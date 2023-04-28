@@ -50,6 +50,16 @@ declare global {
        *    getStripeElement("Field-numberOpt", combobox).select();
        */
       getStripeElement: typeof getStripeElement;
+
+      /**
+       * Clears and seeds the database running -- npx prisma db seed
+       *
+       * @returns {typeof resetDB}
+       * @memberof Chainable
+       * @example
+       *    resetDB()
+       */
+      resetDB: typeof resetDB;
     }
   }
 }
@@ -92,6 +102,10 @@ function deleteUserByEmail(email: string) {
   cy.clearCookie("__session");
 }
 
+function resetDB() {
+  cy.exec("npx prisma db seed");
+}
+
 // We're waiting a second because of this issue happen randomly
 // https://github.com/cypress-io/cypress/issues/7306
 // Also added custom types to avoid getting detached
@@ -123,3 +137,4 @@ Cypress.Commands.add("login", login);
 Cypress.Commands.add("cleanupUser", cleanupUser);
 Cypress.Commands.add("visitAndCheck", visitAndCheck);
 Cypress.Commands.add("getStripeElement", getStripeElement);
+Cypress.Commands.add("resetDB", resetDB);
