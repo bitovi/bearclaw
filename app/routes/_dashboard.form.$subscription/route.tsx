@@ -11,6 +11,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import {
   createBusinessSubscription,
   retrieveStripeCustomerId,
+  validateCredentials,
 } from "~/payment.server";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "~/components/button";
@@ -30,12 +31,24 @@ export async function loader({ params, request }: LoaderArgs) {
     return redirect("/subscriptions");
   }
 
-  const { error, paymentAccountId } = await retrieveStripeCustomerId(request);
-
-  if (error) {
+  const { error: validateError, organization } = await validateCredentials(
+    request
+  );
+  if (validateError || !organization) {
     return json(
       {
-        error: error,
+        error: validateError,
+      },
+      { status: 400 }
+    );
+  }
+
+  const { error: stripeError, paymentAccountId } =
+    await retrieveStripeCustomerId(organization);
+  if (stripeError) {
+    return json(
+      {
+        error: stripeError,
       },
       { status: 400 }
     );

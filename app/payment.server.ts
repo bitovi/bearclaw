@@ -4,13 +4,17 @@
 
 import Stripe from "stripe";
 import { getOrgId, getUser } from "./session.server";
+import type { Organization } from "./models/organization.server";
 import { isNumber } from "./utils";
 import { retrieveOrganizationUser } from "./models/organizationUsers.server";
 import {
   getOrganizationById,
   updateOrganizationPaymentAccount,
 } from "./models/organization.server";
-import { createSubscription } from "./models/subscription.server";
+import {
+  createSubscription,
+  retrieveSubscriptionByOrgId,
+} from "./models/subscription.server";
 
 require("dotenv").config();
 
@@ -101,9 +105,17 @@ export async function retrieveSubscriptionFromPaymentService(
 }
 
 /**
- * Returns the Stripe account Id associated with an organization. If Stripe account is no longer valid (deleted or non-existent) on found Organization, creates a new Stripe account and updates Organization accordingly.
+ * Before creating a new subscription, ensures the following:
+ *
+ * - User exists
+ *
+ * - Organization exists
+ *
+ * - User has susbcription creation permissions
+ *
+ * - Organization does not already have an active subscription associated
  */
-export const retrieveStripeCustomerId = async (request: Request) => {
+export async function validateCredentials(request: Request) {
   try {
     const user = await getUser(request);
     const organizationId = await getOrgId(request);
@@ -137,6 +149,24 @@ export const retrieveStripeCustomerId = async (request: Request) => {
       throw new Error("No organization found");
     }
 
+    const orgSubscription = await retrieveSubscriptionByOrgId(organization.id);
+
+    if (orgSubscription) {
+      throw new Error("Organization already has a subscription");
+    }
+
+    return { organization, error: undefined };
+  } catch (e) {
+    console.error(e);
+    return { organization: null, error: (e as Error).message };
+  }
+}
+
+/**
+ * Returns the Stripe account Id associated with an organization. If Stripe account is no longer valid (deleted or non-existent) on found Organization, creates a new Stripe account and updates Organization accordingly.
+ */
+export const retrieveStripeCustomerId = async (organization: Organization) => {
+  try {
     // confirm Stripe account presence
     let stripeAccount;
 

@@ -58,6 +58,13 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
+export async function getOrgandUserId(request: Request) {
+  const session = await getSession(request);
+  const organizationId = session.get(ORGANIZATION_KEY);
+  const userId = session.get(USER_SESSION_KEY);
+  return { organizationId, userId };
+}
+
 export async function requireUserId(
   request: Request,
   redirectTo: string = new URL(request.url).pathname

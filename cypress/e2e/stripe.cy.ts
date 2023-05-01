@@ -2,8 +2,8 @@ import { faker } from "@faker-js/faker";
 
 describe("Stripe", () => {
   describe("Add subscription", () => {
-    beforeEach(() => {
-      cy.resetDB();
+    afterEach(() => {
+      cy.cleanupUser();
     });
 
     it("works", () => {
@@ -62,6 +62,8 @@ describe("Stripe", () => {
       cy.findByRole("link", { name: /Premium Plan/i });
       cy.findByRole("link", { name: /Enterprise Plan/i });
 
+      cy.findByText(/No plan information to display/i);
+
       cy.get("@standardPlan").click({ force: true });
 
       cy.get("h1").contains("Subscribe");
@@ -73,28 +75,21 @@ describe("Stripe", () => {
       cy.getStripeElement("Field-postalCodeInput").type("90210");
 
       cy.findByRole("button").click();
+      cy.wait(3000);
 
       // The Payment Intent page dump after navigation
-      cy.findByText(/thank you for your payment/i);
+      cy.findByText(/thank you for your payment!/i);
 
       // Navigate back to the subscription page and attempt to pay for another subscription
       cy.findByRole("link", { name: /Subscriptions/i })
         .should("be.visible")
         .click({ force: true });
 
+      cy.findByText(/^Subscription type: Standard Plan$/i);
+      cy.findByText(/^Subscription status: active$/i);
+
       cy.findByRole("link", { name: /Standard Plan/i }).click({ force: true });
-
-      cy.wait(3000);
-
-      cy.getStripeElement("Field-numberInput").type("4000056655665556");
-      cy.getStripeElement("Field-expiryInput").type("0824");
-      cy.getStripeElement("Field-cvcInput").type("123");
-      cy.getStripeElement("Field-postalCodeInput").type("90210");
-
-      cy.findByRole("button").click();
-
-      // We have not navigated away from the page -- the subscription was not successful
-      cy.findByText("User already has an active subscription");
+      cy.findByText(/Organization already has a subscription/i);
     });
   });
 });

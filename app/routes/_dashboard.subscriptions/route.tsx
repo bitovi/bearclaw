@@ -4,10 +4,16 @@ import { subscriptionOptionLookup } from "~/payment.server";
 import type { ExpandedPrice } from "~/payment.server";
 import { Suspense } from "react";
 import { Link } from "~/components/link";
+import { retrieveOrganizationSubscription } from "~/account.server";
+import SubscriptionInformation from "./subscriptionInformation";
 
-export async function loader() {
-  const result = subscriptionOptionLookup();
-  return defer({ data: result });
+export async function loader({ request }: { request: Request }) {
+  const optionResults = subscriptionOptionLookup();
+  const organizationSubscription = retrieveOrganizationSubscription(request);
+  return defer({
+    optionResults,
+    organizationSubscription,
+  });
 }
 
 const Option = ({ opt }: { opt: ExpandedPrice }) => {
@@ -21,12 +27,29 @@ const Option = ({ opt }: { opt: ExpandedPrice }) => {
 };
 
 export default function Route() {
-  const { data } = useLoaderData<typeof loader>();
+  const { optionResults, organizationSubscription } =
+    useLoaderData<typeof loader>();
   return (
     <div>
-      <Suspense fallback={<div>LOADING ... </div>}>
-        <Await resolve={data}>
-          {({ subscriptionOptions, error }) => {
+      <h1 className="text-center">Current Plan Information</h1>
+      <Suspense fallback={<div>LOADING PLAN INFORMATION... </div>}>
+        <Await resolve={organizationSubscription}>
+          {(organizationSubscription) => {
+            if (!organizationSubscription)
+              return <div>No plan information to display</div>;
+            return (
+              <SubscriptionInformation
+                subscription={organizationSubscription}
+              />
+            );
+          }}
+        </Await>
+      </Suspense>
+      <br />
+      <Suspense fallback={<div>LOADING SUBSCRIPTION TIERS... </div>}>
+        <Await resolve={optionResults}>
+          {(optionResults) => {
+            const { error, subscriptionOptions } = optionResults;
             if (error) return <div>{error}</div>;
             return (
               <div className="flex w-full justify-evenly">

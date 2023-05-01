@@ -48,3 +48,12 @@ export async function retrieveOrganizationUser({
 
   return orgUser;
 }
+
+export async function countOrganizationUserInstances(userId: string) {
+  const count = await prisma.organizationUsers.count({
+    where: {
+      userId,
+    },
+  });
+  return count;
+}

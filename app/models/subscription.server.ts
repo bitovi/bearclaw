@@ -12,3 +12,16 @@ export async function createSubscription(subscriptionFields: Subscription) {
 
   return newSubscription;
 }
+
+export async function retrieveSubscription(id: string) {
+  const subscription = await prisma.subscription.findUnique({ where: { id } });
+
+  return subscription;
+}
+
+export async function retrieveSubscriptionByOrgId(id: string) {
+  const subscription = await prisma.subscription.findUnique({
+    where: { organizationId: id },
+  });
+  return subscription;
+}

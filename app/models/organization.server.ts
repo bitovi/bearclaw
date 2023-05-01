@@ -1,5 +1,8 @@
 import { prisma } from "~/db.server";
-import { createOrganizationUser } from "./organizationUsers.server";
+import {
+  countOrganizationUserInstances,
+  createOrganizationUser,
+} from "./organizationUsers.server";
 import { createPaymentVendorCustomer } from "~/payment.server";
 
 export type { Organization } from "@prisma/client";
@@ -21,14 +24,6 @@ export async function getOrganizationById(organizationId: string) {
   return org;
 }
 
-export async function countOrganizationAssociations(userId: string) {
-  const userOrgsCount = await prisma.organization.count({
-    where: { organizationUser: { every: { userId: { equals: userId } } } },
-  });
-
-  return userOrgsCount;
-}
-
 export async function createOrganization({
   userId,
   name,
@@ -42,7 +37,8 @@ export async function createOrganization({
 }) {
   try {
     // A constraint to prevent a User from being associated with more than 1 organization
-    const userOrgCount = await countOrganizationAssociations(userId);
+    const userOrgCount = await countOrganizationUserInstances(userId);
+
     if (userOrgCount > 1) {
       throw new Error("User already belongs to an organization.");
     }
