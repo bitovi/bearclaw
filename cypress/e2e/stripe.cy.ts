@@ -57,6 +57,8 @@ describe("Stripe", () => {
         .should("be.visible")
         .click({ force: true });
 
+      cy.wait(5000);
+
       cy.findByRole("link", { name: /Free Plan/i });
       cy.findByRole("link", { name: /Standard Plan/i }).as("standardPlan");
       cy.findByRole("link", { name: /Premium Plan/i });
@@ -64,7 +66,7 @@ describe("Stripe", () => {
 
       cy.get("@standardPlan").click({ force: true });
 
-      cy.get("h1").contains("Subscribe");
+      cy.wait(5000).get("h1").contains("Subscribe");
 
       // input into Stripe iFrame
       cy.getStripeElement("Field-numberInput").type("4000056655665556");
@@ -84,7 +86,7 @@ describe("Stripe", () => {
 
       cy.findByRole("link", { name: /Standard Plan/i }).click({ force: true });
 
-      cy.wait(3000);
+      cy.wait(5000);
 
       cy.getStripeElement("Field-numberInput").type("4000056655665556");
       cy.getStripeElement("Field-expiryInput").type("0824");
@@ -94,7 +96,7 @@ describe("Stripe", () => {
       cy.findByRole("button").click();
 
       // We have not navigated away from the page -- the subscription was not successful
-      cy.wait(3000).get("h1").contains("Subscribe");
+      cy.wait(5000).get("h1").contains("Subscribe");
     });
   });
 });

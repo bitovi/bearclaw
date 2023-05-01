@@ -1,6 +1,7 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLocation } from "@remix-run/react";
+import { Onboarding } from "~/routes/onboarding/components/Onboarding";
 import { Upload } from "~/components/upload/Upload";
 import { getUserId } from "~/session.server";
 
@@ -18,6 +19,7 @@ export default function Index() {
 
   return location.pathname === "/" ? (
     <div>
+      <Onboarding />
       <Upload />
     </div>
   ) : (
