@@ -54,7 +54,7 @@ describe("join and authenticate tests", () => {
 
     // Logout shows the login screen
     cy.wait(3000);
-    cy.findByRole("link", { name: /logout/i }).click();
+    cy.findAllByRole("link", { name: /logout/i }).first().click();
     cy.findByRole("button", { name: /log in/i });
     cy.url().should("include", "/login");
 
@@ -63,7 +63,7 @@ describe("join and authenticate tests", () => {
     cy.findByLabelText(/password/i).type(loginForm.password);
     cy.findByRole("button", { name: /log in/i }).click();
     cy.findByRole("button", { name: /Upload/i });
-    cy.findByRole("link", { name: /logout/i }).click();
+    cy.findAllByRole("link", { name: /logout/i }).first().click();
 
     // Creating an account with an existing email fails and prompts user to login
     cy.visitAndCheck("/join");
@@ -84,7 +84,7 @@ describe("join and authenticate tests", () => {
     createAndVerifyAccount(loginForm);
 
     cy.wait(100);
-    cy.findByRole("link", { name: /logout/i }).click();
+    cy.findAllByRole("link", { name: /logout/i }).first().click();
     cy.findByRole("link", { name: /forgot password/i }).click();
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByRole("button", { name: /password reset/i }).click();

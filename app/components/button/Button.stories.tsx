@@ -17,6 +17,6 @@ type Story = StoryObj<typeof meta>;
 export const _Button: Story = {
   render: (args) => <Button {...args}>Button</Button>,
   args: {
-    variant: "primary",
+    variant: "contained",
   },
 };

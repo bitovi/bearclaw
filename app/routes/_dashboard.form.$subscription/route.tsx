@@ -141,10 +141,9 @@ function FormComponent() {
           <Button
             type="submit"
             name="submit-payment"
-            className="m-auto"
             disabled={loading}
           >
-            {loading ? <Loading color={"#ffffff"} /> : "Subscribe"}
+            {loading ? <Loading /> : "Subscribe"}
           </Button>
         )}
       </Form>

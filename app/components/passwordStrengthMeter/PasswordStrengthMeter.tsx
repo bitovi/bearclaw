@@ -1,3 +1,5 @@
+import Box from "@mui/material/Box";
+
 export function getPasswordStrength(password: string) {
   let strength = 0;
   if (password.match(/[a-z]/g)) strength += 1;
@@ -11,29 +13,30 @@ export function getPasswordStrength(password: string) {
 export function PasswordStrengthMeter({ strength }: { strength: number }) {
   const barColor =
     strength === 1
-      ? "bg-red-500"
+      ? "error.dark"
       : strength === 2
-      ? "bg-orange-500"
-      : strength === 3
-      ? "bg-yellow-500"
-      : strength === 4
-      ? "bg-lime-500"
-      : strength === 5
-      ? "bg-green-500"
-      : "bg-gray-300";
+        ? "warning.dark"
+        : strength === 3
+          ? "warning.light"
+          : strength === 4
+            ? "info.main"
+            : strength === 5
+              ? "success.main"
+              : "gray.300";
 
   return (
-    <div className="flex w-full gap-1">
+    <Box display="flex" gap={1}>
       {Array(5)
         .fill(0)
         .map((_, i) => (
-          <div
+          <Box
             key={i}
-            className={`h-1 flex-1 rounded bg-gray-300 ${
-              strength > i ? barColor : "gray-300"
-            }`}
+            sx={{ backgroundColor: strength > i ? barColor : "grey.300" }}
+            flex="1"
+            height="0.5rem"
+            borderRadius="2px"
           />
         ))}
-    </div>
+    </Box>
   );
 }

@@ -1,48 +1,23 @@
-type InputProps = React.ComponentPropsWithRef<"input"> & {
-  inputClasses?: string;
-  containerClasses?: string;
-  label?: string;
-  labelClasses?: string;
-  verticalLabel?: boolean;
+import { TextField } from "@mui/material";
+import type { TextFieldProps } from "@mui/material";
+
+type InputProps = Omit<TextFieldProps, "error"> & {
+  error?: boolean | string | null;
 };
 
 export const TextInput: React.FC<InputProps> = ({
-  children,
-  inputClasses: _inputClasses,
-  containerClasses: _containerClasses,
-  label,
-  labelClasses: _labelClasses,
-  name,
-  verticalLabel = false,
+  error,
+  inputRef,
   ...props
 }) => {
-  const inputClasses = `
-    border
-    ${_inputClasses || ""}
-    `;
-
-  const containerClasses = `
-    ${verticalLabel ? "flex-row" : ""}
-    ${_containerClasses || ""}
-    `;
-
-  const labelClasses = `
-    ${verticalLabel ? "flex" : "px-2"}
-    ${_labelClasses || ""}
-    `;
+  const hasError = typeof error === "string" ? error.length > 0 : !!error;
 
   return (
-    <div className={containerClasses}>
-      <label className={labelClasses} htmlFor={name}>
-        {label || name}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type="text"
-        className={inputClasses}
-        {...props}
-      />
-    </div>
+    <TextField
+      error={hasError}
+      helperText={hasError ? error : null}
+      {...props}
+      inputRef={inputRef}
+    />
   );
 };

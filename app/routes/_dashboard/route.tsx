@@ -1,10 +1,11 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
-import { Loading } from "~/components/loading/Loading";
+import Box from "@mui/material/Box";
 
 import { Header } from "./header";
 import { Sidenav } from "./sidenav";
+import { Loading } from "~/components/loading/Loading";
 import { Link } from "~/components/link";
 import { getUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
@@ -36,17 +37,17 @@ export default function Index() {
   const navigation = useNavigation();
 
   return (
-    <div className="h-full overflow-hidden">
-      <Header />
-      <div className="flex h-full flex-row">
-        {isVerified && (
-          <div className="bg-[color:rgba(0, 0, 0, .05)] relative h-full min-h-screen overflow-y-auto p-8">
-            <Sidenav />
-          </div>
-        )}
-        <main className="bg-[color:rgba(0, 0, 0, .05)] relative min-h-screen flex-1 overflow-y-auto overscroll-contain bg-white p-8">
+    <Box display="flex" height="100%">
+      {isVerified && (
+        <Box borderRight="1px solid grey">
+          <Sidenav />
+        </Box>
+      )}
+      <Box display="flex" flexDirection="column" height="100%" width="100%">
+        <Header />
+        <Box component="main" overflow="hidden auto" padding={4}>
           {navigation.state === "loading" ? (
-            <div className="flex h-full w-full items-center justify-center">
+            <div>
               <Loading />
             </div>
           ) : (
@@ -54,7 +55,7 @@ export default function Index() {
               {isVerified ? (
                 <Outlet />
               ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-2">
+                <Box height="100%" width="100%" display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={1}>
                   <p className="text-lg text-gray-500">
                     Please verify your email address. Check your inbox for a
                     verification link.
@@ -62,16 +63,16 @@ export default function Index() {
                   <Link to="/verificationEmailResend">
                     Resend verification email
                   </Link>
-                  <p className="mt-4 text-lg text-gray-500">
+                  <p>
                     TESTING: Email messaging is not connected yet.{" "}
                     <Link to="/fakeMail">View verification emails here</Link>
                   </p>
-                </div>
+                </Box>
               )}
             </>
           )}
-        </main>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }
