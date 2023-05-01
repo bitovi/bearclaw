@@ -57,6 +57,8 @@ describe("Stripe", () => {
         .should("be.visible")
         .click({ force: true });
 
+      cy.wait(5000);
+
       cy.findByRole("link", { name: /Free Plan/i });
       cy.findByRole("link", { name: /Standard Plan/i }).as("standardPlan");
       cy.findByRole("link", { name: /Premium Plan/i });
@@ -66,7 +68,7 @@ describe("Stripe", () => {
 
       cy.get("@standardPlan").click({ force: true });
 
-      cy.get("h1").contains("Subscribe");
+      cy.wait(5000).get("h1").contains("Subscribe");
 
       // input into Stripe iFrame
       cy.getStripeElement("Field-numberInput").type("4000056655665556");

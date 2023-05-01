@@ -1,6 +1,7 @@
 type InputProps = React.ComponentPropsWithRef<"input"> & {
   inputClasses?: string;
   containerClasses?: string;
+  label?: string;
   labelClasses?: string;
   verticalLabel?: boolean;
 };
@@ -9,6 +10,7 @@ export const TextInput: React.FC<InputProps> = ({
   children,
   inputClasses: _inputClasses,
   containerClasses: _containerClasses,
+  label,
   labelClasses: _labelClasses,
   name,
   verticalLabel = false,
@@ -32,7 +34,7 @@ export const TextInput: React.FC<InputProps> = ({
   return (
     <div className={containerClasses}>
       <label className={labelClasses} htmlFor={name}>
-        {name}
+        {label || name}
       </label>
       <input
         id={name}
