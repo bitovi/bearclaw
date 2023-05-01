@@ -1,4 +1,4 @@
-import{j,a as xe}from"./jsx-runtime-1eedc2cd.js";import{a as D,r as s}from"./index-2812c619.js";import{_ as we}from"./iframe-d5119172.js";import"./_commonjsHelpers-725317a4.js";import"../sb-preview/runtime.mjs";/**
+import{j,a as xe}from"./jsx-runtime-1eedc2cd.js";import{a as D,r as s}from"./index-2812c619.js";import{_ as we}from"./iframe-23e7f8d7.js";import"./_commonjsHelpers-725317a4.js";import"../sb-preview/runtime.mjs";/**
  * @remix-run/router v1.3.3
  *
  * Copyright (c) Remix Software Inc.
@@ -69,4 +69,4 @@ import{j,a as xe}from"./jsx-runtime-1eedc2cd.js";import{a as D,r as s}from"./ind
 dependent upon whether user passes a "to" or "href" prop, respectively.`,displayName:"Link",props:{}}}catch{}const Nt={title:"Components/Link",component:_,tags:["component","link"],parameters:{layout:"centered"}},Et=()=>xe(lt,{children:["Click ",j(_,{to:"/",children:"Link Here"}),"."]}),O=Et.bind({});var te,ne,re;O.parameters={...O.parameters,docs:{...(te=O.parameters)==null?void 0:te.docs,source:{originalSource:`() => <MemoryRouter>
     Click <Link to="/">Link Here</Link>.
   </MemoryRouter>`,...(re=(ne=O.parameters)==null?void 0:ne.docs)==null?void 0:re.source}}};const _t=["_Link"];export{O as _Link,_t as __namedExportsOrder,Nt as default};
-//# sourceMappingURL=Link.stories-d78cbbef.js.map
+//# sourceMappingURL=Link.stories-95c4059c.js.map
