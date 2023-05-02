@@ -13,11 +13,11 @@ describe("Input -> Text", () => {
       setValue(e.target.value);
     };
 
-    return <TextInput name="test" value={value} onChange={handleChange} />;
+    return <TextInput label="test" value={value} onChange={handleChange} />;
   };
 
   it("renders input and label", () => {
-    render(<TextInput name="test" />);
+    render(<TextInput label="test" />);
     expect(screen.getByLabelText("test")).toBeInTheDocument();
   });
 

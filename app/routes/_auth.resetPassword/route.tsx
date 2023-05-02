@@ -9,6 +9,7 @@ import {
   useSearchParams,
 } from "@remix-run/react";
 import { useState } from "react";
+import Box from "@mui/material/Box";
 
 import { Button } from "~/components/button/Button";
 import {
@@ -16,6 +17,7 @@ import {
   getPasswordStrength,
 } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
 import { resetPasswordByToken } from "~/models/user.server";
+import { TextInput } from "~/components/input";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -65,82 +67,59 @@ export default function ResetPage() {
 
   if (actionData?.success) {
     return (
-      <div className="flex min-h-full flex-col justify-center">
-        <div className="mx-auto w-full max-w-md px-8">
-          <p className="text-center text-lg">
-            Your password has been reset. You can now{" "}
-            <Link to="/login">login</Link>.
-          </p>
-        </div>
-      </div>
+      <Box padding={4}>
+        <p className="text-center text-lg">
+          Your password has been reset. You can now{" "}
+          <Link to="/login">login</Link>.
+        </p>
+      </Box>
     );
   }
 
   return (
-    <div className="flex min-h-full flex-col justify-center">
-      <div className="mx-auto w-full max-w-md px-8">
-        <Form method="post" className="space-y-6">
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Create new password
-            </label>
-            <div className="my-1">
-              <input
-                id="password"
-                ref={passwordRef}
-                onChange={(value) => {
-                  setPasswordStrength(getPasswordStrength(value.target.value));
-                }}
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                aria-invalid={actionData?.errors?.password ? true : undefined}
-                aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
-              />
-              {actionData?.errors?.password && (
-                <div className="pt-1 text-red-700" id="password-error">
-                  {actionData.errors.password}
-                </div>
-              )}
-            </div>
-            <PasswordStrengthMeter strength={passwordStrength} />
-          </div>
+    <Box>
+      <Form method="post" className="space-y-6">
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextInput
+            label="Create new password"
+            inputRef={passwordRef}
+            onChange={(value) => {
+              setPasswordStrength(getPasswordStrength(value.target.value));
+            }}
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            error={!!actionData?.errors?.password}
+          />
+          <PasswordStrengthMeter strength={passwordStrength} />
           <input type="hidden" name="token" value={token} />
-          <Button type="submit" className="w-full">
+          <Button type="submit" variant="contained">
             Reset password
           </Button>
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-center text-sm text-gray-500">
-              Don't have an account?{" "}
-              <Link
-                className="text-blue-500 underline"
-                to={{
-                  pathname: "/join",
-                  search: searchParams.toString(),
-                }}
-              >
-                Sign up
-              </Link>
-            </div>
-            <div className="text-center text-sm text-gray-500">
-              Know your password?{" "}
-              <Link
-                className="text-blue-500 underline"
-                to={{
-                  pathname: "/login",
-                  search: searchParams.toString(),
-                }}
-              >
-                Login
-              </Link>
-            </div>
+          <div>
+            Don't have an account?{" "}
+            <Link
+              to={{
+                pathname: "/join",
+                search: searchParams.toString(),
+              }}
+            >
+              Sign up
+            </Link>
           </div>
-        </Form>
-      </div>
-    </div>
+          <div>
+            Know your password?{" "}
+            <Link
+              to={{
+                pathname: "/login",
+                search: searchParams.toString(),
+              }}
+            >
+              Login
+            </Link>
+          </div>
+        </Box>
+      </Form>
+    </Box>
   );
 }

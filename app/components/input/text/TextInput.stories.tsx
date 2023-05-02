@@ -11,7 +11,6 @@ const meta = {
   },
   args: {
     name: "Text Box",
-    verticalLabel: false,
   },
 } satisfies Meta<typeof TextInput>;
 

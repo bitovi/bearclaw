@@ -5,10 +5,15 @@
  */
 
 import { RemixBrowser, useLocation, useMatches } from "@remix-run/react";
-import { startTransition, StrictMode } from "react";
+import { startTransition, StrictMode, useMemo, useState, useEffect } from "react";
 import { hydrateRoot } from "react-dom/client";
 import * as Sentry from "@sentry/remix";
-import { useEffect } from "react";
+import { CacheProvider } from '@emotion/react';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import ClientStyleContext from "./styles/ClientStyleContext";
+import createEmotionCache from "./styles/createEmotionCache";
+import theme from "./styles/theme";
 
 if (window.ENV?.SENTRY_DSN !== undefined) {
   Sentry.init({
@@ -26,11 +31,39 @@ if (window.ENV?.SENTRY_DSN !== undefined) {
   });
 }
 
+interface ClientStylingCacheProviderProps {
+  children: React.ReactNode;
+}
+
+function ClientStylingCacheProvider({ children }: ClientStylingCacheProviderProps) {
+  const [cache, setCache] = useState(createEmotionCache());
+
+  const clientStyleContextValue = useMemo(
+    () => ({
+      reset() {
+        setCache(createEmotionCache());
+      },
+    }),
+    [],
+  );
+
+  return (
+    <ClientStyleContext.Provider value={clientStyleContextValue}>
+      <CacheProvider value={cache}>{children}</CacheProvider>
+    </ClientStyleContext.Provider>
+  );
+}
+
 startTransition(() => {
   hydrateRoot(
     document,
     <StrictMode>
-      <RemixBrowser />
+      <ClientStylingCacheProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <RemixBrowser />
+        </ThemeProvider>
+      </ClientStylingCacheProvider>
     </StrictMode>
   );
 });

@@ -1,5 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { listMail } from "~/services/mail/listMail";
+import Box from "@mui/material/Box";
 
 export async function loader() {
   const mail = await listMail();
@@ -12,41 +13,47 @@ export default function DashboardFakeMailPage() {
   const { mail } = useLoaderData<typeof loader>();
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl">Fake Mail</h1>
+    <Box p={4}>
+      <h1>Fake Mail</h1>
       {mail?.length ? (
         mail.map((mail) => (
-          <div
+          <Box
             key={mail.id}
-            className="my-2 flex gap-4 border p-4"
+            display="flex"
+            gap={4}
+            border={1}
+            p={4}
             data-testid={mail.to}
           >
             <div>
-              <p>
+              <div>
                 <i>Sent:</i> {mail.createdAt}
-              </p>
-              <p>
+              </div>
+              <div>
                 <i>To:</i> {mail.to}
-              </p>
-              <p>
+              </div>
+              <div>
                 <i>From:</i> {mail.from}
-              </p>
+              </div>
             </div>
-            <div className="flex-1 border-l pl-4">
+            <Box flex="1" borderLeft="1px" paddingLeft={4} lineHeight={1.2}>
               <p>
                 <i>Subject:</i> {mail.subject}
               </p>
               {mail.text ? (
                 <p>{mail.text}</p>
               ) : (
-                <div dangerouslySetInnerHTML={{ __html: mail.html || "" }} />
+                <Box
+                  sx={{ "> p": { marginBlockStart: 1, marginBlockEnd: 1 } }}
+                  dangerouslySetInnerHTML={{ __html: mail.html || "" }}
+                />
               )}
-            </div>
-          </div>
+            </Box>
+          </Box>
         ))
       ) : (
         <p>No mail found.</p>
       )}
-    </div>
+    </Box>
   );
 }
