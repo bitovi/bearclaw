@@ -132,8 +132,8 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
-        {actionData?.errors?.password && (
-          <div>{actionData?.errors?.password}</div>
+        {actionData?.errors?.organization && (
+          <div>{actionData?.errors?.organization}</div>
         )}
         <Form method="post" className="space-y-6">
           <div>
