@@ -11,6 +11,12 @@ async function seed() {
   await prisma.user.deleteMany({}).catch(() => {
     // no worries if it doesn't exist yet
   });
+  await prisma.organization.deleteMany({}).catch(() => {
+    // no worries if it doesn't exist yet
+  });
+  await prisma.subscription.deleteMany({}).catch(() => {
+    // no worries if it doesn't exist yet
+  });
 
   const hashedPassword = await bcrypt.hash("m3ssWithB34rGetTheCl@w", 10);
 

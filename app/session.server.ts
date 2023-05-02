@@ -1,3 +1,4 @@
+import type { Organization } from "@prisma/client";
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
@@ -18,6 +19,7 @@ export const sessionStorage = createCookieSessionStorage({
 });
 
 const USER_SESSION_KEY = "userId";
+const ORGANIZATION_KEY = "orgId";
 
 export async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
@@ -32,6 +34,20 @@ export async function getUserId(
   return userId;
 }
 
+export async function getOrgId(
+  request: Request
+): Promise<Organization["id"] | undefined> {
+  const session = await getSession(request);
+  const orgId = session.get(ORGANIZATION_KEY);
+  return orgId;
+}
+
+export async function setOrgId(request: Request, orgId: string): Promise<void> {
+  const session = await getSession(request);
+  session.set(ORGANIZATION_KEY, orgId);
+  return;
+}
+
 export async function getUser(request: Request) {
   const userId = await getUserId(request);
   if (userId === undefined) return null;
@@ -40,6 +56,13 @@ export async function getUser(request: Request) {
   if (user) return user;
 
   throw await logout(request);
+}
+
+export async function getOrgandUserId(request: Request) {
+  const session = await getSession(request);
+  const organizationId = session.get(ORGANIZATION_KEY);
+  const userId = session.get(USER_SESSION_KEY);
+  return { organizationId, userId };
 }
 
 export async function requireUserId(
@@ -66,16 +89,19 @@ export async function requireUser(request: Request) {
 export async function createUserSession({
   request,
   userId,
+  orgId,
   remember,
   redirectTo,
 }: {
   request: Request;
   userId: string;
+  orgId: string;
   remember: boolean;
   redirectTo: string;
 }) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, userId);
+  session.set(ORGANIZATION_KEY, orgId);
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {

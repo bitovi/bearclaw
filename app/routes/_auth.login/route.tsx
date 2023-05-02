@@ -7,6 +7,10 @@ import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
+import {
+  createOrganization,
+  getOrganizationsByUserId,
+} from "~/models/organization.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -23,21 +27,39 @@ export async function action({ request }: ActionArgs) {
 
   if (!validateEmail(email)) {
     return json(
-      { errors: { email: "Email is invalid", password: null } },
+      {
+        errors: {
+          email: "Email is invalid",
+          password: null,
+          organization: null,
+        },
+      },
       { status: 400 }
     );
   }
 
   if (typeof password !== "string" || password.length === 0) {
     return json(
-      { errors: { email: null, password: "Password is required" } },
+      {
+        errors: {
+          email: null,
+          password: "Password is required",
+          organization: null,
+        },
+      },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
     return json(
-      { errors: { email: null, password: "Password is too short" } },
+      {
+        errors: {
+          email: null,
+          password: "Password is too short",
+          organization: null,
+        },
+      },
       { status: 400 }
     );
   }
@@ -46,14 +68,45 @@ export async function action({ request }: ActionArgs) {
 
   if (!user) {
     return json(
-      { errors: { email: "Invalid email or password", password: null } },
+      {
+        errors: {
+          email: "Invalid email or password",
+          password: null,
+          organization: null,
+        },
+      },
       { status: 400 }
     );
+  }
+
+  let org = await getOrganizationsByUserId(user.id);
+
+  if (!org) {
+    const { organization: newOrg } = await createOrganization({
+      userId: user.id,
+      email: user.email,
+      name: "New Organization",
+    });
+    org = newOrg;
+    if (!org) {
+      return json(
+        {
+          errors: {
+            email: null,
+            password: null,
+            organization:
+              "Something went wrong verifying an organization for this user",
+          },
+        },
+        { status: 400 }
+      );
+    }
   }
 
   return createUserSession({
     request,
     userId: user.id,
+    orgId: org.id,
     remember: remember === "on" ? true : false,
     redirectTo,
   });
@@ -79,6 +132,9 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
+        {actionData?.errors?.organization && (
+          <div>{actionData?.errors?.organization}</div>
+        )}
         <Form method="post" className="space-y-6">
           <div>
             <label

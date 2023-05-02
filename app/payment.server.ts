@@ -3,13 +3,18 @@
  */
 
 import Stripe from "stripe";
-import { getUser } from "./session.server";
-import {
-  createPaymentAccount,
-  getBusinessAccountByUserId,
-  updateBusinessAccountByUserId,
-} from "./models/businessAccount.server";
+import { getOrgId, getUser } from "./session.server";
+import type { Organization } from "./models/organization.server";
 import { isNumber } from "./utils";
+import { retrieveOrganizationUser } from "./models/organizationUsers.server";
+import {
+  getOrganizationById,
+  updateOrganizationPaymentAccount,
+} from "./models/organization.server";
+import {
+  createSubscription,
+  retrieveSubscriptionByOrgId,
+} from "./models/subscription.server";
 
 require("dotenv").config();
 
@@ -22,7 +27,10 @@ type ExpandedInvoice = Omit<Stripe.Invoice, "payment_intent"> & {
   payment_intent: Stripe.PaymentIntent;
 };
 
-type ExpandedSubscription = Omit<Stripe.Subscription, "latest_invoice"> & {
+type ExpandedSubscription_Invoice = Omit<
+  Stripe.Subscription,
+  "latest_invoice"
+> & {
   latest_invoice: ExpandedInvoice;
 };
 
@@ -66,114 +74,137 @@ export async function subscriptionOptionLookup(): Promise<{
     };
   }
 }
+/**
+ * Creates a new stripe customer account
+ */
+export async function createPaymentVendorCustomer({
+  name,
+  email,
+}: {
+  name?: string;
+  email: string;
+}) {
+  const paymentVendorCustomer = await serverStripe.customers.create({
+    name,
+    email,
+  });
+
+  return paymentVendorCustomer;
+}
 
 // For now, we display the confirmed Payment Intent after a successful order
 export async function retrievePaymentIntent(id: string) {
   return await serverStripe.paymentIntents.retrieve(id);
 }
-/**
- * Operation to find the Stripe customer id - "accountId" - associated with
- * the provided userId in our data tables
- */
-export const retrieveBusinessAccount = async (userId: string) => {
-  return getBusinessAccountByUserId(userId);
-};
-/**
- * Creates a new Stripe customer and then creates a businessAccount in our database, associating Stripe customer ID with our own user ID
- */
-export const createBusinessAccount = async (
-  userId: string,
-  email: string,
-  name: string
-) => {
-  const customer = await serverStripe.customers.create({
-    email,
-    name,
-  });
 
-  const businessAccount = createPaymentAccount(customer.id, userId);
-
-  return businessAccount;
-};
-
-/**
- * Updates the BusinessAccount for a particular user to point to a new Stripe accountId
- */
-export async function updateBusinessAccount({
-  id,
-  email,
-  name,
-}: {
-  id: string;
-  email: string;
-  name: string;
-}) {
-  const customer = await serverStripe.customers.create({
-    email,
-    name,
-  });
-  return updateBusinessAccountByUserId(id, customer.id);
+export async function retrieveSubscriptionFromPaymentService(
+  id: string,
+  params?: Stripe.SubscriptionRetrieveParams
+) {
+  return await serverStripe.subscriptions.retrieve(id, params);
 }
 
 /**
- * Returns businessAccount after pulling Customer ID from User information in the request object. If no businessAccount is found BUT a user email is found, creates and returns business account. If Stripe account is no longer valid (deleted or non-existent) on found BusinessAccount, creates a new Stripe account and updates BusinessAccount accordingly.
+ * Before creating a new subscription, ensures the following:
+ *
+ * - User exists
+ *
+ * - Organization exists
+ *
+ * - User has susbcription creation permissions
+ *
+ * - Organization does not already have an active subscription associated
  */
-export const retrieveStripeCustomer = async (request: Request) => {
+export async function validateCredentials(request: Request) {
   try {
     const user = await getUser(request);
+    const organizationId = await getOrgId(request);
+
     if (!user) {
       throw new Error("No user found");
     }
-
-    // lookup businessAccount with user.id
-    const businessAccount = user
-      ? await retrieveBusinessAccount(user.id)
-      : null;
-
-    if (businessAccount) {
-      // confirm user account is still active on Stripe
-      let stripeAccount;
-
-      try {
-        stripeAccount = await serverStripe.customers.retrieve(
-          businessAccount.accountId
-        );
-      } catch (e) {
-        // There is no longer a Stripe account associated with the provided ID
-        console.error(e);
-      }
-
-      if (!stripeAccount || stripeAccount.deleted) {
-        // if Stripe account has been formally deleted or is not found, create a new one and associate it with User
-        const stripeCustomer = await updateBusinessAccount({
-          id: user.id,
-          email: user.email,
-          name: "Travis Draper" /* to become user.name*/,
-        });
-        return {
-          error: undefined,
-          stripeCustomer,
-        };
-      }
-      return { stripeCustomer: businessAccount, error: undefined };
+    if (!organizationId) {
+      throw new Error("No orgId found");
     }
 
-    // if no businessAccount found, create and return one
-    const stripeCustomer = await createBusinessAccount(
-      user.id,
-      user.email,
-      "Travis Draper" /* to become user.name*/
-    );
+    // Look up the organizationUser associated w/ user & org
+    const orgUser = await retrieveOrganizationUser({
+      userId: user.id,
+      organizationId,
+    });
 
-    return {
-      error: undefined,
-      stripeCustomer,
-    };
+    if (!orgUser) {
+      throw new Error("User is not a member of the organization");
+    }
+
+    if (!orgUser.subscriptionCreate) {
+      throw new Error(
+        "NO PERMISSION - User does not have permissions to create a subscription"
+      );
+    }
+
+    const organization = await getOrganizationById(organizationId);
+
+    if (!organization) {
+      throw new Error("No organization found");
+    }
+
+    const orgSubscription = await retrieveSubscriptionByOrgId(organization.id);
+
+    if (orgSubscription) {
+      throw new Error("Organization already has a subscription");
+    }
+
+    return { organization, error: undefined };
+  } catch (e) {
+    console.error(e);
+    return { organization: null, error: (e as Error).message };
+  }
+}
+
+/**
+ * Returns the Stripe account Id associated with an organization. If Stripe account is no longer valid (deleted or non-existent) on found Organization, creates a new Stripe account and updates Organization accordingly.
+ */
+export const retrieveStripeCustomerId = async (organization: Organization) => {
+  try {
+    // confirm Stripe account presence
+    let stripeAccount;
+
+    try {
+      stripeAccount = await serverStripe.customers.retrieve(
+        organization.paymentAccountId
+      );
+    } catch (e) {
+      // There is no longer a Stripe account associated with the provided ID
+      console.error(e);
+    }
+
+    if (!stripeAccount || stripeAccount.deleted) {
+      // if Stripe account has been formally deleted or is not found, create a new one and associate it with Organization
+      const paymentAccount = await createPaymentVendorCustomer({
+        email: organization.email,
+      });
+
+      await updateOrganizationPaymentAccount(
+        organization.id,
+        paymentAccount.id
+      );
+
+      return {
+        error: undefined,
+        paymentAccountId: paymentAccount.id,
+      };
+    }
+
+    return { paymentAccountId: stripeAccount.id, error: undefined };
   } catch (e) {
     console.error(e);
     return {
       stripeCustomer: undefined,
-      error: "Failed to retrieve Stripe Customer, see console for more details",
+      error:
+        typeof e === "string"
+          ? e
+          : "Failed to retrieve Stripe Customer, see console for more details",
     };
   }
 };
@@ -212,11 +243,45 @@ export async function createBusinessSubscription(
     ],
     payment_behavior: "default_incomplete",
     expand: ["latest_invoice.payment_intent"],
-  })) as ExpandedSubscription;
+  })) as ExpandedSubscription_Invoice;
 
   return {
     subscriptionId: subscription.id,
     clientSecret: subscription?.latest_invoice?.payment_intent?.client_secret,
     paymentIntentId: subscription?.latest_invoice?.payment_intent.id,
   };
+}
+
+export async function setupSubscription(request: Request) {
+  const user = await getUser(request);
+  const organizationId = await getOrgId(request);
+  const url = new URL(request.url);
+  const subscriptionId = url.searchParams.get("subscription_id");
+
+  if (!user) {
+    throw new Error("No user found");
+  }
+  if (!organizationId) {
+    throw new Error("No orgId found");
+  }
+  if (!subscriptionId) {
+    throw new Error("No payment intent or subscription id found in URL");
+  }
+
+  const subscription = await retrieveSubscriptionFromPaymentService(
+    subscriptionId,
+    { expand: ["items.data.price.product"] }
+  );
+
+  const subName = (subscription.items.data[0].price.product as Stripe.Product)
+    .name;
+
+  const newSubscription = createSubscription({
+    id: subscriptionId,
+    organizationId,
+    active: subscription.status,
+    subscriptionLevel: subName,
+  });
+
+  return newSubscription;
 }
