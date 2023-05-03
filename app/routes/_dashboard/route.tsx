@@ -37,7 +37,7 @@ export default function Index() {
   const navigation = useNavigation();
 
   return (
-    <Box display="flex" height="100%">
+    <Box component="main" display="flex" height="100%">
       {isVerified && (
         <Box borderRight="1px solid grey">
           <Sidenav />
@@ -55,7 +55,15 @@ export default function Index() {
               {isVerified ? (
                 <Outlet />
               ) : (
-                <Box height="100%" width="100%" display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap={1}>
+                <Box
+                  height="100%"
+                  width="100%"
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  gap={1}
+                >
                   <p className="text-lg text-gray-500">
                     Please verify your email address. Check your inbox for a
                     verification link.
