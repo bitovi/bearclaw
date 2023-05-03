@@ -18,14 +18,14 @@ const selectedStyles = {
 };
 
 export default function Option({
-  opt,
+  subscriptionPlanOption,
   selected,
   handleClick,
   cancellationDate = 0,
 }: {
-  opt: ExpandedPrice;
+  subscriptionPlanOption: ExpandedPrice;
   selected: boolean;
-  handleClick: (opt: ExpandedPrice) => void;
+  handleClick: (subscriptionPlanOption: ExpandedPrice) => void;
   cancellationDate: number | undefined;
 }) {
   const buttonText = useMemo(() => {
@@ -53,14 +53,14 @@ export default function Option({
       justifyContent={"center"}
       position="relative"
     >
-      <Box minWidth={100}>{opt.product.name}</Box>
+      <Box minWidth={100}>{subscriptionPlanOption.product.name}</Box>
       <Box position={"absolute"} bottom={40} left={selected ? "unset" : -14}>
         <Button
           variant="contained"
           color="primary"
           sx={selected ? selectedStyles : {}}
           disabled={!!cancellationDate}
-          onClick={() => handleClick(opt)}
+          onClick={() => handleClick(subscriptionPlanOption)}
         >
           {buttonText}
         </Button>

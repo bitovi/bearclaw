@@ -1,6 +1,7 @@
 import { SubscriptionInformation } from "./subscriptionInformation";
 import { Await, useMatches } from "@remix-run/react";
 import { Suspense } from "react";
+import { Loading } from "~/components/loading/Loading";
 import type { Subscription } from "~/models/subscriptionTypes";
 import type { ExpandedPrice } from "~/payment.server";
 
@@ -15,7 +16,7 @@ export default function Route() {
     organizationSubscription: Subscription | null;
   };
   return (
-    <Suspense fallback={<div>LOADING PLAN INFORMATION... </div>}>
+    <Suspense fallback={<Loading />}>
       <Await resolve={organizationSubscription}>
         {(organizationSubscription) => {
           return (

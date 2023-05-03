@@ -12,7 +12,6 @@ import { cancelActiveSubscription } from "~/services/subscriptions/cancelActiveS
 export default function Route() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ExpandedPrice>();
-
   const { optionResults, organizationSubscription } = useMatches().find(
     (root) => root.pathname === "/subscription"
   )?.data as {
@@ -50,7 +49,7 @@ export default function Route() {
   return (
     <>
       <SubscriptionPlanModal
-        opt={selectedOption}
+        subscriptionPlanOption={selectedOption}
         secondaryAction={() => setModalOpen(false)}
         primaryAction={primaryModalAction}
         open={modalOpen}
@@ -75,7 +74,7 @@ export default function Route() {
                 setModalOpen(true);
               }}
               key={opt.id}
-              opt={opt}
+              subscriptionPlanOption={opt}
               selected={
                 opt.product.name === organizationSubscription?.subscriptionLevel
               }

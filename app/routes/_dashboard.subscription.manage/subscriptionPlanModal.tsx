@@ -4,13 +4,13 @@ import { SubscriptionStatus } from "~/models/subscriptionTypes";
 import type { ExpandedPrice } from "~/payment.server";
 
 export default function SubscriptionPlanModal({
-  opt,
+  subscriptionPlanOption,
   open,
   currentSubscription,
   secondaryAction,
   primaryAction,
 }: {
-  opt: ExpandedPrice | undefined;
+  subscriptionPlanOption: ExpandedPrice | undefined;
   open: boolean;
   currentSubscription: {
     status: SubscriptionStatus | undefined;
@@ -29,22 +29,20 @@ export default function SubscriptionPlanModal({
 
   const modalActionText = useMemo(() => {
     return userHasPlan
-      ? currentSubscription.name === opt?.product.name
-        ? "Cancel Plan"
-        : "Update Plan"
+      ? currentSubscription.name === subscriptionPlanOption?.product.name
+        ? "Cancel"
+        : "Update"
       : "Subscribe";
-  }, [userHasPlan, currentSubscription.name, opt]);
+  }, [userHasPlan, currentSubscription.name, subscriptionPlanOption]);
 
-  if (!opt) return null;
+  if (!subscriptionPlanOption) return null;
 
   return (
     <Dialog open={open} data-testid="subscription-plan-modal">
       <Box
         minHeight={200}
         minWidth={400}
-        boxShadow={
-          "0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px -7px rgba(0, 0, 0, 0.2)"
-        }
+        boxShadow={2}
         borderRadius={"4px"}
         display="flex"
         flexDirection="column"
@@ -52,20 +50,23 @@ export default function SubscriptionPlanModal({
         padding={2}
       >
         <Typography variant="subtitle2">
-          {opt?.product.name === currentSubscription.name
+          {subscriptionPlanOption?.product.name === currentSubscription.name
             ? "Cancel Plan"
             : modalTitleText}
         </Typography>
         <Typography variant="subtitle2" paddingY={2}>
-          ${(opt?.unit_amount || 0) / 100} per month
+          ${(subscriptionPlanOption?.unit_amount || 0) / 100} per month
         </Typography>
         <Typography>
           Cancel anytime in subscription. Plan automatically renews until
           canceled.
         </Typography>
-        <Box position="absolute" bottom="4" right="4">
+        <Box position="absolute" bottom="8" right="8">
           <Button onClick={secondaryAction}>Dismiss</Button>
-          <Button onClick={() => primaryAction(opt.id)}>
+          <Button
+            variant="contained"
+            onClick={() => primaryAction(subscriptionPlanOption.id)}
+          >
             {modalActionText}
           </Button>
         </Box>
