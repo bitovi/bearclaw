@@ -248,7 +248,7 @@ export async function createBusinessSubscription(
   return {
     subscriptionId: subscription.id,
     clientSecret: subscription?.latest_invoice?.payment_intent?.client_secret,
-    paymentIntentId: subscription?.latest_invoice?.payment_intent.id,
+    paymentIntentId: subscription?.latest_invoice?.payment_intent?.id,
   };
 }
 

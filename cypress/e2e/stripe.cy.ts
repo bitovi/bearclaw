@@ -57,22 +57,37 @@ describe("Stripe", () => {
         .should("be.visible")
         .click({ force: true });
 
-      cy.wait(5000);
+      cy.wait(2000);
 
-      cy.findByRole("link", { name: /Free Plan/i });
-      cy.findByRole("link", { name: /Standard Plan/i }).as("standardPlan");
-      cy.findByRole("link", { name: /Premium Plan/i });
-      cy.findByRole("link", { name: /Enterprise Plan/i });
+      cy.findByRole("link", { name: /Overview/i });
+      cy.findByRole("link", { name: /Manage/i }).as("manage");
 
+      cy.findByRole("heading").contains(/Plan Information/i);
       cy.findByText(/No plan information to display/i);
 
-      cy.get("@standardPlan").click({ force: true });
+      cy.get("@manage").click({ force: true });
+
+      cy.findByText(/free plan/i);
+      cy.findByText(/standard plan/i);
+      cy.findByText(/premium plan/i);
+      cy.findByText(/enterprise plan/i);
+
+      cy.findAllByRole("button", { name: /choose plan/i })
+        // Don't select the "Free Tier" as its currently an edge case which will navigate the user back
+        .eq(1)
+        .click({ force: true });
+
+      cy.findByText(/\$10 per month/i);
+      cy.findByText(/dismiss/i);
+      cy.findByText(/subscribe/i).as("subscribe");
+
+      cy.get("@subscribe").click({ force: true });
 
       cy.wait(5000).get("h1").contains("Subscribe");
 
       // input into Stripe iFrame
-      cy.getStripeElement("Field-numberInput").type("4000056655665556");
-      cy.getStripeElement("Field-expiryInput").type("0824");
+      cy.getStripeElement("Field-numberInput").type("4242424242424242");
+      cy.getStripeElement("Field-expiryInput").type("0829");
       cy.getStripeElement("Field-cvcInput").type("123");
       cy.getStripeElement("Field-postalCodeInput").type("90210");
 
@@ -83,14 +98,28 @@ describe("Stripe", () => {
       cy.findByText(/thank you for your payment!/i);
 
       // Navigate back to the subscription page and attempt to pay for another subscription
-      cy.findByRole("link", { name: /Subscriptions/i })
+      cy.findByRole("link", { name: /overview/i })
         .should("be.visible")
         .click({ force: true });
 
       cy.findByText(/^Subscription type: Standard Plan$/i);
       cy.findByText(/^Subscription status: active$/i);
 
-      cy.findByRole("link", { name: /Standard Plan/i }).click({ force: true });
+      cy.findByRole("link", { name: /manage/i })
+        .should("be.visible")
+        .click({ force: true });
+
+      cy.wait(2000)
+        .findByRole("button", { name: /cancel plan/i })
+        .should("be.visible")
+        .click({ force: true });
+
+      cy.findByText(/\$10 per month/i);
+
+      cy.findByRole("button", { name: /^cancel$/i })
+        .should("be.visible")
+        .click({ force: true });
+
       cy.findByText(/Organization already has a subscription/i);
     });
   });
