@@ -25,11 +25,11 @@ const selectedStyles = {
 };
 
 const Option = ({
-  opt,
+  subscriptionPlanOption,
   selected,
   handleClick,
 }: {
-  opt: ExpandedPrice;
+  subscriptionPlanOption: ExpandedPrice;
   selected: boolean;
   handleClick: (opt: ExpandedPrice) => void;
 }) => {
@@ -48,13 +48,13 @@ const Option = ({
       justifyContent={"center"}
       position="relative"
     >
-      <Box minWidth={100}>{opt.product.name}</Box>
+      <Box minWidth={100}>{subscriptionPlanOption.product.name}</Box>
       <Box position={"absolute"} bottom={40} left={selected ? "unset" : -14}>
         <Button
           variant="contained"
           color="primary"
           sx={selected ? selectedStyles : {}}
-          onClick={() => handleClick(opt)}
+          onClick={() => handleClick(subscriptionPlanOption)}
         >
           {selected ? "Cancel Plan" : "Choose Plan"}
         </Button>
@@ -83,7 +83,7 @@ export default function Route() {
   return (
     <>
       <SubscriptionPlanModal
-        opt={selectedOption}
+        subscriptionPlanOption={selectedOption}
         secondaryAction={() => setModalOpen(false)}
         primaryAction={(id) => {
           navigate(`/subscription/form/${id}`);
@@ -110,7 +110,7 @@ export default function Route() {
                 setModalOpen(true);
               }}
               key={opt.id}
-              opt={opt}
+              subscriptionPlanOption={opt}
               selected={
                 opt.product.name === organizationSubscription?.subscriptionLevel
               }

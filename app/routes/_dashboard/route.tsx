@@ -45,7 +45,7 @@ export default function Index() {
       )}
       <Box display="flex" flexDirection="column" height="100%" width="100%">
         <Header />
-        <Box overflow="hidden auto" padding={4}>
+        <Box component="main" overflow="hidden auto" padding={4}>
           {navigation.state === "loading" ? (
             <div>
               <Loading />
