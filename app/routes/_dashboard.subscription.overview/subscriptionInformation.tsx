@@ -12,7 +12,7 @@ export function SubscriptionInformation({
       {subscription ? (
         <div className="flex-row">
           <p>Subscription type: {subscription.subscriptionLevel}</p>
-          <p>Subscription status: {subscription.active}</p>
+          <p>Subscription status: {subscription.activeStatus}</p>
         </div>
       ) : (
         <div>No plan information to display</div>

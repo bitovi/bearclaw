@@ -30,8 +30,8 @@ export default function SubscriptionPlanModal({
   const modalActionText = useMemo(() => {
     return userHasPlan
       ? currentSubscription.name === opt?.product.name
-        ? "Cancel"
-        : "Update"
+        ? "Cancel Plan"
+        : "Update Plan"
       : "Subscribe";
   }, [userHasPlan, currentSubscription.name, opt]);
 
