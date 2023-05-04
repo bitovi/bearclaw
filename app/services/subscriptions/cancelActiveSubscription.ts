@@ -1,4 +1,4 @@
-import { Subscription } from "@prisma/client";
+import type { Subscription } from "@prisma/client";
 
 /**
  *

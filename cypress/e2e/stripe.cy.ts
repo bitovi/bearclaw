@@ -120,7 +120,7 @@ describe("Stripe", () => {
         .should("be.visible")
         .click({ force: true });
 
-      cy.findByText(/Organization already has a subscription/i);
+      cy.findByText(/ENDING/i);
     });
   });
 });

@@ -36,16 +36,18 @@ export default function Route() {
       if (userHasPlan) {
         await cancelActiveSubscription(organizationSubscription?.id);
         setModalOpen(false);
+        navigate("/subscription/manage");
       } else {
         navigate(`/subscription/form/${id}`);
       }
     },
-    [userHasPlan, navigate]
+    [userHasPlan, navigate, organizationSubscription?.id]
   );
 
   if (optionResults.error) {
     return <Box>{optionResults.error}</Box>;
   }
+
   return (
     <>
       <SubscriptionPlanModal

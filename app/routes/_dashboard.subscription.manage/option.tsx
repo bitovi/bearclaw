@@ -1,6 +1,7 @@
 import { Box, Button } from "@mui/material";
 import { useMemo } from "react";
-import { ExpandedPrice } from "~/payment.server";
+import type { ExpandedPrice } from "~/payment.server";
+import dayjs from "dayjs";
 
 const selectedStyles = {
   textTransform: "uppercase",
@@ -29,11 +30,15 @@ export default function Option({
   cancellationDate: number | undefined;
 }) {
   const buttonText = useMemo(() => {
-    const dateString = new Date(cancellationDate * 1000 || "");
-
+    let dateString;
+    if (cancellationDate) {
+      dateString = dayjs(new Date(cancellationDate * 1000)).format(
+        "MMMM DD, YYYY"
+      );
+    }
     return selected
-      ? cancellationDate
-        ? `Cancels on ${dateString.getDay()}/${dateString.getMonth()}`
+      ? dateString
+        ? `Ending ${dateString}`
         : "Cancel Plan"
       : "Choose Plan";
   }, [selected, cancellationDate]);
