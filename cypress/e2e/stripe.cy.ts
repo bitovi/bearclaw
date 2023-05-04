@@ -121,6 +121,12 @@ describe("Stripe", () => {
         .click({ force: true });
 
       cy.findByText(/ENDING/i);
+
+      cy.findByRole("link", { name: /overview/i })
+        .should("be.visible")
+        .click({ force: true });
+
+      cy.findByText(/Subscription ends on/);
     });
   });
 });

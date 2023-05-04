@@ -1,22 +1,35 @@
+import { Box, Typography } from "@mui/material";
 import type { Subscription } from "@prisma/client";
-
+import dayjs from "dayjs";
 export function SubscriptionInformation({
   subscription,
 }: {
   subscription?: Subscription;
 }) {
   return (
-    <div>
-      <h1>Plan Information</h1>
+    <Box>
+      <Box component="h1">Plan Information</Box>
       <br />
       {subscription ? (
-        <div className="flex-row">
-          <p>Subscription type: {subscription.subscriptionLevel}</p>
-          <p>Subscription status: {subscription.activeStatus}</p>
-        </div>
+        <Box display="flex" flexDirection="column" alignItems={"flex-start"}>
+          <Typography>
+            Subscription type: {subscription.subscriptionLevel}
+          </Typography>
+          <Typography>
+            Subscription status: {subscription.activeStatus}
+          </Typography>
+          {subscription.cancellationDate && (
+            <Typography>
+              Subscription ends on:{" "}
+              {dayjs(new Date(subscription.cancellationDate * 1000)).format(
+                "MMMM DD, YYYY"
+              )}
+            </Typography>
+          )}
+        </Box>
       ) : (
-        <div>No plan information to display</div>
+        <Box>No plan information to display</Box>
       )}
-    </div>
+    </Box>
   );
 }
