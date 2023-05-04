@@ -15,6 +15,7 @@ import {
   createSubscription,
   retrieveSubscriptionByOrgId,
 } from "./models/subscription.server";
+import type { InvoicePreview } from "./models/subscriptionTypes";
 
 require("dotenv").config();
 
@@ -293,4 +294,77 @@ export async function cancelSubscription(subscriptionId: string) {
     { cancel_at_period_end: true }
   );
   return cancelledSubscription;
+}
+
+export async function previewSubscription({
+  subscriptionId,
+  priceId,
+  organizationId,
+}: {
+  subscriptionId: string;
+  priceId: string;
+  organizationId: string;
+}): Promise<InvoicePreview | null> {
+  const organization = await getOrganizationById(organizationId);
+
+  if (!organization) {
+    return null;
+  }
+  const proration_date = Math.floor(Date.now() / 1000);
+
+  const subscription = await serverStripe.subscriptions.retrieve(
+    subscriptionId
+  );
+  const items = [
+    {
+      id: subscription.items.data[0].id,
+      price: priceId,
+    },
+  ];
+
+  const previewedSubscription = await serverStripe.invoices.retrieveUpcoming({
+    subscription: subscriptionId,
+    subscription_items: items,
+    subscription_proration_date: proration_date,
+    customer: organization.paymentAccountId,
+  });
+
+  const periodEnd = previewedSubscription.period_end;
+  const prorationDate = previewedSubscription.subscription_proration_date;
+
+  return {
+    upcomingToBeBilled: previewedSubscription.total,
+    periodEnd,
+    prorationDate,
+  };
+}
+
+export async function updateSubscription({
+  priceId,
+  subscriptionId,
+  proration_date,
+}: {
+  priceId: string;
+  subscriptionId: string;
+  proration_date: string | null;
+}) {
+  const subscription = await serverStripe.subscriptions.retrieve(
+    subscriptionId
+  );
+
+  const updatedSubscription = await serverStripe.subscriptions.update(
+    subscriptionId,
+    {
+      items: [
+        {
+          id: subscription.items.data[0].id,
+          price: priceId,
+        },
+      ],
+      proration_date: proration_date ? +proration_date : undefined,
+      expand: ["items.data.price.product"],
+    }
+  );
+
+  return updatedSubscription;
 }

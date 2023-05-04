@@ -11,3 +11,9 @@ export enum SubscriptionStatus {
   CANCELED = "canceld",
   UNPAID = "unpaid",
 }
+
+export interface InvoicePreview {
+  upcomingToBeBilled: number;
+  periodEnd: number; // Unix timestamp
+  prorationDate: number | undefined; // Unix timestamp
+}

@@ -2,12 +2,12 @@ import { useMatches, useNavigate } from "@remix-run/react";
 
 import type { ExpandedPrice } from "~/payment.server";
 import type { Subscription } from "~/models/subscriptionTypes";
-import { SubscriptionStatus } from "~/models/subscriptionTypes";
 import { Box } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import Option from "./option";
-import SubscriptionPlanModal from "./subscriptionPlanModal";
+import SubscriptionPlanModal, { ModalAction } from "./subscriptionPlanModal";
 import { cancelActiveSubscription } from "~/services/subscriptions/cancelActiveSubscription";
+import { updateActiveSubscription } from "~/services/subscriptions/updateSubscription";
 
 export default function Route() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -23,44 +23,54 @@ export default function Route() {
   };
   const navigate = useNavigate();
 
-  const userHasPlan = useMemo(() => {
-    return (
-      organizationSubscription?.activeStatus === SubscriptionStatus.ACTIVE &&
-      selectedOption?.product.name ===
-        organizationSubscription.subscriptionLevel
-    );
-  }, [organizationSubscription, selectedOption]);
-
   const primaryModalAction = useCallback(
-    async (id: string) => {
-      if (userHasPlan) {
-        await cancelActiveSubscription(organizationSubscription?.id);
-        setModalOpen(false);
-        navigate("/subscription/manage");
-      } else {
-        navigate(`/subscription/form/${id}`);
+    async ({
+      action,
+      planId,
+      subId,
+      invoiceTimeStamp,
+    }: {
+      action: ModalAction;
+      planId: string;
+      subId?: string;
+      invoiceTimeStamp?: number;
+    }) => {
+      switch (action) {
+        case ModalAction.SUBSCRIBE:
+          navigate(`/subscription/form/${planId}`);
+          return;
+        case ModalAction.UPDATE:
+          await updateActiveSubscription(subId, planId, invoiceTimeStamp);
+          setModalOpen(false);
+          navigate("/subscription/manage");
+          return;
+        case ModalAction.CANCEL:
+          await cancelActiveSubscription(subId);
+          setModalOpen(false);
+          navigate("/subscription/manage");
+          return;
       }
     },
-    [userHasPlan, navigate, organizationSubscription?.id]
+    [navigate]
   );
+
+  const closeModal = useCallback(() => {
+    setModalOpen(false);
+    setSelectedOption(undefined);
+  }, []);
 
   if (optionResults.error) {
     return <Box>{optionResults.error}</Box>;
   }
-
   return (
     <>
       <SubscriptionPlanModal
         subscriptionPlanOption={selectedOption}
-        secondaryAction={() => setModalOpen(false)}
         primaryAction={primaryModalAction}
+        secondaryAction={closeModal}
         open={modalOpen}
-        currentSubscription={{
-          status: organizationSubscription?.activeStatus as
-            | SubscriptionStatus
-            | undefined,
-          name: organizationSubscription?.subscriptionLevel,
-        }}
+        currentSubscription={organizationSubscription}
+        onClose={closeModal}
       />
       <Box
         minHeight={400}
