@@ -26,7 +26,7 @@ export async function onboardUser(user: User, data: Partial<OnboardingData>) {
     firstName: data.firstName || undefined,
     lastName: data.lastName || undefined,
     phone: data.phone || undefined,
-    secondaryEmail: data.secondaryEmail || undefined,
+    emailSecondary: data.emailSecondary || undefined,
   };
 
   const organizationData = {

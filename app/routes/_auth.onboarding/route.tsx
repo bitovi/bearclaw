@@ -32,7 +32,7 @@ export async function action({ request }: ActionArgs) {
   const onboardingData: Partial<OnboardingData> = {
     firstName: formData.get("firstName")?.toString() || undefined,
     lastName: formData.get("lastName")?.toString() || undefined,
-    secondaryEmail: formData.get("secondaryEmail")?.toString() || undefined,
+    emailSecondary: formData.get("emailSecondary")?.toString() || undefined,
     phone: formData.get("phone")?.toString() || undefined,
     role: formData.get("role")?.toString() || undefined,
     companyName: formData.get("companyName")?.toString() || undefined,

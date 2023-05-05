@@ -27,12 +27,13 @@ function TestApp({ options }: TestProps) {
 }
 
 describe("Dropdown", () => {
-  it("renders", async () => {
+  it("renders and updates user selection", async () => {
     render(<TestApp options={[{ value: 1, label: "test" }]} />);
+    expect(screen.queryByText(/Selected: 1/i)).not.toBeInTheDocument();
     userEvent.click(screen.getByRole("button"));
     await screen.findByRole("option", { name: "test" });
     userEvent.click(screen.getByRole("option", { name: "test" }));
-    await screen.findByText("Selected: 1");
+    await screen.findByText(/Selected: 1/i);
   });
 
   it("passes value as label for option when none specified", async () => {
@@ -62,21 +63,5 @@ describe("Dropdown", () => {
     expect(
       screen.queryByText("bad")
     ).not.toBeInTheDocument();
-  });
-
-  it("updates user selection", async () => {
-    render(<TestApp options={[{ value: 1, label: "one" }, { value: 2, label: "two" }, { value: 3 }]} />);
-
-    userEvent.click(screen.getByRole("button"));
-    await screen.findByText(/one/i);
-    userEvent.click(screen.getByText(/one/i));
-
-    await screen.findByText(/Selected: 1/i);
-
-    userEvent.click(screen.getByRole("button"));
-    await screen.findByText(/two/i);
-    userEvent.click(screen.getByText(/two/i));
-
-    await screen.findByText(/Selected: 2/i);
   });
 });

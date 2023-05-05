@@ -46,7 +46,7 @@ export const questions: Array<{
         required: true,
       },
       {
-        name: "secondaryEmail",
+        name: "emailSecondary",
         type: "text",
         label: "Secondary email",
         placeholder: "Secondary email",
