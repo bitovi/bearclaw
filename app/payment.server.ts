@@ -346,7 +346,7 @@ export async function updateSubscription({
 }: {
   priceId: string;
   subscriptionId: string;
-  proration_date: string | null;
+  proration_date: string | undefined | null;
 }) {
   const subscription = await serverStripe.subscriptions.retrieve(
     subscriptionId

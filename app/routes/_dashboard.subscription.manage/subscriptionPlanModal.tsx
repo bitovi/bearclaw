@@ -1,13 +1,14 @@
 import { Box, Button, Dialog, Typography } from "@mui/material";
+import { Form } from "@remix-run/react";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loading } from "~/components/loading/Loading";
 import { SubscriptionStatus } from "~/models/subscriptionTypes";
 import type { InvoicePreview, Subscription } from "~/models/subscriptionTypes";
 import type { ExpandedPrice } from "~/payment.server";
-import { previewSubscriptionUpdate } from "~/services/subscriptions/updateSubscription";
+import { previewSubscriptionUpdate } from "~/services/subscriptions/previewSubscription";
 
-export enum ModalAction {
+enum ModalAction {
   UPDATE = "Update",
   CANCEL = "Cancel",
   SUBSCRIBE = "Subscribe",
@@ -17,6 +18,11 @@ enum ModalTitle {
   UPDATE_PLAN = "Change Plan",
   CANCEL_PLAN = "Cancel Plan",
   CHOOSE_PLAN = "Choose Plan",
+}
+enum FormAction {
+  Update = "put",
+  Cancel = "delete",
+  Subscribe = "post",
 }
 
 const UpdateInformationBox = ({
@@ -40,14 +46,13 @@ const UpdateInformationBox = ({
     if (planId && subId) {
       setLoading(true);
       fetchSubcription()
-        .then((result) => {
-          if ("error" in result) {
-            console.error(result.error);
+        .then(({ data, error }) => {
+          if (error) {
+            console.error(error);
             setError("Something went wrong previewing this invoice");
-          }
-          if ("data" in result) {
-            setInvoicePreview(result.data);
-            handleInvoicePreviewTimeStamp(result.data.prorationDate);
+          } else if (data) {
+            setInvoicePreview(data);
+            handleInvoicePreviewTimeStamp(data.prorationDate);
           }
         })
         .finally(() => {
@@ -87,24 +92,12 @@ export default function SubscriptionPlanModal({
   subscriptionPlanOption,
   open,
   currentSubscription,
-  primaryAction,
   secondaryAction,
   onClose,
 }: {
   subscriptionPlanOption: ExpandedPrice | undefined;
   open: boolean;
   currentSubscription: Subscription | null;
-  primaryAction: ({
-    action,
-    planId,
-    subId,
-    invoiceTimeStamp,
-  }: {
-    action: ModalAction;
-    planId: string;
-    subId?: string;
-    invoiceTimeStamp?: number;
-  }) => void;
   secondaryAction: () => void;
   onClose: () => void;
 }) {
@@ -157,43 +150,47 @@ export default function SubscriptionPlanModal({
         alignItems="flex-start"
         padding={2}
       >
-        <Typography variant="subtitle2">{modalTitle}</Typography>
-        <Typography variant="subtitle2" paddingY={2}>
-          {subscriptionPlanOption.product.name} - $
-          {(subscriptionPlanOption?.unit_amount || 0) / 100} per month
-        </Typography>
-
-        {modalAction === ModalAction.UPDATE && currentSubscription && (
-          <UpdateInformationBox
-            subId={currentSubscription?.id}
-            planId={subscriptionPlanOption.id}
-            handleInvoicePreviewTimeStamp={handleInvoicePreviewTimeStamp}
-          />
-        )}
-
-        <Box paddingTop={2} paddingBottom={6}>
-          <Typography>
-            Cancel anytime in subscription. Plan automatically renews until
-            canceled.
+        <Form method={FormAction[modalAction]} action="/subscription/manage">
+          <Typography variant="subtitle2">{modalTitle}</Typography>
+          <Typography variant="subtitle2" paddingY={2}>
+            {subscriptionPlanOption.product.name} - $
+            {(subscriptionPlanOption?.unit_amount || 0) / 100} per month
           </Typography>
-        </Box>
 
-        <Box position="absolute" bottom="8" right="8">
-          <Button onClick={secondaryAction}>Dismiss</Button>
-          <Button
-            variant="contained"
-            onClick={() =>
-              primaryAction({
-                action: modalAction,
-                planId: subscriptionPlanOption.id,
-                subId: currentSubscription?.id,
-                invoiceTimeStamp,
-              })
-            }
-          >
-            {modalAction}
-          </Button>
-        </Box>
+          {modalAction === ModalAction.UPDATE && currentSubscription && (
+            <UpdateInformationBox
+              subId={currentSubscription?.id}
+              planId={subscriptionPlanOption.id}
+              handleInvoicePreviewTimeStamp={handleInvoicePreviewTimeStamp}
+            />
+          )}
+
+          <Box paddingTop={2} paddingBottom={6}>
+            <Typography>
+              Cancel anytime in subscription. Plan automatically renews until
+              canceled.
+            </Typography>
+          </Box>
+
+          <Box position="absolute" bottom="8" right="8">
+            <Button onClick={secondaryAction}>Dismiss</Button>
+            <input
+              type="hidden"
+              name="planId"
+              value={subscriptionPlanOption.id}
+            />
+            <input type="hidden" name="subId" value={currentSubscription?.id} />
+            <input
+              type="hidden"
+              name="invoiceTimeStamp"
+              value={invoiceTimeStamp}
+            />
+
+            <Button type="submit" variant="contained">
+              {modalAction}
+            </Button>
+          </Box>
+        </Form>
       </Box>
     </Dialog>
   );
