@@ -16,6 +16,6 @@ export async function loader({ params }: LoaderArgs) {
 
     return json({ data: activeSubscription });
   } catch (e) {
-    return json({ error: JSON.stringify(e) }, { status: 404 });
+    return json({ error: "Subscription not found" }, { status: 404 });
   }
 }
