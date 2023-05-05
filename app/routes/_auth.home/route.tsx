@@ -8,23 +8,11 @@ export default function Index() {
   return (
     <Box display="flex" gap={2}>
       {user ? (
-        <Link
-          to="/logout"
-        >
-          Logout
-        </Link>
+        <Link to="/logout">Logout</Link>
       ) : (
         <>
-          <Link
-            to="/join"
-          >
-            Sign up
-          </Link>
-          <Link
-            to="/login"
-          >
-            Log In
-          </Link>
+          <Link to="/join">Sign up</Link>
+          <Link to="/login">Log In</Link>
         </>
       )}
     </Box>
