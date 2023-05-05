@@ -120,7 +120,13 @@ describe("Stripe", () => {
         .should("be.visible")
         .click({ force: true });
 
-      cy.findByText(/Organization already has a subscription/i);
+      cy.findByText(/ENDING/i);
+
+      cy.findByRole("link", { name: /overview/i })
+        .should("be.visible")
+        .click({ force: true });
+
+      cy.findByText(/Subscription ends on/);
     });
   });
 });

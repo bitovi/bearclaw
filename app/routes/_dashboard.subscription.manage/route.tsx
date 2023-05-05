@@ -1,67 +1,13 @@
 import { useMatches, useNavigate } from "@remix-run/react";
 
 import type { ExpandedPrice } from "~/payment.server";
-import type {
-  Subscription,
-  SubscriptionStatus,
-} from "~/models/subscriptionTypes";
-import { Box, Button } from "@mui/material";
-import { useState } from "react";
+import type { Subscription } from "~/models/subscriptionTypes";
+import { SubscriptionStatus } from "~/models/subscriptionTypes";
+import { Box } from "@mui/material";
+import { useCallback, useMemo, useState } from "react";
+import Option from "./option";
 import SubscriptionPlanModal from "./subscriptionPlanModal";
-
-const selectedStyles = {
-  textTransform: "uppercase",
-  fontWeight: "500",
-  fontSize: "14px",
-  lineHeight: "24px",
-  paddingY: "6px",
-  paddingX: "16px",
-  borderRadius: "4px",
-  backgroundColor: "transparent",
-  color: "#2196F3",
-  border: "1px solid",
-  borderColor: "#2196F3",
-  boxShadow: "unset",
-};
-
-const Option = ({
-  subscriptionPlanOption,
-  selected,
-  handleClick,
-}: {
-  subscriptionPlanOption: ExpandedPrice;
-  selected: boolean;
-  handleClick: (opt: ExpandedPrice) => void;
-}) => {
-  return (
-    <Box
-      alignSelf={"stretch"}
-      display="flex"
-      flexDirection={"column"}
-      flexGrow={1}
-      marginX={1}
-      bgcolor={"#EEEEEE"}
-      borderRadius={"32px"}
-      border={"1px solid"}
-      borderColor={"#2196F3"}
-      alignItems={"center"}
-      justifyContent={"center"}
-      position="relative"
-    >
-      <Box minWidth={100}>{subscriptionPlanOption.product.name}</Box>
-      <Box position={"absolute"} bottom={40} left={selected ? "unset" : -14}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={selected ? selectedStyles : {}}
-          onClick={() => handleClick(subscriptionPlanOption)}
-        >
-          {selected ? "Cancel Plan" : "Choose Plan"}
-        </Button>
-      </Box>
-    </Box>
-  );
-};
+import { cancelActiveSubscription } from "~/services/subscriptions/cancelActiveSubscription";
 
 export default function Route() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -77,20 +23,40 @@ export default function Route() {
   };
   const navigate = useNavigate();
 
+  const userHasPlan = useMemo(() => {
+    return (
+      organizationSubscription?.activeStatus === SubscriptionStatus.ACTIVE &&
+      selectedOption?.product.name ===
+        organizationSubscription.subscriptionLevel
+    );
+  }, [organizationSubscription, selectedOption]);
+
+  const primaryModalAction = useCallback(
+    async (id: string) => {
+      if (userHasPlan) {
+        await cancelActiveSubscription(organizationSubscription?.id);
+        setModalOpen(false);
+        navigate("/subscription/manage");
+      } else {
+        navigate(`/subscription/form/${id}`);
+      }
+    },
+    [userHasPlan, navigate, organizationSubscription?.id]
+  );
+
   if (optionResults.error) {
     return <Box>{optionResults.error}</Box>;
   }
+
   return (
     <>
       <SubscriptionPlanModal
         subscriptionPlanOption={selectedOption}
         secondaryAction={() => setModalOpen(false)}
-        primaryAction={(id) => {
-          navigate(`/subscription/form/${id}`);
-        }}
+        primaryAction={primaryModalAction}
         open={modalOpen}
         currentSubscription={{
-          status: organizationSubscription?.active as
+          status: organizationSubscription?.activeStatus as
             | SubscriptionStatus
             | undefined,
           name: organizationSubscription?.subscriptionLevel,
@@ -113,6 +79,11 @@ export default function Route() {
               subscriptionPlanOption={opt}
               selected={
                 opt.product.name === organizationSubscription?.subscriptionLevel
+              }
+              cancellationDate={
+                opt.product.name === organizationSubscription?.subscriptionLevel
+                  ? organizationSubscription.cancellationDate || undefined
+                  : undefined
               }
             />
           );

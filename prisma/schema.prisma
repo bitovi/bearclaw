@@ -58,7 +58,8 @@ model Organization {
 model Subscription {
   id                String  @unique 
   subscriptionLevel String
-  active            String
+  activeStatus      String
+  cancellationDate  Int?
 
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String       @unique

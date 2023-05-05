@@ -20,7 +20,7 @@ export default function Status() {
       <>
         <h3>
           Thank you for your payment! Your subscription status is{" "}
-          {subscription.active}
+          {subscription.activeStatus}
         </h3>
         <pre>{JSON.stringify(paymentIntent, null, 2)}</pre>
       </>

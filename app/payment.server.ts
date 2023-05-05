@@ -279,9 +279,18 @@ export async function setupSubscription(request: Request) {
   const newSubscription = createSubscription({
     id: subscriptionId,
     organizationId,
-    active: subscription.status,
+    activeStatus: subscription.status,
+    cancellationDate: null,
     subscriptionLevel: subName,
   });
 
   return newSubscription;
+}
+
+export async function cancelSubscription(subscriptionId: string) {
+  const cancelledSubscription = await serverStripe.subscriptions.update(
+    subscriptionId,
+    { cancel_at_period_end: true }
+  );
+  return cancelledSubscription;
 }
