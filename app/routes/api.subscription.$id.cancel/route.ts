@@ -22,6 +22,6 @@ export async function action({ params }: ActionArgs) {
     });
     return json({ data: updatedSubscription });
   } catch (e) {
-    return json({ error: JSON.stringify(e) }, { status: 404 });
+    return json({ error: "Subscription not found" }, { status: 404 });
   }
 }
