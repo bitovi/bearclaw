@@ -43,7 +43,7 @@ export async function action({ request }: ActionArgs) {
         return json({ data: updatedSubscription });
       } catch (e) {
         console.error(e);
-        return json({ error: JSON.stringify(e) }, { status: 404 });
+        return json({ error: "Subscription not found" }, { status: 404 });
       }
     case "PUT":
       if (!subscriptionId) {
@@ -83,7 +83,7 @@ export async function action({ request }: ActionArgs) {
         return updatedSubscription;
       } catch (e) {
         console.error(e);
-        return json({ error: JSON.stringify(e) }, { status: 404 });
+        return json({ error: "Subscription not found" }, { status: 404 });
       }
     case "POST":
       return redirect(`/subscription/form/${priceId}`);
