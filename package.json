@@ -102,6 +102,7 @@
     "postcss": "^8.4.21",
     "prettier": "2.8.4",
     "prisma": "^4.11.0",
+    "prisma-dbml-generator": "^0.10.0",
     "start-server-and-test": "^1.15.4",
     "storybook": "^7.0.2",
     "ts-node": "^10.9.1",

@@ -21,11 +21,18 @@ model User {
   password           Password?
   resetPasswordToken ResetPasswordToken?
 
-  organizationUser OrganizationUsers[]
+  userOrganizations OrganizationUsers[]
   Organization     Organization?
+
+  emailSecondary  String?
+  firstName       String?
+  lastName        String?
+  phone           String?
 }
 
 model OrganizationUsers {
+  id  String  @id @default(cuid())
+
   subscriptionView   Boolean
   subscriptionEdit   Boolean
   subscriptionCreate Boolean
@@ -34,10 +41,18 @@ model OrganizationUsers {
   orgUsersCreate     Boolean
 
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  organizationId String       @unique
+  organizationId String
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
+  userId String
+
+  role          String?
+  experienceMin Int?
+  experienceMax Int?
+  teamSizeMin   Int?
+  teamSizeMax   Int?
+
+  @@index([userId, organizationId])
 }
 
 model Organization {
@@ -47,7 +62,7 @@ model Organization {
   email            String
   personal         Boolean
 
-  organizationUser OrganizationUsers[]
+  organizationUsers OrganizationUsers[]
 
   owner   User?   @relation(fields: [ownerId], references: [id])
   ownerId String? @unique

@@ -10,7 +10,7 @@ export type { Organization } from "@prisma/client";
 export async function getOrganizationsByUserId(userId: string) {
   // for purposes of MVP, only returning 'findFirst'
   const userOrg = await prisma.organization.findFirst({
-    where: { organizationUser: { every: { userId: { equals: userId } } } },
+    where: { organizationUsers: { every: { userId: { equals: userId } } } },
   });
 
   return userOrg;
