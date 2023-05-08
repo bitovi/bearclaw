@@ -1,10 +1,10 @@
-import type { OrganizationUser } from "@prisma/client";
+import type { OrganizationUsers } from "@prisma/client";
 import { prisma } from "~/db.server";
 
-export type { OrganizationUser } from "@prisma/client";
+export type { OrganizationUsers } from "@prisma/client";
 
 type PermissionFields = Pick<
-  OrganizationUser,
+  OrganizationUsers,
   | "subscriptionView"
   | "subscriptionEdit"
   | "subscriptionCreate"
@@ -24,7 +24,7 @@ export async function createOrganizationUser({
   organizationId: string;
   permissions: Permissions;
 }) {
-  const orgUser = await prisma.organizationUser.create({
+  const orgUser = await prisma.organizationUsers.create({
     data: {
       userId,
       organizationId,
@@ -42,7 +42,7 @@ export async function retrieveOrganizationUser({
   organizationId: string;
   userId: string;
 }) {
-  const orgUser = await prisma.organizationUser.findFirst({
+  const orgUser = await prisma.organizationUsers.findFirst({
     where: { userId, organizationId },
   });
 
@@ -50,7 +50,7 @@ export async function retrieveOrganizationUser({
 }
 
 export async function countOrganizationUserInstances(userId: string) {
-  const count = await prisma.organizationUser.count({
+  const count = await prisma.organizationUsers.count({
     where: {
       userId,
     },

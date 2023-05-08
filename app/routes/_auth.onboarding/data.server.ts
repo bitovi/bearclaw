@@ -14,7 +14,7 @@ export async function onboardUser(user: User, data: Partial<OnboardingData>) {
   });
   invariant(organization, "User must have an organization to update");
 
-  const organizationUser = await prisma.organizationUser.findFirst({
+  const organizationUser = await prisma.organizationUsers.findFirst({
     where: {
       userId: user.id,
       organizationId: organization?.id,
@@ -57,7 +57,7 @@ export async function onboardUser(user: User, data: Partial<OnboardingData>) {
       where: { id: organization.id },
       data: { ...organizationData },
     }),
-    prisma.organizationUser.update({
+    prisma.organizationUsers.update({
       where: { id: organizationUser.id },
       data: { ...organizationUserData },
     }),
