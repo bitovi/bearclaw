@@ -72,17 +72,21 @@ describe("Stripe", () => {
       cy.findByText(/premium plan/i);
       cy.findByText(/enterprise plan/i);
 
-      cy.findAllByRole("button", { name: /choose plan/i })
+      cy.findAllByRole("button", { name: /plan/i })
+        .as("options")
         // Don't select the "Free Tier" as its currently an edge case which will navigate the user back
         .eq(1)
+        .contains(/choose plan/i)
         .click({ force: true });
 
+      // Pop up modal displaying
       cy.findByText(/\$10 per month/i);
       cy.findByText(/dismiss/i);
-      cy.findByText(/subscribe/i).as("subscribe");
+      cy.findByText(/subscribe/i)
+        .as("subscribe")
+        .click({ force: true });
 
-      cy.get("@subscribe").click({ force: true });
-
+      // On the payment form page
       cy.wait(5000).get("h1").contains("Subscribe");
 
       // input into Stripe iFrame
@@ -98,35 +102,73 @@ describe("Stripe", () => {
       cy.findByText(/thank you for your payment!/i);
 
       // Navigate back to the subscription page and attempt to pay for another subscription
-      cy.findByRole("link", { name: /overview/i })
-        .should("be.visible")
-        .click({ force: true });
+      cy.findByRole("link", { name: /Overview/i }).click({ force: true });
 
       cy.findByText(/^Subscription type: Standard Plan$/i);
       cy.findByText(/^Subscription status: active$/i);
 
-      cy.findByRole("link", { name: /manage/i })
-        .should("be.visible")
-        .click({ force: true });
+      cy.findByRole("link", { name: /Manage/i }).click({ force: true });
 
+      // The same UI button now displays "cancel plan" button text
       cy.wait(2000)
-        .findByRole("button", { name: /cancel plan/i })
-        .should("be.visible")
-        .click({ force: true });
+        .get("@options")
+        .eq(1)
+        .parent()
+        .within(() => {
+          cy.findByRole("button", { name: /cancel plan/i })
+            .should("be.visible")
+            .click({ force: true });
+        });
 
+      // Modal displaying
       cy.findByText(/\$10 per month/i);
 
       cy.findByRole("button", { name: /^cancel$/i })
         .should("be.visible")
         .click({ force: true });
 
-      cy.findByText(/ENDING/i);
+      // Plan tier now displays ending date on its button and is disabled
+      cy.wait(2000)
+        .get("@options")
+        .eq(1)
+        .parent()
+        .within(() => {
+          cy.findByRole("button", { name: /ENDING/i }).should("be.disabled");
+        });
 
-      cy.findByRole("link", { name: /overview/i })
+      cy.findByRole("link", { name: /Overview/i }).click({ force: true });
+
+      cy.findByText(/Subscription ends on/);
+
+      cy.findByRole("link", { name: /Manage/i }).click({ force: true });
+
+      cy.get("@options").eq(2).click({ force: true });
+
+      cy.wait(3000);
+
+      cy.findByText(/By changing to this plan/i);
+
+      cy.findByRole("button", { name: /^update$/i })
         .should("be.visible")
         .click({ force: true });
 
-      cy.findByText(/Subscription ends on/);
+      cy.wait(2000);
+
+      cy.get("@options")
+        .eq(2)
+        .parent()
+        .within(() => {
+          // New tier has been selected and can now be cancelled
+          cy.findByRole("button", { name: /cancel plan/i }).should(
+            "be.visible"
+          );
+        });
+
+      // Navigate back to the subscription page and attempt to pay for another subscription
+      cy.findByRole("link", { name: /Overview/i }).click({ force: true });
+
+      cy.findByText(/^Subscription type: Premium Plan$/i);
+      cy.findByText(/^Subscription status: active$/i);
     });
   });
 });
