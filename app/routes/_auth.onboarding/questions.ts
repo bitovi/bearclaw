@@ -1,16 +1,38 @@
-export const questions = [
+type QuestionType =
+  | {
+      name: string;
+      type: "text";
+      label: string;
+      placeholder: string;
+      required: boolean;
+    }
+  | {
+      name: string;
+      type: "select";
+      label: string;
+      placeholder: string;
+      required: boolean;
+      options: { value: string; label: string, selected?: boolean }[];
+    };
+
+export const questions: Array<{
+  title: string;
+  description: string;
+  questions: QuestionType[];
+}> = [
   {
-    sectionTitle: "Personal Info",
+    title: "Personal Info",
+    description: "This type of information helps us keep your account safe and also helps in case you need a speedy recovery.",
     questions: [
       {
-        name: "first_name",
+        name: "firstName",
         type: "text",
         label: "First name",
         placeholder: "First name",
         required: true,
       },
       {
-        name: "last_name",
+        name: "lastName",
         type: "text",
         label: "Last name",
         placeholder: "Last name",
@@ -24,7 +46,7 @@ export const questions = [
         required: true,
       },
       {
-        name: "secondary_email",
+        name: "emailSecondary",
         type: "text",
         label: "Secondary email",
         placeholder: "Secondary email",
@@ -33,7 +55,8 @@ export const questions = [
     ],
   },
   {
-    sectionTitle: "Professional Experience",
+    title: "Professional Experience",
+    description: "This info helps us to make BearClaw with you and your needs in mind.",
     questions: [
       {
         name: "role",
@@ -50,7 +73,7 @@ export const questions = [
         ],
       },
       {
-        name: "team_size",
+        name: "teamSize",
         type: "select",
         label: "Size of team",
         placeholder: "Size of team",
@@ -65,14 +88,14 @@ export const questions = [
         ],
       },
       {
-        name: "company_name",
+        name: "companyName",
         type: "text",
         label: "Company name",
         placeholder: "Company name",
         required: true,
       },
       {
-        name: "level_of_experience",
+        name: "levelOfExperience",
         type: "select",
         label: "Level of experience",
         placeholder: "Level of experience",

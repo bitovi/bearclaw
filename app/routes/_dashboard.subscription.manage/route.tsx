@@ -50,7 +50,7 @@ export async function action({ request }: ActionArgs) {
         return json({ error: "No subscriptionId provided" }, { status: 400 });
       }
       if (!priceId) {
-        return json({ error: "No priceId provided or" }, { status: 400 });
+        return json({ error: "No priceId provided" }, { status: 400 });
       }
       if (typeof priceId !== "string") {
         return json({ error: "Malformed priceId provided" }, { status: 400 });

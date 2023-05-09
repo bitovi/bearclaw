@@ -55,5 +55,5 @@ export async function countOrganizationUserInstances(userId: string) {
       userId,
     },
   });
-  return count;
+  return count || 0;
 }
