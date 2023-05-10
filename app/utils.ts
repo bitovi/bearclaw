@@ -1,5 +1,6 @@
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
+import type Stripe from "stripe";
 
 import type { User } from "~/models/user.server";
 
@@ -74,4 +75,20 @@ export function isNumber(number: unknown) {
   if (typeof number !== "number") return false;
   if (isNaN(number)) return false;
   return true;
+}
+
+export function isStripeInvoice(invoice: any): invoice is Stripe.Invoice {
+  return (
+    invoice && typeof invoice === "object" && typeof invoice.id === "string"
+  );
+}
+
+export function isStripeSubscription(
+  subscription: any
+): subscription is Stripe.Subscription {
+  return (
+    subscription &&
+    typeof subscription === "object" &&
+    typeof subscription.id === "string"
+  );
 }

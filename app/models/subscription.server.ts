@@ -1,6 +1,6 @@
 import type { Subscription } from "@prisma/client";
 import { prisma } from "~/db.server";
-import { SubscriptionStatus } from "./subscriptionTypes";
+import type { SubscriptionStatus } from "./subscriptionTypes";
 
 export type { Subscription } from "@prisma/client";
 

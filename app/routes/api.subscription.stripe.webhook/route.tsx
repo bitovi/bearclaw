@@ -1,12 +1,13 @@
-import { ActionArgs, json } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import { serverStripe } from "~/payment.server";
-import Stripe from "stripe";
 import { SubscriptionStatus } from "~/models/subscriptionTypes";
 import {
   deleteSubscription,
   retrieveSubscription,
   updateSubscriptionStatus,
 } from "~/models/subscription.server";
+import { isStripeInvoice, isStripeSubscription } from "~/utils";
 
 enum StripeEvent {
   INVOICE_PAID = "invoice.paid",
@@ -81,10 +82,11 @@ export async function action({ request }: ActionArgs) {
       // Occurs whenever an invoice payment attempt fails, due either to a declined payment or to the lack of a stored payment method
       // Stripe Invoice https://stripe.com/docs/api/invoices/object#:~:text=rch-,The%20Invoice%20object,-Attributes
 
-      const failedInvoice = event.data.object as Stripe.Invoice;
-
-      if (failedInvoice.customer) {
-        // failedPayment(failedInvoice.customer as string);
+      const failedInvoice = event.data.object;
+      if (isStripeInvoice(failedInvoice)) {
+        if (failedInvoice.customer) {
+          // failedPayment(failedInvoice.customer as string);
+        }
       }
 
       break;
@@ -108,25 +110,29 @@ export async function action({ request }: ActionArgs) {
       // Occurs whenever a customer's subscription ends.
       // Stripe Subscription https://stripe.com/docs/api/subscriptions/object#:~:text=rch-,The%20subscription%20object,-Attributes
 
-      const cancelledSubscription = event.data.object as Stripe.Subscription;
-      if (cancelledSubscription) {
+      const cancelledSubscription = event.data.object;
+      if (isStripeSubscription(cancelledSubscription)) {
         deleteSubscription(cancelledSubscription.id);
       }
+
       break;
 
     case StripeEvent.SUBSCRIPTION_CHANGE:
       // Occurs whenever a subscription changes (e.g., switching from one plan to another, or changing the status from trial to active, transitioning into "past_due", etc.).
       // Stripe Subscription https://stripe.com/docs/api/subscriptions/object#:~:text=rch-,The%20subscription%20object,-Attributes
 
-      const changedSubscription = event.data.object as Stripe.Subscription;
+      const changedSubscription = event.data.object;
 
-      // if the Subscription is being canceled, then the cancellation event will manage it
-      if (changedSubscription.status !== SubscriptionStatus.CANCELED) {
-        subscriptionStatusChange(
-          changedSubscription.id,
-          changedSubscription.status as SubscriptionStatus
-        );
+      if (isStripeSubscription(changedSubscription)) {
+        // if the Subscription is being canceled, then the cancellation event will manage it
+        if (changedSubscription.status !== SubscriptionStatus.CANCELED) {
+          subscriptionStatusChange(
+            changedSubscription.id,
+            changedSubscription.status as SubscriptionStatus
+          );
+        }
       }
+
       break;
     default:
       console.log("UNHANDLED EVENT TYPE: ", event.type);
