@@ -15,25 +15,15 @@ import {
   createSubscription,
   retrieveSubscriptionByOrgId,
 } from "./models/subscription.server";
-import type { InvoicePreview } from "./models/subscriptionTypes";
+import type {
+  ExpandedPrice,
+  ExpandedSubscription_Invoice,
+  InvoiceHistoryItem,
+  InvoicePreview,
+} from "./models/subscriptionTypes";
+import dayjs from "dayjs";
 
 require("dotenv").config();
-
-// Expanded______ types, as Stripe interfaces don't seem capable of detecting use of the "expand" parameter in their query operations.
-export type ExpandedPrice = Omit<Stripe.Price, "product"> & {
-  product: Stripe.Product;
-};
-
-type ExpandedInvoice = Omit<Stripe.Invoice, "payment_intent"> & {
-  payment_intent: Stripe.PaymentIntent;
-};
-
-type ExpandedSubscription_Invoice = Omit<
-  Stripe.Subscription,
-  "latest_invoice"
-> & {
-  latest_invoice: ExpandedInvoice;
-};
 
 // Server-side Stripe instance which manages our queries
 export const serverStripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
@@ -283,6 +273,7 @@ export async function setupSubscription(request: Request) {
     activeStatus: subscription.status,
     cancellationDate: null,
     subscriptionLevel: subName,
+    activeUntil: subscription.current_period_end,
   });
 
   return newSubscription;
@@ -367,4 +358,42 @@ export async function updateSubscription({
   );
 
   return updatedSubscription;
+}
+
+export async function retrieveInvoicePreview(
+  subscriptionId: string
+): Promise<InvoicePreview | null> {
+  try {
+    const preview = await serverStripe.invoices.retrieveUpcoming({
+      subscription: subscriptionId,
+    });
+    return {
+      upcomingToBeBilled: preview.amount_due,
+      dueDate: preview.next_payment_attempt as number, // won't be null given our payment collection method
+    };
+  } catch (e) {
+    console.warn((e as Error).message);
+    return null;
+  }
+}
+
+export async function retrieveSubscriptionInvoiceHistory(
+  subscriptionId: string
+): Promise<InvoiceHistoryItem[] | null> {
+  try {
+    const { data } = await serverStripe.invoices.list({
+      subscription: subscriptionId,
+    });
+
+    return data.map((invoice) => {
+      return {
+        Invoice_ID: invoice.id,
+        Date: dayjs(new Date(invoice.created * 1000)).format("MMMM DD, YYYY"),
+        Invoice_amount: `$${invoice.total / 100}`,
+      };
+    });
+  } catch (e) {
+    console.warn((e as Error).message);
+    return null;
+  }
 }

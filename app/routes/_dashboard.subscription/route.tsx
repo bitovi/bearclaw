@@ -5,21 +5,60 @@ import Box from "@mui/material/Box";
 import { SubscriptionSideNav } from "./sidenav";
 import { useEffect } from "react";
 import { json } from "@remix-run/node";
-import { subscriptionOptionLookup } from "~/payment.server";
+import {
+  retrieveInvoicePreview,
+  retrieveSubscriptionInvoiceHistory,
+  subscriptionOptionLookup,
+} from "~/payment.server";
 import { retrieveOrganizationSubscription } from "~/account.server";
+import { Container } from "@mui/material";
 
 export async function loader({ request }: { request: Request }) {
-  const optionResults = await subscriptionOptionLookup();
-  const organizationSubscription = await retrieveOrganizationSubscription(
-    request
-  );
+  try {
+    const optionResults = await subscriptionOptionLookup();
+    const organizationSubscription = await retrieveOrganizationSubscription(
+      request
+    );
+    if (organizationSubscription) {
+      let invoicePreview = null;
+      let error;
+      try {
+        invoicePreview = await retrieveInvoicePreview(
+          organizationSubscription?.id
+        );
+      } catch (e) {
+        error = (e as Error).message;
+      }
+      const invoiceHistory = await retrieveSubscriptionInvoiceHistory(
+        organizationSubscription.id
+      );
 
-  return json({
-    optionResults,
-    organizationSubscription,
-  });
+      return json({
+        optionResults,
+        organizationSubscription,
+        invoicePreview,
+        invoiceHistory,
+        error: undefined,
+      });
+    }
+    return json({
+      optionResults,
+      organizationSubscription,
+      invoicePreview: null,
+      invoiceHistory: null,
+      error: undefined,
+    });
+  } catch (e) {
+    console.error("ERROR: ", (e as Error).message);
+    return json({
+      optionResults: null,
+      organizationSubscription: null,
+      invoicePreview: null,
+      invoiceHistory: null,
+      error: (e as Error).message,
+    });
+  }
 }
-
 export default function Route() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,9 +74,9 @@ export default function Route() {
       <Box>
         <SubscriptionSideNav />
       </Box>
-      <Box flexGrow={1} padding={4} textAlign="center">
+      <Container>
         <Outlet />
-      </Box>
+      </Container>
     </Box>
   );
 }

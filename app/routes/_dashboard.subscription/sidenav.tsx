@@ -16,7 +16,7 @@ export function SubscriptionSideNav() {
     <Box>
       <nav>
         <List>
-          <ListItem>
+          <ListItem sx={{ padding: 0 }}>
             <ListItemButton
               selected={location.pathname === "/subscription/overview"}
               component={Link}
@@ -25,10 +25,10 @@ export function SubscriptionSideNav() {
               <ListItemIcon>
                 <StarIcon />
               </ListItemIcon>
-              <ListItemText>Overview</ListItemText>
+              <ListItemText>Account</ListItemText>
             </ListItemButton>
           </ListItem>
-          <ListItem>
+          <ListItem sx={{ padding: 0 }}>
             <ListItemButton
               selected={location.pathname === "/subscription/manage"}
               component={Link}
@@ -37,7 +37,67 @@ export function SubscriptionSideNav() {
               <ListItemIcon>
                 <StarIcon />
               </ListItemIcon>
-              <ListItemText>Manage</ListItemText>
+              <ListItemText>Security</ListItemText>
+            </ListItemButton>
+          </ListItem>
+          <ListItem sx={{ padding: 0 }}>
+            <ListItemButton
+              selected={location.pathname === "/subscription/manage"}
+              component={Link}
+              to="/subscription/manage"
+            >
+              <ListItemIcon>
+                <StarIcon />
+              </ListItemIcon>
+              <ListItemText>Susbcription</ListItemText>
+            </ListItemButton>
+          </ListItem>
+          <ListItem sx={{ padding: 0 }}>
+            <ListItemButton
+              selected={location.pathname === "/subscription/manage"}
+              component={Link}
+              to="/subscription/manage"
+            >
+              <ListItemIcon>
+                <StarIcon />
+              </ListItemIcon>
+              <ListItemText>Payment</ListItemText>
+            </ListItemButton>
+          </ListItem>
+          <ListItem sx={{ padding: 0 }}>
+            <ListItemButton
+              selected={location.pathname === "/subscription/manage"}
+              component={Link}
+              to="/subscription/manage"
+            >
+              <ListItemIcon>
+                <StarIcon />
+              </ListItemIcon>
+              <ListItemText>Settings</ListItemText>
+            </ListItemButton>
+          </ListItem>
+          <ListItem sx={{ padding: 0 }}>
+            <ListItemButton
+              selected={location.pathname === "/subscription/manage"}
+              component={Link}
+              to="/subscription/manage"
+            >
+              <ListItemIcon>
+                <StarIcon />
+              </ListItemIcon>
+              <ListItemText>Support</ListItemText>
+            </ListItemButton>
+          </ListItem>
+          <ListItem sx={{ padding: 0 }}>
+            <ListItemButton
+              selected={location.pathname === "/subscription/manage"}
+              component={Link}
+              to="/subscription/manage"
+            >
+              <ListItemIcon>
+                <StarIcon />
+              </ListItemIcon>
+              <ListItemText>Legal</ListItemText>
             </ListItemButton>
           </ListItem>
         </List>

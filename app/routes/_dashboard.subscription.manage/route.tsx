@@ -1,8 +1,7 @@
 import { useMatches } from "@remix-run/react";
 
 import { cancelSubscription, updateSubscription } from "~/payment.server";
-import type { ExpandedPrice } from "~/payment.server";
-import type { Subscription } from "~/models/subscriptionTypes";
+import type { ExpandedPrice, Subscription } from "~/models/subscriptionTypes";
 import { Box } from "@mui/material";
 import { useCallback, useState } from "react";
 import Option from "./option";
@@ -99,7 +98,7 @@ export default function Route() {
     optionResults: {
       subscriptionOptions: ExpandedPrice[] | undefined;
       error: string | undefined;
-    };
+    } | null;
     organizationSubscription: Subscription | null;
   };
 
@@ -108,7 +107,7 @@ export default function Route() {
     setSelectedOption(undefined);
   }, []);
 
-  if (optionResults.error) {
+  if (optionResults?.error) {
     return <Box>{optionResults.error}</Box>;
   }
   return (
@@ -126,7 +125,7 @@ export default function Route() {
         width="full"
         justifyContent="space-between"
       >
-        {optionResults.subscriptionOptions?.map((opt) => {
+        {optionResults?.subscriptionOptions?.map((opt) => {
           return (
             <Option
               handleClick={(opt: ExpandedPrice) => {
