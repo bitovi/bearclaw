@@ -46,9 +46,9 @@ export default function InvoiceTable({ invoiceEntries }: InvoiceTableProps) {
   }, [tableEntries]);
 
   return (
-    <Paper sx={{ width: "100%", mb: 2 }}>
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <Paper sx={{ mb: 2 }}>
+      <TableContainer sx={{ maxHeight: "400px" }}>
+        <Table sx={{ minWidth: 650 }} stickyHeader>
           <TableHead>
             <TableRow>
               {tableHeaders.map((str, i) => {
