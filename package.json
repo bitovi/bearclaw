@@ -21,7 +21,7 @@
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
-    "storybook:prepare": "touch ./storybook-static/.nojekyll && mkdir ./docs && cd ./storybook-static && cp -r * ../docs",
+    "storybook:prepare": "rm -rf ./docs && mkdir ./docs && cp -r ./storybook-static/* ./docs && touch ./docs/.nojekyll && touch ./docs/.gitignore && cp _storybook.gitignore.txt ./docs/.gitignore",
     "storybook:publish": "storybook build && npm run storybook:prepare",
     "prepare": "husky install"
   },
