@@ -1,4 +1,4 @@
-name: Publish Storybook
+name: Deploy Storybook
 on:
   push:
     branches:
@@ -13,6 +13,13 @@ jobs:
           persist-credentials: false
       - name: Install and Build 🔧
         run:
-          | # Install npm packages, build the Storybook files, adds a ./storybook-static/.nojekyll file, and copies these over to /docs
+          | # Install npm packages, build the Storybook files, and add a ./storybook-static/.nojekyll file
           npm install
           npm run storybook:publish
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: dev # The branch the action should deploy to.
+          FOLDER: docs # The folder that the build-storybook script generates files.
+
