@@ -1,0 +1,113 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id    String @id @default(cuid())
+  email String @unique
+
+  emailVerificationToken String?   @default(cuid())
+  emailTokenCreatedAt    DateTime  @default(now())
+  emailVerifiedAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  password           Password?
+  resetPasswordToken ResetPasswordToken?
+
+  userOrganizations OrganizationUsers[]
+  Organization     Organization?
+
+  emailSecondary  String?
+  firstName       String?
+  lastName        String?
+  phone           String?
+}
+
+model OrganizationUsers {
+  id  String  @id @default(cuid())
+
+  subscriptionView   Boolean
+  subscriptionEdit   Boolean
+  subscriptionCreate Boolean
+  orgUsersView       Boolean
+  orgUsersEdit       Boolean
+  orgUsersCreate     Boolean
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizationId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  role          String?
+  experienceMin Int?
+  experienceMax Int?
+  teamSizeMin   Int?
+  teamSizeMax   Int?
+
+  @@index([userId, organizationId])
+}
+
+model Organization {
+  id               String  @id @default(cuid())
+  name             String?
+  paymentAccountId String
+  email            String
+  personal         Boolean
+
+  organizationUsers OrganizationUsers[]
+
+  owner   User?   @relation(fields: [ownerId], references: [id])
+  ownerId String? @unique
+
+  subscription Subscription?
+}
+
+model Subscription {
+  id                String  @unique 
+  subscriptionLevel String
+  activeStatus      String
+  cancellationDate  Int?
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @unique
+}
+
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+model ResetPasswordToken {
+  id String @id @default(cuid())
+
+  token     String?
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+model FakeEmail {
+  id      String @id @default(cuid())
+  to      String
+  from    String
+  subject String
+
+  replyTo String?
+  text    String?
+  html    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
