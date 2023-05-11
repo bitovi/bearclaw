@@ -21,7 +21,8 @@
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
-    "storybook:publish": "storybook build && touch ./storybook-static/.nojekyll",
+    "storybook:prepare": "touch ./storybook-static/.nojekyll && mkdir ./docs && cd ./storybook-static && cp -r * ../docs",
+    "storybook:publish": "storybook build && npm run storybook:prepare",
     "prepare": "husky install"
   },
   "prettier": {},
