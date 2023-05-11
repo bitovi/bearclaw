@@ -1,0 +1,9 @@
+node_modules
+
+/build
+/public/build
+/docs
+/storybook-static
+.env
+
+/app/styles/tailwind.css
