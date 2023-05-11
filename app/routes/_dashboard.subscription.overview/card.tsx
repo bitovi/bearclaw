@@ -27,7 +27,7 @@ const Card = ({
   additionalDetails?: string[];
 }) => {
   return (
-    <MUICard component={Box} flex={1}>
+    <MUICard component={Box} flex={1} maxWidth="350px">
       <Box
         display="flex"
         flexDirection="row"

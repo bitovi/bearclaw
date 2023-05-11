@@ -55,13 +55,17 @@ export default function Route() {
 
   return (
     <Stack>
-      <Stack direction="row" alignItems="stretch" spacing={3}>
+      <Stack
+        direction={{ xs: "column", lg: "row" }}
+        alignItems="stretch"
+        justifyContent="space-between"
+        spacing={2}
+      >
         <Card
           title={organizationSubscription.subscriptionLevel}
           additionalDetails={planCardDetails}
           CTA={{ label: "UPGRADE PLAN", variant: "contained" }}
           star={true}
-          containerStylings={{ minWidth: "250px" }}
         />
         {invoicePreview && (
           <Card

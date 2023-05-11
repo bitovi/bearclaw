@@ -74,7 +74,7 @@ export default function Route() {
       <Box>
         <SubscriptionSideNav />
       </Box>
-      <Container>
+      <Container sx={{ overflow: "scroll" }}>
         <Outlet />
       </Container>
     </Box>
