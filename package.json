@@ -21,7 +21,7 @@
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
-    "storybook:publish": "storybook build && touch ./storybook-static/.nojekyll",
+    "storybook:publish": "storybook build && touch ./storybook-static/.nojekyll && touch ./storybook-static/.gitignore && cp _storybook.gitignore.txt ./storybook-static/.gitignore",
     "prepare": "husky install"
   },
   "prettier": {},
