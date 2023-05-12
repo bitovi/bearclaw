@@ -1,0 +1,1 @@
+import{A as p}from"/build/_shared/chunk-FPCZUKCW.js";import{b as o}from"/build/_shared/chunk-5HKR6QTR.js";import{d as r}from"/build/_shared/chunk-G5WX4PPA.js";var n=r(o()),u=({error:t,inputRef:l,...i})=>{let e=typeof t=="string"?t.length>0:!!t;return(0,n.jsx)(p,{error:e,helperText:e?t:null,...i,inputRef:l})};export{u as a};
