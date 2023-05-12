@@ -6,8 +6,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
-import { useEffect, useMemo, useState } from "react";
-import { InvoiceHistoryItem } from "~/models/subscriptionTypes";
+import { useMemo, useState } from "react";
+import type { InvoiceHistoryItem } from "~/models/subscriptionTypes";
+import { Box, Typography } from "@mui/material";
 
 type InvoiceTableProps = {
   invoiceEntries: InvoiceHistoryItem[];
@@ -18,7 +19,6 @@ export default function InvoiceTable({ invoiceEntries }: InvoiceTableProps) {
   const [page, setPage] = useState(0);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
-    console.log("PAGE TO SET --- ", page);
     setPage(newPage);
   };
 
@@ -41,18 +41,33 @@ export default function InvoiceTable({ invoiceEntries }: InvoiceTableProps) {
       page * rowsPerPage + rowsPerPage
     );
   }, [page, rowsPerPage, invoiceEntries]);
-  useEffect(() => {
-    console.log("tableEntries.length", tableEntries.length);
-  }, [tableEntries]);
 
   return (
     <Paper sx={{ mb: 2 }}>
+      <Box padding={2}>
+        <Typography variant="h6" color="text.primary">
+          Invoice
+        </Typography>
+      </Box>
       <TableContainer sx={{ maxHeight: "400px" }}>
         <Table sx={{ minWidth: 650 }} stickyHeader>
           <TableHead>
-            <TableRow>
+            <TableRow
+              sx={{
+                "& th": {
+                  color: "text.secondary",
+                },
+              }}
+            >
               {tableHeaders.map((str, i) => {
-                return <TableCell key={`str-${i}`}>{str}</TableCell>;
+                return (
+                  <TableCell
+                    sx={{ fontColor: "text.secondary" }}
+                    key={`str-${i}`}
+                  >
+                    {str}
+                  </TableCell>
+                );
               })}
             </TableRow>
           </TableHead>

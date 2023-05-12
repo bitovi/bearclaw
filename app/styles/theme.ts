@@ -1,17 +1,51 @@
 import { createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
+
+declare module "@mui/material/styles" {
+  interface PaletteColor {
+    contrast?: string;
+    states?: {
+      focusVisible?: string;
+    };
+  }
+
+  interface SimplePaletteColorOptions {
+    contrast?: string;
+    states?: {
+      focusVisible?: string;
+    };
+  }
+}
+
+declare module "@mui/material/Button" {
+  interface ButtonPropsVariantOverrides {
+    buttonLarge: true;
+    buttonMedium: true;
+    buttonLargeOutlined: true;
+  }
+}
 
 // Create a theme instance.
 const theme = createTheme({
   palette: {
+    action: {
+      active: "rgba(0, 0, 0, 0.56)",
+    },
+    text: {
+      primary: "rgba(0, 0, 0, 0.87)",
+      secondary: "rgba(0, 0, 0, 0.6)",
+    },
     primary: {
-      main: "#2196F3",
+      main: "#0037FF",
+      contrast: "#FFFFFF",
+      states: {
+        focusVisible: "rgba(0, 55, 255, 0.3)",
+      },
     },
     secondary: {
       main: "#19857b",
     },
     error: {
-      main: red.A400,
+      main: "#D32F2F",
     },
   },
   typography: {
@@ -30,39 +64,63 @@ const theme = createTheme({
       letterSpacing: "0.00938em",
     },
     h3: {
-      fontSize: "1.25rem",
-      fontWeight: 700,
-      lineHeight: 1.5,
-      letterSpacing: "0.00938em",
+      fontStyle: "normal",
+      fontWeight: 400,
+      fontSize: "48px",
+      lineHeight: "116.7%",
     },
     h4: {
-      fontSize: "1rem",
-      fontWeight: 700,
-      lineHeight: 1.5,
-      letterSpacing: "0.00938em",
+      fontStyle: "normal",
+      fontSize: "34px",
+      fontWeight: 400,
+      lineHeight: "123.5%",
+      letterSpacing: "0.25px",
     },
     h5: {
-      fontSize: "0.875rem",
-      fontWeight: 700,
-      lineHeight: 1.5,
-      letterSpacing: "0.00938em",
+      fontStyle: "normal",
+      fontWeight: 400,
+      fontSize: "24px",
+      lineHeight: "133.4%",
     },
     h6: {
-      fontSize: "0.75rem",
-      fontWeight: 700,
-      lineHeight: 1.5,
-      letterSpacing: "0.00938em",
+      fontStyle: "normal",
+      fontWeight: 500,
+      fontSize: "20px",
+      lineHeight: "160%",
+      letterSpacing: "0.15px",
     },
     subtitle2: {
       fontSize: "20px",
       fontWeight: 500,
       letterSpacing: "0.15px",
     },
+    body1: {
+      fontStyle: "normal",
+      fontWeight: 400,
+      fontSize: "16px",
+      lineHeight: "150%",
+      letterSpacing: "0.15px",
+    },
     body2: {
-      color: "#00000099",
+      fontStyle: "normal",
+      fontWeight: 400,
+      fontSize: "14px",
+      lineHeight: "143%",
+      letterSpacing: "0.17px",
     },
   },
   components: {
+    MuiAlert: {
+      variants: [
+        {
+          props: { variant: "standard" },
+          style: {
+            backgroundColor: "#D32F2F",
+            color: "#FFFFFF",
+          },
+        },
+      ],
+    },
     MuiButton: {
       variants: [
         {
@@ -75,15 +133,49 @@ const theme = createTheme({
             paddingY: "6px",
             paddingX: "16px",
             borderRadius: "4px",
-            backgroundColor: "#2196F3",
+            backgroundColor: "#0037FF",
             boxShadow:
               "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
           },
         },
         {
-          props: { variant: "outlined" },
+          props: { variant: "buttonLarge" },
           style: {
-            color: "#2196F3",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: "15px",
+            lineHeight: "26px",
+            letterSpacing: "0.46px",
+            textTransform: "uppercase",
+            backgroundColor: "#0037FF",
+            "&.Mui-disabled": {
+              backgroundColor: "#cccccc",
+            },
+          },
+        },
+        {
+          props: { variant: "buttonLargeOutlined" },
+          style: {
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: "15px",
+            lineHeight: "26px",
+            letterSpacing: "0.46px",
+            textTransform: "uppercase",
+            backgroundColor: "transparent",
+            color: "#0037FF",
+            border: "1px solid #0037FF",
+          },
+        },
+        {
+          props: { variant: "buttonMedium" },
+          style: {
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: "24px",
+            letterSpacing: "0.4px",
+            textTransform: "uppercase",
           },
         },
       ],

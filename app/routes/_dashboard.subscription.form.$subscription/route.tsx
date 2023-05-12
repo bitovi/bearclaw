@@ -1,4 +1,4 @@
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useNavigate } from "@remix-run/react";
 
 import {
   PaymentElement,
@@ -68,6 +68,7 @@ export async function loader({ params, request }: LoaderArgs) {
         paymentAccountId,
         paymentIntentId,
         STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+        priceId,
       });
   }
 
@@ -87,8 +88,13 @@ function FormComponent() {
   if ("error" in data) {
     return null;
   }
-  const { paymentAccountId, clientSecret, paymentIntentId, subscriptionId } =
-    data;
+  const {
+    paymentAccountId,
+    clientSecret,
+    paymentIntentId,
+    subscriptionId,
+    priceId,
+  } = data;
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -111,7 +117,7 @@ function FormComponent() {
           elements,
           clientSecret,
           confirmParams: {
-            return_url: `${window.location.origin}/subscription/pay/success?subscription_id=${subscriptionId}&payment_intent=${paymentIntentId}`,
+            return_url: `${window.location.origin}/subscription/pay/success?subscription_id=${subscriptionId}&payment_intent=${paymentIntentId}&planId=${priceId}`,
           },
         });
         if (error) throw new Error(error.message);
@@ -167,9 +173,10 @@ function FormComponent() {
 
 export default function Index() {
   const data = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   if ("error" in data) {
-    return <div>{data.error}</div>;
+    return navigate("/subscription/overview");
   }
   const clientStripePromise = loadStripe(data.STRIPE_PUBLIC_KEY);
 

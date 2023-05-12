@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate } from "@remix-run/react";
 
 import Box from "@mui/material/Box";
 
-import { SubscriptionSideNav } from "./sidenav";
+import { SubscriptionSideNav } from "./components/sidenav";
 import { useEffect } from "react";
 import { json } from "@remix-run/node";
 import {
@@ -21,7 +21,7 @@ export async function loader({ request }: { request: Request }) {
     );
     if (organizationSubscription) {
       let invoicePreview = null;
-      let error;
+      let error = undefined;
       try {
         invoicePreview = await retrieveInvoicePreview(
           organizationSubscription?.id
@@ -38,7 +38,7 @@ export async function loader({ request }: { request: Request }) {
         organizationSubscription,
         invoicePreview,
         invoiceHistory,
-        error: undefined,
+        error,
       });
     }
     return json({

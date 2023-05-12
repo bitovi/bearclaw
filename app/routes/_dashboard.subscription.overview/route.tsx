@@ -1,18 +1,19 @@
 import { Box, Stack, Typography } from "@mui/material";
 
-import { useMatches } from "@remix-run/react";
+import { useMatches, useNavigate } from "@remix-run/react";
 import type {
   ExpandedPrice,
   Subscription,
   InvoicePreview,
   InvoiceHistoryItem,
 } from "~/models/subscriptionTypes";
-import InvoiceTable from "./invoiceTable";
-import Card from "./card";
+import InvoiceTable from "./components/invoiceTable";
+import Card from "./components/card";
 import dayjs from "dayjs";
 import { useMemo } from "react";
 
 export default function Route() {
+  const navigate = useNavigate();
   const { organizationSubscription, invoicePreview, invoiceHistory } =
     useMatches().find((root) => root.pathname === "/subscription")?.data as {
       optionResults: {
@@ -23,14 +24,6 @@ export default function Route() {
       invoicePreview: InvoicePreview | null;
       invoiceHistory: InvoiceHistoryItem[] | null;
     };
-
-  if (!organizationSubscription) {
-    return (
-      <Box textAlign={"center"}>
-        <Typography>No active subscription</Typography>
-      </Box>
-    );
-  }
 
   const planCardDetails = useMemo(() => {
     return [
@@ -53,6 +46,14 @@ export default function Route() {
     ];
   }, [invoicePreview]);
 
+  if (!organizationSubscription) {
+    return (
+      <Box textAlign={"center"}>
+        <Typography>No active subscription</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Stack>
       <Stack
@@ -65,6 +66,7 @@ export default function Route() {
           title={organizationSubscription.subscriptionLevel}
           additionalDetails={planCardDetails}
           CTA={{ label: "UPGRADE PLAN", variant: "contained" }}
+          handleClick={() => navigate("/subscription/manage")}
           star={true}
         />
         {invoicePreview && (
@@ -73,15 +75,12 @@ export default function Route() {
             additionalDetails={invoiceCardDetails}
             CTA={{
               label: "MANAGE PAYMENT SETTINGS",
-              variant: "outlined",
+              variant: "buttonLargeOutlined",
             }}
           />
         )}
       </Stack>
       <Box paddingY={2}>
-        <Typography variant="subtitle2">Invoices</Typography>
-      </Box>
-      <Box>
         <InvoiceTable
           invoiceEntries={
             invoiceHistory || [{ Invoice_ID: "", Date: "", Invoice_amount: "" }]

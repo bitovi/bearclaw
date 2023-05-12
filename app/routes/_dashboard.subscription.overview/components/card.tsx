@@ -1,11 +1,5 @@
-import {
-  Card as MUICard,
-  ButtonProps,
-  BoxProps,
-  Box,
-  Typography,
-  CardActions,
-} from "@mui/material";
+import { Card as MUICard, Box, Typography, CardActions } from "@mui/material";
+import type { ButtonProps, BoxProps } from "@mui/material";
 import { Button } from "~/components/button";
 import StarIcon from "@mui/icons-material/Star";
 
@@ -15,6 +9,7 @@ const Card = ({
   star = false,
   containerStylings = {},
   additionalDetails = [],
+  handleClick,
 }: {
   title: string;
   CTA: {
@@ -25,6 +20,7 @@ const Card = ({
   star?: boolean;
   containerStylings?: BoxProps;
   additionalDetails?: string[];
+  handleClick?: () => void;
 }) => {
   return (
     <MUICard component={Box} flex={1} maxWidth="350px">
@@ -39,10 +35,17 @@ const Card = ({
       >
         <Box flexDirection="column" paddingRight={2}>
           <Box paddingBottom={3} textAlign="left">
-            <Typography variant="subtitle2">{title}</Typography>
+            <Typography variant="h5" color="text.primary">
+              {title}
+            </Typography>
+
             {additionalDetails.map((detail, i) =>
               detail ? (
-                <Typography key={i} variant="body2">
+                <Typography
+                  key={`${detail.slice(0, 3)}-${i}`}
+                  variant="body2"
+                  color="text.secondary"
+                >
                   {detail}
                 </Typography>
               ) : null
@@ -50,16 +53,17 @@ const Card = ({
           </Box>
 
           <CardActions sx={{ padding: 0 }}>
-            <Button variant={CTA.variant || "contained"}>{CTA.label}</Button>
+            <Button
+              onClick={handleClick}
+              variant={CTA.variant || "buttonLarge"}
+            >
+              {CTA.label}
+            </Button>
           </CardActions>
         </Box>
 
         {star && (
-          <Box
-            paddingTop={3}
-            justifySelf={"flex-end"}
-            color="rgba(0, 0, 0, 0.56)"
-          >
+          <Box paddingTop={3} justifySelf={"flex-end"} color="action.active">
             <StarIcon color="inherit" />
           </Box>
         )}
