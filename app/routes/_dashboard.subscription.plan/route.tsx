@@ -1,12 +1,4 @@
-import {
-  Container,
-  Box,
-  Skeleton,
-  Typography,
-  Stack,
-  Alert,
-  AlertTitle,
-} from "@mui/material";
+import { Container, Box, Skeleton, Typography, Stack } from "@mui/material";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { Button } from "~/components/button";
 import { useLoaderData, useMatches, useNavigate } from "@remix-run/react";
@@ -18,7 +10,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import SubscriptionPlanModal from "./components/subscriptionPlanModal";
 import dayjs from "dayjs";
 import FeatureBox from "./components/featureBox";
-import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
+import { Banner } from "~/components/banner";
 
 const featuresFixture = [
   "Suscipit lacus elit lobortis ultrices a diam. Diam eu est vel mollis ut. At mi id morbi blandit pharetra in neque. Enim adipiscing dui sed urna at vivamus. Nisl nisl id vitae non sed. Risus ut viverra nulla urna posuere varius.",
@@ -39,7 +31,7 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function Route() {
-  const { error } = useLoaderData();
+  const { error } = useLoaderData<typeof loader>();
   const [modalOpen, setModalOpen] = useState(false);
   const [subscriptionError, setSubscriptionError] = useState(!!error);
   const { priceId } = useLoaderData<typeof loader>();
@@ -160,28 +152,22 @@ export default function Route() {
             Go back
           </Button>
         </Stack>
-        {subscriptionError && (
-          <Alert
-            severity="error"
-            sx={{
-              position: "absolute",
-              right: 34,
-              bottom: 34,
-              bgColor: "error.main",
-            }}
-            onClose={() => setSubscriptionError(false)}
-            icon={
-              <Box color="primary.contrast">
-                <ErrorOutlineOutlinedIcon color="inherit" />
-              </Box>
-            }
-          >
-            <AlertTitle>
-              A problem occurred setting up the subscription
-            </AlertTitle>
+        <Banner
+          container={{
+            open: subscriptionError,
+            anchorOrigin: { vertical: "bottom", horizontal: "right" },
+          }}
+          title="A problem occurred setting up the subscription"
+          alert={{
+            severity: "error",
+            variant: "filled",
+            onClose: () => setSubscriptionError(false),
+          }}
+        >
+          <Typography>
             Please contact customer support to resolve this issue.
-          </Alert>
-        )}
+          </Typography>
+        </Banner>
       </Container>
     </>
   );
