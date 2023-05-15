@@ -20,6 +20,8 @@ model User {
 
   password           Password?
   resetPasswordToken ResetPasswordToken?
+  mfaMethods         MfaMethod[]
+  mfaTokens           MfaToken[]
 
   userOrganizations OrganizationUsers[]
   Organization     Organization?
@@ -96,6 +98,35 @@ model ResetPasswordToken {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
+}
+
+model MfaMethod {
+  id String @id @default(cuid())
+
+  type        String
+  active      Boolean
+  verifiedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  @@unique([userId, type])
+}
+
+model MfaToken {
+  id String @id @default(cuid())
+
+  type      String
+  token     String
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  @@unique([userId, type])
 }
 
 model FakeEmail {

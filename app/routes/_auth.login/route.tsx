@@ -15,6 +15,8 @@ import {
 import { TextInput } from "~/components/input";
 import { Link } from "~/components/link/Link";
 import { Checkbox } from "~/components/input/checkbox/Checkbox";
+import { getUserMfaMethods, resetMfaToken } from "~/models/mfa.server";
+import { MFA_TYPE } from "~/models/mfa";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -107,10 +109,23 @@ export async function action({ request }: ActionArgs) {
     }
   }
 
+  const mfaMethods = await getUserMfaMethods(user);
+
+  if (mfaMethods.length > 0) {
+    console.log("mfaMethods", mfaMethods);
+    if (mfaMethods.find((m) => m.type === MFA_TYPE.SMS)) {
+      // TODO 
+    }
+    if (mfaMethods.find((m) => m.type === MFA_TYPE.EMAIL)) {
+      resetMfaToken({ type: MFA_TYPE.EMAIL, user: user });
+    }
+  }
+
   return createUserSession({
     request,
     userId: user.id,
     orgId: org.id,
+    mfaEnabled: mfaMethods.length > 0,
     remember: remember === "on" ? true : false,
     redirectTo,
   });
