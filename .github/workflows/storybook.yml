@@ -20,5 +20,13 @@ jobs:
         run:
           | # Install npm packages, build the Storybook files, and add a ./storybook-static/.nojekyll file
           npm install
+          npm run storybook:build
+          echo "storybook built"
+          npm run storybook:jekyll
+          echo "jekyll added to storybook folder"
+          ls
+          cd storybook-static
+          ls
+          cd ..
           git remote set-url origin https://git:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git
           npm run storybook:deploy -- -u "github-actions-bot <support+actions@github.com>"
