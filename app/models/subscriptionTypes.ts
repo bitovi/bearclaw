@@ -1,3 +1,5 @@
+import type Stripe from "stripe";
+
 export type { Subscription } from "@prisma/client";
 
 // Possible Stripe subscription statuses
@@ -14,6 +16,29 @@ export enum SubscriptionStatus {
 
 export interface InvoicePreview {
   upcomingToBeBilled: number;
-  periodEnd: number; // Unix timestamp
-  prorationDate: number | undefined; // Unix timestamp
+  periodEnd?: number; // Unix timestamp
+  prorationDate?: number | undefined; // Unix timestamp
+  dueDate?: number | null; // Unix timestamp
 }
+
+// Expanded______ types, as Stripe interfaces don't seem capable of detecting use of the "expand" parameter in their query operations.
+export type ExpandedPrice = Omit<Stripe.Price, "product"> & {
+  product: Stripe.Product;
+};
+
+export type ExpandedInvoice = Omit<Stripe.Invoice, "payment_intent"> & {
+  payment_intent: Stripe.PaymentIntent;
+};
+
+export type ExpandedSubscription_Invoice = Omit<
+  Stripe.Subscription,
+  "latest_invoice"
+> & {
+  latest_invoice: ExpandedInvoice;
+};
+
+export type InvoiceHistoryItem = {
+  Invoice_ID: string;
+  Date: string;
+  Invoice_amount: string;
+};

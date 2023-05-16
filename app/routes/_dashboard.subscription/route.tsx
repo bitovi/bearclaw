@@ -1,26 +1,80 @@
-import { Outlet, useLocation, useNavigate } from "@remix-run/react";
+import {
+  Outlet,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from "@remix-run/react";
 
 import Box from "@mui/material/Box";
 
-import { SubscriptionSideNav } from "./sidenav";
-import { useEffect } from "react";
+import { SubscriptionSideNav } from "./components/sidenav";
+import { useEffect, useState } from "react";
 import { json } from "@remix-run/node";
-import { subscriptionOptionLookup } from "~/payment.server";
+import {
+  retrieveInvoicePreview,
+  retrieveSubscriptionInvoiceHistory,
+  subscriptionOptionLookup,
+} from "~/payment.server";
 import { retrieveOrganizationSubscription } from "~/account.server";
+import { Container } from "@mui/material";
+import { Banner } from "~/components/banner";
+import { badSubscriptionStatus } from "./utils/badSubscriptionStatus";
 
 export async function loader({ request }: { request: Request }) {
-  const optionResults = await subscriptionOptionLookup();
-  const organizationSubscription = await retrieveOrganizationSubscription(
-    request
-  );
+  try {
+    const optionResults = await subscriptionOptionLookup();
+    const organizationSubscription = await retrieveOrganizationSubscription(
+      request
+    );
 
-  return json({
-    optionResults,
-    organizationSubscription,
-  });
+    if (organizationSubscription) {
+      let invoicePreview = null;
+      let error = undefined;
+      try {
+        invoicePreview = await retrieveInvoicePreview(
+          organizationSubscription?.id
+        );
+      } catch (e) {
+        error = (e as Error).message;
+      }
+      const invoiceHistory = await retrieveSubscriptionInvoiceHistory(
+        organizationSubscription.id
+      );
+
+      return json({
+        optionResults,
+        organizationSubscription,
+        invoicePreview,
+        invoiceHistory,
+        error,
+      });
+    }
+    return json({
+      optionResults,
+      organizationSubscription,
+      invoicePreview: null,
+      invoiceHistory: null,
+      error: undefined,
+    });
+  } catch (e) {
+    console.error("ERROR: ", (e as Error).message);
+    return json({
+      optionResults: null,
+      organizationSubscription: null,
+      invoicePreview: null,
+      invoiceHistory: null,
+      error: (e as Error).message,
+    });
+  }
 }
 
 export default function Route() {
+  const { organizationSubscription } = useLoaderData<typeof loader>();
+  const [errorVisible, setErrorVisible] = useState(
+    organizationSubscription
+      ? badSubscriptionStatus(organizationSubscription.activeStatus)
+      : false
+  );
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -35,9 +89,24 @@ export default function Route() {
       <Box>
         <SubscriptionSideNav />
       </Box>
-      <Box flexGrow={1} padding={4} textAlign="center">
+      <Container sx={{ overflow: "scroll" }}>
         <Outlet />
-      </Box>
+        <Banner
+          container={{
+            open: errorVisible,
+            anchorOrigin: { vertical: "bottom", horizontal: "center" },
+          }}
+          alert={{
+            severity: "error",
+            variant: "filled",
+            onClose: () => {
+              setErrorVisible(false);
+            },
+          }}
+          title="Error"
+          content="There was an error during billing for your most recent subscription. Please contact customer support to resolve the issue."
+        />
+      </Container>
     </Box>
   );
 }

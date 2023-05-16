@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loading } from "~/components/loading/Loading";
 import { SubscriptionStatus } from "~/models/subscriptionTypes";
 import type { InvoicePreview, Subscription } from "~/models/subscriptionTypes";
-import type { ExpandedPrice } from "~/payment.server";
+import type { ExpandedPrice } from "~/models/subscriptionTypes";
 import { previewSubscriptionUpdate } from "~/services/subscriptions/previewSubscription";
 
 enum ModalAction {
@@ -65,7 +65,7 @@ const UpdateInformationBox = ({
     <Box>
       {loading && <Loading />}
       {error && <Box>{error}</Box>}
-      {!loading && !error && invoicePreview && (
+      {!loading && !error && invoicePreview?.periodEnd && (
         <Box
           display="flex"
           flexDirection="column"

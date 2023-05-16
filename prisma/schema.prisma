@@ -74,6 +74,7 @@ model Subscription {
   id                String  @unique 
   subscriptionLevel String
   activeStatus      String
+  activeUntil       Int?
   cancellationDate  Int?
 
   organization   Organization @relation(fields: [organizationId], references: [id])

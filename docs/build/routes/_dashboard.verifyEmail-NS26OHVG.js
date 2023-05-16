@@ -1,0 +1,1 @@
+import{b as u}from"/build/_shared/chunk-5HKR6QTR.js";import{d as f}from"/build/_shared/chunk-G5WX4PPA.js";var e=f(u());function d(){return(0,e.jsx)("div",{children:(0,e.jsx)("p",{children:"Email verified successfully!"})})}export{d as default};
