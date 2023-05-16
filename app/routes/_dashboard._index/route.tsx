@@ -1,12 +1,11 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Outlet, useLocation } from "@remix-run/react";
 import { Upload } from "~/components/upload/Upload";
-import { getUserId } from "~/session.server";
+import { requireUser } from "~/session.server";
 
 export async function loader({ request, params }: LoaderArgs) {
-  const userId = await getUserId(request);
-  if (!userId) return redirect("/home");
+  await requireUser(request);
 
   return json({});
 }

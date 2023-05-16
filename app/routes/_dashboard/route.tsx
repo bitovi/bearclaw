@@ -4,7 +4,7 @@ import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
 import Box from "@mui/material/Box";
 
 import { Header } from "./header";
-import { Sidenav } from "./sidenav";
+import { MainSideNav } from "./sidenav";
 import { Loading } from "~/components/loading/Loading";
 import { Link } from "~/components/link";
 import { getUser } from "~/session.server";
@@ -39,8 +39,8 @@ export default function Index() {
   return (
     <Box component="main" display="flex" height="100%">
       {isVerified && (
-        <Box borderRight="1px solid grey">
-          <Sidenav />
+        <Box width="300px" borderRight="1px solid grey">
+          <MainSideNav />
         </Box>
       )}
       <Box display="flex" flexDirection="column" height="100%" width="100%">

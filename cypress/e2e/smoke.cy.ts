@@ -25,7 +25,8 @@ function createAndVerifyAccount({ email, password }: LoginData) {
   cy.findByLabelText(/password/i).type(password);
   cy.findByRole("button", { name: /create account/i }).click();
   cy.findByRole("link", { name: /View verification emails here/i }).click();
-  cy.findByTestId(email)
+  cy.findAllByTestId(email)
+    .first()
     .findByRole("link", { name: /verify your email/i })
     .click();
   cy.findByText(/verified successfully/i);
@@ -36,7 +37,7 @@ describe("join and authenticate tests", () => {
     cy.cleanupUser();
   });
 
-  it("should allow you to register, login, and navigate", () => {
+  it("should allow you to register, login, MFA, and navigate", () => {
     const loginForm = createLoginData();
 
     cy.then(() => ({ email: loginForm.email })).as("user");
@@ -58,11 +59,54 @@ describe("join and authenticate tests", () => {
     cy.findByRole("button", { name: /log in/i });
     cy.url().should("include", "/login");
 
-    // Log in
+    // Log in without MFA
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
     cy.findByRole("button", { name: /log in/i }).click();
-    cy.findByRole("button", { name: /Upload/i });
+    cy.findAllByRole("link", { name: /logout/i })
+    
+    // Setup email MFA
+    cy.findAllByRole("link", { name: /Account/i }).first().click();
+    cy.findAllByRole("link", { name: /Settings/i }).first().click();
+    cy.findByRole("button", { name: /Enable Email MFA/i }).click();
+    cy.findByText(/You have been sent a 6 digit token/i);
+    cy.visit("/fakeMail");
+    cy.findAllByTestId(/token/i).first().then((t) => {
+      const token = t.text();
+
+      cy.go('back');
+      cy.wait(1000);
+      cy.findByRole("textbox", { name: /mfa token/i }).type(token, {force: true});
+      cy.findByRole("button", { name: /verify/i }).click();
+      cy.findByText(/Email MFA Enabled/i);
+    })
+    
+    // Logout and verify MFA
+    cy.findAllByRole("link", { name: /logout/i }).first().click();
+    cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
+    cy.findByLabelText(/password/i).type(loginForm.password);
+    cy.findByRole("button", { name: /log in/i }).click();
+    cy.findByText(/You have been sent a 6 digit token/i);
+    cy.visit("/fakeMail");
+
+    cy.findAllByTestId(loginForm.email).first().findByTestId(/token/i).then((t) => {
+      const token = t.text();
+
+      cy.go('back');
+      cy.wait(1000);
+      cy.findByRole("textbox", { name: /token/i }).type(token, {force: true});
+      cy.findByRole("button", { name: /complete/i }).click();
+      cy.findAllByRole("link", { name: /logout/i })
+    })
+
+    // Disable MFA
+    cy.findAllByRole("link", { name: /Account/i }).first().click();
+    cy.findAllByRole("link", { name: /Settings/i }).first().click();
+    cy.findByRole("button", { name: /Disable Email MFA/i }).click();
+    cy.findByText(/Are you sure you want to disable email MFA/i);
+    cy.findByRole("button", { name: /Disable/i }).click();
+    cy.findByText(/Email MFA: Off/i);
+
     cy.findAllByRole("link", { name: /logout/i }).first().click();
 
     // Creating an account with an existing email fails and prompts user to login

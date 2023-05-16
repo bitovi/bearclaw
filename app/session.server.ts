@@ -20,6 +20,9 @@ export const sessionStorage = createCookieSessionStorage({
 
 const USER_SESSION_KEY = "userId";
 const ORGANIZATION_KEY = "orgId";
+const MFA_STATUS_KEY = "mfaStatus";
+
+type MfaStatus = "success" | "pending" | null;
 
 export async function getSession(request: Request) {
   const cookie = request.headers.get("Cookie");
@@ -32,6 +35,20 @@ export async function getUserId(
   const session = await getSession(request);
   const userId = session.get(USER_SESSION_KEY);
   return userId;
+}
+
+export async function getMfaStatus(
+  request: Request
+): Promise<MfaStatus> {
+  const session = await getSession(request);
+  const status = session.get(MFA_STATUS_KEY);
+  return status;
+}
+
+export async function setMfaStatus(request: Request, mfaStatus: MfaStatus): Promise<void> {
+  const session = await getSession(request);
+  session.set(MFA_STATUS_KEY, mfaStatus);
+  return;
 }
 
 export async function getOrgId(
@@ -74,6 +91,11 @@ export async function requireUserId(
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
     throw redirect(`/login?${searchParams}`);
   }
+  const mfaStatus = await getMfaStatus(request);
+  if (mfaStatus === "pending") {
+    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+    throw redirect(`/mfa?${searchParams}`);
+  }
   return userId;
 }
 
@@ -90,24 +112,47 @@ export async function createUserSession({
   request,
   userId,
   orgId,
+  mfaEnabled,
   remember,
   redirectTo,
 }: {
   request: Request;
   userId: string;
   orgId: string;
+  mfaEnabled: boolean;
   remember: boolean;
   redirectTo: string;
 }) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, userId);
   session.set(ORGANIZATION_KEY, orgId);
+  mfaEnabled && session.set(MFA_STATUS_KEY, "pending");
+
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {
         maxAge: remember
           ? 60 * 60 * 24 * 7 // 7 days
           : undefined,
+      }),
+    },
+  });
+}
+
+export async function mfaActivateUserSession({
+  request,
+  redirectTo,
+}: {
+  request: Request;
+  redirectTo: string;
+}) {
+  const session = await getSession(request);
+  session.set(MFA_STATUS_KEY, "success");
+
+  return redirect(redirectTo, {
+    headers: {
+      "Set-Cookie": await sessionStorage.commitSession(session, {
+        maxAge: 60 * 60 * 24 * 7, // 7 days
       }),
     },
   });

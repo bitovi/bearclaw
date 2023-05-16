@@ -118,6 +118,7 @@ export async function action({ request }: ActionArgs) {
     request,
     userId: user.id,
     orgId,
+    mfaEnabled: false,
     remember: false,
     redirectTo,
   });

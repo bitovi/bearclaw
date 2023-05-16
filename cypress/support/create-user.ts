@@ -30,6 +30,7 @@ async function createAndLogin(email: string) {
     request: new Request("test://test"),
     userId: user.id,
     orgId,
+    mfaEnabled: false,
     remember: false,
     redirectTo: "/",
   });
