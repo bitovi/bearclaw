@@ -1,9 +1,14 @@
-import { Outlet, useLocation, useNavigate } from "@remix-run/react";
+import {
+  Outlet,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from "@remix-run/react";
 
 import Box from "@mui/material/Box";
 
 import { SubscriptionSideNav } from "./components/sidenav";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { json } from "@remix-run/node";
 import {
   retrieveInvoicePreview,
@@ -12,6 +17,8 @@ import {
 } from "~/payment.server";
 import { retrieveOrganizationSubscription } from "~/account.server";
 import { Container } from "@mui/material";
+import { Banner } from "~/components/banner";
+import { badSubscriptionStatus } from "./utils/badSubscriptionStatus";
 
 export async function loader({ request }: { request: Request }) {
   try {
@@ -19,6 +26,7 @@ export async function loader({ request }: { request: Request }) {
     const organizationSubscription = await retrieveOrganizationSubscription(
       request
     );
+
     if (organizationSubscription) {
       let invoicePreview = null;
       let error = undefined;
@@ -59,7 +67,14 @@ export async function loader({ request }: { request: Request }) {
     });
   }
 }
+
 export default function Route() {
+  const { organizationSubscription } = useLoaderData<typeof loader>();
+  const [errorVisible, setErrorVisible] = useState(
+    organizationSubscription
+      ? badSubscriptionStatus(organizationSubscription.activeStatus)
+      : false
+  );
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -76,6 +91,21 @@ export default function Route() {
       </Box>
       <Container sx={{ overflow: "scroll" }}>
         <Outlet />
+        <Banner
+          container={{
+            open: errorVisible,
+            anchorOrigin: { vertical: "bottom", horizontal: "center" },
+          }}
+          alert={{
+            severity: "error",
+            variant: "filled",
+            onClose: () => {
+              setErrorVisible(false);
+            },
+          }}
+          title="Error"
+          content="There was an error during billing for your most recent subscription. Please contact customer support to resolve the issue."
+        />
       </Container>
     </Box>
   );

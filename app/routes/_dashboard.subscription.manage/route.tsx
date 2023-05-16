@@ -43,7 +43,6 @@ export async function action({ request }: ActionArgs) {
             cancellationDate: cancelledSubscription.cancel_at,
           },
         });
-        console.log("ABOUT TO REDIRECT");
         return redirect("/subscription/overview");
       } catch (e) {
         console.error(e);
