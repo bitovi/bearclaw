@@ -95,7 +95,10 @@ describe("join and authenticate tests", () => {
       .click();
 
     cy.wait(100);
-    cy.findByLabelText(/create new password/i).type(loginForm.resetPassword);
+    cy.findByLabelText(/create new password/i).type('1');
+    cy.findByRole("button", { name: /reset password/i }).click();
+    cy.findByText(/too short/i);
+    cy.findByLabelText(/create new password/i).clear().type(loginForm.resetPassword);
     cy.findByRole("button", { name: /reset password/i }).click();
     cy.findByText(/your password has been reset/i);
     cy.findByRole("link", { name: /login/i }).click();
