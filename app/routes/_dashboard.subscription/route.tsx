@@ -79,14 +79,6 @@ export default function Route() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (organizationSubscription) {
-      setErrorVisible(
-        badSubscriptionStatus(organizationSubscription.activeStatus)
-      );
-    }
-  }, [organizationSubscription]);
-
-  useEffect(() => {
     if (location.pathname === "/subscription") {
       navigate("./overview");
     }

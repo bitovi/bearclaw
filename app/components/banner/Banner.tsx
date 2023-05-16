@@ -1,5 +1,6 @@
 import MuiSnackbar from "@mui/material/Snackbar";
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import MuiAlert from "@mui/material/Alert";
+import type { AlertProps } from "@mui/material/Alert";
 import MuiAlertTitle from "@mui/material/AlertTitle";
 
 import type { SnackbarProps } from "@mui/material/Snackbar";
