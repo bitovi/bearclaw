@@ -14,8 +14,8 @@ import { safeRedirect } from "~/utils";
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   if (!user) return redirect("/login");
+
   const mfaStatus = await getMfaStatus(request);
-  console.log(mfaStatus, "mfaStatus")
   if (mfaStatus !== "pending") return redirect("/");
 
   const mfaMethods = await getUserMfaMethods(user);
@@ -64,7 +64,6 @@ export async function action({ request }: LoaderArgs) {
     });
 
     if (tokenValid) {
-      console.log("token valid")
       return await mfaActivateUserSession({ request, redirectTo });
     }
   }

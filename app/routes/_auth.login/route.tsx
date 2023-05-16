@@ -112,7 +112,6 @@ export async function action({ request }: ActionArgs) {
   const mfaMethods = await getUserMfaMethods(user);
 
   if (mfaMethods.length > 0) {
-    console.log("mfaMethods", mfaMethods);
     if (mfaMethods.find((m) => m.type === MFA_TYPE.SMS)) {
       // TODO 
     }
