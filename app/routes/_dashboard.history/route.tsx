@@ -1,0 +1,38 @@
+import { Box } from "@mui/material";
+import HistoryTable from "../../components/table";
+import { json } from "@remix-run/node";
+import { retrieveRSBOMList } from "~/models/rsboms.server";
+import { useLoaderData } from "@remix-run/react";
+import { RSBOMListEntry } from "~/models/rsbomTypes";
+
+export async function loader() {
+  try {
+    const rsbomList = await retrieveRSBOMList();
+
+    return json({ rsbomList, error: "" });
+  } catch (e) {
+    const error = (e as Error).message;
+    console.error(error);
+    return json({ error, rsbomList: [] });
+  }
+}
+
+export default function Route() {
+  const { rsbomList, error } = useLoaderData<typeof loader>();
+
+  return (
+    <Box>
+      {error ? (
+        <Box textAlign={"center"}> {error} </Box>
+      ) : (
+        <HistoryTable<RSBOMListEntry>
+          tableTitle={"Lists"}
+          tableData={rsbomList || undefined}
+          headers={["Timestamp", "Data Object", "Filename", "ID"]}
+          tableContainerStyles={{ maxHeight: "600px" }}
+          search
+        />
+      )}
+    </Box>
+  );
+}

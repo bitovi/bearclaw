@@ -11,11 +11,11 @@ type NavItem = {
   label: string;
   to: string;
   icon?: React.ReactNode;
-}
+};
 
 type Props = {
   navMenu: NavItem[];
-}
+};
 
 export function SideNav({ navMenu }: Props) {
   return (
@@ -24,9 +24,7 @@ export function SideNav({ navMenu }: Props) {
         {navMenu.map(({ label, to, icon }, index) => (
           <ListItem key={index}>
             <ListItemButton component={Link} to={to}>
-              <ListItemIcon>
-                {icon ? icon : <StarIcon />}
-              </ListItemIcon>
+              <ListItemIcon>{icon ? icon : <StarIcon />}</ListItemIcon>
               <ListItemText>{label}</ListItemText>
             </ListItemButton>
           </ListItem>

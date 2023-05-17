@@ -59,7 +59,7 @@ describe("Stripe", () => {
 
       cy.wait(2000);
 
-      cy.findByRole("link", { name: /Account/i });
+      cy.findByRole("link", { name: /Overview/i });
       cy.findByRole("link", { name: /^Subscription$/i }).as("manage");
 
       cy.findByText(/No active subscription/i);
