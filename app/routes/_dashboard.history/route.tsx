@@ -3,7 +3,7 @@ import HistoryTable from "../../components/table";
 import { json } from "@remix-run/node";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { useLoaderData } from "@remix-run/react";
-import { RSBOMListEntry } from "~/models/rsbomTypes";
+import type { RSBOMListEntry } from "~/models/rsbomTypes";
 
 export async function loader() {
   try {

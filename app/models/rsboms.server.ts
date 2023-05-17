@@ -1,4 +1,4 @@
-import { RSBOMListEntry } from "./rsbomTypes";
+import type { RSBOMListEntry } from "./rsbomTypes";
 
 const baseURL = process.env.BEAR_CLAW_SERVER;
 

@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import { SideNav } from "~/components/sideNav/SideNav";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import HistoryIcon from "@mui/icons-material/History";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import BiotechIcon from "@mui/icons-material/Biotech";
@@ -84,6 +85,11 @@ export function MainSideNav() {
               label: "Supply Chain",
               to: "/supplyChain",
               icon: <LinkIcon />,
+            },
+            {
+              label: "History",
+              to: "/history",
+              icon: <HistoryIcon />,
             },
             {
               label: "Subscriptions",

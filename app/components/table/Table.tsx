@@ -7,14 +7,8 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import React, { useMemo, useState } from "react";
-import {
-  Box,
-  IconButton,
-  Stack,
-  SxProps,
-  Theme,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TextInput } from "../input";
 
@@ -39,6 +33,7 @@ const Search = ({
     <Stack direction="row" alignItems="center" justifyContent={"flex-end"}>
       <Stack direction={"row"} width="30%">
         <TextInput
+          name="search"
           inputProps={{
             sx: { maxHeight: "20px" },
           }}
