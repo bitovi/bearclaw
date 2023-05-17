@@ -29,10 +29,10 @@ export default function Index() {
         alignItems="center"
         textAlign="center"
         overflow="hidden"
+        paddingRight="16px"
         sx={{
           color: "white",
-          background:
-            "linear-gradient(167.62deg, #192869 19.38%, #0B1433 101.5%)",
+          background: "linear-gradient(167.62deg, #192869 19.38%, #0B1433 101.5%)",
         }}
       >
         <Box
@@ -90,7 +90,19 @@ export default function Index() {
           </Typography>
         </Box>
       </Box>
-      <Box flex="2" display="flex" justifyContent="center" alignItems="center">
+      <Box
+        flex="2"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        marginLeft="-16px"
+        zIndex="2"
+        sx={{
+          backgroundColor: "white",
+          borderTopLeftRadius: "16px 24px",
+          borderBottomLeftRadius: "16px 24px"
+        }}
+      >
         <Box maxWidth="700px" padding={{ xs: "5rem 1rem", md: "unset" }}>
           <Outlet />
         </Box>
