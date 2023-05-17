@@ -92,7 +92,7 @@ export default function Route() {
           ]}
         />
       </Box>
-      <Container sx={{ overflow: "scroll" }}>
+      <Container>
         <Outlet />
         <Banner
           container={{

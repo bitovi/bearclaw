@@ -43,7 +43,19 @@ export default function Index() {
           <MainSideNav />
         </Box>
       )}
-      <Box display="flex" flexDirection="column" height="100%" width="100%">
+      <Box
+        display="flex"
+        flexDirection="column"
+        height="100%"
+        width="100%"
+        marginLeft="-16px"
+        zIndex="2"
+        sx={{
+          backgroundColor: "white",
+          borderTopLeftRadius: "16px 24px",
+          borderBottomLeftRadius: "16px 24px"
+        }}
+      >
         <Header />
         <Box overflow="hidden auto" padding={4}>
           {navigation.state === "loading" ? (
