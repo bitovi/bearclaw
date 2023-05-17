@@ -181,9 +181,26 @@ export async function forgotPassword(email: User["email"]) {
   return user;
 }
 
+export async function isResetPasswordTokenValid(token: string) {
+  const reset = await prisma.resetPasswordToken.findFirst({
+    where: { 
+      token,
+      expiresAt: {
+        gt: new Date()
+      }
+    },
+  });
+  return reset ? true : false;
+}
+
 export async function resetPasswordByToken(token: string, newPassword: string) {
   const reset = await prisma.resetPasswordToken.findFirst({
-    where: { token },
+    where: { 
+      token,
+      expiresAt: {
+        gt: new Date()
+      }
+    },
     include: {
       user: true,
     },

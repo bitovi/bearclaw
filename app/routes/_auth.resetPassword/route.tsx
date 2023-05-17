@@ -16,14 +16,17 @@ import {
   PasswordStrengthMeter,
   getPasswordStrength,
 } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
-import { resetPasswordByToken } from "~/models/user.server";
+import { isResetPasswordTokenValid, resetPasswordByToken } from "~/models/user.server";
 import { TextInput } from "~/components/input";
+import { Typography } from "@mui/material";
+import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const token = url.searchParams.get("token") || "";
+  const validToken = await isResetPasswordTokenValid(token);
 
-  return json({ token });
+  return json({ token, validToken });
 }
 
 export async function action({ request }: ActionArgs) {
@@ -33,7 +36,36 @@ export async function action({ request }: ActionArgs) {
 
   if (!password) {
     return json(
-      { errors: { password: "Password is invalid" }, success: false },
+      {
+        errors: {
+          password: "Password is invalid"
+        },
+        success: false
+      },
+      { status: 400 }
+    );
+  }
+
+  if (typeof password !== "string" || password.length === 0) {
+    return json(
+      {
+        errors: {
+          password: "Password is required",
+        },
+        success: false
+      },
+      { status: 400 }
+    );
+  }
+
+  if (password.length < 8) {
+    return json(
+      {
+        errors: {
+          password: "Password is too short",
+        },
+        success: false
+      },
       { status: 400 }
     );
   }
@@ -57,7 +89,7 @@ export default function ResetPage() {
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const actionData = useActionData<typeof action>();
   const passwordRef = React.useRef<HTMLInputElement>(null);
-  const { token } = useLoaderData<typeof loader>();
+  const { token, validToken } = useLoaderData<typeof loader>();
 
   React.useEffect(() => {
     if (actionData?.errors?.password) {
@@ -68,10 +100,23 @@ export default function ResetPage() {
   if (actionData?.success) {
     return (
       <Box padding={4}>
-        <p className="text-center text-lg">
+        <Typography>
           Your password has been reset. You can now{" "}
           <Link to="/login">login</Link>.
-        </p>
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (!validToken) {
+    return (
+      <Box padding={4} display="flex" flexDirection="column" gap="1rem">
+        <Typography>
+          Invalid or expired token. Please request a new password reset.
+        </Typography>
+        <ButtonLink to="/forgotPassword" >
+          Reset password
+        </ButtonLink>
       </Box>
     );
   }
@@ -89,7 +134,7 @@ export default function ResetPage() {
             name="password"
             type="password"
             autoComplete="new-password"
-            error={!!actionData?.errors?.password}
+            error={actionData?.errors?.password}
           />
           <PasswordStrengthMeter strength={passwordStrength} />
           <input type="hidden" name="token" value={token} />
