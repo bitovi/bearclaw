@@ -1,4 +1,4 @@
-import type { RSBOMListEntry } from "./rsbomTypes";
+import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
 
 const baseURL = process.env.BEAR_CLAW_SERVER;
 
@@ -23,7 +23,7 @@ export async function retrieveRSBOMDetails({
   userId?: string;
   orgId?: string;
   dataObjectId: string;
-}): Promise<any> {
+}): Promise<ExpandedRSBOMEntry> {
   /**
     TODO: utilize userId and/or orgId to retrieve particular file histories 
     */
