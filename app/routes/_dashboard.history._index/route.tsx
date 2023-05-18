@@ -22,10 +22,8 @@ export async function action({ request }: ActionArgs) {
   const dataObject = formData.get("dataObject");
 
   if (!dataObject || typeof dataObject !== "string") {
-    console.log("AHHHHHH!!!!!!!!!");
     return json({});
   }
-  console.log("WAHOOOO!!!!!!!");
   return redirect(`./${dataObject}`);
 }
 

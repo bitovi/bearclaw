@@ -24,7 +24,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const InvoiceTable: Story = {
+export const _Table: Story = {
   render: (args) => <Table {...args} />,
   args: {
     tableTitle: "Invoices",

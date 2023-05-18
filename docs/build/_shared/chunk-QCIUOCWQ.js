@@ -1,1 +1,0 @@
-import{a as r}from"/build/_shared/chunk-TQRC56TV.js";import{b as o}from"/build/_shared/chunk-5HKR6QTR.js";import{d as t}from"/build/_shared/chunk-G5WX4PPA.js";var p=t(o()),i=({children:u,...n})=>(0,p.jsx)(r,{...n,children:u});export{i as a};
