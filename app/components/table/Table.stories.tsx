@@ -19,7 +19,7 @@ const meta = {
   title: "Components/Table",
   component: Table<any>,
   tags: ["component", "table"],
-} satisfies Meta<typeof Table>;
+} satisfies Meta<typeof Table<any>>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

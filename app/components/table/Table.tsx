@@ -18,6 +18,7 @@ interface TableProps<T> {
   headers: string[];
   tableContainerStyles?: SxProps<Theme>;
   search?: boolean;
+  onRowClick?: (entry: T) => void;
 }
 
 const Search = ({
@@ -56,6 +57,7 @@ export default function InvoiceTable<T>({
   headers = [],
   tableContainerStyles = {},
   search,
+  onRowClick = () => {},
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchString, setSearchString] = useState("");
@@ -135,6 +137,7 @@ export default function InvoiceTable<T>({
                 <TableRow
                   key={i}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  onClick={() => onRowClick(entry)}
                 >
                   {Object.entries(entry).map(([_field, fieldValue], i) => {
                     if (i === 0) {
