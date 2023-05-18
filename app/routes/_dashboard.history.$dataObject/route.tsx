@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
-import { LoaderArgs, json, redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { retrieveRSBOMDetails } from "~/models/rsboms.server";
 import DetailTable from "../../components/table";

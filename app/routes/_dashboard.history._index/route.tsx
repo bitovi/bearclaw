@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import HistoryTable from "../../components/table";
-import { ActionArgs, json, redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { useLoaderData, useSubmit } from "@remix-run/react";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
