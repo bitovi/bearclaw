@@ -14,3 +14,23 @@ export async function retrieveRSBOMList(
   const { bc_rsbom_cyclonedx_aggregate } = await response.json();
   return bc_rsbom_cyclonedx_aggregate;
 }
+
+export async function retrieveRSBOMDetails({
+  userId: _userId,
+  orgId: _orgId,
+  dataObjectId,
+}: {
+  userId?: string;
+  orgId?: string;
+  dataObjectId: string;
+}): Promise<any> {
+  /**
+    TODO: utilize userId and/or orgId to retrieve particular file histories 
+    */
+
+  const response = await fetch(
+    `${baseURL}/bear/get_rsboms_cyclonedx/${dataObjectId}`
+  );
+  const { bc_rsbom_cyclonedx_aggregate } = await response.json();
+  return bc_rsbom_cyclonedx_aggregate;
+}

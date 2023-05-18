@@ -1,9 +1,10 @@
 import { Box } from "@mui/material";
 import HistoryTable from "../../components/table";
-import { json } from "@remix-run/node";
+import { ActionArgs, json, redirect } from "@remix-run/node";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useSubmit } from "@remix-run/react";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
+import { useCallback } from "react";
 
 export async function loader() {
   try {
@@ -16,9 +17,33 @@ export async function loader() {
     return json({ error, rsbomList: [] });
   }
 }
+export async function action({ request }: ActionArgs) {
+  const formData = await request.formData();
+  const dataObject = formData.get("dataObject");
+
+  if (!dataObject || typeof dataObject !== "string") {
+    console.log("AHHHHHH!!!!!!!!!");
+    return json({});
+  }
+  console.log("WAHOOOO!!!!!!!");
+  return redirect(`./${dataObject}`);
+}
 
 export default function Route() {
   const { rsbomList, error } = useLoaderData<typeof loader>();
+  const submit = useSubmit();
+
+  const handleTableRowClick = useCallback(
+    (entry: RSBOMListEntry) => {
+      const formData = new FormData();
+      formData.append("dataObject", entry.dataObject);
+      submit(formData, {
+        action: `/history`,
+        method: "post",
+      });
+    },
+    [submit]
+  );
 
   return (
     <Box>
@@ -28,6 +53,7 @@ export default function Route() {
         <HistoryTable<RSBOMListEntry>
           tableTitle={"Lists"}
           tableData={rsbomList || undefined}
+          onRowClick={handleTableRowClick}
           headers={["Timestamp", "Data Object", "Filename", "ID"]}
           tableContainerStyles={{ maxHeight: "600px" }}
           search
