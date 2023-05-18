@@ -77,7 +77,10 @@ describe("History", () => {
 
     cy.get("tbody").within(() => {
       // one result to display
-      cy.get("tr").should("have.length", 1);
+      cy.get("tr").should("have.length", 1).click({ force: true });
     });
+
+    // we are on the RSBOM Details page
+    cy.findByText(/some complex thing/i);
   });
 });
