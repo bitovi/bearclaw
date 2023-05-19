@@ -1,11 +1,9 @@
 describe("History", () => {
   afterEach(() => {
     cy.cleanupUser();
-    const downloadsFolder = Cypress.config("downloadsFolder");
-    cy.task("deleteFolder", downloadsFolder);
   });
 
-  it.skip("Displays rSBOM history in a table", () => {
+  it("Displays rSBOM history in a table", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to History page
@@ -51,7 +49,7 @@ describe("History", () => {
     });
 
     // we are on the RSBOM Details page
-    cy.findByText(/some complex thing/i);
+    cy.findByTestId("table-title");
   });
 
   it("Allows user to download rSBOM JSON", () => {
@@ -61,10 +59,10 @@ describe("History", () => {
     cy.findByRole("link", { name: /History/i })
       .should("be.visible")
       .click({ force: true });
+
     cy.wait(1000)
       .get("tbody")
       .within(() => {
-        // one result to display
         cy.get("tr").eq(3).click({ force: true });
       });
 
@@ -73,5 +71,8 @@ describe("History", () => {
     cy.findByTestId("table-title").then(($title) => {
       cy.readFile(`cypress/downloads/${$title.text()}.json`, {});
     });
+
+    const downloadsFolder = Cypress.config("downloadsFolder");
+    cy.task("deleteFolder", downloadsFolder);
   });
 });
