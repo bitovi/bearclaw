@@ -136,11 +136,11 @@ export default function InvoiceTable<T>({
                   key={i}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  {Object.entries(entry).map(([_field, fieldValue], i) => {
+                  {Object.entries(entry).map(([field, fieldValue], i) => {
                     if (i === 0) {
                       return (
                         <TableCell
-                          key={`${fieldValue}-${i}`}
+                          key={`${field}-${i}`}
                           component="th"
                           scope="row"
                         >
