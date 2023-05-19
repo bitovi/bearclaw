@@ -102,7 +102,7 @@ export default function InvoiceTable<T>({
   return (
     <Paper sx={{ mb: 2 }}>
       <Box padding={2}>
-        <Typography variant="h6" color="text.primary">
+        <Typography variant="h6" color="text.primary" data-testid="table-title">
           {tableTitle}
         </Typography>
       </Box>

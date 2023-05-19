@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+const { rmdir, existsSync } = require("fs");
 
 export default defineConfig({
   e2e: {
@@ -14,11 +15,28 @@ export default defineConfig({
 
       // To use this:
       // cy.task('log', whateverYouWantInTheTerminal)
+      // cy.task('deleteFolder', folderName)
+
       on("task", {
         log: (message) => {
           console.log(message);
 
           return null;
+        },
+        deleteFolder(folderName) {
+          console.log("deleting folder %s", folderName);
+          // clears our cypress/downloads folder after testing the downloading of an attachment, if the folder exists
+          if (existsSync(folderName)) {
+            return new Promise((resolve, reject) => {
+              rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
+                if (err) {
+                  console.error(err);
+                  return reject(err);
+                }
+                resolve(null);
+              });
+            });
+          }
         },
       });
 
