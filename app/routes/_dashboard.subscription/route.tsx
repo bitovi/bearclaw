@@ -1,14 +1,8 @@
-import {
-  Outlet,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-} from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 
 import Box from "@mui/material/Box";
 
-import { SubscriptionSideNav } from "./components/sidenav";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { json } from "@remix-run/node";
 import {
   retrieveInvoicePreview,
@@ -19,6 +13,10 @@ import { retrieveOrganizationSubscription } from "~/account.server";
 import { Container } from "@mui/material";
 import { Banner } from "~/components/banner";
 import { badSubscriptionStatus } from "./utils/badSubscriptionStatus";
+import { SideNav } from "~/components/sideNav/SideNav";
+
+import PersonIcon from "@mui/icons-material/Person";
+import StarsRoundedIcon from "@mui/icons-material/StarsRounded";
 
 export async function loader({ request }: { request: Request }) {
   try {
@@ -75,21 +73,26 @@ export default function Route() {
       ? badSubscriptionStatus(organizationSubscription.activeStatus)
       : false
   );
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (location.pathname === "/subscription") {
-      navigate("./overview");
-    }
-  }, [location.pathname, navigate]);
 
   return (
     <Box width="100%" display="flex">
       <Box>
-        <SubscriptionSideNav />
+        <SideNav
+          navMenu={[
+            {
+              label: "Overview",
+              to: "/subscription/overview",
+              icon: <PersonIcon />,
+            },
+            {
+              label: "Subscription",
+              to: "/subscription/manage",
+              icon: <StarsRoundedIcon />,
+            },
+          ]}
+        />
       </Box>
-      <Container sx={{ overflow: "scroll" }}>
+      <Container>
         <Outlet />
         <Banner
           container={{

@@ -11,7 +11,7 @@ type NavItem = {
   label: string;
   to: string;
   icon?: React.ReactNode;
-}
+};
 
 type Props = {
   navMenu: NavItem[];
@@ -20,7 +20,7 @@ type Props = {
 
 export function SideNav({ navMenu }: Props) {
   const location = useLocation();
-  const currentPath = location?.pathname
+  const currentPath = location?.pathname;
 
   let bestRouteMatch = "";
   navMenu.forEach((item) => {
@@ -36,10 +36,13 @@ export function SideNav({ navMenu }: Props) {
     <nav>
       <List>
         {navMenu.map((item, index) => (
-          <ListItemButton key={index} component={Link} to={item.to} selected={bestRouteMatch === item.to}>
-            <ListItemIcon>
-              {item.icon ? item.icon : <StarIcon />}
-            </ListItemIcon>
+          <ListItemButton
+            key={index}
+            component={Link}
+            to={item.to}
+            selected={bestRouteMatch === item.to}
+          >
+            <ListItemIcon>{item.icon ? item.icon : <StarIcon />}</ListItemIcon>
             <ListItemText>{item.label}</ListItemText>
           </ListItemButton>
         ))}

@@ -7,10 +7,12 @@ import type {
   InvoicePreview,
   InvoiceHistoryItem,
 } from "~/models/subscriptionTypes";
-import InvoiceTable from "./components/invoiceTable";
+import InvoiceTable from "../../components/table";
 import Card from "./components/card";
 import dayjs from "dayjs";
 import { useMemo } from "react";
+
+const InvoiceTableHeaders = ["Invoice ID", "Date", "Invoice Amount"];
 
 export default function Route() {
   const navigate = useNavigate();
@@ -81,10 +83,12 @@ export default function Route() {
         )}
       </Stack>
       <Box paddingY={2}>
-        <InvoiceTable
-          invoiceEntries={
-            invoiceHistory || [{ Invoice_ID: "", Date: "", Invoice_amount: "" }]
-          }
+        <InvoiceTable<InvoiceHistoryItem>
+          tableTitle={"Invoice"}
+          tableData={invoiceHistory || undefined}
+          headers={InvoiceTableHeaders}
+          tableContainerStyles={{ maxHeight: "400px" }}
+          search
         />
       </Box>
     </Stack>

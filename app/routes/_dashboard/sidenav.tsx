@@ -1,12 +1,13 @@
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { SideNav } from "~/components/sideNav/SideNav";
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import LogoutIcon from '@mui/icons-material/Logout';
-import BiotechIcon from '@mui/icons-material/Biotech';
-import LinkIcon from '@mui/icons-material/Link';
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import HistoryIcon from "@mui/icons-material/History";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import LogoutIcon from "@mui/icons-material/Logout";
+import BiotechIcon from "@mui/icons-material/Biotech";
+import LinkIcon from "@mui/icons-material/Link";
 
 export function MainSideNav() {
   return (
@@ -28,17 +29,25 @@ export function MainSideNav() {
         bottom="-40px"
         sx={{
           background: "rgba(117, 117, 117, 0.1)",
-          transform: "rotate(-18deg)"
+          transform: "rotate(-18deg)",
         }}
       />
-      <Box display="flex" flexDirection="column" alignItems="center" padding="2rem 0" width="100%" gap="1rem">
-        <img src="/images/bearclaw.png" alt="" width="100px" style={{ transform: "rotate(-22deg)", filter: "brightness(0)" }} />
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        padding="2rem 0"
+        width="100%"
+        gap="1rem"
+      >
+        <img
+          src="/images/bearclaw.png"
+          alt=""
+          width="100px"
+          style={{ transform: "rotate(-22deg)", filter: "brightness(0)" }}
+        />
         <div>
-          <Typography
-            fontWeight="900"
-            fontSize="2rem"
-            display="inline"
-          >
+          <Typography fontWeight="900" fontSize="2rem" display="inline">
             BEAR
           </Typography>
           <Typography
@@ -51,7 +60,7 @@ export function MainSideNav() {
                 -1px -1px 0 #0037FF,  
                 1px -1px 0 #0037FF,
                 -1px 1px 0 #0037FF,
-                1px 1px 0 #0037FF`
+                1px 1px 0 #0037FF`,
             }}
           >
             CLAW
@@ -65,33 +74,37 @@ export function MainSideNav() {
             {
               label: "Dashboard",
               to: "/",
-              icon: <DashboardIcon />
+              icon: <DashboardIcon />,
             },
             {
               label: "Analysis",
               to: "/analysis",
-              icon: <BiotechIcon />
+              icon: <BiotechIcon />,
             },
             {
-
               label: "Supply Chain",
               to: "/supplyChain",
-              icon: <LinkIcon />
+              icon: <LinkIcon />,
+            },
+            {
+              label: "History",
+              to: "/history",
+              icon: <HistoryIcon />,
             },
             {
               label: "Subscriptions",
-              to: "/subscription",
-              icon: <WorkspacePremiumIcon />
+              to: "/subscription/overview",
+              icon: <WorkspacePremiumIcon />,
             },
             {
               label: "Account",
               to: "/account",
-              icon: <AccountBoxIcon />
+              icon: <AccountBoxIcon />,
             },
             {
               label: "Logout",
               to: "/logout",
-              icon: <LogoutIcon />
+              icon: <LogoutIcon />,
             },
           ]}
         />
