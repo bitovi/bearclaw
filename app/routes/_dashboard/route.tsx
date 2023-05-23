@@ -58,7 +58,7 @@ export default function Index() {
         }}
       >
         <Header />
-        <Box sx={{ overflowX: "scroll" }} padding={4} height="100%">
+        <Box overflow="hidden auto" padding={4} height="100%">
           {navigation.state === "loading" ? (
             <div>
               <Loading />
