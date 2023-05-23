@@ -1,5 +1,11 @@
 import { faker } from "@faker-js/faker";
 
+type LoginData = {
+  email: string;
+  password: string;
+  resetPassword: string;
+};
+
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -50,6 +56,16 @@ declare global {
        *    getStripeElement("Field-numberOpt", combobox).select();
        */
       getStripeElement: typeof getStripeElement;
+
+      /**
+       * Creates user account, verifies, and logs user in
+       *
+       * @returns {typeof LoginData}
+       * @memberof Chainable
+       * @example
+       *    const loginDetails = createAndVeryAccount();
+       */
+      createAndVerifyAccount: typeof createAndVerifyAccount;
     }
   }
 }
@@ -119,7 +135,45 @@ function getStripeElement(fieldName: string, type?: string) {
     .find(selector);
 }
 
+function createLoginData(): LoginData {
+  return {
+    email: `${faker.internet.userName()}-test@bigbear.ai`,
+    password: faker.internet.password(),
+    resetPassword: faker.internet.password(),
+  };
+}
+
+function createAndVerifyAccount(
+  credentials?: LoginData,
+  destination = "/home"
+) {
+  let _loginForm = credentials;
+  if (!credentials) {
+    _loginForm = createLoginData();
+  }
+  const loginForm = _loginForm as LoginData;
+
+  cy.then(() => ({ email: loginForm.email })).as("user");
+
+  cy.viewport(1280, 800);
+  cy.visitAndCheck(destination);
+
+  if (destination === "/home") {
+    cy.findByRole("link", { name: /sign up/i }).click();
+  }
+
+  cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
+  cy.findByLabelText(/password/i).type(loginForm.password);
+  cy.findByRole("button", { name: /create account/i }).click();
+  cy.findByRole("link", { name: /View verification emails here/i }).click();
+  cy.findByTestId(loginForm.email)
+    .findByRole("link", { name: /verify your email/i })
+    .click();
+  cy.findByText(/verified successfully/i);
+}
+
 Cypress.Commands.add("login", login);
 Cypress.Commands.add("cleanupUser", cleanupUser);
 Cypress.Commands.add("visitAndCheck", visitAndCheck);
 Cypress.Commands.add("getStripeElement", getStripeElement);
+Cypress.Commands.add("createAndVerifyAccount", createAndVerifyAccount);

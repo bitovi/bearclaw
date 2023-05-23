@@ -1,0 +1,26 @@
+diff --git a/node_modules/@cyclonedx/cyclonedx-library/src/spdx.ts b/node_modules/@cyclonedx/cyclonedx-library/src/spdx.ts
+index dfd210e..772d32b 100644
+--- a/node_modules/@cyclonedx/cyclonedx-library/src/spdx.ts
++++ b/node_modules/@cyclonedx/cyclonedx-library/src/spdx.ts
+@@ -17,7 +17,7 @@ SPDX-License-Identifier: Apache-2.0
+ Copyright (c) OWASP Foundation. All Rights Reserved.
+ */
+ 
+-import * as spdxExpressionParse from 'spdx-expression-parse'
++import spdxExpressionParse from 'spdx-expression-parse'
+ 
+ /* @ts-expect-error: TS6059 -- this works as long as the file/path is available in dist-package. */
+ import { enum as _spdxSpecEnum } from '../res/schema/spdx.SNAPSHOT.schema.json' assert { type: 'json' }
+diff --git a/node_modules/@cyclonedx/cyclonedx-library/tsconfig.json b/node_modules/@cyclonedx/cyclonedx-library/tsconfig.json
+index 3c48e6b..2a8e459 100644
+--- a/node_modules/@cyclonedx/cyclonedx-library/tsconfig.json
++++ b/node_modules/@cyclonedx/cyclonedx-library/tsconfig.json
+@@ -72,7 +72,7 @@
+     /* Interop Constraints */
+     "isolatedModules": true,                          /* Ensure that each file can be safely transpiled without relying on other imports. */
+     // "allowSyntheticDefaultImports": true,             /* Allow 'import x from y' when a module doesn't have a default export. */
+-    // "esModuleInterop": true,                          /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
++    "esModuleInterop": true,                          /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */
+     // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
+     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+ 

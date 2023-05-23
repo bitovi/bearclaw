@@ -20,18 +20,6 @@ function createLoginData(): LoginData {
   };
 }
 
-function createAndVerifyAccount({ email, password }: LoginData) {
-  cy.findByRole("textbox", { name: /email/i }).type(email);
-  cy.findByLabelText(/password/i).type(password);
-  cy.findByRole("button", { name: /create account/i }).click();
-  cy.findByRole("link", { name: /View verification emails here/i }).click();
-  cy.findAllByTestId(email)
-    .first()
-    .findByRole("link", { name: /verify your email/i })
-    .click();
-  cy.findByText(/verified successfully/i);
-}
-
 describe("join and authenticate tests", () => {
   afterEach(() => {
     cy.cleanupUser();
@@ -39,15 +27,7 @@ describe("join and authenticate tests", () => {
 
   it("should allow you to register, login, MFA, and navigate", () => {
     const loginForm = createLoginData();
-
-    cy.then(() => ({ email: loginForm.email })).as("user");
-
-    cy.viewport(1280, 800);
-    cy.visitAndCheck("/home");
-
-    // Sign up
-    cy.findByRole("link", { name: /sign up/i }).click();
-    createAndVerifyAccount(loginForm);
+    cy.createAndVerifyAccount(loginForm);
 
     // Automatically logged in after sign up
     cy.findByRole("link", { name: /analysis/i });
@@ -55,7 +35,9 @@ describe("join and authenticate tests", () => {
 
     // Logout shows the login screen
     cy.wait(3000);
-    cy.findAllByRole("link", { name: /logout/i }).first().click();
+    cy.findAllByRole("link", { name: /logout/i })
+      .first()
+      .click();
     cy.findByRole("button", { name: /log in/i });
     cy.url().should("include", "/login");
 
@@ -63,51 +45,72 @@ describe("join and authenticate tests", () => {
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
     cy.findByRole("button", { name: /log in/i }).click();
-    cy.findAllByRole("link", { name: /logout/i })
-    
+    cy.findAllByRole("link", { name: /logout/i });
+
     // Setup email MFA
-    cy.findAllByRole("link", { name: /Account/i }).first().click();
-    cy.findAllByRole("link", { name: /Settings/i }).first().click();
+    cy.findAllByRole("link", { name: /Account/i })
+      .first()
+      .click();
+    cy.findAllByRole("link", { name: /Settings/i })
+      .first()
+      .click();
     cy.findByRole("button", { name: /Enable Email MFA/i }).click();
     cy.findByText(/You have been sent a 6 digit token/i);
     cy.visit("/fakeMail");
-    cy.findAllByTestId(/token/i).first().then((t) => {
-      const token = t.text();
+    cy.findAllByTestId(/token/i)
+      .first()
+      .then((t) => {
+        const token = t.text();
 
-      cy.go('back');
-      cy.wait(1000);
-      cy.findByRole("textbox", { name: /mfa token/i }).type(token, {force: true});
-      cy.findByRole("button", { name: /verify/i }).click();
-      cy.findByText(/Email MFA Enabled/i);
-    })
-    
+        cy.go("back");
+        cy.wait(1000);
+        cy.findByRole("textbox", { name: /mfa token/i }).type(token, {
+          force: true,
+        });
+        cy.findByRole("button", { name: /verify/i }).click();
+        cy.findByText(/Email MFA Enabled/i);
+      });
+
     // Logout and verify MFA
-    cy.findAllByRole("link", { name: /logout/i }).first().click();
+    cy.findAllByRole("link", { name: /logout/i })
+      .first()
+      .click();
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
     cy.findByRole("button", { name: /log in/i }).click();
     cy.findByText(/You have been sent a 6 digit token/i);
     cy.visit("/fakeMail");
 
-    cy.findAllByTestId(loginForm.email).first().findByTestId(/token/i).then((t) => {
-      const token = t.text();
+    cy.findAllByTestId(loginForm.email)
+      .first()
+      .findByTestId(/token/i)
+      .then((t) => {
+        const token = t.text();
 
-      cy.go('back');
-      cy.wait(1000);
-      cy.findByRole("textbox", { name: /token/i }).type(token, {force: true});
-      cy.findByRole("button", { name: /complete/i }).click();
-      cy.findAllByRole("link", { name: /logout/i })
-    })
+        cy.go("back");
+        cy.wait(1000);
+        cy.findByRole("textbox", { name: /token/i }).type(token, {
+          force: true,
+        });
+        cy.findByRole("button", { name: /complete/i }).click();
+        cy.findAllByRole("link", { name: /logout/i });
+      });
 
     // Disable MFA
-    cy.findAllByRole("link", { name: /Account/i }).first().click();
-    cy.findAllByRole("link", { name: /Settings/i }).first().click();
+    cy.findAllByRole("link", { name: /Account/i })
+      .first()
+      .click();
+    cy.findAllByRole("link", { name: /Settings/i })
+      .first()
+      .click();
     cy.findByRole("button", { name: /Disable Email MFA/i }).click();
     cy.findByText(/Are you sure you want to disable email MFA/i);
     cy.findByRole("button", { name: /Disable/i }).click();
     cy.findByText(/Email MFA: Off/i);
 
-    cy.findAllByRole("link", { name: /logout/i }).first().click();
+    cy.findAllByRole("link", { name: /logout/i })
+      .first()
+      .click();
 
     // Creating an account with an existing email fails and prompts user to login
     cy.visitAndCheck("/join");
@@ -120,15 +123,13 @@ describe("join and authenticate tests", () => {
 
   it("should allow you to reset password", () => {
     const loginForm = createLoginData();
-
+    cy.createAndVerifyAccount(loginForm, "/join");
     cy.then(() => ({ email: loginForm.email })).as("user");
 
-    cy.viewport(1280, 800);
-    cy.visitAndCheck("/join");
-    createAndVerifyAccount(loginForm);
-
     cy.wait(100);
-    cy.findAllByRole("link", { name: /logout/i }).first().click();
+    cy.findAllByRole("link", { name: /logout/i })
+      .first()
+      .click();
     cy.findByRole("link", { name: /forgot password/i }).click();
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByRole("button", { name: /password reset/i }).click();
@@ -139,10 +140,12 @@ describe("join and authenticate tests", () => {
       .click();
 
     cy.wait(100);
-    cy.findByLabelText(/create new password/i).type('1');
+    cy.findByLabelText(/create new password/i).type("1");
     cy.findByRole("button", { name: /reset password/i }).click();
     cy.findByText(/too short/i);
-    cy.findByLabelText(/create new password/i).clear().type(loginForm.resetPassword);
+    cy.findByLabelText(/create new password/i)
+      .clear()
+      .type(loginForm.resetPassword);
     cy.findByRole("button", { name: /reset password/i }).click();
     cy.findByText(/your password has been reset/i);
     cy.findByRole("link", { name: /login/i }).click();

@@ -1,1 +1,0 @@
-import{$ as p,F as e,I as s,J as o,K as t,S as r,Z as a}from"/build/_shared/chunk-MLPEZQPG.js";a();s();t();var m=p(),n=r({themeId:o,defaultTheme:m,defaultClassName:"MuiBox-root",generateClassName:e.generate}),T=n;export{T as a};

@@ -45,19 +45,20 @@ export default function Index() {
       )}
       <Box
         display="flex"
+        flex={1}
         flexDirection="column"
         height="100%"
-        width="100%"
         marginLeft="-16px"
         zIndex="2"
         sx={{
           backgroundColor: "white",
           borderTopLeftRadius: "16px 24px",
-          borderBottomLeftRadius: "16px 24px"
+          borderBottomLeftRadius: "16px 24px",
+          overflowX: "scroll",
         }}
       >
         <Header />
-        <Box overflow="hidden auto" padding={4}>
+        <Box overflow="hidden auto" padding={4} height="100%">
           {navigation.state === "loading" ? (
             <div>
               <Loading />
