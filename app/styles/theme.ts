@@ -151,6 +151,10 @@ const theme = createTheme({
             "&.Mui-disabled": {
               backgroundColor: "#cccccc",
             },
+            "&:hover": {
+              // until we get a styling for this, setting it to primary, default styling has it fading the color to an almost illegible text
+              backgroundColor: "#0037FF",
+            },
           },
         },
         {
@@ -176,9 +180,21 @@ const theme = createTheme({
             lineHeight: "24px",
             letterSpacing: "0.4px",
             textTransform: "uppercase",
+            "&:hover": {
+              backgroundColor: "transparent",
+            },
           },
         },
       ],
+    },
+    // MuiInputLabel and MuiOutlinedInput set here to match consistent styling of "shrunk" input labels with placeholder text in input box
+    MuiInputLabel: {
+      defaultProps: { shrink: true },
+    },
+    MuiOutlinedInput: {
+      defaultProps: {
+        notched: true,
+      },
     },
   },
 });

@@ -8,6 +8,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import BiotechIcon from "@mui/icons-material/Biotech";
 import LinkIcon from "@mui/icons-material/Link";
+import SupportIcon from "@mui/icons-material/Support";
 
 export function MainSideNav() {
   return (
@@ -69,6 +70,7 @@ export function MainSideNav() {
       </Box>
       <Box>
         <SideNav
+          dividerAfter={3}
           iconColor="#0037FF"
           navMenu={[
             {
@@ -95,6 +97,11 @@ export function MainSideNav() {
               label: "Subscriptions",
               to: "/subscription/overview",
               icon: <WorkspacePremiumIcon />,
+            },
+            {
+              label: "Support",
+              to: "/support",
+              icon: <SupportIcon />,
             },
             {
               label: "Account",

@@ -6,6 +6,8 @@ import StarIcon from "@mui/icons-material/Star";
 
 import { Link } from "~/components/link";
 import { useLocation } from "@remix-run/react";
+import { Divider } from "@mui/material";
+import React from "react";
 
 type NavItem = {
   label: string;
@@ -16,9 +18,10 @@ type NavItem = {
 type Props = {
   navMenu: NavItem[];
   iconColor?: string;
+  dividerAfter?: number;
 };
 
-export function SideNav({ navMenu }: Props) {
+export function SideNav({ navMenu, dividerAfter }: Props) {
   const location = useLocation();
   const currentPath = location?.pathname;
 
@@ -35,17 +38,38 @@ export function SideNav({ navMenu }: Props) {
   return (
     <nav>
       <List>
-        {navMenu.map((item, index) => (
-          <ListItemButton
-            key={index}
-            component={Link}
-            to={item.to}
-            selected={bestRouteMatch === item.to}
-          >
-            <ListItemIcon>{item.icon ? item.icon : <StarIcon />}</ListItemIcon>
-            <ListItemText>{item.label}</ListItemText>
-          </ListItemButton>
-        ))}
+        {navMenu.map((item, index) => {
+          if (dividerAfter && dividerAfter === index) {
+            return (
+              <React.Fragment key={index}>
+                <ListItemButton
+                  component={Link}
+                  to={item.to}
+                  selected={bestRouteMatch === item.to}
+                >
+                  <ListItemIcon>
+                    {item.icon ? item.icon : <StarIcon />}
+                  </ListItemIcon>
+                  <ListItemText>{item.label}</ListItemText>
+                </ListItemButton>
+                <Divider component="li" sx={{ marginY: 2 }} />
+              </React.Fragment>
+            );
+          }
+          return (
+            <ListItemButton
+              key={index}
+              component={Link}
+              to={item.to}
+              selected={bestRouteMatch === item.to}
+            >
+              <ListItemIcon>
+                {item.icon ? item.icon : <StarIcon />}
+              </ListItemIcon>
+              <ListItemText>{item.label}</ListItemText>
+            </ListItemButton>
+          );
+        })}
       </List>
     </nav>
   );
