@@ -44,11 +44,12 @@ describe("Support", () => {
       .click({ force: true });
 
     cy.findByText(/how can we help\?/i);
-    cy.findByRole("textbox", { name: /subject/i }).as("subject");
-    cy.findByRole("textbox", { name: /details/i }).as("details");
 
-    cy.get("@subject").type("I have a problem.");
-    cy.get("@details").type("As I said before, I have a problem.");
+    cy.findByRole("textbox", { name: /subject/i }).type("I have a problem.");
+
+    cy.findByRole("textbox", { name: /additional details/i }).type(
+      "As I said before, I have a problem."
+    );
 
     cy.findByRole("button", { name: /submit/i })
       .should("be.visible")

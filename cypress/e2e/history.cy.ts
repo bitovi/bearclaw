@@ -43,21 +43,24 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
-    // Inspect history trable
-    cy.findByRole("table").within(() => {
-      cy.contains("th", "Timestamp");
-      cy.contains("th", "Data Object");
-      cy.contains("th", "Filename");
-      cy.contains("th", "ID");
-      // Default fetching will have data rows
-      cy.get("tbody").within(() => {
-        cy.get("tr").should("have.length.gt", 0);
-      });
+    // Inspect history table
+    // padding in time as the endpoint is slow
+    cy.wait(5000)
+      .findByRole("table")
+      .within(() => {
+        cy.contains("th", "Timestamp");
+        cy.contains("th", "Data Object");
+        cy.contains("th", "Filename");
+        cy.contains("th", "ID");
+        // Default fetching will have data rows
+        cy.get("tbody").within(() => {
+          cy.get("tr").should("have.length.gt", 0);
+        });
 
-      cy.get("td").then(($td) => {
-        cy.wrap($td.get(6).innerHTML).as("searchText");
+        cy.get("td").then(($td) => {
+          cy.wrap($td.get(6).innerHTML).as("searchText");
+        });
       });
-    });
 
     // search for a string that will yield no results
     cy.wait(2000)

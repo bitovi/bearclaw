@@ -6,7 +6,8 @@ import {
   Button,
   Skeleton,
 } from "@mui/material";
-import { ActionArgs, json } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { Banner } from "~/components/banner";
 import { TextInput } from "~/components/input";
@@ -26,7 +27,7 @@ export async function action({ request }: ActionArgs) {
   }
 
   const subject = formData.get("subject");
-  const details = formData.get("details");
+  const details = formData.get("Additional details");
   if (
     !subject ||
     typeof subject !== "string" ||
@@ -133,7 +134,7 @@ export default function Route() {
                   placeholder="Please select a subject related to your inquiry."
                 />
                 <TextInput
-                  name="details"
+                  name="Additional details"
                   label="Additional details"
                   required
                   fullWidth
