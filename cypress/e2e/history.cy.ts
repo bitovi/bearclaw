@@ -12,20 +12,22 @@ describe("History", () => {
       .click({ force: true });
 
     // Inspect history trable
-    cy.findByRole("table").within(() => {
-      cy.contains("th", "Timestamp");
-      cy.contains("th", "Data Object");
-      cy.contains("th", "Filename");
-      cy.contains("th", "ID");
-      // Default fetching will have data rows
-      cy.get("tbody").within(() => {
-        cy.get("tr").should("have.length.gt", 0);
-      });
+    cy.wait(5000)
+      .findByRole("table")
+      .within(() => {
+        cy.contains("th", "Timestamp");
+        cy.contains("th", "Data Object");
+        cy.contains("th", "Filename");
+        cy.contains("th", "ID");
+        // Default fetching will have data rows
+        cy.get("tbody").within(() => {
+          cy.findAllByRole("row").should("have.length.gt", 0);
+        });
 
-      cy.get("td").then(($td) => {
-        cy.wrap($td.get(6).innerHTML).as("searchText");
+        cy.get("td").then(($td) => {
+          cy.wrap($td.get(6).innerHTML).as("searchText");
+        });
       });
-    });
 
     // search for a string that will yield no results
     cy.wait(2000)
@@ -35,7 +37,7 @@ describe("History", () => {
 
     cy.get("tbody").within(() => {
       // no table row data to display
-      cy.get("tr").should("have.length", 0);
+      cy.findAllByRole("row").should("have.length", 0);
     });
 
     cy.get("@searchText").then((txt: any) => {
@@ -45,7 +47,7 @@ describe("History", () => {
 
     cy.get("tbody").within(() => {
       // one result to display
-      cy.get("tr").should("have.length", 1).click({ force: true });
+      cy.findAllByRole("row").should("have.length", 1).click({ force: true });
     });
 
     // we are on the RSBOM Details page
@@ -63,7 +65,7 @@ describe("History", () => {
     cy.wait(1000)
       .get("tbody")
       .within(() => {
-        cy.get("tr").eq(3).click({ force: true });
+        cy.findAllByRole("row").eq(3).click({ force: true });
       });
 
     cy.findByText(/download/i).click({ force: true });
