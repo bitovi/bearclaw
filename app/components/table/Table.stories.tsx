@@ -19,12 +19,12 @@ const meta = {
   title: "Components/Table",
   component: Table<any>,
   tags: ["component", "table"],
-} satisfies Meta<typeof Table>;
+} satisfies Meta<typeof Table<any>>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const InvoiceTable: Story = {
+export const _Table: Story = {
   render: (args) => <Table {...args} />,
   args: {
     tableTitle: "Invoices",

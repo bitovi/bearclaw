@@ -11,6 +11,7 @@ import { Box, IconButton, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TextInput } from "../input";
+import { Link } from "../link";
 
 interface TableProps<T> {
   tableData: Array<T> | undefined;
@@ -18,6 +19,8 @@ interface TableProps<T> {
   headers: string[];
   tableContainerStyles?: SxProps<Theme>;
   search?: boolean;
+  onRowClick?: (entry: T) => void;
+  linkKey?: keyof T;
 }
 
 const Search = ({
@@ -50,12 +53,44 @@ const Search = ({
   );
 };
 
+function TableRowLink<T>({
+  entry,
+  linkKey,
+}: {
+  entry: T extends Record<string, any> ? T : never;
+  linkKey: keyof T;
+}) {
+  return (
+    <TableRow
+      component={Link}
+      to={`./${entry[linkKey]}`}
+      sx={{
+        "&:last-child td, &:last-child th": { border: 0 },
+        textDecoration: "unset",
+      }}
+    >
+      {Object.entries(entry).map(([field, fieldValue], i) => {
+        if (i === 0) {
+          return (
+            <TableCell key={`${field}-${i}`} component="th" scope="row">
+              {fieldValue}
+            </TableCell>
+          );
+        }
+        return <TableCell key={`${fieldValue}-${i}`}>{fieldValue}</TableCell>;
+      })}
+    </TableRow>
+  );
+}
+
 export default function InvoiceTable<T>({
   tableData = [],
   tableTitle,
   headers = [],
   tableContainerStyles = {},
   search,
+  onRowClick = () => {},
+  linkKey,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchString, setSearchString] = useState("");
@@ -100,7 +135,7 @@ export default function InvoiceTable<T>({
   return (
     <Paper sx={{ mb: 2 }}>
       <Box padding={2}>
-        <Typography variant="h6" color="text.primary">
+        <Typography variant="h6" color="text.primary" data-testid="table-title">
           {tableTitle}
         </Typography>
       </Box>
@@ -131,10 +166,13 @@ export default function InvoiceTable<T>({
           </TableHead>
           <TableBody>
             {tableEntries.map((entry, i) => {
-              return (
+              return linkKey ? (
+                <TableRowLink linkKey={linkKey} key={i} entry={entry} />
+              ) : (
                 <TableRow
                   key={i}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  onClick={() => onRowClick(entry)}
                 >
                   {Object.entries(entry).map(([field, fieldValue], i) => {
                     if (i === 0) {

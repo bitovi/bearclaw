@@ -26,6 +26,7 @@ export default function Route() {
         <Box textAlign={"center"}> {error} </Box>
       ) : (
         <HistoryTable<RSBOMListEntry>
+          linkKey="dataObject"
           tableTitle={"Lists"}
           tableData={rsbomList || undefined}
           headers={["Timestamp", "Data Object", "Filename", "ID"]}
