@@ -1,6 +1,7 @@
 import { useOptionalUser } from "~/utils";
 import Box from "@mui/material/Box";
 import { url } from "gravatar";
+import { Logo } from "./logo";
 
 export const Header = () => {
   const user = useOptionalUser();
@@ -9,9 +10,11 @@ export const Header = () => {
     <Box
       component="header"
       width="100%"
-      borderBottom="1px solid grey"
       padding="1rem 1.5rem"
+      display="flex"
+      justifyContent="space-between"
     >
+      <Logo />
       <Box display="flex" gap={1} justifyContent="flex-end" alignItems="center">
         {user?.email && (
           <Box

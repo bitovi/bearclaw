@@ -2,6 +2,7 @@ import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
 import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
 
 import { Header } from "./header";
 import { MainSideNav } from "./sidenav";
@@ -106,7 +107,7 @@ export default function Index() {
               <Loading />
             </div>
           ) : (
-            <>
+            <main>
               {isVerified ? (
                 <Outlet />
               ) : (
@@ -132,7 +133,7 @@ export default function Index() {
                   </p>
                 </Box>
               )}
-            </>
+            </main>
           )}
         </Box>
       </Box>
