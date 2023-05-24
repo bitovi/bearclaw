@@ -6,12 +6,16 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TextInput } from "../input";
 import { Link } from "../link";
+import { copyText } from "./utils/copyText";
+
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 interface TableProps<T> {
   tableData: Array<T> | undefined;
@@ -60,6 +64,20 @@ function TableRowLink<T>({
   entry: T extends Record<string, any> ? T : never;
   linkKey: keyof T;
 }) {
+  const [textCopied, setTextCopied] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if (textCopied) {
+      timer = setTimeout(() => {
+        setTextCopied(false);
+      }, 500);
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [textCopied]);
+
   return (
     <TableRow
       component={Link}
@@ -77,7 +95,45 @@ function TableRowLink<T>({
             </TableCell>
           );
         }
-        return <TableCell key={`${fieldValue}-${i}`}>{fieldValue}</TableCell>;
+        return (
+          <TableCell key={`${fieldValue}-${i}`}>
+            {field === linkKey ? (
+              <Stack direction="row" alignItems="center">
+                <Box
+                  sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "100px",
+                  }}
+                >
+                  {fieldValue}
+                </Box>
+
+                <IconButton
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setTextCopied(true);
+                    copyText(fieldValue);
+                  }}
+                >
+                  {textCopied ? (
+                    <CheckCircleIcon data-testid="copy-success-icon" />
+                  ) : (
+                    <ContentCopyIcon data-testid="copy-icon" />
+                  )}
+                </IconButton>
+              </Stack>
+            ) : (
+              <>{fieldValue}</>
+            )}
+          </TableCell>
+        );
       })}
     </TableRow>
   );

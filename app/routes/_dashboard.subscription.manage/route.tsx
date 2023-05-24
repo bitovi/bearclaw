@@ -124,36 +124,34 @@ export default function Route() {
     return <Box>{optionResults.error}</Box>;
   }
   return (
-    <Box>
-      <Box flexDirection="column" display="flex">
-        <Box paddingLeft={2} paddingBottom={3}>
-          <Typography variant="h5">Hello McUsername,</Typography>
-          {invoicePreviewDueDate && (
-            <Typography variant="body2" color="text.secondary">
-              {invoicePreviewDueDate}
-            </Typography>
-          )}
-        </Box>
-        <Box maxHeight="80vh" overflow="scroll">
-          <Stack spacing={2}>
-            {optionResults?.subscriptionOptions?.map((opt) => {
-              return (
-                <PlanCard
-                  key={opt.id}
-                  selected={
-                    opt.product.name ===
-                    organizationSubscription?.subscriptionLevel
-                  }
-                  planName={opt.product.name}
-                  price={`$${(opt.unit_amount || 0) / 100}`}
-                  description={`The ${opt.product.name} subscription tier`}
-                  featureList={["Feature 1", "Feature 2", "Feature 3"]}
-                  handleClick={() => handlePlanClick(opt.id)}
-                />
-              );
-            })}
-          </Stack>
-        </Box>
+    <Box flexDirection="column" display="flex">
+      <Box paddingLeft={2} paddingBottom={2}>
+        <Typography variant="h5">Hello McUsername,</Typography>
+        {invoicePreviewDueDate && (
+          <Typography variant="body2" color="text.secondary">
+            {invoicePreviewDueDate}
+          </Typography>
+        )}
+      </Box>
+      <Box maxHeight="78vh" overflow="scroll">
+        <Stack spacing={2}>
+          {optionResults?.subscriptionOptions?.map((opt) => {
+            return (
+              <PlanCard
+                key={opt.id}
+                selected={
+                  opt.product.name ===
+                  organizationSubscription?.subscriptionLevel
+                }
+                planName={opt.product.name}
+                price={`$${(opt.unit_amount || 0) / 100}`}
+                description={`The ${opt.product.name} subscription tier`}
+                featureList={["Feature 1", "Feature 2", "Feature 3"]}
+                handleClick={() => handlePlanClick(opt.id)}
+              />
+            );
+          })}
+        </Stack>
       </Box>
     </Box>
   );
