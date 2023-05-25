@@ -10,7 +10,6 @@ import {
   subscriptionOptionLookup,
 } from "~/payment.server";
 import { retrieveOrganizationSubscription } from "~/account.server";
-import { Container } from "@mui/material";
 import { Banner } from "~/components/banner";
 import { badSubscriptionStatus } from "./utils/badSubscriptionStatus";
 import { SideNav } from "~/components/sideNav/SideNav";
@@ -75,7 +74,7 @@ export default function Route() {
   );
 
   return (
-    <Box width="100%" display="flex">
+    <Box display="flex" height="100%">
       <Box>
         <SideNav
           navMenu={[
@@ -92,7 +91,7 @@ export default function Route() {
           ]}
         />
       </Box>
-      <Container>
+      <Box overflow="hidden auto" paddingX={2} flex={1}>
         <Outlet />
         <Banner
           container={{
@@ -109,7 +108,7 @@ export default function Route() {
           title="Error"
           content="There was an error during billing for your most recent subscription. Please contact customer support to resolve the issue."
         />
-      </Container>
+      </Box>
     </Box>
   );
 }

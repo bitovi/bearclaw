@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-
+import "cypress-real-events";
 type LoginData = {
   email: string;
   password: string;

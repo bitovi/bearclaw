@@ -57,7 +57,7 @@ export default function Route() {
   }
 
   return (
-    <Stack>
+    <>
       <Stack
         direction={{ xs: "column", lg: "row" }}
         alignItems="stretch"
@@ -82,15 +82,14 @@ export default function Route() {
           />
         )}
       </Stack>
-      <Box paddingY={2}>
-        <InvoiceTable<InvoiceHistoryItem>
-          tableTitle={"Invoice"}
-          tableData={invoiceHistory || undefined}
-          headers={InvoiceTableHeaders}
-          tableContainerStyles={{ maxHeight: "400px" }}
-          search
-        />
-      </Box>
-    </Stack>
+
+      <InvoiceTable<InvoiceHistoryItem>
+        tableTitle={"Invoice"}
+        tableData={invoiceHistory || undefined}
+        headers={InvoiceTableHeaders}
+        tableContainerStyles={{ maxHeight: "400px" }}
+        search
+      />
+    </>
   );
 }
