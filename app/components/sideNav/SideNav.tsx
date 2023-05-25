@@ -39,35 +39,22 @@ export function SideNav({ navMenu, dividerAfter }: Props) {
     <nav>
       <List>
         {navMenu.map((item, index) => {
-          if (dividerAfter && dividerAfter === index) {
-            return (
-              <React.Fragment key={index}>
-                <ListItemButton
-                  component={Link}
-                  to={item.to}
-                  selected={bestRouteMatch === item.to}
-                >
-                  <ListItemIcon>
-                    {item.icon ? item.icon : <StarIcon />}
-                  </ListItemIcon>
-                  <ListItemText>{item.label}</ListItemText>
-                </ListItemButton>
-                <Divider component="li" sx={{ marginY: 2 }} />
-              </React.Fragment>
-            );
-          }
           return (
-            <ListItemButton
-              key={index}
-              component={Link}
-              to={item.to}
-              selected={bestRouteMatch === item.to}
-            >
-              <ListItemIcon>
-                {item.icon ? item.icon : <StarIcon />}
-              </ListItemIcon>
-              <ListItemText>{item.label}</ListItemText>
-            </ListItemButton>
+            <React.Fragment key={index}>
+              <ListItemButton
+                component={Link}
+                to={item.to}
+                selected={bestRouteMatch === item.to}
+              >
+                <ListItemIcon>
+                  {item.icon ? item.icon : <StarIcon />}
+                </ListItemIcon>
+                <ListItemText>{item.label}</ListItemText>
+              </ListItemButton>
+              {dividerAfter && dividerAfter === index && (
+                <Divider component="li" sx={{ marginY: 2 }} />
+              )}
+            </React.Fragment>
           );
         })}
       </List>
