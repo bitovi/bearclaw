@@ -22,7 +22,8 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
-    // Inspect history trable
+    // Inspect history table
+    // padding in time as the endpoint is slow
     cy.wait(5000)
       .findByRole("table")
       .within(() => {

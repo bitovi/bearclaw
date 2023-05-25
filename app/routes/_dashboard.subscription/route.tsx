@@ -99,8 +99,6 @@ export default function Route() {
             anchorOrigin: { vertical: "bottom", horizontal: "center" },
           }}
           alert={{
-            severity: "error",
-            variant: "filled",
             onClose: () => {
               setErrorVisible(false);
             },
