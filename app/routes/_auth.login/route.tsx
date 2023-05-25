@@ -21,7 +21,7 @@ import { retrieveOrgUserOwner } from "~/models/organizationUsers.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
-  if (userId) return redirect("/");
+  if (userId) return redirect("/dashboard");
   return json({});
 }
 

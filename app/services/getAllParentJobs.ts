@@ -39,12 +39,16 @@ function transformApiParentJob(job: ParentJobResponse): ParentJob {
   };
 }
 
-export const getAllParentJobs = async (): Promise<ParentJob[]> => {
+export const getAllParentJobs = async ({
+  userId,
+  organizationId,
+}: {
+  userId: string;
+  organizationId: string;
+}): Promise<ParentJob[]> => {
   const response = await fetch(
-    `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs`
+    `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs?userId=${userId}&groupId=${organizationId}`
   );
   const data: ParentJobResponse[] = await response.json();
-  return data.map((job) => transformApiParentJob(job)).sort((a, b) => {
-    return dayjs(b.analyzedAt).unix() - dayjs(a.analyzedAt).unix();
-  });
+  return data.map((job) => transformApiParentJob(job))
 };

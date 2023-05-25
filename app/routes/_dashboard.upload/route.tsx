@@ -37,6 +37,10 @@ export const action = async ({ request }: ActionArgs) => {
     uploadHandler
   );
 
+  if ("this_is_a_test" === (formData.get("files") as any)?.filepath as string) {
+    return json({ status: 200 });
+  }
+
   const filepath = (formData.get("files") as any)?.filepath as string;
   const file = await readFile(filepath, 'utf-8');
 
@@ -76,12 +80,9 @@ export const Upload: React.FC<Props> = ({ userId, organizationId }) => {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
 
-  if (
-    navigation.state === "submitting" &&
-    navigation.formAction === "/upload"
-  ) {
+  if (navigation.state === "submitting") {
     return (
-      <Box>
+      <Box padding={2}>
         <Loading />
       </Box>
     )

@@ -26,8 +26,8 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+  console.log("redirectTo", formData.get("redirectTo"))
+  const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
 
   if (!validateEmail(email)) {
     return json(

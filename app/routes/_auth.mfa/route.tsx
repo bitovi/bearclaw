@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderArgs) {
   if (!user) return redirect("/login");
 
   const mfaStatus = await getMfaStatus(request);
-  if (mfaStatus !== "pending") return redirect("/");
+  if (mfaStatus !== "pending") return redirect("/dashboard");
 
   const mfaMethods = await getUserMfaMethods(user);
   const activeMfaMethods = mfaMethods.filter((mfa) => mfa.active && mfa.verifiedAt).map((mfa) => mfa.type);

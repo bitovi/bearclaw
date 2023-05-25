@@ -8,15 +8,15 @@ import Divider from "@mui/material/Divider";
 
 import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
 import { getOrgandUserId, requireUser } from "~/session.server";
-import { DataTable } from "./DataTable";
-import { getAllDataObjects } from "~/services/dataObjects/getAllDataObjects";
+import { getAllParentJobs } from "~/services/getAllParentJobs";
+import Table from "~/components/table/Table";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
-  const activity = await getAllDataObjects(userId, organizationId)
+  const jobs = await getAllParentJobs({ userId, organizationId })
 
-  return json({ user, activity, userId, organizationId });
+  return json({ user, jobs, userId, organizationId });
 }
 
 export async function action(args: ActionArgs) {
@@ -26,7 +26,7 @@ export async function action(args: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-  const { userId, organizationId, user, activity } = useLoaderData<typeof loader>();
+  const { userId, organizationId, user, jobs } = useLoaderData<typeof loader>();
 
   return (
     <Box display="flex" flexDirection="column" gap="2rem">
@@ -94,11 +94,22 @@ export default function Index() {
           <Typography color="#999">Critical Level Warnings</Typography>
         </Box>
       </Box>
-      <Box component={Paper} variant="outlined" pt={2}>
-        {activity.length > 0 ? (
-          <DataTable data={activity} />
+      <Box>
+        {jobs.length > 0 ? (
+          <Table
+            tableTitle="Recent Activity"
+            headers={["File Name", "Type", "Status", "Object ID"]}
+            tableData={jobs.map((job) => {
+              return {
+                fileName: job.filename,
+                type: job.type,
+                status: job.status,
+                objectId: job._id
+              }
+            })}
+          />
         ) : (
-          <Box padding={4}>
+            <Box component={Paper} variant="outlined" pt={2}>
             <Typography fontStyle="italic">No activity yet</Typography>
           </Box>
         )}

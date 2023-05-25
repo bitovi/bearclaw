@@ -73,10 +73,10 @@ export function MainSideNav({ canViewUsers }: { canViewUsers: boolean }) {
     ..._navMenuFirst,
     canViewUsers
       ? {
-          label: "User Management",
-          to: "/manageUser",
-          icon: <PersonSearchIcon />,
-        }
+        label: "User Management",
+        to: "/manageUser",
+        icon: <PersonSearchIcon />,
+      }
       : undefined,
     ..._navMenuSecond,
   ].filter((res) => res !== undefined) as NavItem[];

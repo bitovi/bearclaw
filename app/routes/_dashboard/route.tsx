@@ -80,28 +80,35 @@ export default function Index() {
   const navigation = useNavigation();
 
   return (
-    <Box component="main" display="flex" height="100%">
-      {isVerified && (
-        <Box width="300px" borderRight="1px solid grey">
-          <MainSideNav canViewUsers={canViewUsers} />
-        </Box>
-      )}
+    <Box
+      display="flex"
+      flexDirection="column"
+      width="100%"
+      height="100%"
+      sx={{
+        backgroundColor: "#F5F5F5",
+      }}
+    >
+      <Header />
       <Box
         display="flex"
-        flex={1}
-        flexDirection="column"
         height="100%"
-        marginLeft="-16px"
-        zIndex="2"
-        sx={{
-          backgroundColor: "white",
-          borderTopLeftRadius: "16px 24px",
-          borderBottomLeftRadius: "16px 24px",
-          overflowX: "scroll",
-        }}
+        width="100%"
+        overflow="hidden"
       >
-        <Header />
-        <Box overflow="hidden auto" padding={4} height="100%">
+        {isVerified && (
+          <Box width="250px">
+            <MainSideNav canViewUsers={canViewUsers} />
+          </Box>
+        )}
+        <Box
+          component={Paper}
+          height="100%"
+          overflow="hidden auto"
+          flex="1"
+          padding={4}
+          sx={{ backgroundColor: "white", borderTopLeftRadius: "16px" }}
+        >
           {navigation.state === "loading" ? (
             <div>
               <Loading />

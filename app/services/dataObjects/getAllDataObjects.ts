@@ -32,7 +32,8 @@ export async function getAllDataObjects(userId: string, orgId: string) {
     const response = await fetch(getPath(userId, orgId));
     const data: DataObjectResponse = await response.json();
     return data.data_objects
-  } catch {
+  } catch (error) {
+    console.error(error);
     return [];
   }
 }
