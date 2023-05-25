@@ -4,6 +4,17 @@ describe("History", () => {
   });
 
   it("Displays rSBOM history in a table", () => {
+    // give Cypress permissions to read clipboard
+    Cypress.automation("remote:debugger:protocol", {
+      command: "Browser.grantPermissions",
+      params: {
+        permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
+        origin: window.location.origin,
+      },
+    }).catch((e) => {
+      console.log("error", e.message);
+    });
+
     cy.createAndVerifyAccount();
 
     // Navigate to History page
@@ -25,9 +36,8 @@ describe("History", () => {
           cy.findAllByRole("row").should("have.length.gt", 0);
         });
 
-        cy.get("td").then(($td) => {
-          cy.wrap($td.get(6).innerHTML).as("searchText");
-        });
+        // realClick allows us to engage the copy to clipboard behavior in the cy environment
+        cy.findAllByRole("button").eq(2).realClick();
       });
 
     // search for a string that will yield no results
@@ -41,10 +51,13 @@ describe("History", () => {
       cy.findAllByRole("row").should("have.length", 0);
     });
 
-    cy.get("@searchText").then((txt: any) => {
-      // search for a specifically captured ID value
-      cy.wait(2000).findByRole("textbox").clear().type(txt);
-    });
+    // read from clipboard into search bar of table
+    cy.window()
+      .its("navigator.clipboard")
+      .invoke("readText")
+      .then((data) => {
+        cy.findByRole("textbox").clear().type(data);
+      });
 
     cy.get("tbody").within(() => {
       // one result to display
