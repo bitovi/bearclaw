@@ -6,7 +6,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -163,11 +163,12 @@ export default function InvoiceTable<T>({
     setPage(0);
   };
 
-  const handleSearch = (
-    ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setSearchString(ev.target.value);
-  };
+  const handleSearch = useCallback(
+    (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setSearchString(ev.target.value);
+    },
+    []
+  );
 
   const filteredTabledEntries = useMemo(() => {
     if (!searchString) return tableData;

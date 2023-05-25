@@ -24,7 +24,6 @@ model User {
   mfaTokens           MfaToken[]
 
   userOrganizations OrganizationUsers[]
-  Organization     Organization?
 
   emailSecondary  String?
   firstName       String?
@@ -41,6 +40,8 @@ model OrganizationUsers {
   orgUsersView       Boolean
   orgUsersEdit       Boolean
   orgUsersCreate     Boolean
+
+  owner              Boolean
 
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId String
