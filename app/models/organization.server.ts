@@ -29,11 +29,13 @@ export async function createOrganization({
   name,
   email,
   personal = false,
+  inviteLink,
 }: {
   userId: string;
   name: string;
   email: string;
   personal?: boolean;
+  inviteLink?: string;
 }) {
   try {
     // A constraint to prevent a User from being associated with more than 1 organization
@@ -43,32 +45,34 @@ export async function createOrganization({
       throw new Error("User already belongs to an organization.");
     }
 
-    // // Onboarding a new user: create a vendor payment account and a new organization tagged with that payment account id
-    const paymentAccount = await createPaymentVendorCustomer({ email });
+    if (!inviteLink) {
+      // // Onboarding a new user with no invitation link: create a vendor payment account and a new organization tagged with that payment account id
+      const paymentAccount = await createPaymentVendorCustomer({ email });
 
-    const organization = await prisma.organization.create({
-      data: {
-        paymentAccountId: paymentAccount.id,
-        personal,
-        name,
-        email,
-        ownerId: userId,
-      },
-    });
+      const organization = await prisma.organization.create({
+        data: {
+          paymentAccountId: paymentAccount.id,
+          name,
+          email,
+        },
+      });
 
-    await createOrganizationUser({
-      userId,
-      organizationId: organization.id,
-      permissions: {
-        subscriptionCreate: true,
-        subscriptionEdit: true,
-        subscriptionView: true,
-        orgUsersCreate: true,
-        orgUsersEdit: true,
-        orgUsersView: true,
-      },
-    });
-    return { organization, error: undefined };
+      await createOrganizationUser({
+        userId,
+        organizationId: organization.id,
+        permissions: {
+          subscriptionCreate: true,
+          subscriptionEdit: true,
+          subscriptionView: true,
+          orgUsersCreate: true,
+          orgUsersEdit: true,
+          orgUsersView: true,
+        },
+        owner: true,
+      });
+      return { organization, error: undefined };
+    }
+
     // //
   } catch (e) {
     console.error("Error occurred creating an organization: ", e);

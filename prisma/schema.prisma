@@ -63,12 +63,9 @@ model Organization {
   name             String?
   paymentAccountId String
   email            String
-  personal         Boolean
 
-  organizationUsers OrganizationUsers[]
-
-  owner   User?   @relation(fields: [ownerId], references: [id])
-  ownerId String? @unique
+  organizationUsers   OrganizationUsers[]
+  invitationTokens    InvitationToken[]
 
   subscription Subscription?
 }
@@ -129,6 +126,20 @@ model MfaToken {
   userId String
 
   @@unique([userId, type])
+}
+
+model InvitationToken {
+  id              String @id @default(cuid())
+  guestEmail      String 
+
+
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  organizationId  String @unique
+
+  @@unique([guestEmail, organizationId])
 }
 
 model FakeEmail {

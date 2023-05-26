@@ -19,16 +19,19 @@ export async function createOrganizationUser({
   userId,
   organizationId,
   permissions,
+  owner,
 }: {
   userId: string;
   organizationId: string;
   permissions: Permissions;
+  owner: boolean;
 }) {
   const orgUser = await prisma.organizationUsers.create({
     data: {
       userId,
       organizationId,
       ...permissions,
+      owner,
     },
   });
 
