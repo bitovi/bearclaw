@@ -7,17 +7,34 @@ import { Header } from "./header";
 import { MainSideNav } from "./sidenav";
 import { Loading } from "~/components/loading/Loading";
 import { Link } from "~/components/link";
-import { getUser } from "~/session.server";
+import { getOrgId, getUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
+import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
+import type { OrganizationUsers } from "~/models/organizationUsers.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await getUser(request);
+  const organizationId = await getOrgId(request);
+  let orgUser: OrganizationUsers | null = null;
+
   if (!user) {
     return redirect(`/login?redirectTo=${encodeURIComponent(request.url)}`);
   }
-  if (user.emailVerifiedAt) {
-    return json({ isVerified: true });
+
+  if (organizationId) {
+    orgUser = await retrieveOrganizationUser({
+      organizationId,
+      userId: user?.id,
+    });
   }
+
+  if (user.emailVerifiedAt) {
+    return json({
+      isVerified: true,
+      canViewUsers: orgUser ? orgUser.orgUsersView : false,
+    });
+  }
+
   const url = new URL(request.url);
   const token = url.searchParams.get("token");
   if (token) {
@@ -25,22 +42,28 @@ export async function loader({ request, params }: LoaderArgs) {
     if (result.error) {
       return redirect(`/verify-email/${result.status}`);
     }
-    return json({ isVerified: true });
+    return json({
+      isVerified: true,
+      canViewUsers: orgUser ? orgUser.orgUsersView : false,
+    });
   }
-  return json({ isVerified: false });
+  return json({
+    isVerified: false,
+    canViewUsers: orgUser ? orgUser.orgUsersView : false,
+  });
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-  const { isVerified } = useLoaderData<typeof loader>();
+  const { isVerified, canViewUsers } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
 
   return (
     <Box component="main" display="flex" height="100%">
       {isVerified && (
         <Box width="300px" borderRight="1px solid grey">
-          <MainSideNav />
+          <MainSideNav canViewUsers={canViewUsers} />
         </Box>
       )}
       <Box

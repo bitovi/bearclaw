@@ -14,8 +14,10 @@ export async function generateInvitationToken(
 
   const token = await prisma.invitationToken.upsert({
     where: {
-      organizationId,
-      guestEmail,
+      guestEmail_organizationId: {
+        organizationId,
+        guestEmail,
+      },
     },
     update: inviteToken,
     create: {

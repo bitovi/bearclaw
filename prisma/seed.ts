@@ -15,6 +15,7 @@ async function seed() {
   await prisma.organization.deleteMany({}).catch(() => {
     // no worries if it doesn't exist yet
   });
+  await prisma.organizationUsers.deleteMany({}).catch(() => {});
   await prisma.subscription.deleteMany({}).catch(() => {
     // no worries if it doesn't exist yet
   });

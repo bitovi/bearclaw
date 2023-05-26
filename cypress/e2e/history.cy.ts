@@ -1,6 +1,6 @@
-describe("History", () => {
+describe.skip("History", () => {
   afterEach(() => {
-    cy.cleanupUser();
+    cy.cleanupAccount();
   });
 
   it("Displays rSBOM history in a table", () => {

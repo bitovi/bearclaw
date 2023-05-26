@@ -22,16 +22,16 @@ declare global {
       login: typeof login;
 
       /**
-       * Deletes the current @user
+       * Deletes the current @user and organization
        *
-       * @returns {typeof cleanupUser}
+       * @returns {typeof cleanupAccount}
        * @memberof Chainable
        * @example
-       *    cy.cleanupUser()
+       *    cy.cleanupAccount()
        * @example
-       *    cy.cleanupUser({ email: 'whatever@example.com' })
+       *    cy.cleanupAccount({ email: 'whatever@example.com' })
        */
-      cleanupUser: typeof cleanupUser;
+      cleanupAccount: typeof cleanupAccount;
 
       /**
        * Extends the standard visit command to wait for the page to load
@@ -87,14 +87,16 @@ function login({
   return cy.get("@user");
 }
 
-function cleanupUser({ email }: { email?: string } = {}) {
+function cleanupAccount({ email }: { email?: string } = {}) {
   if (email) {
     deleteUserByEmail(email);
+    deleteOrganizationByEmail(email);
   } else {
     cy.get("@user").then((user) => {
       const email = (user as { email?: string }).email;
       if (email) {
         deleteUserByEmail(email);
+        deleteOrganizationByEmail(email);
       }
     });
   }
@@ -106,6 +108,12 @@ function deleteUserByEmail(email: string) {
     `npx ts-node --require tsconfig-paths/register ./cypress/support/delete-user.ts "${email}"`
   );
   cy.clearCookie("__session");
+}
+
+function deleteOrganizationByEmail(email: string) {
+  cy.exec(
+    `npx ts-node --require tsconfig-paths/register ./cypress/support/delete-organization.ts "${email}"`
+  );
 }
 
 // We're waiting a second because of this issue happen randomly
@@ -173,7 +181,7 @@ function createAndVerifyAccount(
 }
 
 Cypress.Commands.add("login", login);
-Cypress.Commands.add("cleanupUser", cleanupUser);
+Cypress.Commands.add("cleanupAccount", cleanupAccount);
 Cypress.Commands.add("visitAndCheck", visitAndCheck);
 Cypress.Commands.add("getStripeElement", getStripeElement);
 Cypress.Commands.add("createAndVerifyAccount", createAndVerifyAccount);

@@ -2,18 +2,30 @@ import { prisma } from "~/db.server";
 import {
   countOrganizationUserInstances,
   createOrganizationUser,
+  retrieveOrgUserOwner,
+  retrieveOrganizationUsersByUserId,
 } from "./organizationUsers.server";
 import { createPaymentVendorCustomer } from "~/payment.server";
+import type { Organization } from "@prisma/client";
 
 export type { Organization } from "@prisma/client";
 
-export async function getOrganizationsByUserId(userId: string) {
-  // for purposes of MVP, only returning 'findFirst'
-  const userOrg = await prisma.organization.findFirst({
-    where: { organizationUsers: { every: { userId: { equals: userId } } } },
-  });
+export async function getOrganizationsByUserId(
+  userId: string
+): Promise<Organization[]> {
+  const orgUsers = await retrieveOrganizationUsersByUserId({ userId });
 
-  return userOrg;
+  return Promise.all(
+    orgUsers
+      .map(async (orgUser) => {
+        return await prisma.organization.findUnique({
+          where: {
+            id: orgUser.organizationId,
+          },
+        });
+      })
+      .filter((org) => !!org)
+  ) as Promise<Organization[]>;
 }
 
 export async function getOrganizationById(organizationId: string) {
@@ -24,17 +36,25 @@ export async function getOrganizationById(organizationId: string) {
   return org;
 }
 
+export async function getOwnerOrganization({ userId }: { userId: string }) {
+  const orgUserOwner = await retrieveOrgUserOwner({ userId });
+
+  if (!orgUserOwner) {
+    return null;
+  }
+
+  return await getOrganizationById(orgUserOwner.organizationId);
+}
+
 export async function createOrganization({
   userId,
   name,
   email,
-  personal = false,
   inviteLink,
 }: {
   userId: string;
   name: string;
   email: string;
-  personal?: boolean;
   inviteLink?: string;
 }) {
   try {
@@ -45,33 +65,31 @@ export async function createOrganization({
       throw new Error("User already belongs to an organization.");
     }
 
-    if (!inviteLink) {
-      // // Onboarding a new user with no invitation link: create a vendor payment account and a new organization tagged with that payment account id
-      const paymentAccount = await createPaymentVendorCustomer({ email });
+    // // Onboarding a new user with no invitation link: create a vendor payment account and a new organization tagged with that payment account id
+    const paymentAccount = await createPaymentVendorCustomer({ email });
 
-      const organization = await prisma.organization.create({
-        data: {
-          paymentAccountId: paymentAccount.id,
-          name,
-          email,
-        },
-      });
+    const organization = await prisma.organization.create({
+      data: {
+        paymentAccountId: paymentAccount.id,
+        name,
+        email,
+      },
+    });
 
-      await createOrganizationUser({
-        userId,
-        organizationId: organization.id,
-        permissions: {
-          subscriptionCreate: true,
-          subscriptionEdit: true,
-          subscriptionView: true,
-          orgUsersCreate: true,
-          orgUsersEdit: true,
-          orgUsersView: true,
-        },
-        owner: true,
-      });
-      return { organization, error: undefined };
-    }
+    await createOrganizationUser({
+      userId,
+      organizationId: organization.id,
+      permissions: {
+        subscriptionCreate: true,
+        subscriptionEdit: true,
+        subscriptionView: true,
+        orgUsersCreate: true,
+        orgUsersEdit: true,
+        orgUsersView: true,
+      },
+      owner: true,
+    });
+    return { organization, error: undefined };
 
     // //
   } catch (e) {

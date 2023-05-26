@@ -43,6 +43,8 @@ model OrganizationUsers {
 
   owner              Boolean
 
+  accountStatus      String?
+
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId String
 
@@ -56,6 +58,7 @@ model OrganizationUsers {
   teamSizeMax   Int?
 
   @@index([userId, organizationId])
+  @@unique([userId, owner])
 }
 
 model Organization {
@@ -68,6 +71,7 @@ model Organization {
   invitationTokens    InvitationToken[]
 
   subscription Subscription?
+  
 }
 
 model Subscription {
@@ -137,7 +141,7 @@ model InvitationToken {
   expiresAt       DateTime
 
   organization    Organization @relation(fields: [organizationId], references: [id])
-  organizationId  String @unique
+  organizationId  String 
 
   @@unique([guestEmail, organizationId])
 }

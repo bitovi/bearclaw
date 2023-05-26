@@ -18,46 +18,7 @@ import { Button } from "~/components/button";
 
 import AddIcon from "@mui/icons-material/Add";
 import { Stack } from "@mui/material";
-
-interface Data {
-  user: string;
-  email: string;
-  label: string;
-  accountStatus: string;
-  label2: string;
-}
-
-function createData(
-  user: string,
-  email: string,
-  label: string,
-  accountStatus: string,
-  label2: string
-): Data {
-  return {
-    user,
-    email,
-    label,
-    accountStatus,
-    label2,
-  };
-}
-
-const rows = [
-  createData("Cupcake", "Cupcake@blah.com", "Cell", "Active", "Cell"),
-  createData("Donut", "Donut@blah.com", "Cell", "Active", "Cell"),
-  createData("Eclair", "Eclair@blah.com", "Cell", "Active", "Cell"),
-  createData("Frozen yoghurt", "Frozen@blah.com", "Cell", "Active", "Cell"),
-  createData("Gingerbread", "Gingerbread@blah.com", "Cell", "Active", "Cell"),
-  createData("Honeycomb", "Honeycomb@blah.com", "Cell", "Active", "Cell"),
-  createData("Ice cream sandwich", "Ice@blah.com", "Cell", "Active", "Cell"),
-  createData("Jelly Bean", "Jelly@blah.com", "Cell", "Active", "Cell"),
-  createData("KitKat", "KitKat@blah.com", "Cell", "Active", "Cell"),
-  createData("Lollipop", "Lollipop@blah.com", "Cell", "Active", "Cell"),
-  createData("Marshmallow", "Marshmallow@blah.com", "Cell", "Active", "Cell"),
-  createData("Nougat", "Nougat@blah.com", "Cell", "Active", "Cell"),
-  createData("Oreo", "Oreo@blah.com", "Cell", "Active", "Cell"),
-];
+import type { OrganizationMember } from "~/models/organizationUsers.server";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -75,8 +36,8 @@ function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key
 ): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
+  a: { [key in Key]: number | string | null },
+  b: { [key in Key]: number | string | null }
 ) => number {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -104,14 +65,14 @@ function stableSort<T>(
 
 interface HeadCell {
   disablePadding: boolean;
-  id: keyof Data;
+  id: keyof OrganizationMember;
   label: string;
   numeric: boolean;
 }
 
 const headCells: readonly HeadCell[] = [
   {
-    id: "user",
+    id: "name",
     numeric: false,
     disablePadding: true,
     label: "User",
@@ -123,22 +84,10 @@ const headCells: readonly HeadCell[] = [
     label: "Email",
   },
   {
-    id: "label",
-    numeric: false,
-    disablePadding: false,
-    label: "Label",
-  },
-  {
     id: "accountStatus",
     numeric: false,
     disablePadding: false,
     label: "Account Status",
-  },
-  {
-    id: "label2",
-    numeric: false,
-    disablePadding: false,
-    label: "Label",
   },
 ];
 
@@ -146,7 +95,7 @@ interface EnhancedTableProps {
   numSelected: number;
   onRequestSort: (
     event: React.MouseEvent<unknown>,
-    property: keyof Data
+    property: keyof OrganizationMember
   ) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
@@ -164,7 +113,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     onRequestSort,
   } = props;
   const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+    (property: keyof OrganizationMember) =>
+    (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
 
@@ -210,11 +160,15 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 function EnhancedTableToolbar({
   onHandleChange,
   searchString,
+  handleAddUser,
+  handleRemoveUser,
 }: {
   onHandleChange: (
     ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   searchString: string | undefined;
+  handleRemoveUser?: (userId: string) => Promise<void>;
+  handleAddUser?: () => Promise<void>;
 }) {
   return (
     <Toolbar
@@ -222,6 +176,10 @@ function EnhancedTableToolbar({
         pt: 2,
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
+        flexDirection: {
+          xs: "column",
+          lg: "row",
+        },
       }}
     >
       <Typography
@@ -230,9 +188,9 @@ function EnhancedTableToolbar({
         id="tableTitle"
         component="div"
       >
-        Nutrition
+        Organization Users
       </Typography>
-      <Stack py={2} gap={2} direction="row" alignItems="center">
+      <Stack py={2} pr={2} gap={2} direction="row" alignItems="center">
         <TextInput
           name="search"
           inputProps={{
@@ -243,34 +201,46 @@ function EnhancedTableToolbar({
           value={searchString}
           sx={{ minWidth: "200px" }}
         />
-        <Button
-          variant={"buttonMedium"}
-          sx={{
-            border: "1px solid rgba(0, 0, 0, 0.87)",
-            height: "100%",
-            maxHeight: "36px",
-          }}
-        >
-          <Typography>Remove</Typography>
-        </Button>
-        <Button
-          variant={"contained"}
-          sx={{
-            height: "100%",
-            maxHeight: "36px",
-          }}
-        >
-          <AddIcon />
-          <Typography>New</Typography>
-        </Button>
+        {handleRemoveUser && (
+          <Button
+            variant={"buttonMedium"}
+            sx={{
+              border: "1px solid rgba(0, 0, 0, 0.87)",
+              height: "100%",
+              maxHeight: "36px",
+            }}
+          >
+            <Typography>Remove</Typography>
+          </Button>
+        )}
+        {handleAddUser && (
+          <Button
+            variant={"contained"}
+            sx={{
+              height: "100%",
+              maxHeight: "36px",
+            }}
+          >
+            <AddIcon />
+            <Typography>New</Typography>
+          </Button>
+        )}
       </Stack>
     </Toolbar>
   );
 }
 
-export function UserTable() {
+export function UserTable({
+  users,
+  handleAddUser,
+  handleRemoveUser,
+}: {
+  users: OrganizationMember[];
+  handleRemoveUser?: (userId: string) => Promise<void>;
+  handleAddUser?: () => Promise<void>;
+}) {
   const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] = useState<keyof Data>("user");
+  const [orderBy, setOrderBy] = useState<keyof OrganizationMember>("name");
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -278,7 +248,7 @@ export function UserTable() {
 
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
-    property: keyof Data
+    property: keyof OrganizationMember
   ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -287,7 +257,7 @@ export function UserTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.user);
+      const newSelected = users.map((n) => n.name);
       setSelected(newSelected);
       return;
     }
@@ -336,26 +306,33 @@ export function UserTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
   const filteredTabledEntries = useMemo(() => {
-    if (!searchString) return rows;
+    if (!searchString) return users;
 
-    return rows.filter((entry) => {
+    return users.filter((entry) => {
       let result = false;
       for (const key in entry) {
-        if (entry[key].toLowerCase().includes(searchString)) result = true;
+        if (
+          // Typescript won't believe the keys are associated with the ones specified in the object type
+          (entry[key as keyof OrganizationMember] || "")
+            .toLowerCase()
+            .includes(searchString)
+        ) {
+          result = true;
+        }
       }
       return result;
     });
-  }, [searchString, rows]);
+  }, [searchString, users]);
 
   const visibleRows = useMemo(
     () =>
-      stableSort(filteredTabledEntries, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
-      ),
+      stableSort<OrganizationMember>(
+        filteredTabledEntries,
+        getComparator(order, orderBy)
+      ).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [order, orderBy, page, rowsPerPage, filteredTabledEntries]
   );
 
@@ -363,6 +340,8 @@ export function UserTable() {
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar
+          handleAddUser={handleAddUser}
+          handleRemoveUser={handleRemoveUser}
           onHandleChange={handleSearch}
           searchString={searchString}
         />
@@ -378,21 +357,21 @@ export function UserTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={users.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.user);
+                const isItemSelected = isSelected(row.name);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.user)}
+                    onClick={(event) => handleClick(event, row.name)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.user}
+                    key={row.name}
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
@@ -411,12 +390,12 @@ export function UserTable() {
                       scope="row"
                       padding="none"
                     >
-                      {row.user}
+                      {row.name}
                     </TableCell>
                     <TableCell align="left">{row.email}</TableCell>
-                    <TableCell align="left">{row.label}</TableCell>
+                    {/* <TableCell align="left">{row.label}</TableCell> */}
                     <TableCell align="left">{row.accountStatus}</TableCell>
-                    <TableCell align="left">{row.label2}</TableCell>
+                    {/* <TableCell align="left">{row.label2}</TableCell> */}
                   </TableRow>
                 );
               })}

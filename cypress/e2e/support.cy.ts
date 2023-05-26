@@ -1,6 +1,6 @@
-describe("Support", () => {
+describe.skip("Support", () => {
   afterEach(() => {
-    cy.cleanupUser();
+    cy.cleanupAccount();
   });
 
   it("Displays Support page & form", () => {

@@ -85,16 +85,16 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  let org = await getOrganizationsByUserId(user.id);
+  let orgs = await getOrganizationsByUserId(user.id);
 
-  if (!org) {
+  if (!orgs.length) {
+    const orgName = user.email.split("@")[0];
     const { organization: newOrg } = await createOrganization({
       userId: user.id,
       email: user.email,
-      name: "New Organization",
+      name: `${orgName}'s Organization`,
     });
-    org = newOrg;
-    if (!org) {
+    if (!newOrg) {
       return json(
         {
           errors: {
@@ -107,13 +107,14 @@ export async function action({ request }: ActionArgs) {
         { status: 400 }
       );
     }
+    orgs = [newOrg];
   }
 
   const mfaMethods = await getUserMfaMethods(user);
 
   if (mfaMethods.length > 0) {
     if (mfaMethods.find((m) => m.type === MFA_TYPE.SMS)) {
-      // TODO 
+      // TODO
     }
     if (mfaMethods.find((m) => m.type === MFA_TYPE.EMAIL)) {
       resetMfaToken({ type: MFA_TYPE.EMAIL, user: user });
@@ -123,7 +124,7 @@ export async function action({ request }: ActionArgs) {
   return createUserSession({
     request,
     userId: user.id,
-    orgId: org.id,
+    orgId: orgs[0].id,
     mfaEnabled: mfaMethods.length > 0,
     remember: remember === "on" ? true : false,
     redirectTo,
@@ -150,7 +151,12 @@ export default function LoginPage() {
   return (
     <Box>
       <Form method="post">
-        <Box display="flex" gap="0.5rem" flexDirection="column" textAlign="center">
+        <Box
+          display="flex"
+          gap="0.5rem"
+          flexDirection="column"
+          textAlign="center"
+        >
           <TextInput
             label="Email address"
             name="email"
@@ -173,11 +179,7 @@ export default function LoginPage() {
           <Button type="submit" variant="contained">
             Log in
           </Button>
-          <Checkbox
-            id="remember"
-            name="remember"
-            label="Remember me"
-          />
+          <Checkbox id="remember" name="remember" label="Remember me" />
           <div>
             Don't have an account?{" "}
             <Link
