@@ -20,6 +20,14 @@ Browser-based UI to interact with the BearClaw software analysis tool.
 
 ## Development
 
+### Docker
+
+The dev environment needs Postgres to match production and its just easier to set all that up with a Docker container so you just need to install Docker and teh rest can be magic.
+
+Download and install [Docker](https://www.docker.com/). The recommended settings should be fine.
+
+
+
 - Initial setup:
 
   ```sh
