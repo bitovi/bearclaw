@@ -1,4 +1,4 @@
-import{j as A}from"./jsx-runtime-ad672792.js";import{a as W,r as s}from"./index-f1f749bf.js";import{_ as ve}from"./iframe-9098532e.js";/**
+import{j as A}from"./jsx-runtime-ad672792.js";import{a as W,r as s}from"./index-f1f749bf.js";import{_ as ve}from"./iframe-a40d5cda.js";/**
  * @remix-run/router v1.3.3
  *
  * Copyright (c) Remix Software Inc.
@@ -67,4 +67,4 @@ import{j as A}from"./jsx-runtime-ad672792.js";import{a as W,r as s}from"./index-
     ${t||""}
   `;return"to"in n?A(me,{...n,className:r,"data-testid":"internal-link",children:e}):A("a",{...n,"data-testid":"external-link",className:r,children:e})};try{Z.displayName="Link",Z.__docgenInfo={description:`returns either a Link component or anchor element,
 dependent upon whether user passes a "to" or "href" prop, respectively.`,displayName:"Link",props:{}}}catch{}export{Z as L,St as M};
-//# sourceMappingURL=Link-86e85c3b.js.map
+//# sourceMappingURL=Link-dedfbfff.js.map
