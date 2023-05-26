@@ -2,8 +2,6 @@ import { prisma } from "~/db.server";
 import {
   countOrganizationUserInstances,
   createOrganizationUser,
-  retrieveOrgUserOwner,
-  retrieveOrganizationUsersByUserId,
 } from "./organizationUsers.server";
 import { createPaymentVendorCustomer } from "~/payment.server";
 import type { Organization } from "@prisma/client";
@@ -12,20 +10,21 @@ export type { Organization } from "@prisma/client";
 
 export async function getOrganizationsByUserId(
   userId: string
-): Promise<Organization[]> {
-  const orgUsers = await retrieveOrganizationUsersByUserId({ userId });
-
-  return Promise.all(
-    orgUsers
-      .map(async (orgUser) => {
-        return await prisma.organization.findUnique({
-          where: {
-            id: orgUser.organizationId,
+): Promise<Organization[] | undefined> {
+  return (
+    await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        userOrganizations: {
+          include: {
+            organization: true,
           },
-        });
-      })
-      .filter((org) => !!org)
-  ) as Promise<Organization[]>;
+        },
+      },
+    })
+  )?.userOrganizations.map((userOrg) => userOrg.organization);
 }
 
 export async function getOrganizationById(organizationId: string) {
@@ -37,13 +36,26 @@ export async function getOrganizationById(organizationId: string) {
 }
 
 export async function getOwnerOrganization({ userId }: { userId: string }) {
-  const orgUserOwner = await retrieveOrgUserOwner({ userId });
-
-  if (!orgUserOwner) {
-    return null;
-  }
-
-  return await getOrganizationById(orgUserOwner.organizationId);
+  return (
+    await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        userOrganizations: {
+          include: {
+            organization: true,
+          },
+          where: {
+            owner: true,
+            userId: {
+              equals: userId,
+            },
+          },
+        },
+      },
+    })
+  )?.userOrganizations[0].organization;
 }
 
 export async function createOrganization({

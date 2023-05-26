@@ -87,7 +87,7 @@ export async function action({ request }: ActionArgs) {
 
   let orgs = await getOrganizationsByUserId(user.id);
 
-  if (!orgs.length) {
+  if (!orgs?.length) {
     const orgName = user.email.split("@")[0];
     const { organization: newOrg } = await createOrganization({
       userId: user.id,
