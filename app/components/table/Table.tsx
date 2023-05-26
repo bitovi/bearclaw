@@ -7,7 +7,7 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TextInput } from "../input";
@@ -27,7 +27,7 @@ interface TableProps<T> {
   linkKey?: keyof T;
 }
 
-const Search = ({
+export const Search = ({
   onHandleChange,
   searchString,
 }: {
@@ -37,23 +37,21 @@ const Search = ({
   searchString: string;
 }) => {
   return (
-    <Stack direction="row" alignItems="center" justifyContent={"flex-end"}>
-      <Stack direction={"row"} width="30%">
-        <TextInput
-          name="search"
-          inputProps={{
-            sx: { maxHeight: "20px" },
-          }}
-          onChange={onHandleChange}
-          placeholder="Search"
-          fullWidth
-          value={searchString}
-        />
-        <IconButton>
-          <FilterListIcon />
-        </IconButton>
-      </Stack>
-    </Stack>
+    <Toolbar sx={{ justifyContent: "flex-end" }}>
+      <TextInput
+        name="search"
+        inputProps={{
+          sx: { maxHeight: "20px", minWidth: "300px" },
+        }}
+        onChange={onHandleChange}
+        placeholder="Search"
+        value={searchString}
+        sx={{ minWidth: "200px" }}
+      />
+      <IconButton>
+        <FilterListIcon />
+      </IconButton>
+    </Toolbar>
   );
 };
 
@@ -176,7 +174,7 @@ export default function InvoiceTable<T>({
     return tableData.filter((entry) => {
       let result = false;
       for (const key in entry) {
-        if (entry[key].includes(searchString)) result = true;
+        if (entry[key].toLowerCase().includes(searchString)) result = true;
       }
       return result;
     });

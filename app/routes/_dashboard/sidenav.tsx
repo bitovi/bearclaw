@@ -6,9 +6,11 @@ import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import HistoryIcon from "@mui/icons-material/History";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
-import BiotechIcon from "@mui/icons-material/Biotech";
-import LinkIcon from "@mui/icons-material/Link";
+import SchemaIcon from "@mui/icons-material/Schema";
+// import BiotechIcon from "@mui/icons-material/Biotech";
+// import LinkIcon from "@mui/icons-material/Link";
 import SupportIcon from "@mui/icons-material/Support";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 
 export function MainSideNav() {
   return (
@@ -79,20 +81,31 @@ export function MainSideNav() {
               icon: <DashboardIcon />,
             },
             {
-              label: "Analysis",
-              to: "/analysis",
-              icon: <BiotechIcon />,
-            },
-            {
-              label: "Supply Chain",
-              to: "/supplyChain",
-              icon: <LinkIcon />,
-            },
-            {
               label: "History",
               to: "/history",
               icon: <HistoryIcon />,
             },
+            {
+              label: "Workflows",
+              to: "/workflows",
+              icon: <SchemaIcon />,
+            },
+            {
+              label: "User Management",
+              to: "/manageUser",
+              icon: <PersonSearchIcon />,
+            },
+            // {
+            //   label: "Analysis",
+            //   to: "/analysis",
+            //   icon: <BiotechIcon />,
+            // },
+            // {
+            //   label: "Supply Chain",
+            //   to: "/supplyChain",
+            //   icon: <LinkIcon />,
+            // },
+
             {
               label: "Subscriptions",
               to: "/subscription/overview",
@@ -103,11 +116,11 @@ export function MainSideNav() {
               to: "/support",
               icon: <SupportIcon />,
             },
-            {
-              label: "Account",
-              to: "/account",
-              icon: <AccountBoxIcon />,
-            },
+            // {
+            //   label: "Account",
+            //   to: "/account",
+            //   icon: <AccountBoxIcon />,
+            // },
             {
               label: "Logout",
               to: "/logout",
