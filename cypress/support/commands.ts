@@ -112,7 +112,8 @@ function deleteUserByEmail(email: string) {
 
 function deleteOrganizationByEmail(email: string) {
   cy.exec(
-    `npx ts-node --require tsconfig-paths/register ./cypress/support/delete-organization.ts "${email}"`
+    `npx ts-node --require tsconfig-paths/register ./cypress/support/delete-organization.ts "${email}"`,
+    { failOnNonZeroExit: false }
   );
 }
 

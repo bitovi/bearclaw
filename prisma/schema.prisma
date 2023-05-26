@@ -140,7 +140,7 @@ model InvitationToken {
   createdAt       DateTime @default(now())
   expiresAt       DateTime
 
-  organization    Organization @relation(fields: [organizationId], references: [id])
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId  String 
 
   @@unique([guestEmail, organizationId])

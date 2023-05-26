@@ -1,4 +1,4 @@
-describe.skip("History", () => {
+describe("History", () => {
   afterEach(() => {
     cy.cleanupAccount();
   });

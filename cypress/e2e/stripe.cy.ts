@@ -1,4 +1,4 @@
-describe.skip("Stripe", () => {
+describe("Stripe", () => {
   describe("Add subscription", () => {
     afterEach(() => {
       cy.cleanupAccount();

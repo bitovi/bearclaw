@@ -11,6 +11,7 @@ import { prisma } from "~/db.server";
 installGlobals();
 
 async function deleteOrganization(email: string) {
+  console.log("IN THE SCRIPT!!!!!");
   if (!email) {
     throw new Error("email required for login");
   }
@@ -19,13 +20,15 @@ async function deleteOrganization(email: string) {
   }
 
   try {
-    await prisma.organization.deleteMany({ where: { email } });
+    await prisma.organization.deleteMany({
+      where: { email },
+    });
   } catch (error) {
     if (
       error instanceof PrismaClientKnownRequestError &&
       error.code === "P2025"
     ) {
-      console.log("User not found, so no need to delete");
+      console.log("Organization not found, so no need to delete");
     } else {
       throw error;
     }
