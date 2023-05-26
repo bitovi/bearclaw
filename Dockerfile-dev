@@ -1,0 +1,21 @@
+# base node image
+FROM node:18-bullseye-slim as base
+
+# set for base and all layer that inherit from it
+ENV NODE_ENV development
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+# Install openssl for Prisma
+RUN apt-get update && apt-get install -y openssl
+
+WORKDIR /
+
+ADD package.json package-lock.json .npmrc ./
+RUN npm install
+
+ADD prisma .
+RUN npx prisma generate
+
+ADD . .
+
+ENTRYPOINT [ "./start-dev.sh" ]

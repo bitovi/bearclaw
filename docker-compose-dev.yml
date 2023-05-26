@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  postgres: 
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: B34rCl4w
+      POSTGRES_DB: bearclaw
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+  web:
+    build: 
+      context: ./
+      dockerfile: ./Dockerfile-dev
+      args:
+        environment: dev
+        status: stable
+        DATABASE_URL: postgres://postgres:B34rCl4w@postgres/bearclaw
+    command: npm run dev
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://postgres:B34rCl4w@postgres/bearclaw
+      SESSION_SECRET: ${SESSION_SECRET}
+      BEARCLAW_URL: ${BEARCLAW_URL}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+volumes:
+  db:
+    driver: local

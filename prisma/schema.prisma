@@ -1,10 +1,14 @@
 datasource db {
-  provider = "sqlite"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
 }
 
 model User {
@@ -21,7 +25,7 @@ model User {
   password           Password?
   resetPasswordToken ResetPasswordToken?
   mfaMethods         MfaMethod[]
-  mfaTokens           MfaToken[]
+  mfaTokens          MfaToken[]
 
   userOrganizations OrganizationUsers[]
   Organization     Organization?
