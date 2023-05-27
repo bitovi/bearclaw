@@ -11,7 +11,6 @@ import { prisma } from "~/db.server";
 installGlobals();
 
 async function deleteOrganization(email: string) {
-  console.log("IN THE SCRIPT!!!!!");
   if (!email) {
     throw new Error("email required for login");
   }
