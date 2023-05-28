@@ -11,7 +11,6 @@ import type { ActionArgs } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { Banner } from "~/components/banner";
 import { TextInput } from "~/components/input";
-import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail";
 import { getUser } from "~/session.server";
 
@@ -61,18 +60,6 @@ export async function action({ request }: ActionArgs) {
     return json({ success: false, error: (e as Error).message });
   }
 }
-
-// export async function loader() {
-//   const result = await prisma.organization.findMany({});
-
-//   console.log("result", result);
-
-//   const delete2 = await prisma.organization.delete({
-//     where: { id: "cli5848s90022vt8qa9ks548j" },
-//   });
-//   console.log("delete", delete2);
-//   return json({});
-// }
 
 const SuccessView = () => {
   return (

@@ -160,15 +160,15 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 function EnhancedTableToolbar({
   onHandleChange,
   searchString,
-  handleAddUser,
-  handleRemoveUser,
+  onHandleAddUser,
+  onHandleRemoveUser,
 }: {
   onHandleChange: (
     ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   searchString: string | undefined;
-  handleRemoveUser?: (userId: string) => Promise<void>;
-  handleAddUser?: () => Promise<void>;
+  onHandleRemoveUser?: () => void;
+  onHandleAddUser?: () => void;
 }) {
   return (
     <Toolbar
@@ -201,7 +201,7 @@ function EnhancedTableToolbar({
           value={searchString}
           sx={{ minWidth: "200px" }}
         />
-        {handleRemoveUser && (
+        {onHandleRemoveUser && (
           <Button
             variant={"buttonMedium"}
             sx={{
@@ -209,17 +209,19 @@ function EnhancedTableToolbar({
               height: "100%",
               maxHeight: "36px",
             }}
+            onClick={onHandleRemoveUser}
           >
             <Typography>Remove</Typography>
           </Button>
         )}
-        {handleAddUser && (
+        {onHandleAddUser && (
           <Button
             variant={"contained"}
             sx={{
               height: "100%",
               maxHeight: "36px",
             }}
+            onClick={onHandleAddUser}
           >
             <AddIcon />
             <Typography>New</Typography>
@@ -236,8 +238,8 @@ export function UserTable({
   handleRemoveUser,
 }: {
   users: OrganizationMember[];
-  handleRemoveUser?: (userId: string) => Promise<void>;
-  handleAddUser?: () => Promise<void>;
+  handleRemoveUser?: (userIds: readonly string[]) => void;
+  handleAddUser?: (userIds: readonly string[]) => void;
 }) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof OrganizationMember>("name");
@@ -257,19 +259,19 @@ export function UserTable({
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = users.map((n) => n.name);
+      const newSelected: string[] = users.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (_event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (_event: React.MouseEvent<unknown>, id: string) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -302,7 +304,7 @@ export function UserTable({
     []
   );
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -336,12 +338,20 @@ export function UserTable({
     [order, orderBy, page, rowsPerPage, filteredTabledEntries]
   );
 
+  const onHandleAddUser = useCallback(() => {
+    handleAddUser && handleAddUser(selected);
+  }, [handleAddUser, selected]);
+
+  const onHandleRemoveUser = useCallback(() => {
+    handleRemoveUser && handleRemoveUser(selected);
+  }, [handleRemoveUser, selected]);
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar
-          handleAddUser={handleAddUser}
-          handleRemoveUser={handleRemoveUser}
+          onHandleAddUser={onHandleAddUser}
+          onHandleRemoveUser={onHandleRemoveUser}
           onHandleChange={handleSearch}
           searchString={searchString}
         />
@@ -361,13 +371,13 @@ export function UserTable({
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.name);
+                const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.name)}
+                    onClick={(event) => handleClick(event, row.id)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}

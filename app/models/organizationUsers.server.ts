@@ -22,6 +22,7 @@ export type OrganizationMember = {
   name: string;
   email: string;
   accountStatus: string | null;
+  id: string;
 };
 
 export async function createOrganizationUser({
@@ -63,7 +64,7 @@ export async function retrieveUsersOfOrganization({
     orgUsers
       // does not return the owner of the particular organization
       // .filter((orgUser) => !orgUser.owner)
-      .map(async (orgUser) => {
+      .map(async (orgUser): Promise<OrganizationMember> => {
         const user = await getUserById(orgUser.userId);
         if (!user) {
           throw new Error("Organization member not found");
@@ -75,6 +76,7 @@ export async function retrieveUsersOfOrganization({
           }`,
           email: user.email,
           accountStatus: orgUser.accountStatus,
+          id: orgUser.id,
         };
       })
   );
@@ -126,4 +128,38 @@ export async function countOrganizationUserInstances(userId: string) {
     },
   });
   return count || 0;
+}
+
+export async function deleteOrganizationUserById(orgUserId: string | string[]) {
+  if (Array.isArray(orgUserId)) {
+    return await prisma.$transaction([
+      ...orgUserId.map((orgUser) =>
+        prisma.organizationUsers.delete({ where: { id: orgUser } })
+      ),
+    ]);
+  }
+
+  return await prisma.organizationUsers.delete({ where: { id: orgUserId } });
+}
+
+export async function addOrganizationUser(
+  userId: string,
+  organizationId: string
+) {
+  const lookUpUser = await prisma.user.findUnique({ where: { id: userId } });
+  if (!lookUpUser) return;
+  const orgUser = await createOrganizationUser({
+    userId: lookUpUser?.id,
+    organizationId,
+    permissions: {
+      subscriptionView: true,
+      subscriptionEdit: true,
+      subscriptionCreate: true,
+      orgUsersView: true,
+      orgUsersEdit: true,
+      orgUsersCreate: true,
+    },
+    owner: false,
+  });
+  return orgUser;
 }
