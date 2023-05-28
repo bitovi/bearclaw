@@ -41,7 +41,7 @@ model OrganizationUsers {
   orgUsersEdit       Boolean
   orgUsersCreate     Boolean
 
-  owner              Boolean
+  owner              Boolean  @default(true)
 
   accountStatus      String?
 
