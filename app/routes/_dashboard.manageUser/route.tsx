@@ -1,16 +1,17 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ActionArgs, json, redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { UserTable } from "./components/userTable";
 import { getOrgId, getUser } from "~/session.server";
 import {
-  addOrganizationUser,
   deleteOrganizationUserById,
   retrieveOrganizationUser,
   retrieveUsersOfOrganization,
 } from "~/models/organizationUsers.server";
-import { useLoaderData, useSubmit } from "@remix-run/react";
-import { useCallback } from "react";
+import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
+import { useCallback, useRef, useState } from "react";
+import { AddUserModal } from "./components/addUserModal";
+import { inviteUser } from "~/models/invitationToken.server";
 
 export async function loader({ request }: LoaderArgs) {
   try {
@@ -31,12 +32,7 @@ export async function loader({ request }: LoaderArgs) {
     }
 
     const users = await retrieveUsersOfOrganization({ organizationId });
-    users.push({
-      name: "Test Person",
-      email: "testperson@bitovi.com",
-      accountStatus: "Active",
-      id: "sadfaklsjhdlaslk;fa",
-    });
+
     if (!orgUser.orgUsersView) {
       // if user does not have appropriate view privileges, redirect
       return redirect("/");
@@ -67,62 +63,79 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: ActionArgs) {
   // TODO -- double check CRUD permissions here?
+  const formData = await request.formData();
+
   switch (request.method) {
     case "POST":
-      // const formData = await request.formData();
-      // const userIds = formData.get("userIds");
-      // if (!userIds) return json({});
-
-      // const userIdsArray = JSON.parse(userIds.toString());
-      // const userId = ["cli7n4onr0000vtqp3co6yo0g"];
+      const inviteEmail = formData.get("inviteEmail");
+      if (!inviteEmail) {
+        return json({
+          error:
+            "Must provide an email in order to invite a user to your organziation",
+        });
+      }
       const orgId = await getOrgId(request);
-      if (!orgId) return json({});
-      await addOrganizationUser("cli7n4onr0000vtqp3co6yo0g", orgId);
-      return json({});
+      if (!orgId) return json({ error: "No organization ID found" });
+      await inviteUser(inviteEmail.toString(), orgId);
+      return json({ error: null });
     case "DELETE":
-      // const formData = await request.formData();
-      // const userIds = formData.get("userIds");
-      // if (!userIds) return json({});
+      const userIds = formData.get("userIds");
+      if (!userIds) return json({ error: null });
 
-      // const userIdsArray: string[] = JSON.parse(userIds.toString());
-      // const result = await deleteOrganizationUserById(userIdsArray);
-      // console.log("result", result);
-      return json({});
+      const userIdsArray: string[] = JSON.parse(userIds.toString());
+      const result = await deleteOrganizationUserById(userIdsArray);
+      return json({ error: null });
+    default:
+      return json({
+        error: null,
+      });
   }
 }
 
 export default function Route() {
-  const { permissions, error, users } = useLoaderData<typeof loader>();
+  const [modalOpen, setModalOpen] = useState(false);
+  const {
+    permissions,
+    error: loaderError,
+    users,
+  } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const inputRef = useRef<HTMLInputElement>(null);
   const submit = useSubmit();
 
-  const deleteUser = useCallback((userIds: readonly string[]) => {
-    const formData = new FormData();
-    formData.append("userIds", JSON.stringify(userIds));
-
-    return submit(formData, { method: "delete" });
-  }, []);
-
-  const createUser = useCallback(
+  const deleteUser = useCallback(
     (userIds: readonly string[]) => {
       const formData = new FormData();
       formData.append("userIds", JSON.stringify(userIds));
 
-      return submit(formData, { method: "post" });
+      return submit(formData, { method: "delete" });
     },
     [submit]
   );
 
-  if (error) {
-    return <Box textAlign="center">{error}</Box>;
+  const toggleAddUserModal = useCallback(() => {
+    setModalOpen((modalOpen) => !modalOpen);
+  }, []);
+
+  if (loaderError) {
+    return <Box textAlign="center">{loaderError}</Box>;
   }
 
   return (
     <Box>
+      {actionData?.error && (
+        <Box textAlign={"center"}>
+          <Typography variant="h6" color="error">
+            {actionData.error}
+          </Typography>
+        </Box>
+      )}
       <UserTable
         users={users}
-        handleAddUser={permissions.createUsers ? createUser : undefined}
+        handleAddUser={toggleAddUserModal}
         handleRemoveUser={permissions.deleteUsers ? deleteUser : undefined}
       />
+      <AddUserModal open={modalOpen} onClose={toggleAddUserModal} />
     </Box>
   );
 }

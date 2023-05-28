@@ -59,11 +59,10 @@ export async function retrieveUsersOfOrganization({
       organizationId,
     },
   });
-
   const users = await Promise.all(
     orgUsers
       // does not return the owner of the particular organization
-      // .filter((orgUser) => !orgUser.owner)
+      .filter((orgUser) => !orgUser.owner)
       .map(async (orgUser): Promise<OrganizationMember> => {
         const user = await getUserById(orgUser.userId);
         if (!user) {
@@ -114,11 +113,15 @@ export async function retrieveOrganizationUser({
   organizationId: string;
   userId: string;
 }) {
-  const orgUser = await prisma.organizationUsers.findFirst({
-    where: { userId, organizationId },
-  });
+  try {
+    const orgUser = await prisma.organizationUsers.findFirst({
+      where: { userId, organizationId },
+    });
 
-  return orgUser;
+    return orgUser;
+  } catch (e) {
+    return null;
+  }
 }
 
 export async function countOrganizationUserInstances(userId: string) {

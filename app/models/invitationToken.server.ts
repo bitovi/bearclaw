@@ -28,6 +28,10 @@ export async function generateInvitationToken(
   return token.id;
 }
 
+export async function retrieveInvitationToken(id: string) {
+  return await prisma.invitationToken.findUnique({ where: { id } });
+}
+
 export function sendInvitationTokenEmail(email: string, token: string) {
   return sendMail({
     to: email,
@@ -36,9 +40,8 @@ export function sendInvitationTokenEmail(email: string, token: string) {
     html: `
       <p>Hi ${email},</p>
       <p>Someone has invited you to join their organization.</p>
-      <p>Please click on the following link and sign in to accept their invitation:</p>
-      <a href="${process.env.BEAR_CLAW_SERVER}/login?invite=${token}">Join here</a>
-      <p><b><span data-testid="inviteToken">${token}</span></b></p>
+      <p>Please click on the link below and sign in or sign up to accept their invitation. The link will expire in seven days.</p>
+      <a href="/invite/${token}">Join here</a>
       <p>Thanks,</p>
       <p>The BearClaw Team</p>
     `,
@@ -63,7 +66,29 @@ export async function validateInvitiationToken(id: string) {
     return false;
   }
 
-  await destroyInviteToken(id);
+  return inviteToken;
+}
 
-  return true;
+export async function inviteUser(email: string, orgId: string) {
+  const tokenId = await generateInvitationToken(email, orgId);
+  await sendInvitationTokenEmail(email, tokenId);
+}
+
+/**
+ * Pull the invite token from the pathname passed through redirect
+ * @param string pathname of URL
+ * @returns
+ */
+export function returnInviteToken(string: string) {
+  const arrayString = string.split("/");
+  let result: string | undefined;
+
+  arrayString.forEach((str, i) => {
+    if (str.trim() === "invite") {
+      result = arrayString[i + 1].trim();
+      return;
+    }
+  });
+
+  return result;
 }

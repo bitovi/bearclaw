@@ -37,15 +37,16 @@ export async function getUserId(
   return userId;
 }
 
-export async function getMfaStatus(
-  request: Request
-): Promise<MfaStatus> {
+export async function getMfaStatus(request: Request): Promise<MfaStatus> {
   const session = await getSession(request);
   const status = session.get(MFA_STATUS_KEY);
   return status;
 }
 
-export async function setMfaStatus(request: Request, mfaStatus: MfaStatus): Promise<void> {
+export async function setMfaStatus(
+  request: Request,
+  mfaStatus: MfaStatus
+): Promise<void> {
   const session = await getSession(request);
   session.set(MFA_STATUS_KEY, mfaStatus);
   return;
@@ -127,7 +128,6 @@ export async function createUserSession({
   session.set(USER_SESSION_KEY, userId);
   session.set(ORGANIZATION_KEY, orgId);
   mfaEnabled && session.set(MFA_STATUS_KEY, "pending");
-
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {

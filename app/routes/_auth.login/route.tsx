@@ -1,8 +1,13 @@
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData, useSearchParams } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useSearchParams,
+} from "@remix-run/react";
 import * as React from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
@@ -17,11 +22,32 @@ import { Link } from "~/components/link/Link";
 import { Checkbox } from "~/components/input/checkbox/Checkbox";
 import { getUserMfaMethods, resetMfaToken } from "~/models/mfa.server";
 import { MFA_TYPE } from "~/models/mfa";
+import {
+  returnInviteToken,
+  validateInvitiationToken,
+} from "~/models/invitationToken.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
   if (userId) return redirect("/");
-  return json({});
+  const url = new URL(request.url);
+  const redirectTo = url.searchParams.get("redirectTo");
+
+  if (redirectTo) {
+    const inviteToken = returnInviteToken(redirectTo);
+    if (inviteToken) {
+      const invitationToken = await validateInvitiationToken(inviteToken);
+      if (!invitationToken) {
+        return json({
+          error:
+            "Unable to find invitation token or token has already expired. Please contact organization adminstrator to request a new invitation token.",
+          email: null,
+        });
+      }
+      return json({ email: invitationToken.guestEmail, error: null });
+    }
+  }
+  return json({ error: null, email: null });
 }
 
 export async function action({ request }: ActionArgs) {
@@ -135,6 +161,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
+  const { email, error } = useLoaderData<typeof loader>();
   const redirectTo = searchParams.get("redirectTo") || "/";
   const actionData = useActionData<typeof action>();
   const emailRef = React.useRef<HTMLInputElement>(null);
@@ -148,8 +175,21 @@ export default function LoginPage() {
     }
   }, [actionData]);
 
+  React.useEffect(() => {
+    if (email && emailRef.current) {
+      emailRef.current.value = email;
+    }
+  }, [email]);
+
   return (
     <Box>
+      {error && (
+        <Box paddingBottom={4}>
+          <Typography variant={"h6"} color="error">
+            {error}
+          </Typography>
+        </Box>
+      )}
       <Form method="post">
         <Box
           display="flex"
@@ -165,6 +205,7 @@ export default function LoginPage() {
             autoFocus={true}
             error={actionData?.errors?.email}
             inputRef={emailRef}
+            inputProps={{ readOnly: !!email }}
           />
           <TextInput
             label="Password"

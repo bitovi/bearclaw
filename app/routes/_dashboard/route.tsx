@@ -11,14 +11,16 @@ import { getOrgId, getUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
 import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
 import type { OrganizationUsers } from "~/models/organizationUsers.server";
+import { safeRedirect } from "~/utils";
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await getUser(request);
   const organizationId = await getOrgId(request);
   let orgUser: OrganizationUsers | null = null;
-
+  const url = new URL(request.url);
   if (!user) {
-    return redirect(`/login?redirectTo=${encodeURIComponent(request.url)}`);
+    // encode the pathname rather than the full url to avoid failing the safeRedirect check
+    return redirect(`/login?redirectTo=${encodeURIComponent(url.pathname)}`);
   }
 
   if (organizationId) {
@@ -35,12 +37,15 @@ export async function loader({ request, params }: LoaderArgs) {
     });
   }
 
-  const url = new URL(request.url);
   const token = url.searchParams.get("token");
+  const redirectTo = url.searchParams.get("redirectTo");
   if (token) {
     const result = await validateUserEmailByToken(token);
     if (result.error) {
       return redirect(`/verify-email/${result.status}`);
+    }
+    if (redirectTo) {
+      return redirect(safeRedirect(redirectTo));
     }
     return json({
       isVerified: true,

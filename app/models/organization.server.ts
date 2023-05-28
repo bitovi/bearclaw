@@ -62,12 +62,10 @@ export async function createOrganization({
   userId,
   name,
   email,
-  inviteLink,
 }: {
   userId: string;
   name: string;
   email: string;
-  inviteLink?: string;
 }) {
   try {
     // A constraint to prevent a User from being associated with more than 1 organization

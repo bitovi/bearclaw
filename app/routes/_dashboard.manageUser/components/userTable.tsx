@@ -239,7 +239,7 @@ export function UserTable({
 }: {
   users: OrganizationMember[];
   handleRemoveUser?: (userIds: readonly string[]) => void;
-  handleAddUser?: (userIds: readonly string[]) => void;
+  handleAddUser?: () => void;
 }) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof OrganizationMember>("name");
@@ -338,10 +338,6 @@ export function UserTable({
     [order, orderBy, page, rowsPerPage, filteredTabledEntries]
   );
 
-  const onHandleAddUser = useCallback(() => {
-    handleAddUser && handleAddUser(selected);
-  }, [handleAddUser, selected]);
-
   const onHandleRemoveUser = useCallback(() => {
     handleRemoveUser && handleRemoveUser(selected);
   }, [handleRemoveUser, selected]);
@@ -350,7 +346,7 @@ export function UserTable({
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar
-          onHandleAddUser={onHandleAddUser}
+          onHandleAddUser={handleAddUser}
           onHandleRemoveUser={onHandleRemoveUser}
           onHandleChange={handleSearch}
           searchString={searchString}
@@ -403,9 +399,7 @@ export function UserTable({
                       {row.name}
                     </TableCell>
                     <TableCell align="left">{row.email}</TableCell>
-                    {/* <TableCell align="left">{row.label}</TableCell> */}
                     <TableCell align="left">{row.accountStatus}</TableCell>
-                    {/* <TableCell align="left">{row.label2}</TableCell> */}
                   </TableRow>
                 );
               })}

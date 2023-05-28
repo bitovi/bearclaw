@@ -16,7 +16,10 @@ export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-function sendEmailVerificationEmail(user: User) {
+function sendEmailVerificationEmail(user: User, redirectTo?: string) {
+  const redirectParam = redirectTo
+    ? `&redirectTo=${encodeURIComponent(redirectTo)}`
+    : "";
   return sendMail({
     to: user.email,
     from: "noreply@example.com",
@@ -24,7 +27,7 @@ function sendEmailVerificationEmail(user: User) {
     html: `
       <p>Hi ${user.email},</p>
       <p>Thanks for signing up for BearClaw! Please verify your email address by clicking the link below. The link will expire in 24 hours.</p>
-      <p><a href="/verifyEmail?token=${user.emailVerificationToken}">Verify your email address</a></p>
+      <p><a href="/verifyEmail?token=${user.emailVerificationToken}${redirectParam}">Verify your email address</a></p>
       <p>Thanks,</p>
       <p>The BearClaw Team</p>
       <p><small>If you didn't sign up for BearClaw, please ignore this email.</small></p>
@@ -32,7 +35,11 @@ function sendEmailVerificationEmail(user: User) {
   });
 }
 
-export async function createUser(email: User["email"], password: string) {
+export async function createUser(
+  email: User["email"],
+  password: string,
+  redirectTo?: string
+) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
@@ -54,7 +61,7 @@ export async function createUser(email: User["email"], password: string) {
     name: `${orgName}'s Organization`,
   });
 
-  await sendEmailVerificationEmail(user);
+  await sendEmailVerificationEmail(user, redirectTo);
 
   return { user, orgId: organization?.id, error };
 }
