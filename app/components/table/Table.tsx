@@ -27,7 +27,7 @@ interface TableProps<T> {
   linkKey?: keyof T;
 }
 
-export const Search = ({
+const Search = ({
   onHandleChange,
   searchString,
 }: {
