@@ -50,7 +50,7 @@ INSERT INTO "new_OrganizationUsers" ("experienceMax", "experienceMin", "id", "or
 DROP TABLE "OrganizationUsers";
 ALTER TABLE "new_OrganizationUsers" RENAME TO "OrganizationUsers";
 CREATE INDEX "OrganizationUsers_userId_organizationId_idx" ON "OrganizationUsers"("userId", "organizationId");
-CREATE UNIQUE INDEX "OrganizationUsers_userId_owner_key" ON "OrganizationUsers"("userId", "owner");
+CREATE UNIQUE INDEX "OrganizationUsers_userId_organizationId_key" ON "OrganizationUsers"("userId", "organizationId");
 CREATE TABLE "new_Subscription" (
     "id" TEXT NOT NULL,
     "subscriptionLevel" TEXT NOT NULL,

@@ -15,7 +15,7 @@ import { safeRedirect, validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
 import {
   createOrganization,
-  getOrganizationsByUserId,
+  getOrganizationById,
 } from "~/models/organization.server";
 import { TextInput } from "~/components/input";
 import { Link } from "~/components/link/Link";
@@ -26,6 +26,7 @@ import {
   returnInviteToken,
   validateInvitiationToken,
 } from "~/models/invitationToken.server";
+import { retrieveOrgUserOwner } from "~/models/organizationUsers.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -111,29 +112,35 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  let orgs = await getOrganizationsByUserId(user.id);
+  const ownerOrgUser = await retrieveOrgUserOwner({ userId: user.id });
+  let org;
 
-  if (!orgs?.length) {
+  if (ownerOrgUser) {
+    org = await getOrganizationById(ownerOrgUser.organizationId);
+  }
+
+  if (!ownerOrgUser) {
     const orgName = user.email.split("@")[0];
     const { organization: newOrg } = await createOrganization({
       userId: user.id,
       email: user.email,
       name: `${orgName}'s Organization`,
     });
-    if (!newOrg) {
-      return json(
-        {
-          errors: {
-            email: null,
-            password: null,
-            organization:
-              "Something went wrong verifying an organization for this user",
-          },
+    org = newOrg;
+  }
+
+  if (!org) {
+    return json(
+      {
+        errors: {
+          email: null,
+          password: null,
+          organization:
+            "Something went wrong verifying an organization for this user",
         },
-        { status: 400 }
-      );
-    }
-    orgs = [newOrg];
+      },
+      { status: 400 }
+    );
   }
 
   const mfaMethods = await getUserMfaMethods(user);
@@ -150,7 +157,7 @@ export async function action({ request }: ActionArgs) {
   return createUserSession({
     request,
     userId: user.id,
-    orgId: orgs[0].id,
+    orgId: org.id,
     mfaEnabled: mfaMethods.length > 0,
     remember: remember === "on" ? true : false,
     redirectTo,

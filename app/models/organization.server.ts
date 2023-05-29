@@ -68,14 +68,13 @@ export async function createOrganization({
   email: string;
 }) {
   try {
-    // A constraint to prevent a User from being associated with more than 1 organization
+    // A constraint to prevent a User from creating more than 1 organization
     const userOrgCount = await countOrganizationUserInstances(userId);
 
     if (userOrgCount > 1) {
       throw new Error("User already belongs to an organization.");
     }
 
-    // // Onboarding a new user with no invitation link: create a vendor payment account and a new organization tagged with that payment account id
     const paymentAccount = await createPaymentVendorCustomer({ email });
 
     const organization = await prisma.organization.create({

@@ -58,7 +58,7 @@ model OrganizationUsers {
   teamSizeMax   Int?
 
   @@index([userId, organizationId])
-  @@unique([userId, owner])
+  @@unique([userId, organizationId])
 }
 
 model Organization {

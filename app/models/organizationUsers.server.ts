@@ -96,12 +96,10 @@ export async function retrieveOrganizationUsersByUserId({
 }
 
 export async function retrieveOrgUserOwner({ userId }: { userId: string }) {
-  return await prisma.organizationUsers.findUnique({
+  return await prisma.organizationUsers.findFirst({
     where: {
-      userId_owner: {
-        owner: true,
-        userId,
-      },
+      owner: true,
+      userId,
     },
   });
 }
