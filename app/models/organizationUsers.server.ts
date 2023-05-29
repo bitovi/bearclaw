@@ -133,16 +133,12 @@ export async function countOrganizationUserInstances(userId: string) {
   return count || 0;
 }
 
-export async function deleteOrganizationUserById(orgUserId: string | string[]) {
-  if (Array.isArray(orgUserId)) {
-    return await prisma.$transaction([
-      ...orgUserId.map((orgUser) =>
-        prisma.organizationUsers.delete({ where: { id: orgUser } })
-      ),
-    ]);
-  }
-
-  return await prisma.organizationUsers.delete({ where: { id: orgUserId } });
+export async function deleteOrganizationUsersById(orgUserId: string[]) {
+  return await prisma.$transaction([
+    ...orgUserId.map((orgUser) =>
+      prisma.organizationUsers.delete({ where: { id: orgUser } })
+    ),
+  ]);
 }
 
 export async function addOrganizationUser(

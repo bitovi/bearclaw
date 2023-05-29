@@ -21,14 +21,19 @@ export const Banner: React.FC<Props> = ({
   title,
   content,
 }) => {
-  const containerProps = { ...container };
+  const containerProps = {
+    ...container,
+  };
   const alertProps: Omit<AlertProps, "children"> = {
     severity: "error",
     variant: "filled",
     ...alert,
   };
   return (
-    <MuiSnackbar {...containerProps}>
+    <MuiSnackbar
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      {...containerProps}
+    >
       <MuiAlert {...alertProps}>
         {title && <MuiAlertTitle>{title}</MuiAlertTitle>}
         {content && content}

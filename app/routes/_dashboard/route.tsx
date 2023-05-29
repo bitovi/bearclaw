@@ -39,14 +39,19 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const token = url.searchParams.get("token");
   const redirectTo = url.searchParams.get("redirectTo");
+
   if (token) {
     const result = await validateUserEmailByToken(token);
     if (result.error) {
       return redirect(`/verify-email/${result.status}`);
     }
-    if (redirectTo) {
+
+    // Only redirect if an explicit redirect path was passed (don't use default)
+    // for example to /invite/$token
+    if (redirectTo !== "/") {
       return redirect(safeRedirect(redirectTo));
     }
+
     return json({
       isVerified: true,
       canViewUsers: orgUser ? orgUser.orgUsersView : false,

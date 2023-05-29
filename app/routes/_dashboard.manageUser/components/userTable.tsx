@@ -17,7 +17,7 @@ import { TextInput } from "~/components/input";
 import { Button } from "~/components/button";
 
 import AddIcon from "@mui/icons-material/Add";
-import { Stack } from "@mui/material";
+import { Chip, Stack } from "@mui/material";
 import type { OrganizationMember } from "~/models/organizationUsers.server";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -347,7 +347,7 @@ export function UserTable({
       <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar
           onHandleAddUser={handleAddUser}
-          onHandleRemoveUser={onHandleRemoveUser}
+          onHandleRemoveUser={selected.length ? onHandleRemoveUser : undefined}
           onHandleChange={handleSearch}
           searchString={searchString}
         />
@@ -399,7 +399,9 @@ export function UserTable({
                       {row.name}
                     </TableCell>
                     <TableCell align="left">{row.email}</TableCell>
-                    <TableCell align="left">{row.accountStatus}</TableCell>
+                    <TableCell align="left">
+                      <Chip label={row.accountStatus} />
+                    </TableCell>
                   </TableRow>
                 );
               })}
