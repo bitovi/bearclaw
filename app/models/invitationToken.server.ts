@@ -41,7 +41,7 @@ export function sendInvitationTokenEmail(email: string, token: string) {
       <p>Hi ${email},</p>
       <p>Someone has invited you to join their organization.</p>
       <p>Please click on the link below and sign in or sign up to accept their invitation. The link will expire in seven days.</p>
-      <a href="/invite/${token}">Join here</a>
+      <a data-testid="${email}-link" href="/invite/${token}">Join here</a>
       <p>Thanks,</p>
       <p>The BearClaw Team</p>
     `,

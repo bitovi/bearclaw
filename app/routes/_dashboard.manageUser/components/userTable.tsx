@@ -210,6 +210,7 @@ function EnhancedTableToolbar({
               maxHeight: "36px",
             }}
             onClick={onHandleRemoveUser}
+            name="remove"
           >
             <Typography>Remove</Typography>
           </Button>
@@ -222,6 +223,7 @@ function EnhancedTableToolbar({
               maxHeight: "36px",
             }}
             onClick={onHandleAddUser}
+            name="add"
           >
             <AddIcon />
             <Typography>New</Typography>

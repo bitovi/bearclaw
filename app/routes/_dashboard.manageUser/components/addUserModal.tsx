@@ -2,6 +2,7 @@ import { Dialog, Stack, Typography, Button } from "@mui/material";
 import { Form } from "@remix-run/react";
 import { TextInput } from "~/components/input";
 
+//TODO Validate email before sending invite /utils
 export const AddUserModal = ({
   open,
   onClose,
@@ -56,7 +57,7 @@ export const AddUserModal = ({
             justifyContent="flex-end"
             paddingBottom={3}
           >
-            <Button variant="contained" type="submit" fullWidth>
+            <Button variant="contained" type="submit" fullWidth name="submit">
               Send Invite
             </Button>
           </Stack>
