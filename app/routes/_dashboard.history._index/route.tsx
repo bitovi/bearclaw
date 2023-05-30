@@ -29,7 +29,14 @@ export default function Route() {
           linkKey="dataObject"
           tableTitle={"Lists"}
           tableData={rsbomList || undefined}
-          headers={["Timestamp", "Data Object", "Filename", "ID"]}
+          headers={[
+            "Timestamp",
+            "Data Object",
+            "Filename",
+            "ID",
+            "Type",
+            "Status",
+          ]}
           tableContainerStyles={{ maxHeight: "600px" }}
           search
         />
