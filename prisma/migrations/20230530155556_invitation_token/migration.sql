@@ -17,15 +17,6 @@ CREATE TABLE "InvitationToken" (
 
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
-CREATE TABLE "new_Organization" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT,
-    "paymentAccountId" TEXT NOT NULL,
-    "email" TEXT NOT NULL
-);
-INSERT INTO "new_Organization" ("email", "id", "name", "paymentAccountId") SELECT "email", "id", "name", "paymentAccountId" FROM "Organization";
-DROP TABLE "Organization";
-ALTER TABLE "new_Organization" RENAME TO "Organization";
 CREATE TABLE "new_OrganizationUsers" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "subscriptionView" BOOLEAN NOT NULL,
@@ -51,6 +42,15 @@ DROP TABLE "OrganizationUsers";
 ALTER TABLE "new_OrganizationUsers" RENAME TO "OrganizationUsers";
 CREATE INDEX "OrganizationUsers_userId_organizationId_idx" ON "OrganizationUsers"("userId", "organizationId");
 CREATE UNIQUE INDEX "OrganizationUsers_userId_organizationId_key" ON "OrganizationUsers"("userId", "organizationId");
+CREATE TABLE "new_Organization" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT,
+    "paymentAccountId" TEXT NOT NULL,
+    "email" TEXT NOT NULL
+);
+INSERT INTO "new_Organization" ("email", "id", "name", "paymentAccountId") SELECT "email", "id", "name", "paymentAccountId" FROM "Organization";
+DROP TABLE "Organization";
+ALTER TABLE "new_Organization" RENAME TO "Organization";
 CREATE TABLE "new_Subscription" (
     "id" TEXT NOT NULL,
     "subscriptionLevel" TEXT NOT NULL,
