@@ -2,8 +2,8 @@ require("dotenv").config();
 
 const { setupServer } = require("msw/node");
 const { rest } = require("msw");
-const fixture_getRSBOMSCyclonedx = require("./mockData/getRSBOMSCyclonedx.ts");
-const fixture_getAllParentJobs = require("./mockData/getAllParentJobs.ts");
+const fixture_getRSBOMSCyclonedx = require("./fixtures/getRSBOMSCyclonedx.js");
+const fixture_getAllParentJobs = require("./fixtures/getAllParentJobs.js");
 
 const baseURL = process.env.BEAR_CLAW_SERVER;
 
