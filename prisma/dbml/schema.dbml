@@ -15,7 +15,6 @@ Table User {
   mfaMethods MfaMethod [not null]
   mfaTokens MfaToken [not null]
   userOrganizations OrganizationUsers [not null]
-  Organization Organization
   emailSecondary String
   firstName String
   lastName String
@@ -30,6 +29,8 @@ Table OrganizationUsers {
   orgUsersView Boolean [not null]
   orgUsersEdit Boolean [not null]
   orgUsersCreate Boolean [not null]
+  owner Boolean [not null, default: true]
+  accountStatus String
   organization Organization [not null]
   organizationId String [not null]
   user User [not null]
@@ -39,6 +40,10 @@ Table OrganizationUsers {
   experienceMax Int
   teamSizeMin Int
   teamSizeMax Int
+
+  indexes {
+    (userId, organizationId) [unique]
+  }
 }
 
 Table Organization {
@@ -46,10 +51,8 @@ Table Organization {
   name String
   paymentAccountId String [not null]
   email String [not null]
-  personal Boolean [not null]
   organizationUsers OrganizationUsers [not null]
-  owner User
-  ownerId String [unique]
+  invitationTokens InvitationToken [not null]
   subscription Subscription
 }
 
@@ -107,6 +110,19 @@ Table MfaToken {
   }
 }
 
+Table InvitationToken {
+  id String [pk]
+  guestEmail String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  expiresAt DateTime [not null]
+  organization Organization [not null]
+  organizationId String [not null]
+
+  indexes {
+    (guestEmail, organizationId) [unique]
+  }
+}
+
 Table FakeEmail {
   id String [pk]
   to String [not null]
@@ -123,9 +139,7 @@ Ref: OrganizationUsers.organizationId > Organization.id [delete: Cascade]
 
 Ref: OrganizationUsers.userId > User.id [delete: Cascade]
 
-Ref: Organization.ownerId - User.id
-
-Ref: Subscription.organizationId - Organization.id
+Ref: Subscription.organizationId - Organization.id [delete: Cascade]
 
 Ref: Password.userId - User.id [delete: Cascade]
 
@@ -134,3 +148,5 @@ Ref: ResetPasswordToken.userId - User.id [delete: Cascade]
 Ref: MfaMethod.userId > User.id [delete: Cascade]
 
 Ref: MfaToken.userId > User.id [delete: Cascade]
+
+Ref: InvitationToken.organizationId > Organization.id [delete: Cascade]
