@@ -104,7 +104,12 @@ export async function requireUser(request: Request) {
   const userId = await requireUserId(request);
 
   const user = await getUserById(userId);
-  if (user) return user;
+  if (user) {
+    if (!user.emailVerifiedAt) {
+      throw redirect(`/verifyEmail`);
+    }
+    return user;
+  }
 
   throw await logout(request);
 }

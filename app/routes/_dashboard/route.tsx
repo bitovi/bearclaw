@@ -7,7 +7,6 @@ import Paper from "@mui/material/Paper";
 import { Header } from "./header";
 import { MainSideNav } from "./sidenav";
 import { Loading } from "~/components/loading/Loading";
-import { Link } from "~/components/link";
 import { getOrgId, getUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
 import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
@@ -96,11 +95,9 @@ export default function Index() {
         width="100%"
         overflow="hidden"
       >
-        {isVerified && (
-          <Box width="250px">
-            <MainSideNav canViewUsers={canViewUsers} />
-          </Box>
-        )}
+        <Box width="250px">
+          <MainSideNav canViewUsers={canViewUsers} />
+        </Box>
         <Box
           component={Paper}
           height="100%"
@@ -115,31 +112,7 @@ export default function Index() {
             </div>
           ) : (
             <main>
-              {isVerified ? (
-                <Outlet />
-              ) : (
-                <Box
-                  height="100%"
-                  width="100%"
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  gap={1}
-                >
-                  <p className="text-lg text-gray-500">
-                    Please verify your email address. Check your inbox for a
-                    verification link.
-                  </p>
-                  <Link to="/verificationEmailResend">
-                    Resend verification email
-                  </Link>
-                  <p>
-                    TESTING: Email messaging is not connected yet.{" "}
-                    <Link to="/fakeMail">View verification emails here</Link>
-                  </p>
-                </Box>
-              )}
+              <Outlet />
             </main>
           )}
         </Box>

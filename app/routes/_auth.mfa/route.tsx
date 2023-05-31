@@ -48,7 +48,7 @@ export async function action({ request }: LoaderArgs) {
   }
 
   const token = formData.get("token");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+  const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
 
   if (
     token &&

@@ -4,7 +4,7 @@ import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 
-import { getUserId, createUserSession } from "~/session.server";
+import { createUserSession, getUserId } from "~/session.server";
 
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
@@ -17,8 +17,7 @@ import { TextInput } from "~/components/input";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
-  if (userId) return redirect("/");
-
+  if (userId) return redirect("/dashboard");
   return json({});
 }
 
@@ -26,8 +25,7 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  console.log("redirectTo", formData.get("redirectTo"))
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
+  const redirectTo = safeRedirect(formData.get("redirectTo"), "/verifyEmail");
 
   if (!validateEmail(email)) {
     return json(

@@ -7,12 +7,12 @@ import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
 
 import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
-import { getOrgandUserId, requireUser } from "~/session.server";
+import { getOrgandUserId, getUser } from "~/session.server";
 import { getAllParentJobs } from "~/services/getAllParentJobs";
 import Table from "~/components/table/Table";
 
 export async function loader({ request }: LoaderArgs) {
-  const user = await requireUser(request);
+  const user = await getUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
   const jobs = await getAllParentJobs({ userId, organizationId })
 
@@ -33,7 +33,7 @@ export default function Index() {
       <Box display="flex" alignItems="center">
         <Box flex="1">
           <Typography>Dashboard</Typography>
-          <Typography fontSize="34px" fontWeight="400" lineHeight={2}>Welcome {user.firstName}</Typography>
+          <Typography fontSize="34px" fontWeight="400" lineHeight={2}>Welcome {user?.firstName}</Typography>
         </Box>
         <Box border="1px dashed #999" padding="1rem">
           <Upload userId={userId} organizationId={organizationId} />
@@ -109,7 +109,7 @@ export default function Index() {
             })}
           />
         ) : (
-            <Box component={Paper} variant="outlined" pt={2}>
+            <Box component={Paper} variant="outlined" padding={2}>
             <Typography fontStyle="italic">No activity yet</Typography>
           </Box>
         )}

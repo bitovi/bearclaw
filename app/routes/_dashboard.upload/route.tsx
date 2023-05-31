@@ -15,7 +15,6 @@ import { Loading } from "~/components/loading/Loading";
 
 const CLAW_UPLOAD = process.env.BEARCLAW_URL || '';
 
-
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
   if (!userId || !organizationId) {
@@ -38,7 +37,7 @@ export const action = async ({ request }: ActionArgs) => {
   );
 
   if ("this_is_a_test" === (formData.get("files") as any)?.filepath as string) {
-    return json({ status: 200 });
+    return json({ success: true }, { status: 200 });
   }
 
   const filepath = (formData.get("files") as any)?.filepath as string;
@@ -65,10 +64,10 @@ export const action = async ({ request }: ActionArgs) => {
   });
   await unlink(filepath) // delete the temp file
 
-  if (response.status !== 200) {
-    return json({ status: 500 });
+  if (response.status >= 400) {
+    return json({ success: false }, { status: 500 });
   }
-  return json({ status: 200 });
+  return json({ success: true }, { status: 200 });
 };
 
 type Props = {
@@ -82,20 +81,20 @@ export const Upload: React.FC<Props> = ({ userId, organizationId }) => {
 
   if (navigation.state === "submitting") {
     return (
-      <Box padding={2}>
+      <Box padding={2} width="240px">
         <Loading />
       </Box>
     )
   }
 
   return (
-    <Form method="POST" encType="multipart/form-data" >
+    <Form method="POST" encType="multipart/form-data">
       <Box display="flex" flexDirection="column" gap="1rem" width="240px">
         <input type="file" name="files" aria-label="Select file to upload" />
         <input type="hidden" name="userId" value={userId} />
         <input type="hidden" name="groupId" value={organizationId} />
         <Button type="submit" variant="outlined">Upload</Button>
-        {actionData?.status === 200 && (
+        {actionData?.success && (
           <Typography fontSize="0.75rem" fontWeight="500">
             File uploaded successfully
           </Typography>

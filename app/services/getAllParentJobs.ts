@@ -8,8 +8,6 @@
 //   "_id": "48fe3e4d5de5f76a0b5d5074f21b491d13a5faf86862d648aa5d499978f8da77"
 // }
 
-import dayjs from "dayjs";
-
 type ParentJobResponse = {
   _id: string;
   "Date Analyzed": string;
@@ -46,9 +44,14 @@ export const getAllParentJobs = async ({
   userId: string;
   organizationId: string;
 }): Promise<ParentJob[]> => {
-  const response = await fetch(
-    `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs?userId=${userId}&groupId=${organizationId}`
-  );
-  const data: ParentJobResponse[] = await response.json();
-  return data.map((job) => transformApiParentJob(job))
+  try {
+    const response = await fetch(
+      `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs?userId=${userId}&groupId=${organizationId}`
+    );
+    const data: ParentJobResponse[] = await response.json();
+    return data.map((job) => transformApiParentJob(job))
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
