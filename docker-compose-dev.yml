@@ -19,15 +19,18 @@ services:
         environment: dev
         status: stable
         DATABASE_URL: postgres://postgres:B34rCl4w@postgres/bearclaw
-    command: npm run dev
+    restart: always
     volumes:
-      - .:/usr/app/
-      - /usr/app/node_modules
+      - .:/usr/src/app/
+      - /usr/src/app/node_modules
     ports:
       - "3000:3000"
+      - "8002:8002"
     depends_on:
       - postgres
+    stdin_open: true
     environment:
+      CHOKIDAR_USEPOLLING: true
       DATABASE_URL: postgres://postgres:B34rCl4w@postgres/bearclaw
       SESSION_SECRET: ${SESSION_SECRET}
       BEARCLAW_URL: ${BEARCLAW_URL}
