@@ -17,11 +17,6 @@ export async function loader({ params }: LoaderArgs) {
     const expandedRSBOM = await retrieveRSBOMDetails({
       dataObjectId: dataObject,
     });
-
-    console.log("TEST TEST TEST");
-    console.log("expandedRSBOM", expandedRSBOM);
-    console.log("TEST TEST TEST");
-
     return json({ expandedRSBOM, error: "" });
   } catch (e) {
     const error = (e as Error).message;
