@@ -17,10 +17,19 @@ export async function loader({ request, params }: LoaderArgs) {
   const user = await getUser(request);
   const organizationId = await getOrgId(request);
   let orgUser: OrganizationUsers | null = null;
+
   const url = new URL(request.url);
+  const email = url.searchParams.get("email");
+  const inviteToken = url.searchParams.get("inviteToken");
+
   if (!user) {
     // encode the pathname rather than the full url to avoid failing the safeRedirect check
-    return redirect(`/login?redirectTo=${encodeURIComponent(url.pathname)}`);
+    // pass inviteToken into the encoded redirect but forward email in url params for login/join form
+    return redirect(
+      `/login?redirectTo=${encodeURIComponent(
+        `${url.pathname}?${inviteToken ? `inviteToken=${inviteToken}` : ""}`
+      )}${email ? `&email=${email}` : ""}`
+    );
   }
 
   if (organizationId) {

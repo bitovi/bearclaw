@@ -68,7 +68,8 @@ describe("User Management & Invitation", () => {
       .should("have.value", newUserAccount.email)
       .should("have.attr", "readonly", "readonly");
 
-    cy.findByLabelText(/password/i)
+    cy.wait(500)
+      .findByLabelText(/password/i)
       .should("be.visible")
       .type(newUserAccount.password);
 
@@ -149,7 +150,8 @@ describe("User Management & Invitation", () => {
       .should("have.value", existingUserAccount.email)
       .should("have.attr", "readonly", "readonly");
 
-    cy.findByLabelText(/password/i)
+    cy.wait(500)
+      .findByLabelText(/password/i)
       .should("be.visible")
       .type(ownerAccount.password);
 

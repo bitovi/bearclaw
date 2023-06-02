@@ -11,7 +11,6 @@ import SchemaIcon from "@mui/icons-material/Schema";
 // import LinkIcon from "@mui/icons-material/Link";
 import SupportIcon from "@mui/icons-material/Support";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import { useMemo } from "react";
 
 const _navMenuFirst = [
   {
@@ -70,19 +69,17 @@ const _navMenuSecond = [
 ];
 
 export function MainSideNav({ canViewUsers }: { canViewUsers: boolean }) {
-  const navMenu = useMemo(() => {
-    return [
-      ..._navMenuFirst,
-      canViewUsers
-        ? {
-            label: "User Management",
-            to: "/manageUser",
-            icon: <PersonSearchIcon />,
-          }
-        : undefined,
-      ..._navMenuSecond,
-    ].filter((res) => res !== undefined) as NavItem[];
-  }, [canViewUsers]);
+  const navMenu = [
+    ..._navMenuFirst,
+    canViewUsers
+      ? {
+          label: "User Management",
+          to: "/manageUser",
+          icon: <PersonSearchIcon />,
+        }
+      : undefined,
+    ..._navMenuSecond,
+  ].filter((res) => res !== undefined) as NavItem[];
 
   return (
     <Box

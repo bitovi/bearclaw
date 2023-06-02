@@ -13,39 +13,40 @@ import {
 } from "~/models/organizationUsers.server";
 import { getUser } from "~/session.server";
 
-export async function loader({ request, params }: LoaderArgs) {
+export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
-  if (!user?.emailVerifiedAt) {
+
+  if (!user) {
+    return json({
+      error: "No user found",
+      organizationName: null,
+    });
+  }
+
+  if (!user.emailVerifiedAt) {
     // first ensure the user has been verified before assigning them to the organization
     return json({ error: null, organizationName: null });
   }
+
   try {
-    const { token } = params;
+    const url = new URL(request.url);
+    const token = url.searchParams.get("inviteToken");
     if (!token) {
       return json({
         error:
-          "No invitation token found. Please reach out to organization administrator to request a new invitation.",
+          "No valid invitation token found. Please reach out to organization administrator to request a new invitation.",
         organizationName: null,
       });
     }
-    const invitationToken = await validateInvitiationToken(token);
+    const invitationToken = await validateInvitiationToken(token, user.email);
     if (!invitationToken) {
-      return redirect("/");
-    }
-    const user = await getUser(request);
-    if (!user) {
-      return json({
-        error: "No user found",
-        organizationName: null,
-      });
-    }
-    if (invitationToken.guestEmail !== user.email) {
       return json({
         error:
-          "User email does not match email attached to the invitation token.",
+          "No valid invitation token found for this email. Please reach out to organization administrator to request a new invitation.",
         organizationName: null,
       });
     }
+
     const org = await getOrganizationById(invitationToken.organizationId);
     if (!org) {
       return json({
