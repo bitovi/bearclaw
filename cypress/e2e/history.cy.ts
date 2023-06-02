@@ -82,7 +82,10 @@ describe("History", () => {
         cy.findAllByRole("row").eq(3).click({ force: true });
       });
 
-    cy.findByText(/download/i).click({ force: true });
+    cy.wait(1000)
+      .findByText(/download/i)
+      .should("be.visible")
+      .click({ force: true });
 
     cy.findByTestId("table-title").then(($title) => {
       cy.readFile(`cypress/downloads/${$title.text()}.json`, {});
