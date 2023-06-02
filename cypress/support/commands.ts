@@ -167,16 +167,23 @@ function createAndVerifyAccount(
   cy.visitAndCheck(destination);
 
   if (destination === "/home") {
-    cy.findByRole("link", { name: /sign up/i }).click();
+    cy.findByRole("link", { name: /sign up/i })
+      .should("be.visible")
+      .click({ force: true });
   }
 
   cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
   cy.findByLabelText(/password/i).type(loginForm.password);
-  cy.findByRole("button", { name: /create account/i }).click();
-  cy.findByRole("link", { name: /View verification emails here/i }).click();
+  cy.findByRole("button", { name: /create account/i })
+    .should("be.visible")
+    .click({ force: true });
+  cy.findByRole("link", { name: /View verification emails here/i })
+    .should("be.visible")
+    .click({ force: true });
   cy.findByTestId(loginForm.email)
     .findByRole("link", { name: /verify your email/i })
-    .click();
+    .should("be.visible")
+    .click({ force: true });
   cy.findByText(/verified successfully/i);
 }
 

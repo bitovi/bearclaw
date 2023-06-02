@@ -37,24 +37,35 @@ describe("join and authenticate tests", () => {
     cy.wait(3000);
     cy.findAllByRole("link", { name: /logout/i })
       .first()
-      .click();
+      .should("be.visible")
+      .click({ force: true });
+
     cy.findByRole("button", { name: /log in/i });
     cy.url().should("include", "/login");
 
     // Log in without MFA
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
-    cy.findByRole("button", { name: /log in/i }).click();
+    cy.findByRole("button", { name: /log in/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findAllByRole("link", { name: /logout/i });
 
     // Setup email MFA
     cy.findAllByRole("link", { name: /Account/i })
       .first()
-      .click();
+      .should("be.visible")
+      .click({ force: true });
+
     cy.findAllByRole("link", { name: /Settings/i })
       .first()
-      .click();
-    cy.findByRole("button", { name: /Enable Email MFA/i }).click();
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByRole("button", { name: /Enable Email MFA/i })
+      .should("be.visible")
+      .click({ force: true });
+
     cy.findByText(/You have been sent a 6 digit token/i);
     cy.visit("/fakeMail");
     cy.findAllByTestId(/token/i)
@@ -67,17 +78,24 @@ describe("join and authenticate tests", () => {
         cy.findByRole("textbox", { name: /mfa token/i }).type(token, {
           force: true,
         });
-        cy.findByRole("button", { name: /verify/i }).click();
+        cy.findByRole("button", { name: /verify/i })
+          .should("be.visible")
+          .click({ force: true });
         cy.findByText(/Email MFA Enabled/i);
       });
 
     // Logout and verify MFA
     cy.findAllByRole("link", { name: /logout/i })
       .first()
-      .click();
+      .should("be.visible")
+      .click({ force: true });
+
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
-    cy.findByRole("button", { name: /log in/i }).click();
+    cy.findByRole("button", { name: /log in/i })
+      .should("be.visible")
+      .click({ force: true });
+
     cy.findByText(/You have been sent a 6 digit token/i);
     cy.visit("/fakeMail");
 
@@ -92,31 +110,45 @@ describe("join and authenticate tests", () => {
         cy.findByRole("textbox", { name: /token/i }).type(token, {
           force: true,
         });
-        cy.findByRole("button", { name: /complete/i }).click();
+        cy.findByRole("button", { name: /complete/i })
+          .should("be.visible")
+          .click({ force: true });
+
         cy.findAllByRole("link", { name: /logout/i });
       });
 
     // Disable MFA
     cy.findAllByRole("link", { name: /Account/i })
       .first()
-      .click();
+      .should("be.visible")
+      .click({ force: true });
+
     cy.findAllByRole("link", { name: /Settings/i })
       .first()
-      .click();
-    cy.findByRole("button", { name: /Disable Email MFA/i }).click();
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByRole("button", { name: /Disable Email MFA/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByText(/Are you sure you want to disable email MFA/i);
-    cy.findByRole("button", { name: /Disable/i }).click();
+    cy.findByRole("button", { name: /Disable/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByText(/Email MFA: Off/i);
 
     cy.findAllByRole("link", { name: /logout/i })
       .first()
-      .click();
+      .should("be.visible")
+      .click({ force: true });
 
     // Creating an account with an existing email fails and prompts user to login
     cy.visitAndCheck("/join");
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
-    cy.findByRole("button", { name: /create account/i }).click();
+    cy.findByRole("button", { name: /create account/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByText(/user already exists with this email/i);
     cy.findByRole("link", { name: /log in/i });
   });
@@ -129,40 +161,62 @@ describe("join and authenticate tests", () => {
     cy.wait(100);
     cy.findAllByRole("link", { name: /logout/i })
       .first()
-      .click();
-    cy.findByRole("link", { name: /forgot password/i }).click();
+      .should("be.visible")
+      .click({ force: true });
+    cy.findByRole("link", { name: /forgot password/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
-    cy.findByRole("button", { name: /password reset/i }).click();
-    cy.findByRole("link", { name: /View emails here/i }).click();
+    cy.findByRole("button", { name: /password reset/i })
+      .should("be.visible")
+      .click({ force: true });
+    cy.findByRole("link", { name: /View emails here/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findAllByTestId(loginForm.email)
       .first()
       .findAllByRole("link", { name: /reset your password/i })
-      .click();
+      .should("be.visible")
+      .click({ force: true });
 
-    cy.wait(100);
-    cy.findByLabelText(/create new password/i).type("1");
-    cy.findByRole("button", { name: /reset password/i }).click();
+    cy.wait(500)
+      .findByLabelText(/create new password/i)
+      .type("1");
+    cy.findByRole("button", { name: /reset password/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByText(/too short/i);
-    cy.findByLabelText(/create new password/i)
+    cy.wait(500)
+      .findByLabelText(/create new password/i)
       .clear()
       .type(loginForm.resetPassword);
-    cy.findByRole("button", { name: /reset password/i }).click();
+    cy.findByRole("button", { name: /reset password/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByText(/your password has been reset/i);
-    cy.findByRole("link", { name: /login/i }).click();
+    cy.findByRole("link", { name: /login/i })
+      .should("be.visible")
+      .click({ force: true });
 
     // Old password no longer works
     cy.wait(100);
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
-    cy.findByLabelText(/password/i).type(loginForm.password);
-    cy.findByRole("button", { name: /log in/i }).click();
+    cy.wait(500)
+      .findByLabelText(/password/i)
+      .type(loginForm.password);
+    cy.findByRole("button", { name: /log in/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByText(/invalid email or password/i);
 
     // New password works
-    cy.wait(100);
-    cy.findByLabelText(/password/i)
+    cy.wait(500)
+      .findByLabelText(/password/i)
       .clear()
       .type(loginForm.resetPassword);
-    cy.findByRole("button", { name: /log in/i }).click();
+    cy.findByRole("button", { name: /log in/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByRole("link", { name: /workflows/i });
   });
 });
@@ -180,7 +234,9 @@ describe("Non-authenticated users", () => {
 
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
-    cy.findByRole("button", { name: /create account/i }).click();
+    cy.findByRole("button", { name: /create account/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByText(/too short/i);
   });
 
