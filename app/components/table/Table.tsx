@@ -4,7 +4,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, IconButton, Stack, Toolbar, Typography } from "@mui/material";
@@ -16,6 +15,7 @@ import { copyText } from "./utils/copyText";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { LinkPagination } from "./LinkPagination";
 
 interface TableProps<T> {
   tableData: Array<T> | undefined;
@@ -143,42 +143,16 @@ export default function InvoiceTable<T>({
   headers = [],
   tableContainerStyles = {},
   search,
-  onRowClick = () => {},
+  onRowClick = () => { },
   linkKey,
 }: TableProps<T extends Record<string, any> ? T : never>) {
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchString, setSearchString] = useState("");
-  const [page, setPage] = useState(0);
 
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+  const handleSearch = (
+    ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setSearchString(ev.target.value);
   };
-
-  const filteredTabledEntries = useMemo(() => {
-    if (!searchString) return tableData;
-
-    return tableData.filter((entry) => {
-      let result = false;
-      for (const key in entry) {
-        if (entry[key].toLowerCase().includes(searchString)) result = true;
-      }
-      return result;
-    });
-  }, [searchString, tableData]);
-
-  const tableEntries = useMemo(() => {
-    return filteredTabledEntries.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    );
-  }, [page, rowsPerPage, filteredTabledEntries]);
 
   return (
     <Paper sx={{ mb: 2 }}>
@@ -216,7 +190,7 @@ export default function InvoiceTable<T>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableEntries.map((entry, i) => {
+            {tableData.map((entry, i) => {
               return linkKey ? (
                 <TableRowLink linkKey={linkKey} key={i} entry={entry} />
               ) : (
@@ -249,15 +223,7 @@ export default function InvoiceTable<T>({
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredTabledEntries?.length || 0}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <LinkPagination totalItems={tableData.length} />
     </Paper>
   );
 }

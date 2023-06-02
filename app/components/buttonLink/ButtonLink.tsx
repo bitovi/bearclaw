@@ -6,9 +6,9 @@ type Props = ButtonProps & {
   to: string;
 };
 
-export function ButtonLink({ to, children, variant, sx }: Props) {
+export function ButtonLink({ to, children, variant, sx, ...props }: Props) {
   return (
-    <Button component={Link} to={to} variant={variant} sx={sx}>
+    <Button component={Link} to={to} variant={variant} sx={sx} aria-label={props["aria-label"]}>
       {children}
     </Button>
   );
