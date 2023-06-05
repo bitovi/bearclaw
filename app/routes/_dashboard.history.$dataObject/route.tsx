@@ -54,7 +54,7 @@ export default function Route() {
               justifyContent={"space-between"}
               alignItems="center"
             >
-              Download <FileDownloadIcon data-testid="download-button" />
+              Download <FileDownloadIcon />
             </Typography>
           </Button>
         </Box>

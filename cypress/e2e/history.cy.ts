@@ -83,7 +83,7 @@ describe("History", () => {
       });
 
     cy.wait(1000)
-      .findByTestId("download-button")
+      .findByText(/download/i)
       .should("be.visible")
       .click({ force: true });
 
