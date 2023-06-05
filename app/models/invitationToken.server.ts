@@ -52,7 +52,7 @@ export async function destroyInviteToken(id: string) {
   return await prisma.invitationToken.delete({ where: { id } });
 }
 
-export async function validateInvitiationToken(id: string, email: string) {
+export async function validateInvitationToken(id: string, email: string) {
   const inviteToken = await prisma.invitationToken.findFirst({
     where: {
       id,

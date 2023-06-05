@@ -4,7 +4,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import {
   destroyInviteToken,
-  validateInvitiationToken,
+  validateInvitationToken,
 } from "~/models/invitationToken.server";
 import { getOrganizationById } from "~/models/organization.server";
 import {
