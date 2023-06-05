@@ -4,7 +4,7 @@ import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 
-import { createUserSession, getUserId } from "~/session.server";
+import { getUserId, createUserSession } from "~/session.server";
 
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";

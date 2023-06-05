@@ -143,7 +143,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
 
-  const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+  const redirectTo = safeRedirect(searchParams.get("redirectTo"), "/dashboard");
   const guestEmail = searchParams.get("email");
 
   const actionData = useActionData<typeof action>();

@@ -87,7 +87,6 @@ export function MainSideNav({ canViewUsers }: { canViewUsers: boolean }) {
       height="100%"
       width="100%"
       sx={{
-        overflowY: "auto",
         background: "#F5F5F5",
       }}
     >
@@ -103,42 +102,7 @@ export function MainSideNav({ canViewUsers }: { canViewUsers: boolean }) {
           transform: "rotate(-18deg)",
         }}
       />
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        padding="2rem 0"
-        width="100%"
-        gap="1rem"
-      >
-        <img
-          src="/images/bearclaw.png"
-          alt=""
-          width="100px"
-          style={{ transform: "rotate(-22deg)", filter: "brightness(0)" }}
-        />
-        <div>
-          <Typography fontWeight="900" fontSize="2rem" display="inline">
-            BEAR
-          </Typography>
-          <Typography
-            fontWeight="900"
-            fontSize="2rem"
-            color="#F5F5F5"
-            display="inline"
-            sx={{
-              textShadow: `
-                -1px -1px 0 #0037FF,  
-                1px -1px 0 #0037FF,
-                -1px 1px 0 #0037FF,
-                1px 1px 0 #0037FF`,
-            }}
-          >
-            CLAW
-          </Typography>
-        </div>
-      </Box>
-      <Box>
+      <Box padding="1.5rem 1rem" maxHeight="100%" sx={{ overflowY: "auto" }}>
         <SideNav dividerAfter={3} iconColor="#0037FF" navMenu={navMenu} />
       </Box>
     </Box>

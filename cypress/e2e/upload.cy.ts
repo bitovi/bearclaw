@@ -1,6 +1,6 @@
 describe("Upload", () => {
   afterEach(() => {
-    cy.cleanupUser();
+    cy.cleanupAccount();
   });
 
   it("allows upload from the main dashboard screen", () => {
