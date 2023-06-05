@@ -38,7 +38,7 @@ export async function loader({ request }: LoaderArgs) {
         organizationName: null,
       });
     }
-    const invitationToken = await validateInvitiationToken(token, user.email);
+    const invitationToken = await validateInvitationToken(token, user.email);
     if (!invitationToken) {
       return json({
         error:
