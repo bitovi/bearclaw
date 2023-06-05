@@ -166,7 +166,9 @@ describe("join and authenticate tests", () => {
     cy.findByRole("link", { name: /forgot password/i })
       .should("be.visible")
       .click({ force: true });
-    cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
+    cy.wait(500)
+      .findByRole("textbox", { name: /email/i })
+      .type(loginForm.email);
     cy.findByRole("button", { name: /password reset/i })
       .should("be.visible")
       .click({ force: true });
