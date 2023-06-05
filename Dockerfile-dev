@@ -8,14 +8,12 @@ ENV DATABASE_URL=$DATABASE_URL
 # Install openssl for Prisma
 RUN apt-get update && apt-get install -y openssl
 
-WORKDIR /
+WORKDIR /usr/src/app
 
-ADD package.json package-lock.json .npmrc ./
+COPY package*.json ./
 RUN npm install
 
 ADD prisma .
 RUN npx prisma generate
 
-ADD . .
-
-ENTRYPOINT [ "./start-dev.sh" ]
+CMD [ "npm", "run", "dev" ]
