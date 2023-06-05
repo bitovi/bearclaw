@@ -28,7 +28,6 @@ model User {
   mfaTokens          MfaToken[]
 
   userOrganizations OrganizationUsers[]
-  Organization     Organization?
 
   emailSecondary  String?
   firstName       String?
@@ -46,6 +45,10 @@ model OrganizationUsers {
   orgUsersEdit       Boolean
   orgUsersCreate     Boolean
 
+  owner              Boolean  @default(true)
+
+  accountStatus      String?
+
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId String
 
@@ -59,6 +62,7 @@ model OrganizationUsers {
   teamSizeMax   Int?
 
   @@index([userId, organizationId])
+  @@unique([userId, organizationId])
 }
 
 model Organization {
@@ -66,14 +70,12 @@ model Organization {
   name             String?
   paymentAccountId String
   email            String
-  personal         Boolean
 
-  organizationUsers OrganizationUsers[]
-
-  owner   User?   @relation(fields: [ownerId], references: [id])
-  ownerId String? @unique
+  organizationUsers   OrganizationUsers[]
+  invitationTokens    InvitationToken[]
 
   subscription Subscription?
+  
 }
 
 model Subscription {
@@ -83,7 +85,7 @@ model Subscription {
   activeUntil       Int?
   cancellationDate  Int?
 
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId String       @unique
 }
 
@@ -132,6 +134,20 @@ model MfaToken {
   userId String
 
   @@unique([userId, type])
+}
+
+model InvitationToken {
+  id              String @id @default(cuid())
+  guestEmail      String 
+
+
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  organizationId  String 
+
+  @@unique([guestEmail, organizationId])
 }
 
 model FakeEmail {

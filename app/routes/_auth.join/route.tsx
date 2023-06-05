@@ -18,6 +18,7 @@ import { TextInput } from "~/components/input";
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
   if (userId) return redirect("/");
+
   return json({});
 }
 
@@ -96,7 +97,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  const { user, orgId, error } = await createUser(email, password);
+  const { user, orgId, error } = await createUser(email, password, redirectTo);
 
   if (error || !orgId) {
     return json(
@@ -128,8 +129,11 @@ export const meta: V2_MetaFunction = () => [{ title: "Sign Up" }];
 
 export default function Join() {
   const [searchParams] = useSearchParams();
+
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const redirectTo = searchParams.get("redirectTo") ?? undefined;
+  const guestEmail = searchParams.get("email");
+
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -147,18 +151,20 @@ export default function Join() {
       {actionData?.errors.orgCreation && (
         <div>{actionData?.errors.orgCreation}</div>
       )}
+
       <Form method="post">
         <Box display="flex" flexDirection="column" gap={2}>
           <TextInput
             label="Email"
             name="email"
-            inputRef={emailRef}
             id="email"
             required
             autoFocus={true}
             type="email"
             autoComplete="email"
             error={actionData?.errors?.email}
+            defaultValue={guestEmail || ""}
+            inputProps={{ readOnly: !!guestEmail }}
           />
           <TextInput
             label="Password"
@@ -177,6 +183,7 @@ export default function Join() {
           />
           <PasswordStrengthMeter strength={passwordStrength} />
           <input type="hidden" name="redirectTo" value={redirectTo} />
+
           <Button type="submit" variant="contained">
             Create Account
           </Button>

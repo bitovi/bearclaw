@@ -7,7 +7,7 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TextInput } from "../input";
@@ -37,23 +37,21 @@ const Search = ({
   searchString: string;
 }) => {
   return (
-    <Stack direction="row" alignItems="center" justifyContent={"flex-end"}>
-      <Stack direction={"row"} width="30%">
-        <TextInput
-          name="search"
-          inputProps={{
-            sx: { maxHeight: "20px" },
-          }}
-          onChange={onHandleChange}
-          placeholder="Search"
-          fullWidth
-          value={searchString}
-        />
-        <IconButton>
-          <FilterListIcon />
-        </IconButton>
-      </Stack>
-    </Stack>
+    <Toolbar sx={{ justifyContent: "flex-end" }}>
+      <TextInput
+        name="search"
+        inputProps={{
+          sx: { maxHeight: "20px", minWidth: "300px" },
+        }}
+        onChange={onHandleChange}
+        placeholder="Search"
+        value={searchString}
+        sx={{ minWidth: "200px" }}
+      />
+      <IconButton>
+        <FilterListIcon />
+      </IconButton>
+    </Toolbar>
   );
 };
 
@@ -163,19 +161,13 @@ export default function InvoiceTable<T>({
     setPage(0);
   };
 
-  const handleSearch = (
-    ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setSearchString(ev.target.value);
-  };
-
   const filteredTabledEntries = useMemo(() => {
     if (!searchString) return tableData;
 
     return tableData.filter((entry) => {
       let result = false;
       for (const key in entry) {
-        if (entry[key].includes(searchString)) result = true;
+        if (entry[key].toLowerCase().includes(searchString)) result = true;
       }
       return result;
     });
@@ -196,7 +188,10 @@ export default function InvoiceTable<T>({
         </Typography>
       </Box>
       {search && (
-        <Search onHandleChange={handleSearch} searchString={searchString} />
+        <Search
+          onHandleChange={(ev) => setSearchString(ev.target.value)}
+          searchString={searchString}
+        />
       )}
       <TableContainer sx={tableContainerStyles}>
         <Table sx={{ minWidth: 650 }} stickyHeader>

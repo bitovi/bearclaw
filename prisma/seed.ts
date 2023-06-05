@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import type Stripe from "stripe";
 import { serverStripe } from "~/payment.server";
 
 const prisma = new PrismaClient();
@@ -14,6 +15,8 @@ async function seed() {
   await prisma.organization.deleteMany({}).catch(() => {
     // no worries if it doesn't exist yet
   });
+  await prisma.organizationUsers.deleteMany({}).catch(() => {});
+  await prisma.fakeEmail.deleteMany({}).catch(() => {});
   await prisma.subscription.deleteMany({}).catch(() => {
     // no worries if it doesn't exist yet
   });
@@ -41,16 +44,31 @@ async function seed() {
  */
 async function clearStripeCustomers() {
   if (process.env.NODE_ENV === "production") return;
+  let customersList: Partial<Stripe.Customer>[] = [];
 
-  const { data: customers } = await serverStripe.customers.list();
+  while (true) {
+    // Stripe dev has a rate limit of 10, looping through in chunks of 10 entries to ensure Stripe customer list is cleared
+    const { data: customers } = await serverStripe.customers.list();
+    if (!customers.length) break;
 
-  const removeCustomers = customers.map((c) => {
-    return serverStripe.customers.del(c.id);
-  });
+    customersList.push(
+      ...customers.map((c) => ({
+        id: c.id,
+        email: c.email,
+      }))
+    );
 
-  await Promise.all(removeCustomers).then((r) => {
-    console.log("Stripe dev customer database cleared 👍", JSON.stringify(r));
-  });
+    const removeCustomers = customers.map((c) => {
+      return serverStripe.customers.del(c.id);
+    });
+
+    await Promise.all(removeCustomers);
+  }
+
+  console.log(
+    "Stripe dev customer database cleared 👍",
+    JSON.stringify(customersList)
+  );
 }
 seed()
   .catch((e) => {

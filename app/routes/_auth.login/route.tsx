@@ -10,13 +10,14 @@ import { safeRedirect, validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
 import {
   createOrganization,
-  getOrganizationsByUserId,
+  getOrganizationById,
 } from "~/models/organization.server";
 import { TextInput } from "~/components/input";
 import { Link } from "~/components/link/Link";
 import { Checkbox } from "~/components/input/checkbox/Checkbox";
 import { getUserMfaMethods, resetMfaToken } from "~/models/mfa.server";
 import { MFA_TYPE } from "~/models/mfa";
+import { retrieveOrgUserOwner } from "~/models/organizationUsers.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -85,35 +86,42 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  let org = await getOrganizationsByUserId(user.id);
+  const ownerOrgUser = await retrieveOrgUserOwner({ userId: user.id });
+  let org;
 
-  if (!org) {
+  if (ownerOrgUser) {
+    org = await getOrganizationById(ownerOrgUser.organizationId);
+  }
+
+  if (!ownerOrgUser) {
+    const orgName = user.email.split("@")[0];
     const { organization: newOrg } = await createOrganization({
       userId: user.id,
       email: user.email,
-      name: "New Organization",
+      name: `${orgName}'s Organization`,
     });
     org = newOrg;
-    if (!org) {
-      return json(
-        {
-          errors: {
-            email: null,
-            password: null,
-            organization:
-              "Something went wrong verifying an organization for this user",
-          },
+  }
+
+  if (!org) {
+    return json(
+      {
+        errors: {
+          email: null,
+          password: null,
+          organization:
+            "Something went wrong verifying an organization for this user",
         },
-        { status: 400 }
-      );
-    }
+      },
+      { status: 400 }
+    );
   }
 
   const mfaMethods = await getUserMfaMethods(user);
 
   if (mfaMethods.length > 0) {
     if (mfaMethods.find((m) => m.type === MFA_TYPE.SMS)) {
-      // TODO 
+      // TODO
     }
     if (mfaMethods.find((m) => m.type === MFA_TYPE.EMAIL)) {
       resetMfaToken({ type: MFA_TYPE.EMAIL, user: user });
@@ -134,7 +142,10 @@ export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
+
   const redirectTo = searchParams.get("redirectTo") || "/";
+  const guestEmail = searchParams.get("email");
+
   const actionData = useActionData<typeof action>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
@@ -150,7 +161,12 @@ export default function LoginPage() {
   return (
     <Box>
       <Form method="post">
-        <Box display="flex" gap="0.5rem" flexDirection="column" textAlign="center">
+        <Box
+          display="flex"
+          gap="0.5rem"
+          flexDirection="column"
+          textAlign="center"
+        >
           <TextInput
             label="Email address"
             name="email"
@@ -159,6 +175,8 @@ export default function LoginPage() {
             autoFocus={true}
             error={actionData?.errors?.email}
             inputRef={emailRef}
+            defaultValue={guestEmail || ""}
+            inputProps={{ readOnly: !!guestEmail }}
           />
           <TextInput
             label="Password"
@@ -170,14 +188,11 @@ export default function LoginPage() {
           />
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
+
           <Button type="submit" variant="contained">
             Log in
           </Button>
-          <Checkbox
-            id="remember"
-            name="remember"
-            label="Remember me"
-          />
+          <Checkbox id="remember" name="remember" label="Remember me" />
           <div>
             Don't have an account?{" "}
             <Link

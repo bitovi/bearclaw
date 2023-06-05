@@ -7,40 +7,82 @@ import { Header } from "./header";
 import { MainSideNav } from "./sidenav";
 import { Loading } from "~/components/loading/Loading";
 import { Link } from "~/components/link";
-import { getUser } from "~/session.server";
+import { getOrgId, getUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
+import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
+import type { OrganizationUsers } from "~/models/organizationUsers.server";
+import { safeRedirect } from "~/utils";
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await getUser(request);
-  if (!user) {
-    return redirect(`/login?redirectTo=${encodeURIComponent(request.url)}`);
-  }
-  if (user.emailVerifiedAt) {
-    return json({ isVerified: true });
-  }
+  const organizationId = await getOrgId(request);
+  let orgUser: OrganizationUsers | null = null;
+
   const url = new URL(request.url);
+  const email = url.searchParams.get("email");
+  const inviteToken = url.searchParams.get("inviteToken");
+
+  if (!user) {
+    // encode the pathname rather than the full url to avoid failing the safeRedirect check
+    // pass inviteToken into the encoded redirect but forward email in url params for login/join form
+    return redirect(
+      `/login?redirectTo=${encodeURIComponent(
+        `${url.pathname}?${inviteToken ? `inviteToken=${inviteToken}` : ""}`
+      )}${email ? `&email=${email}` : ""}`
+    );
+  }
+
+  if (organizationId) {
+    orgUser = await retrieveOrganizationUser({
+      organizationId,
+      userId: user?.id,
+    });
+  }
+
+  if (user.emailVerifiedAt) {
+    return json({
+      isVerified: true,
+      canViewUsers: orgUser ? orgUser.orgUsersView : false,
+    });
+  }
+
   const token = url.searchParams.get("token");
+  const redirectTo = url.searchParams.get("redirectTo");
+
   if (token) {
     const result = await validateUserEmailByToken(token);
     if (result.error) {
       return redirect(`/verify-email/${result.status}`);
     }
-    return json({ isVerified: true });
+
+    // Only redirect if an explicit redirect path was passed (don't use default)
+    // for example to /invite/$token
+    if (redirectTo !== "/") {
+      return redirect(safeRedirect(redirectTo));
+    }
+
+    return json({
+      isVerified: true,
+      canViewUsers: orgUser ? orgUser.orgUsersView : false,
+    });
   }
-  return json({ isVerified: false });
+  return json({
+    isVerified: false,
+    canViewUsers: orgUser ? orgUser.orgUsersView : false,
+  });
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-  const { isVerified } = useLoaderData<typeof loader>();
+  const { isVerified, canViewUsers } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
 
   return (
     <Box component="main" display="flex" height="100%">
       {isVerified && (
         <Box width="300px" borderRight="1px solid grey">
-          <MainSideNav />
+          <MainSideNav canViewUsers={canViewUsers} />
         </Box>
       )}
       <Box

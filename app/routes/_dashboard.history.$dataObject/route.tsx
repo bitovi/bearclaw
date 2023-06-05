@@ -17,7 +17,6 @@ export async function loader({ params }: LoaderArgs) {
     const expandedRSBOM = await retrieveRSBOMDetails({
       dataObjectId: dataObject,
     });
-
     return json({ expandedRSBOM, error: "" });
   } catch (e) {
     const error = (e as Error).message;
@@ -44,7 +43,7 @@ export default function Route() {
               encodeURIComponent(JSON.stringify(expandedRSBOM, undefined, 2))
             }
             download={`${
-              expandedRSBOM?.component?.file.filename || expandedRSBOM?.id
+              expandedRSBOM?.metadata?.component?.name || expandedRSBOM?.id
             }.json`}
           >
             <Typography
@@ -61,7 +60,7 @@ export default function Route() {
         </Box>
       )}
       <DetailTable
-        tableTitle={expandedRSBOM?.component?.file.filename || "rSBOM Details"}
+        tableTitle={expandedRSBOM?.metadata?.component?.name || "rSBOM Details"}
         tableData={[]}
         headers={["Header 1", "Header 2", "Header 3"]}
         search

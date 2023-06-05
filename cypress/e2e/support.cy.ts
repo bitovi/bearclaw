@@ -1,6 +1,6 @@
 describe("Support", () => {
   afterEach(() => {
-    cy.cleanupUser();
+    cy.cleanupAccount();
   });
 
   it("Displays Support page & form", () => {

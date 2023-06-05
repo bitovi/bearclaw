@@ -16,7 +16,10 @@ export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-function sendEmailVerificationEmail(user: User) {
+function sendEmailVerificationEmail(user: User, redirectTo?: string) {
+  const redirectParam = redirectTo
+    ? `&redirectTo=${encodeURIComponent(redirectTo)}`
+    : "";
   return sendMail({
     to: user.email,
     from: "noreply@example.com",
@@ -24,7 +27,7 @@ function sendEmailVerificationEmail(user: User) {
     html: `
       <p>Hi ${user.email},</p>
       <p>Thanks for signing up for BearClaw! Please verify your email address by clicking the link below. The link will expire in 24 hours.</p>
-      <p><a href="/verifyEmail?token=${user.emailVerificationToken}">Verify your email address</a></p>
+      <p><a href="/verifyEmail?token=${user.emailVerificationToken}${redirectParam}">Verify your email address</a></p>
       <p>Thanks,</p>
       <p>The BearClaw Team</p>
       <p><small>If you didn't sign up for BearClaw, please ignore this email.</small></p>
@@ -32,7 +35,11 @@ function sendEmailVerificationEmail(user: User) {
   });
 }
 
-export async function createUser(email: User["email"], password: string) {
+export async function createUser(
+  email: User["email"],
+  password: string,
+  redirectTo?: string
+) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
@@ -47,13 +54,14 @@ export async function createUser(email: User["email"], password: string) {
   });
 
   // For the time being, whenever we create a user we create an organization associated with that user, of which they are the owner. This will likely be expanded so that users created through invitation links can skip this step and register with a pre-existing organization
+  const orgName = email.split("@")[0];
   const { organization, error } = await createOrganization({
     email,
     userId: user.id,
-    name: "New Organization", //TODO figure out best way to manage naming the Org
+    name: `${orgName}'s Organization`,
   });
 
-  await sendEmailVerificationEmail(user);
+  await sendEmailVerificationEmail(user, redirectTo);
 
   return { user, orgId: organization?.id, error };
 }
@@ -183,11 +191,11 @@ export async function forgotPassword(email: User["email"]) {
 
 export async function isResetPasswordTokenValid(token: string) {
   const reset = await prisma.resetPasswordToken.findFirst({
-    where: { 
+    where: {
       token,
       expiresAt: {
-        gt: new Date()
-      }
+        gt: new Date(),
+      },
     },
   });
   return reset ? true : false;
@@ -195,11 +203,11 @@ export async function isResetPasswordTokenValid(token: string) {
 
 export async function resetPasswordByToken(token: string, newPassword: string) {
   const reset = await prisma.resetPasswordToken.findFirst({
-    where: { 
+    where: {
       token,
       expiresAt: {
-        gt: new Date()
-      }
+        gt: new Date(),
+      },
     },
     include: {
       user: true,

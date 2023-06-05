@@ -9,7 +9,7 @@ import { useLocation } from "@remix-run/react";
 import { Divider } from "@mui/material";
 import React from "react";
 
-type NavItem = {
+export type NavItem = {
   label: string;
   to: string;
   icon?: React.ReactNode;

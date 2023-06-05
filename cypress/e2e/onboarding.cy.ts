@@ -21,7 +21,7 @@ function createOnboardingData() {
 
 describe("join and authenticate tests", () => {
   afterEach(() => {
-    cy.cleanupUser();
+    cy.cleanupAccount();
   });
 
   it("should allow you to onboard", () => {
