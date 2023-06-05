@@ -131,7 +131,7 @@ jobs:
           wait-on: "http://localhost:8811"
         env:
           PORT: "8811"
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgres://postgres:postgres@postgres:5432/bearclaw
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
