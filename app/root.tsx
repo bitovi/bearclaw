@@ -10,18 +10,17 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { withSentry } from "@sentry/remix";
-import { withEmotionCache } from '@emotion/react';
-import { unstable_useEnhancedEffect as useEnhancedEffect } from '@mui/material';
+import { withEmotionCache } from "@emotion/react";
+import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
 
 import stylesheetUrl from "./styles/style.css";
 import { getUser } from "./session.server";
 import { useContext } from "react";
 import ClientStyleContext from "./styles/ClientStyleContext";
+import { startMSW } from "./entry.server";
 
 export const links: LinksFunction = () => {
-  return [
-    { rel: "stylesheet", href: stylesheetUrl },
-  ];
+  return [{ rel: "stylesheet", href: stylesheetUrl }];
 };
 
 // process.env is not available in the browser
@@ -37,6 +36,7 @@ declare global {
 }
 
 export async function loader({ request }: LoaderArgs) {
+  startMSW();
   return json({
     user: await getUser(request),
     ENV: {
