@@ -102,7 +102,7 @@ jobs:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
-      BEAR_CLAW_SERVER: ${{ secrets.BEAR_CLAW_SERVER }}
+      BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -132,14 +132,13 @@ jobs:
           start: npm run start:mocks
           wait-on: "http://localhost:8811"
         env:
-          DEBUG: "cypress:*"
           PORT: "8811"
           DATABASE_URL: postgres://postgres:postgres@postgres:5432/bearclaw
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
-          BEAR_CLAW_SERVER: ${{ secrets.BEAR_CLAW_SERVER }}
+          BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
 
   build:
     name: 🐳 Build
@@ -152,7 +151,7 @@ jobs:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
-      BEAR_CLAW_SERVER: ${{ secrets.BEAR_CLAW_SERVER }}
+      BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
 
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -220,7 +219,7 @@ jobs:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
-      BEAR_CLAW_SERVER: ${{ secrets.BEAR_CLAW_SERVER }}
+      BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
 
     steps:
       - name: 🛑 Cancel Previous Runs

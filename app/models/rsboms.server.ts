@@ -10,6 +10,10 @@ export async function retrieveRSBOMList(
     TODO: utilize userId and/or orgId to retrieve particular file histories 
     */
 
+  console.log(
+    "URL TO FETCH HISTORY FROM",
+    `${baseURL}/claw/get_rsboms_cyclonedx`
+  );
   const response = await fetch(`${baseURL}/claw/get_rsboms_cyclonedx`);
   const { bc_rsbom_cyclonedx_aggregate } = await response.json();
   return bc_rsbom_cyclonedx_aggregate;

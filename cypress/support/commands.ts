@@ -181,17 +181,10 @@ function createAndVerifyAccount(
     .should("be.visible")
     .click({ force: true });
 
-  cy.url().then((url) => {
-    cy.task("log", `URL -> ${url}`);
-  });
-
   cy.findByTestId(loginForm.email)
     .findByRole("link", { name: /verify your email/i })
     .should("be.visible")
     .click({ force: true });
-  cy.url().then((url) => {
-    cy.task("log", `URL -> ${url}`);
-  });
 
   cy.findByText(/verified successfully/i);
 }
