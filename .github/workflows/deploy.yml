@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
-      options: --user 1001 
+      options: --user 1001
     services:
       postgres:
         image: postgres
@@ -132,6 +132,7 @@ jobs:
           start: npm run start:mocks
           wait-on: "http://localhost:8811"
         env:
+          DEBUG: "cypress:*"
           PORT: "8811"
           DATABASE_URL: postgres://postgres:postgres@postgres:5432/bearclaw
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
