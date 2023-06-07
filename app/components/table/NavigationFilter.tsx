@@ -86,10 +86,8 @@ function useFiltering(endpoint: string) {
   };
 
   const apiCall = useCallback(() => {
-    if (searchField && searchString) {
-      navigate(`${endpoint}?${updatedSearchParams}`);
-    }
-  }, [searchField, searchString, updatedSearchParams, navigate]);
+    navigate(`${endpoint}?${updatedSearchParams}`);
+  }, [updatedSearchParams, navigate]);
 
   useDebounceApiCall({
     apiCall,
@@ -103,7 +101,7 @@ function useFiltering(endpoint: string) {
   };
 }
 
-export function LinkFilter({
+export function NavigationFilter({
   dropdownOptions: _dropdownOptions,
   dropdownLabel,
   searchLabel,
@@ -120,6 +118,10 @@ export function LinkFilter({
   const dropdownOptions = [{ value: "", label: "Select a Field" }].concat(
     _dropdownOptions
   );
+  const focusRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    focusRef.current?.focus();
+  }, []);
 
   return (
     <Form action="" method="get">
@@ -127,6 +129,7 @@ export function LinkFilter({
         <Stack direction="row" gap={2}>
           <TextInput
             name={searchLabel}
+            inputRef={focusRef}
             inputProps={{
               sx: { maxHeight: "20px" },
             }}

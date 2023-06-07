@@ -3,14 +3,15 @@ import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
 const baseURL = process.env.BEAR_CLAW_SERVER;
 
 export async function retrieveRSBOMList(
-  _userId?: string,
-  _orgId?: string
+  searchParams: URLSearchParams
 ): Promise<RSBOMListEntry[]> {
   /**
     TODO: utilize userId and/or orgId to retrieve particular file histories 
     */
 
-  const response = await fetch(`${baseURL}/claw/get_rsboms_cyclonedx`);
+  const response = await fetch(
+    `${baseURL}/claw/get_rsboms_cyclonedx?${searchParams.toString()}`
+  );
   const { bc_rsbom_cyclonedx_aggregate } = await response.json();
   return bc_rsbom_cyclonedx_aggregate;
 }

@@ -1,13 +1,15 @@
 import { Box } from "@mui/material";
 import HistoryTable from "../../components/table";
-import { json } from "@remix-run/node";
+import { LoaderArgs, json } from "@remix-run/node";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { useLoaderData } from "@remix-run/react";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
 
-export async function loader() {
+export async function loader({ request }: LoaderArgs) {
   try {
-    const rsbomList = await retrieveRSBOMList();
+    const url = new URL(request.url);
+    const searchParams = url.searchParams;
+    const rsbomList = await retrieveRSBOMList(searchParams);
 
     return json({ rsbomList, error: "" });
   } catch (e) {
@@ -20,7 +22,6 @@ export async function loader() {
 export default function Route() {
   const { rsbomList, error } = useLoaderData<typeof loader>();
 
-  console.log("rsbomList", rsbomList[0]);
   return (
     <Box>
       {error ? (

@@ -26,7 +26,7 @@ import { copyText } from "./utils/copyText";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { LinkFilter } from "./LinkFilter";
+import { NavigationFilter } from "./NavigationFilter";
 
 export type DropdownOption = {
   value: string;
@@ -222,7 +222,7 @@ export default function InvoiceTable<T>({
         </Typography>
       </Box>
       {search && endpoint && searchFields && (
-        <LinkFilter
+        <NavigationFilter
           dropdownLabel="Type"
           dropdownOptions={searchFields}
           searchLabel="Search"
