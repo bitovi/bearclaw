@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:latest
-      options: --user 1001 
+      options: --user 1001
     services:
       postgres:
         image: postgres
@@ -102,7 +102,7 @@ jobs:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
-      BEAR_CLAW_SERVER: ${{ secrets.BEAR_CLAW_SERVER }}
+      BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -138,7 +138,7 @@ jobs:
           STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
-          BEAR_CLAW_SERVER: ${{ secrets.BEAR_CLAW_SERVER }}
+          BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
 
   build:
     name: 🐳 Build
@@ -151,7 +151,7 @@ jobs:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
-      BEAR_CLAW_SERVER: ${{ secrets.BEAR_CLAW_SERVER }}
+      BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
 
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -219,7 +219,7 @@ jobs:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
-      BEAR_CLAW_SERVER: ${{ secrets.BEAR_CLAW_SERVER }}
+      BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
 
     steps:
       - name: 🛑 Cancel Previous Runs

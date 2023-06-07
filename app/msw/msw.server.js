@@ -6,7 +6,7 @@ const fixture_getRSBOMSCyclonedx = require("./fixtures/getRSBOMSCyclonedx.js");
 const fixture_getAllParentJobs = require("./fixtures/getAllParentJobs.js");
 const fixture_getRSBOMDetail = require("./fixtures/getRSBOMDetail.js");
 
-const baseURL = process.env.BEAR_CLAW_SERVER;
+const baseURL = process.env.BEARCLAW_URL;
 
 const handlers = [
   rest.get(`${baseURL}/claw/get_rsboms_cyclonedx`, (req, res, ctx) => {
@@ -25,5 +25,9 @@ const server = setupServer(...handlers);
 server.listen({ onUnhandledRequest: "bypass" });
 console.info("🔶 Mock server running");
 
-process.once("SIGINT", () => server.close());
-process.once("SIGTERM", () => server.close());
+const closeServer = () => server.close();
+// in case of remount, remove listeners before re-subscribing
+process.removeListener("SIGINT", closeServer);
+process.removeListener("SIGTERM", closeServer);
+process.once("SIGINT", closeServer);
+process.once("SIGTERM", closeServer);

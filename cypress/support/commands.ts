@@ -180,10 +180,12 @@ function createAndVerifyAccount(
   cy.findByRole("link", { name: /View verification emails here/i })
     .should("be.visible")
     .click({ force: true });
+
   cy.findByTestId(loginForm.email)
     .findByRole("link", { name: /verify your email/i })
     .should("be.visible")
     .click({ force: true });
+
   cy.findByText(/verified successfully/i);
 }
 

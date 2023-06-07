@@ -1,6 +1,6 @@
 import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
 
-const baseURL = process.env.BEAR_CLAW_SERVER;
+const baseURL = process.env.BEARCLAW_URL;
 
 export async function retrieveRSBOMList(
   _userId?: string,
@@ -29,7 +29,7 @@ export async function retrieveRSBOMDetails({
     */
 
   const response = await fetch(
-    `${baseURL}/bear/get_rsboms_cyclonedx/${dataObjectId}`
+    `${baseURL}/claw/get_rsboms_cyclonedx/${dataObjectId}`
   );
   const { bc_rsbom_cyclonedx_aggregate } = await response.json();
   return bc_rsbom_cyclonedx_aggregate[0];
