@@ -76,16 +76,24 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
-export async function getOrgandUserId(request: Request) {
+export async function getOrgandUserId(
+  request: Request
+): Promise<{
+  userId: User["id"],
+  organizationId: Organization["id"]
+}> {
   const session = await getSession(request);
   const organizationId = session.get(ORGANIZATION_KEY);
   const userId = session.get(USER_SESSION_KEY);
+
+  if (!organizationId || !userId) throw await logout(request);
+
   return { organizationId, userId };
 }
 
 export async function requireUserId(
   request: Request,
-  redirectTo: string = new URL(request.url).pathname
+  redirectTo: string = request.url
 ) {
   const userId = await getUserId(request);
   if (!userId) {
@@ -104,7 +112,13 @@ export async function requireUser(request: Request) {
   const userId = await requireUserId(request);
 
   const user = await getUserById(userId);
-  if (user) return user;
+  if (user) {
+    if (!user.emailVerifiedAt) {
+      const searchParams = new URLSearchParams([["redirectTo", request.url]]);
+      throw redirect(`/verifyEmail?${searchParams}`);
+    }
+    return user;
+  }
 
   throw await logout(request);
 }
@@ -160,7 +174,8 @@ export async function mfaActivateUserSession({
 
 export async function logout(request: Request) {
   const session = await getSession(request);
-  return redirect("/login", {
+  const searchParams = new URLSearchParams([["redirectTo", request.url]]);
+  return redirect(`/login?${searchParams}`, {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },
