@@ -20,6 +20,7 @@ export async function loader() {
 export default function Route() {
   const { rsbomList, error } = useLoaderData<typeof loader>();
 
+  console.log("rsbomList", rsbomList[0]);
   return (
     <Box>
       {error ? (
@@ -30,15 +31,26 @@ export default function Route() {
           tableTitle={"Lists"}
           tableData={rsbomList || undefined}
           headers={[
+            "Id",
+            "Filename",
             "Timestamp",
             "Data Object",
-            "Filename",
-            "ID",
             "Type",
             "Status",
           ]}
           tableContainerStyles={{ maxHeight: "600px" }}
           search
+          endpoint="/history"
+          searchFields={[
+            {
+              value: "dataObject",
+              label: "Data Object",
+            },
+            {
+              value: "filename",
+              label: "Filename",
+            },
+          ]}
         />
       )}
     </Box>

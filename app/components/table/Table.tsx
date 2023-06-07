@@ -7,7 +7,17 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TextInput } from "../input";
@@ -16,7 +26,12 @@ import { copyText } from "./utils/copyText";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { LinkFilter } from "./LinkFilter";
 
+export type DropdownOption = {
+  value: string;
+  label: string;
+};
 interface TableProps<T> {
   tableData: Array<T> | undefined;
   tableTitle: string;
@@ -25,9 +40,11 @@ interface TableProps<T> {
   search?: boolean;
   onRowClick?: (entry: T) => void;
   linkKey?: keyof T;
+  endpoint?: string;
+  searchFields?: DropdownOption[];
 }
 
-const Search = ({
+export const Search = ({
   onHandleChange,
   searchString,
 }: {
@@ -37,20 +54,34 @@ const Search = ({
   searchString: string;
 }) => {
   return (
-    <Toolbar sx={{ justifyContent: "flex-end" }}>
-      <TextInput
-        name="search"
-        inputProps={{
-          sx: { maxHeight: "20px", minWidth: "300px" },
-        }}
-        onChange={onHandleChange}
-        placeholder="Search"
-        value={searchString}
-        sx={{ minWidth: "200px" }}
-      />
-      <IconButton>
-        <FilterListIcon />
-      </IconButton>
+    <Toolbar sx={{ justifyContent: "flex-start" }}>
+      <Stack direction="row" gap={2}>
+        <TextInput
+          name="search"
+          inputProps={{
+            sx: { maxHeight: "20px", minWidth: "300px" },
+          }}
+          onChange={onHandleChange}
+          label="Search"
+          value={searchString}
+          sx={{ minWidth: "200px" }}
+        />
+        <FormControl fullWidth>
+          <InputLabel id="filter-type-select">Type</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="filter-type-select"
+            defaultValue="All"
+            label="Type" // To ensure MUI notched outline styling, we still need to pass a value to the label prop
+          >
+            <MenuItem value={10}>Ten</MenuItem>
+            <MenuItem value="All">All</MenuItem>
+          </Select>
+        </FormControl>
+        <IconButton>
+          <FilterListIcon />
+        </IconButton>
+      </Stack>
     </Toolbar>
   );
 };
@@ -76,6 +107,7 @@ function TableRowLink<T>({
     };
   }, [textCopied]);
 
+  // TODO -- resolve validateDOMNesting error re: <a/>'s being children of <tbody>
   return (
     <TableRow
       component={Link}
@@ -145,6 +177,8 @@ export default function InvoiceTable<T>({
   search,
   onRowClick = () => {},
   linkKey,
+  endpoint,
+  searchFields,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchString, setSearchString] = useState("");
@@ -187,10 +221,12 @@ export default function InvoiceTable<T>({
           {tableTitle}
         </Typography>
       </Box>
-      {search && (
-        <Search
-          onHandleChange={(ev) => setSearchString(ev.target.value)}
-          searchString={searchString}
+      {search && endpoint && searchFields && (
+        <LinkFilter
+          dropdownLabel="Type"
+          dropdownOptions={searchFields}
+          searchLabel="Search"
+          endpoint={endpoint}
         />
       )}
       <TableContainer sx={tableContainerStyles}>
