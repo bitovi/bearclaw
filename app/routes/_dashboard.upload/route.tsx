@@ -10,16 +10,13 @@ import {
 import { getOrgandUserId } from "~/session.server";
 import { Form, useActionData, useLoaderData, useNavigation } from "@remix-run/react";
 import { Box, Typography } from "@mui/material";
-import { readFile, unlink } from "fs/promises";
+import { unlink } from "fs/promises";
 import { Loading } from "~/components/loading/Loading";
 
 const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
 
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
-  if (!userId || !organizationId) {
-    return new Response("Unauthorized", { status: 401 });
-  }
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
@@ -35,10 +32,6 @@ export const action = async ({ request }: ActionArgs) => {
     request,
     uploadHandler
   );
-
-  if ("this_is_a_test" === (formData.get("files") as any)?.filepath as string) {
-    return json({ success: true }, { status: 200 });
-  }
 
   formData.append("userId", userId);
   formData.append("groupId", organizationId);

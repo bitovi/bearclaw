@@ -4,7 +4,6 @@ import invariant from "tiny-invariant";
 
 import type { User } from "~/models/user.server";
 import { getUserById } from "~/models/user.server";
-import { safeRedirect } from "./utils";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
@@ -77,10 +76,18 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
-export async function getOrgandUserId(request: Request) {
+export async function getOrgandUserId(
+  request: Request
+): Promise<{
+  userId: User["id"],
+  organizationId: Organization["id"]
+}> {
   const session = await getSession(request);
   const organizationId = session.get(ORGANIZATION_KEY);
   const userId = session.get(USER_SESSION_KEY);
+
+  if (!organizationId || !userId) throw await logout(request);
+
   return { organizationId, userId };
 }
 
