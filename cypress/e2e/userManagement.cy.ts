@@ -89,6 +89,9 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
+    cy.findByRole("link", { name: /Continue/i })
+      .should("be.visible")
+      .click({ force: true });
     cy.findByText(
       /You have successfully joined ownerAccount-test's organization/i
     );

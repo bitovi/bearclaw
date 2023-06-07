@@ -1,9 +1,11 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useLoaderData } from "@remix-run/react";
-import { LoaderArgs, json, redirect } from "@remix-run/server-runtime";
+import type { LoaderArgs } from "@remix-run/server-runtime";
+import { json } from "@remix-run/server-runtime";
 import { Link } from "~/components/link";
 import { validateUserEmailByToken } from "~/models/user.server";
+import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -13,13 +15,17 @@ export async function loader({ request }: LoaderArgs) {
     if (result.error) {
       return json({ isVerified: false, error: "Could not verify. Token is expired or invalid." });
     }
-    return json({ isVerified: true, error: null });
+    const redirectTo = url.searchParams.get("redirectTo");
+    if (redirectTo) {
+      return json({ isVerified: true, error: null, redirectTo: safeRedirect(redirectTo) });
+    }
+    return json({ isVerified: true, error: null, redirectTo: "/dashboard" });
   }
-  return json({ isVerified: false, error: null });
+  return json({ isVerified: false, error: null, redirectTo: null });
 }
 
 export default function Route() {
-  const { isVerified, error } = useLoaderData();
+  const { isVerified, error, redirectTo } = useLoaderData();
 
   if (isVerified === true) {
     return (
@@ -33,7 +39,7 @@ export default function Route() {
         gap={1}
       >
         <Typography>Email verified successfully!</Typography>
-        <Link to="/dashboard">Continue to dashboard</Link>
+        <Link to={redirectTo}>Continue to dashboard</Link>
       </Box>
     );
   }

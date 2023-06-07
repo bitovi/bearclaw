@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { SideNav } from "~/components/sideNav/SideNav";
 import type { NavItem } from "~/components/sideNav/SideNav";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -15,7 +15,7 @@ import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 const _navMenuFirst = [
   {
     label: "Dashboard",
-    to: "/",
+    to: "/dashboard",
     icon: <DashboardIcon />,
   },
   {

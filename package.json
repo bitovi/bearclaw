@@ -7,6 +7,7 @@
     "build:remix": "remix build",
     "dev": "run-p dev:*",
     "dev:remix": "cross-env NODE_ENV=development binode --require ./app/msw/msw.server.js -- @remix-run/dev:remix dev",
+    "database": "docker-compose -f docker-compose-db.yml up --build",
     "docker": "docker-compose -f docker-compose-dev.yml up --build",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",

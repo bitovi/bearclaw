@@ -7,30 +7,31 @@ import Paper from "@mui/material/Paper";
 import { Header } from "./header";
 import { MainSideNav } from "./sidenav";
 import { Loading } from "~/components/loading/Loading";
-import { getOrgId, getUser } from "~/session.server";
+import { getOrgId, getUser, requireUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
 import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
 import type { OrganizationUsers } from "~/models/organizationUsers.server";
 import { safeRedirect } from "~/utils";
 
-export async function loader({ request, params }: LoaderArgs) {
-  const user = await getUser(request);
-  const organizationId = await getOrgId(request);
-  let orgUser: OrganizationUsers | null = null;
-
+export async function loader({ request }: LoaderArgs) {
+  const isLoggedIn = await getUser(request);
   const url = new URL(request.url);
   const email = url.searchParams.get("email");
   const inviteToken = url.searchParams.get("inviteToken");
-
-  if (!user) {
+  if (!isLoggedIn && inviteToken) {
     // encode the pathname rather than the full url to avoid failing the safeRedirect check
     // pass inviteToken into the encoded redirect but forward email in url params for login/join form
-    return redirect(
+    throw redirect(
       `/login?redirectTo=${encodeURIComponent(
         `${url.pathname}?${inviteToken ? `inviteToken=${inviteToken}` : ""}`
       )}${email ? `&email=${email}` : ""}`
     );
   }
+
+  const user = await requireUser(request);
+  const organizationId = await getOrgId(request);
+  let orgUser: OrganizationUsers | null = null;
+
 
   if (organizationId) {
     orgUser = await retrieveOrganizationUser({
@@ -58,7 +59,7 @@ export async function loader({ request, params }: LoaderArgs) {
     // Only redirect if an explicit redirect path was passed (don't use default)
     // for example to /invite/$token
     if (redirectTo !== "/") {
-      return redirect(safeRedirect(redirectTo));
+      return redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
     }
 
     return json({
@@ -75,7 +76,7 @@ export async function loader({ request, params }: LoaderArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-  const { isVerified, canViewUsers } = useLoaderData<typeof loader>();
+  const { canViewUsers } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
 
   return (

@@ -187,9 +187,8 @@ function createAndVerifyAccount(
     .click({ force: true });
 
   cy.findByText(/verified successfully/i);
-  cy.wait(1000);
+  cy.wait(1000);  
   cy.findByRole("link", { name: /Continue/i }).click();
-  cy.findByText(/welcome/i);
 }
 
 Cypress.Commands.add("login", login);

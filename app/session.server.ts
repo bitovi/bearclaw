@@ -4,6 +4,7 @@ import invariant from "tiny-invariant";
 
 import type { User } from "~/models/user.server";
 import { getUserById } from "~/models/user.server";
+import { safeRedirect } from "./utils";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
@@ -85,7 +86,7 @@ export async function getOrgandUserId(request: Request) {
 
 export async function requireUserId(
   request: Request,
-  redirectTo: string = new URL(request.url).pathname
+  redirectTo: string = request.url
 ) {
   const userId = await getUserId(request);
   if (!userId) {
@@ -106,7 +107,8 @@ export async function requireUser(request: Request) {
   const user = await getUserById(userId);
   if (user) {
     if (!user.emailVerifiedAt) {
-      throw redirect(`/verifyEmail`);
+      const searchParams = new URLSearchParams([["redirectTo", request.url]]);
+      throw redirect(`/verifyEmail?${searchParams}`);
     }
     return user;
   }
@@ -165,7 +167,8 @@ export async function mfaActivateUserSession({
 
 export async function logout(request: Request) {
   const session = await getSession(request);
-  return redirect("/login", {
+  const searchParams = new URLSearchParams([["redirectTo", request.url]]);
+  return redirect(`/login?${searchParams}`, {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },

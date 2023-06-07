@@ -13,7 +13,7 @@ import { Box, Typography } from "@mui/material";
 import { readFile, unlink } from "fs/promises";
 import { Loading } from "~/components/loading/Loading";
 
-const CLAW_UPLOAD = process.env.BEARCLAW_URL || '';
+const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
 
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -40,28 +40,15 @@ export const action = async ({ request }: ActionArgs) => {
     return json({ success: true }, { status: 200 });
   }
 
-  const filepath = (formData.get("files") as any)?.filepath as string;
-  const file = await readFile(filepath, 'utf-8');
-
-  const outboundFormData = new FormData();
-  outboundFormData.append(
-    "files",
-    file,
-  );
-
-  outboundFormData.append("userId", typeof formData.get("userId") === "string"
-    ? formData.get("userId")
-    : userId
-  );
-  outboundFormData.append("groupId", typeof formData.get("groupId") === "string"
-    ? formData.get("groupId")
-    : organizationId
-  );
+  formData.append("userId", userId);
+  formData.append("groupId", organizationId);
 
   const response = await fetch(CLAW_UPLOAD, {
     method: "POST",
     body: formData
   });
+
+  const filepath = (formData.get("files") as any)?.filepath as string;
   await unlink(filepath) // delete the temp file
 
   if (response.status >= 400) {
@@ -91,12 +78,15 @@ export const Upload: React.FC<Props> = ({ userId, organizationId }) => {
     <Form method="POST" encType="multipart/form-data">
       <Box display="flex" flexDirection="column" gap="1rem" width="240px">
         <input type="file" name="files" aria-label="Select file to upload" />
-        <input type="hidden" name="userId" value={userId} />
-        <input type="hidden" name="groupId" value={organizationId} />
         <Button type="submit" variant="outlined">Upload</Button>
-        {actionData?.success && (
+        {actionData?.success === true && (
           <Typography fontSize="0.75rem" fontWeight="500">
             File uploaded successfully
+          </Typography>
+        )}
+        {actionData?.success === false && (
+          <Typography fontSize="0.75rem" fontWeight="500" color="red.800">
+            File uploaded failed
           </Typography>
         )}
       </Box>
