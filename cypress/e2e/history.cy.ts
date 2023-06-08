@@ -37,13 +37,12 @@ describe("History", () => {
         });
 
         // realClick allows us to engage the copy to clipboard behavior in the cy environment
-        cy.findAllByRole("button").eq(2).realClick();
+        cy.findAllByTitle(/copy to clipboard/i).eq(2).realClick().click({ force: true });
       });
 
     // search for a string that will yield no results
     cy.wait(2000)
       .findByRole("textbox")
-      .should("be.visible")
       .type("zdfasfdafdsfad");
 
     cy.get("tbody").within(() => {
@@ -93,5 +92,35 @@ describe("History", () => {
 
     const downloadsFolder = Cypress.config("downloadsFolder");
     cy.task("deleteFolder", downloadsFolder);
+  });
+
+  it("Allows pagination of results", () => {
+    cy.createAndVerifyAccount();
+
+    // Navigate to History page
+    cy.findByRole("link", { name: /History/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(1000)
+      .findByLabelText(/first page/i)
+
+    cy.findByLabelText(/previous page/i)
+
+    cy.findByRole("link", { name: /last page/i })
+
+    cy.findByRole("link", { name: /next page/i }).click();
+
+    cy.location('search')
+      .should('include', 'page=2')
+      .should('include', 'perPage=10');
+
+    cy.findByLabelText(/Rows per page/i).click();
+
+    cy.findByRole("link", { name: /show 25/i }).click();
+
+    cy.location('search')
+      .should('include', 'page=1')
+      .should('include', 'perPage=25');
   });
 });
