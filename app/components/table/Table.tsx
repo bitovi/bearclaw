@@ -5,7 +5,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -109,6 +109,8 @@ function TableRowLink<T>({
                 </Box>
 
                 <IconButton
+                  aria-label="copy to clipboard"
+                  title="Copy to clipboard"
                   sx={{
                     "&:hover": {
                       backgroundColor: "transparent",
@@ -148,6 +150,18 @@ export default function InvoiceTable<T>({
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const [searchString, setSearchString] = useState("");
 
+  const filteredTabledEntries = useMemo(() => {
+    if (!searchString) return tableData;
+
+    return tableData.filter((entry) => {
+      let result = false;
+      for (const key in entry) {
+        if (entry[key].toLowerCase().includes(searchString)) result = true;
+      }
+      return result;
+    });
+  }, [searchString, tableData]);
+
   return (
     <Paper sx={{ mb: 2 }}>
       <Box padding={2}>
@@ -184,7 +198,7 @@ export default function InvoiceTable<T>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableData.map((entry, i) => {
+            {filteredTabledEntries.map((entry, i) => {
               return linkKey ? (
                 <TableRowLink linkKey={linkKey} key={i} entry={entry} />
               ) : (

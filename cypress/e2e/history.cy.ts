@@ -37,7 +37,7 @@ describe("History", () => {
         });
 
         // realClick allows us to engage the copy to clipboard behavior in the cy environment
-        cy.findAllByRole("button").eq(2).realClick();
+        cy.findAllByTitle(/copy to clipboard/i).eq(2).realClick().click({ force: true });
       });
 
     // search for a string that will yield no results
@@ -115,7 +115,7 @@ describe("History", () => {
       .should('include', 'page=2')
       .should('include', 'perPage=10');
 
-    cy.findByLabelText("Rows per page").click();
+    cy.findByLabelText(/Rows per page/i).click();
 
     cy.findByRole("link", { name: /show 25/i }).click();
 
