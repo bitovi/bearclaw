@@ -32,7 +32,7 @@ async function createAndLogin(email: string) {
     orgId,
     mfaEnabled: false,
     remember: false,
-    redirectTo: "/",
+    redirectTo: "/dashboard",
   });
 
   const cookieValue = response.headers.get("Set-Cookie");

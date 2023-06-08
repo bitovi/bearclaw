@@ -1,25 +1,26 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, useLocation } from "@remix-run/react";
-import { Upload } from "~/components/upload/Upload";
-import { requireUser } from "~/session.server";
+import { useLoaderData } from "@remix-run/react";
+import { getOrgandUserId } from "~/session.server";
+import { Upload, uploadAction } from "../_dashboard.upload/route";
 
-export async function loader({ request, params }: LoaderArgs) {
-  await requireUser(request);
+export async function loader({ request }: LoaderArgs) {
+  const { userId, organizationId } = await getOrgandUserId(request);
 
-  return json({});
+  return json({ userId, organizationId });
+}
+
+export async function action(args: LoaderArgs) {
+  return uploadAction(args);
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-  const location = useLocation();
-
-  return location.pathname === "/" ? (
+  const { userId, organizationId } = useLoaderData<typeof loader>();
+  return (
     <div>
-      <Upload />
+      <Upload userId={userId} organizationId={organizationId} />
     </div>
-  ) : (
-    <Outlet />
   );
 }

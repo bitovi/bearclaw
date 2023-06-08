@@ -54,12 +54,6 @@ function useFiltering() {
     navigate(`./?${updatedSearchParams}`);
   }, [updatedSearchParams, navigate]);
 
-  useEffect(() => {
-    return () => {
-      console.log("USE FILTERING IS UNMOUNTING");
-    };
-  }, []);
-
   useDebounceApiCall({
     apiCall,
   });

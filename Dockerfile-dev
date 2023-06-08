@@ -16,4 +16,5 @@ RUN npm install
 ADD prisma .
 RUN npx prisma generate
 
+CMD [ "npm", "run", "db:reset" ]
 CMD [ "npm", "run", "dev" ]

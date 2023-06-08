@@ -180,11 +180,15 @@ function createAndVerifyAccount(
   cy.findByRole("link", { name: /View verification emails here/i })
     .should("be.visible")
     .click({ force: true });
+
   cy.findByTestId(loginForm.email)
     .findByRole("link", { name: /verify your email/i })
     .should("be.visible")
     .click({ force: true });
+
   cy.findByText(/verified successfully/i);
+  cy.wait(1000);  
+  cy.findByRole("link", { name: /Continue/i }).click();
 }
 
 Cypress.Commands.add("login", login);

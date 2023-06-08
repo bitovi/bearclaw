@@ -1,6 +1,6 @@
 import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
 
-const baseURL = process.env.BEAR_CLAW_SERVER;
+const baseURL = process.env.BEARCLAW_URL;
 
 export async function retrieveRSBOMList(
   searchParams: URLSearchParams

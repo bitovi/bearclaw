@@ -4,9 +4,8 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, IconButton, Skeleton, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import { Link } from "../link";
@@ -15,6 +14,7 @@ import { copyText } from "./utils/copyText";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { NavigationFilter } from "./NavigationFilter";
+import { LinkPagination } from "./LinkPagination";
 
 export type DropdownOption = {
   value: string;
@@ -167,6 +167,8 @@ function TableRowLink<T>({
                 </Box>
 
                 <IconButton
+                  aria-label="copy to clipboard"
+                  title="Copy to clipboard"
                   sx={{
                     "&:hover": {
                       backgroundColor: "transparent",
@@ -205,27 +207,6 @@ export default function InvoiceTable<T>({
   linkKey,
   searchFields,
 }: TableProps<T extends Record<string, any> ? T : never>) {
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [page, setPage] = useState(0);
-
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const tableEntries = useMemo(() => {
-    return tableData.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    );
-  }, [page, rowsPerPage, tableData]);
-
   return (
     <Paper sx={{ mb: 2 }}>
       <Box padding={2}>
@@ -263,7 +244,7 @@ export default function InvoiceTable<T>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableEntries.map((entry, i) => {
+            {tableData.map((entry, i) => {
               return linkKey ? (
                 <TableRowLink linkKey={linkKey} key={i} entry={entry} />
               ) : (
@@ -296,15 +277,7 @@ export default function InvoiceTable<T>({
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={tableData?.length || 0}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <LinkPagination totalItems={tableData.length} />
     </Paper>
   );
 }

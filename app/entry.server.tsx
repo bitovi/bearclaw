@@ -12,9 +12,9 @@ import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import * as Sentry from "@sentry/remix";
 import { prisma } from "~/db.server";
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from '@mui/material/styles';
-import { CacheProvider } from '@emotion/react';
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from "@mui/material/styles";
+import { CacheProvider } from "@emotion/react";
 import createEmotionServer from "@emotion/server/create-instance";
 
 import createEmotionCache from "./styles/createEmotionCache";
@@ -30,6 +30,12 @@ if (process.env.SENTRY_DSN !== undefined) {
   });
 }
 
+export function startMSW() {
+  if (process.env.MSW === "true") {
+    require("./msw/msw.server");
+  }
+}
+
 export default function handleRequest(
   request: Request,
   responseStatusCode: number,
@@ -38,17 +44,17 @@ export default function handleRequest(
 ) {
   return isbot(request.headers.get("user-agent"))
     ? handleBotRequest(
-      request,
-      responseStatusCode,
-      responseHeaders,
-      remixContext
-    )
+        request,
+        responseStatusCode,
+        responseHeaders,
+        remixContext
+      )
     : handleBrowserRequest(
-      request,
-      responseStatusCode,
-      responseHeaders,
-      remixContext
-    );
+        request,
+        responseStatusCode,
+        responseHeaders,
+        remixContext
+      );
 }
 
 function handleBotRequest(
@@ -118,36 +124,33 @@ function handleBrowserRequest(
   }
 
   return new Promise((resolve, reject) => {
-    const { pipe, abort } = renderToPipeableStream(
-      <MuiRemixServer />,
-      {
-        onShellReady() {
-          const body = new PassThrough();
+    const { pipe, abort } = renderToPipeableStream(<MuiRemixServer />, {
+      onShellReady() {
+        const body = new PassThrough();
 
-          const emotionServer = createEmotionServer(emotionCache);
-          const bodyWithStyles = emotionServer.renderStylesToNodeStream();
-          body.pipe(bodyWithStyles);
+        const emotionServer = createEmotionServer(emotionCache);
+        const bodyWithStyles = emotionServer.renderStylesToNodeStream();
+        body.pipe(bodyWithStyles);
 
-          responseHeaders.set("Content-Type", "text/html");
+        responseHeaders.set("Content-Type", "text/html");
 
-          resolve(
-            new Response(bodyWithStyles, {
-              headers: responseHeaders,
-              status: responseStatusCode,
-            })
-          );
+        resolve(
+          new Response(bodyWithStyles, {
+            headers: responseHeaders,
+            status: responseStatusCode,
+          })
+        );
 
-          pipe(body);
-        },
-        onShellError(error: unknown) {
-          reject(error);
-        },
-        onError(error: unknown) {
-          console.error(error);
-          responseStatusCode = 500;
-        },
-      }
-    );
+        pipe(body);
+      },
+      onShellError(error: unknown) {
+        reject(error);
+      },
+      onError(error: unknown) {
+        console.error(error);
+        responseStatusCode = 500;
+      },
+    });
 
     setTimeout(abort, ABORT_DELAY);
   });

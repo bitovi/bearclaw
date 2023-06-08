@@ -17,8 +17,7 @@ import { TextInput } from "~/components/input";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
-  if (userId) return redirect("/");
-
+  if (userId) return redirect("/dashboard");
   return json({});
 }
 
@@ -26,8 +25,7 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+  const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
 
   if (!validateEmail(email)) {
     return json(

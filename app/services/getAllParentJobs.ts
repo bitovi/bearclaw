@@ -1,22 +1,30 @@
 // Example response
 // {
-//   "Date Analyzed": "2023-03-01 14:07:59.611000",
-//   "Filename": "tdpServer",
-//   "Size": 134064,
-//   "Status": "complete",
-//   "Type": "application/x-executable",
-//   "_id": "48fe3e4d5de5f76a0b5d5074f21b491d13a5faf86862d648aa5d499978f8da77"
+//   "data": [
+//       {
+//           "_id": "8944da5a861ece00185fa173ea65324e7d4797aa863c6fa0f03e066805974b6c",
+//           "filename": "Lato-Black.ttf",
+//           "size": 69484,
+//           "type": "application/font-sfnt",
+//           "status": "not started",
+//           "dateAnalyzed": "2023-06-07 17:57:51.699000"
+//       }
+//   ],
+//   "processingTime": 0.028655666974373162
 // }
+
 type ParentJobResponse = {
-  _id: string;
-  "Date Analyzed": string;
-  Filename: string;
-  Size: number;
-  Status: string;
-  Type: string;
+  data: Array<{
+    _id: string;
+    dateAnalyzed: string;
+    filename: string;
+    size: number;
+    status: string;
+    type: string;
+  }>
 };
 
-type ParentJob = {
+export type ParentJob = {
   _id: string;
   analyzedAt: string;
   filename: string;
@@ -25,22 +33,32 @@ type ParentJob = {
   type: string; // TODO: make this an enum
 };
 
-let cachedParentJobs: ParentJob[] = [];
-
-export const getAllParentJobs = async (): Promise<ParentJob[]> => {
-  if (cachedParentJobs.length) {
-    return cachedParentJobs;
-  }
-  const response = await fetch(
-    `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs`
-  );
-  const data: ParentJobResponse[] = await response.json();
-  return data.map((job) => ({
+function transformApiParentJob(job: ParentJobResponse["data"][number]): ParentJob {
+  return {
     _id: job._id,
-    analyzedAt: job["Date Analyzed"],
-    filename: job.Filename,
-    size: job.Size,
-    status: job.Status,
-    type: job.Type,
-  }));
+    analyzedAt: job.dateAnalyzed,
+    filename: job.filename,
+    size: job.size,
+    status: job.status,
+    type: job.type,
+  };
+}
+
+export const getAllParentJobs = async ({
+  userId,
+  organizationId,
+}: {
+  userId: string;
+  organizationId: string;
+}): Promise<ParentJob[]> => {
+  try {
+    const response = await fetch(
+      `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs?userId=${userId}&groupId=${organizationId}`
+    );
+    const data: ParentJobResponse["data"] = await response.json();
+    return data.map((job) => transformApiParentJob(job))
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };

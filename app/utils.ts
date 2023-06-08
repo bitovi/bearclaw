@@ -4,7 +4,7 @@ import type Stripe from "stripe";
 
 import type { User } from "~/models/user.server";
 
-const DEFAULT_REDIRECT = "/";
+const DEFAULT_REDIRECT = "/dashboard";
 
 /**
  * This should be used any time the redirect path is user-provided

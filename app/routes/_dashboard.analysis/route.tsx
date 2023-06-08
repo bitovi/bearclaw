@@ -1,9 +1,12 @@
 import { Link, useLoaderData } from "@remix-run/react";
+import type { LoaderArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { getAllParentJobs } from "~/services/getAllParentJobs";
+import { getOrgandUserId } from "~/session.server";
 
-export async function loader() {
-  const files = await getAllParentJobs();
+export async function loader({ request }: LoaderArgs) {
+  const { userId, organizationId } = await getOrgandUserId(request);
+  const files = await getAllParentJobs({ userId, organizationId });
   return json({
     files,
   });
