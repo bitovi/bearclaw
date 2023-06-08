@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import HistoryTable, { SkeletonTable } from "../../components/table";
-import { LoaderArgs, defer } from "@remix-run/node";
+import { defer } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { Await, useLoaderData } from "@remix-run/react";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";

@@ -11,23 +11,10 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 
 import { TextInput } from "../input";
 import { Form, useNavigate, useSearchParams } from "@remix-run/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DropdownOption } from "./Table";
-
-function buildNewSearchParams(
-  searchParams: URLSearchParams,
-  newValues: Record<string, string | number | null>
-): string {
-  const newSearchParams = new URLSearchParams(searchParams);
-  for (const [key, value] of Object.entries(newValues)) {
-    if (value === null) {
-      newSearchParams.delete(key);
-    } else {
-      newSearchParams.set(key, value.toString());
-    }
-  }
-  return newSearchParams.toString();
-}
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { DropdownOption } from "./Table";
+import { useDebounceApiCall } from "~/hooks/useDebounceApiCall";
+import { buildNewSearchParams } from "~/utils/buildNewSearchParams";
 
 function parseFilterParam(filterParam: string | null) {
   // regex to return values within "contains(______,______)"
@@ -37,27 +24,6 @@ function parseFilterParam(filterParam: string | null) {
     _searchField: result?.[0],
     _searchString: result?.[1],
   };
-}
-
-function useDebounceApiCall<T>({
-  delay,
-  apiCall,
-}: {
-  delay?: number;
-  apiCall: T extends Function ? T : never;
-}) {
-  const mountedRef = useRef(false);
-  useEffect(() => {
-    let timer: NodeJS.Timeout | undefined;
-    if (mountedRef.current) {
-      timer = setTimeout(() => apiCall(), delay || 500);
-    }
-    mountedRef.current = true;
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [delay, apiCall]);
 }
 
 function useFiltering() {
@@ -84,8 +50,15 @@ function useFiltering() {
   };
 
   const apiCall = useCallback(() => {
+    // This navigation will fire a fresh API call from the '/history' loader
     navigate(`./?${updatedSearchParams}`);
   }, [updatedSearchParams, navigate]);
+
+  useEffect(() => {
+    return () => {
+      console.log("USE FILTERING IS UNMOUNTING");
+    };
+  }, []);
 
   useDebounceApiCall({
     apiCall,

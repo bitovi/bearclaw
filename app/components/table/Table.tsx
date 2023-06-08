@@ -7,21 +7,8 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  Skeleton,
-  Stack,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, Skeleton, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { TextInput } from "../input";
 import { Link } from "../link";
 import { copyText } from "./utils/copyText";
 
@@ -94,7 +81,7 @@ export function SkeletonTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {[0, 1, 2, 4, 5].map((row) => {
+            {headers.map((row) => {
               return (
                 <TableRow key={row}>
                   <TableCell component="th" scope="row">
@@ -124,48 +111,6 @@ export function SkeletonTable({
     </Paper>
   );
 }
-
-export const Search = ({
-  onHandleChange,
-  searchString,
-}: {
-  onHandleChange: (
-    ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  searchString: string;
-}) => {
-  return (
-    <Toolbar sx={{ justifyContent: "flex-start" }}>
-      <Stack direction="row" gap={2}>
-        <TextInput
-          name="search"
-          inputProps={{
-            sx: { maxHeight: "20px", minWidth: "300px" },
-          }}
-          onChange={onHandleChange}
-          label="Search"
-          value={searchString}
-          sx={{ minWidth: "200px" }}
-        />
-        <FormControl fullWidth>
-          <InputLabel id="filter-type-select">Type</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="filter-type-select"
-            defaultValue="All"
-            label="Type" // To ensure MUI notched outline styling, we still need to pass a value to the label prop
-          >
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value="All">All</MenuItem>
-          </Select>
-        </FormControl>
-        <IconButton>
-          <FilterListIcon />
-        </IconButton>
-      </Stack>
-    </Toolbar>
-  );
-};
 
 function TableRowLink<T>({
   entry,
@@ -261,7 +206,6 @@ export default function InvoiceTable<T>({
   searchFields,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [searchString, setSearchString] = useState("");
   const [page, setPage] = useState(0);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
@@ -275,24 +219,12 @@ export default function InvoiceTable<T>({
     setPage(0);
   };
 
-  const filteredTabledEntries = useMemo(() => {
-    if (!searchString) return tableData;
-
-    return tableData.filter((entry) => {
-      let result = false;
-      for (const key in entry) {
-        if (entry[key].toLowerCase().includes(searchString)) result = true;
-      }
-      return result;
-    });
-  }, [searchString, tableData]);
-
   const tableEntries = useMemo(() => {
-    return filteredTabledEntries.slice(
+    return tableData.slice(
       page * rowsPerPage,
       page * rowsPerPage + rowsPerPage
     );
-  }, [page, rowsPerPage, filteredTabledEntries]);
+  }, [page, rowsPerPage, tableData]);
 
   return (
     <Paper sx={{ mb: 2 }}>
@@ -367,7 +299,7 @@ export default function InvoiceTable<T>({
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={filteredTabledEntries?.length || 0}
+        count={tableData?.length || 0}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

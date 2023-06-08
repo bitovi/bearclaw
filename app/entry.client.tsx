@@ -65,11 +65,13 @@ function ClientStylingCacheProvider({
 startTransition(() => {
   hydrateRoot(
     document,
-    <ClientStylingCacheProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <RemixBrowser />
-      </ThemeProvider>
-    </ClientStylingCacheProvider>
+    <StrictMode>
+      <ClientStylingCacheProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <RemixBrowser />
+        </ThemeProvider>
+      </ClientStylingCacheProvider>
+    </StrictMode>
   );
 });
