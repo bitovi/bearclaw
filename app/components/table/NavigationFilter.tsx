@@ -60,7 +60,7 @@ function useDebounceApiCall<T>({
   }, [delay, apiCall]);
 }
 
-function useFiltering(endpoint: string) {
+function useFiltering() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { _searchField, _searchString } = parseFilterParam(
@@ -79,14 +79,12 @@ function useFiltering(endpoint: string) {
     setSearchString(val);
   };
 
-  // TODO make this param more strongly typed w/ enum
-  // TODO create defer logic w/ Suspense and table Skeleton that maintains search bar
   const handleSearchField = (val: string) => {
     setSearchField(val);
   };
 
   const apiCall = useCallback(() => {
-    navigate(`${endpoint}?${updatedSearchParams}`);
+    navigate(`./?${updatedSearchParams}`);
   }, [updatedSearchParams, navigate]);
 
   useDebounceApiCall({
@@ -105,23 +103,17 @@ export function NavigationFilter({
   dropdownOptions: _dropdownOptions,
   dropdownLabel,
   searchLabel,
-  endpoint,
 }: {
   dropdownOptions: DropdownOption[];
   dropdownLabel: string;
   searchLabel: string;
-  endpoint: string;
 }) {
   const { searchField, searchString, handleSearchString, handleSearchField } =
-    useFiltering(endpoint);
+    useFiltering();
 
   const dropdownOptions = [{ value: "", label: "Select a Field" }].concat(
     _dropdownOptions
   );
-  const focusRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    focusRef.current?.focus();
-  }, []);
 
   return (
     <Form action="" method="get">
@@ -129,7 +121,6 @@ export function NavigationFilter({
         <Stack direction="row" gap={2}>
           <TextInput
             name={searchLabel}
-            inputRef={focusRef}
             inputProps={{
               sx: { maxHeight: "20px" },
             }}

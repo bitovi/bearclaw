@@ -30,7 +30,7 @@ export async function retrieveRSBOMDetails({
     */
 
   const response = await fetch(
-    `${baseURL}/bear/get_rsboms_cyclonedx/${dataObjectId}`
+    `${baseURL}/claw/get_rsboms_cyclonedx/${dataObjectId}`
   );
   const { bc_rsbom_cyclonedx_aggregate } = await response.json();
   return bc_rsbom_cyclonedx_aggregate[0];

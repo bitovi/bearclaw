@@ -31,6 +31,8 @@ describe("History", () => {
         cy.contains("th", "Data Object");
         cy.contains("th", "Filename");
         cy.contains("th", "ID");
+        cy.contains("th", "Type");
+        cy.contains("th", "Status");
         // Default fetching will have data rows
         cy.get("tbody").within(() => {
           cy.findAllByRole("row").should("have.length.gt", 0);

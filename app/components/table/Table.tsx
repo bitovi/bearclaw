@@ -14,6 +14,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Skeleton,
   Stack,
   Toolbar,
   Typography,
@@ -40,8 +41,88 @@ interface TableProps<T> {
   search?: boolean;
   onRowClick?: (entry: T) => void;
   linkKey?: keyof T;
-  endpoint?: string;
   searchFields?: DropdownOption[];
+}
+
+export function SkeletonTable({
+  search,
+  searchFields,
+  tableTitle,
+  tableContainerStyles,
+  headers,
+}: {
+  search: boolean;
+  searchFields: DropdownOption[];
+  tableTitle: string;
+  tableContainerStyles?: SxProps<Theme>;
+  headers: string[];
+}) {
+  return (
+    <Paper sx={{ mb: 2 }}>
+      <Box padding={2}>
+        <Typography variant="h6" color="text.primary" data-testid="table-title">
+          {tableTitle}
+        </Typography>
+      </Box>
+      {search && searchFields && (
+        <NavigationFilter
+          dropdownLabel="Type"
+          dropdownOptions={searchFields}
+          searchLabel="Search"
+        />
+      )}
+      <TableContainer sx={tableContainerStyles}>
+        <Table sx={{ minWidth: 650 }} stickyHeader>
+          <TableHead>
+            <TableRow
+              sx={{
+                "& th": {
+                  color: "text.secondary",
+                },
+              }}
+            >
+              {headers.map((str, i) => {
+                return (
+                  <TableCell
+                    sx={{ fontColor: "text.secondary" }}
+                    key={`str-${i}`}
+                  >
+                    {str}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {[0, 1, 2, 4, 5].map((row) => {
+              return (
+                <TableRow key={row}>
+                  <TableCell component="th" scope="row">
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
+  );
 }
 
 export const Search = ({
@@ -177,7 +258,6 @@ export default function InvoiceTable<T>({
   search,
   onRowClick = () => {},
   linkKey,
-  endpoint,
   searchFields,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -221,12 +301,11 @@ export default function InvoiceTable<T>({
           {tableTitle}
         </Typography>
       </Box>
-      {search && endpoint && searchFields && (
+      {search && searchFields && (
         <NavigationFilter
           dropdownLabel="Type"
           dropdownOptions={searchFields}
           searchLabel="Search"
-          endpoint={endpoint}
         />
       )}
       <TableContainer sx={tableContainerStyles}>

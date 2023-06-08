@@ -1,21 +1,22 @@
 import { Box } from "@mui/material";
-import HistoryTable from "../../components/table";
-import { LoaderArgs, json } from "@remix-run/node";
+import HistoryTable, { SkeletonTable } from "../../components/table";
+import { LoaderArgs, defer } from "@remix-run/node";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
-import { useLoaderData } from "@remix-run/react";
+import { Await, useLoaderData } from "@remix-run/react";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
+import { Suspense } from "react";
 
 export async function loader({ request }: LoaderArgs) {
   try {
     const url = new URL(request.url);
     const searchParams = url.searchParams;
-    const rsbomList = await retrieveRSBOMList(searchParams);
+    const rsbomList = retrieveRSBOMList(searchParams);
 
-    return json({ rsbomList, error: "" });
+    return defer({ rsbomList, error: "" });
   } catch (e) {
     const error = (e as Error).message;
     console.error(error);
-    return json({ error, rsbomList: [] });
+    return defer({ error, rsbomList: [] });
   }
 }
 
@@ -23,14 +24,12 @@ export default function Route() {
   const { rsbomList, error } = useLoaderData<typeof loader>();
 
   return (
-    <Box>
-      {error ? (
-        <Box textAlign={"center"}> {error} </Box>
-      ) : (
-        <HistoryTable<RSBOMListEntry>
-          linkKey="dataObject"
-          tableTitle={"Lists"}
-          tableData={rsbomList || undefined}
+    <Suspense
+      fallback={
+        <SkeletonTable
+          search
+          searchFields={[]}
+          tableTitle="History"
           headers={[
             "Id",
             "Filename",
@@ -39,21 +38,45 @@ export default function Route() {
             "Type",
             "Status",
           ]}
-          tableContainerStyles={{ maxHeight: "600px" }}
-          search
-          endpoint="/history"
-          searchFields={[
-            {
-              value: "dataObject",
-              label: "Data Object",
-            },
-            {
-              value: "filename",
-              label: "Filename",
-            },
-          ]}
         />
-      )}
-    </Box>
+      }
+    >
+      <Await resolve={rsbomList}>
+        {(rsbomList) => {
+          if (error) {
+            return <Box>{error}</Box>;
+          }
+          return (
+            <Box>
+              <HistoryTable<RSBOMListEntry>
+                tableTitle={"Lists"}
+                tableData={rsbomList || undefined}
+                linkKey="dataObject"
+                headers={[
+                  "Id",
+                  "Filename",
+                  "Timestamp",
+                  "Data Object",
+                  "Type",
+                  "Status",
+                ]}
+                tableContainerStyles={{ maxHeight: "600px" }}
+                search
+                searchFields={[
+                  {
+                    value: "dataObject",
+                    label: "Data Object",
+                  },
+                  {
+                    value: "filename",
+                    label: "Filename",
+                  },
+                ]}
+              />
+            </Box>
+          );
+        }}
+      </Await>
+    </Suspense>
   );
 }
