@@ -131,13 +131,15 @@ describe("User Management & Invitation", () => {
 
     cy.focused().type(existingUserAccount.email);
 
-    cy.findByRole("button", { name: /send invite/i })
+    cy.wait(200)
+      .findByRole("button", { name: /send invite/i })
       .should("be.visible")
       .click({ force: true });
 
     cy.findByText(/invitation successfully sent/i);
 
-    cy.findByRole("link", { name: /logout/i })
+    cy.wait(200)
+      .findByRole("link", { name: /logout/i })
       .should("be.visible")
       .click({ force: true });
 
