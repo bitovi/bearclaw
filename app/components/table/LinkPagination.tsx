@@ -22,12 +22,13 @@ function usePagination({
   const totalPages = Math.ceil(totalItems / perPage);
   const startItemIndex = ((currentPage - 1) * perPage) + 1;
   const endItemIndex = currentPage * perPage > totalItems ? totalItems : currentPage * perPage;
-  const firstPageLink = currentPage === 1 ? "" : `?${buildNewSearchParams(searchParams, { perPage, page: 1 })}`;
-  const lastPageLink = currentPage === 1 ? "" : `?${buildNewSearchParams(searchParams, { perPage, page: totalPages })}`;
-  const prevPageLink = currentPage >= totalPages ? "" : `?${buildNewSearchParams(searchParams, { perPage, page: currentPage - 1 })}`;
-  const nextPageLink = currentPage >= totalPages ? "" : `?${buildNewSearchParams(searchParams, { perPage, page: currentPage + 1 })}`;
+  const firstPageLink = currentPage === 1 ? undefined : `?${buildNewSearchParams(searchParams, { perPage, page: 1 })}`;
+  const lastPageLink = currentPage === totalPages ? undefined : `?${buildNewSearchParams(searchParams, { perPage, page: totalPages })}`;
+  const prevPageLink = currentPage <= 1 ? undefined : `?${buildNewSearchParams(searchParams, { perPage, page: currentPage - 1 })}`;
+  const nextPageLink = currentPage >= totalPages ? undefined : `?${buildNewSearchParams(searchParams, { perPage, page: currentPage + 1 })}`;
 
   const optionLinks = perPageOptions.map(option => ({
+    key: option,
     value: option,
     link: `?${buildNewSearchParams(searchParams, { perPage: option, page: 1 })}`,
   }))
@@ -54,9 +55,7 @@ export function LinkPagination({
   perPageOptions?: Array<number>
 }) {
   const {
-    currentPage,
     perPage,
-    totalPages,
     startItemIndex,
     endItemIndex,
     optionLinks,
@@ -69,9 +68,9 @@ export function LinkPagination({
   return (
     <Toolbar sx={{ display: "flex", justifyContent: "right", gap: 2 }}>
       <Typography>Rows per page:</Typography>
-      <Select value={perPage} variant="standard">
-        {optionLinks.map(({ value, link }) => (
-          <MenuItem value={value} sx={{ padding: 0 }}>
+      <Select value={perPage} variant="standard" aria-label="Rows per page">
+        {optionLinks.map(({ key, value, link }) => (
+          <MenuItem key={key} value={value} sx={{ padding: 0 }}>
             <Typography
               component={value === perPage ? "div" : Link}
               to={link}
@@ -116,7 +115,7 @@ export function LinkPagination({
         <ButtonLink
           aria-label="last page"
           to={lastPageLink}
-          disabled={currentPage === totalPages}
+          disabled={!!lastPageLink}
         >
           <KeyboardDoubleArrowRightIcon />
         </ButtonLink>

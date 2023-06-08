@@ -1,5 +1,5 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getOrgandUserId } from "~/session.server";
 import { Upload, uploadAction } from "../_dashboard.upload/route";

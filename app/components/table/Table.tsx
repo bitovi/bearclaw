@@ -5,7 +5,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -147,12 +147,6 @@ export default function InvoiceTable<T>({
   linkKey,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const [searchString, setSearchString] = useState("");
-
-  const handleSearch = (
-    ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setSearchString(ev.target.value);
-  };
 
   return (
     <Paper sx={{ mb: 2 }}>
