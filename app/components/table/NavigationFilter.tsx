@@ -11,7 +11,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 
 import { TextInput } from "../input";
 import { Form, useNavigate, useSearchParams } from "@remix-run/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { DropdownOption } from "./Table";
 import { useDebounceApiCall } from "~/hooks/useDebounceApiCall";
 import { buildNewSearchParams } from "~/utils/buildNewSearchParams";
@@ -50,7 +50,6 @@ function useFiltering() {
   };
 
   const apiCall = useCallback(() => {
-    // This navigation will fire a fresh API call from the '/history' loader
     navigate(`./?${updatedSearchParams}`);
   }, [updatedSearchParams, navigate]);
 
