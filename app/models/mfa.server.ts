@@ -30,15 +30,15 @@ export function sendMfaTokenEmail(email: string, token: string) {
 export async function createMfaEmailValidationToken(user: User) {
   const mfaToken = {
     type: "email",
-    expiresAt: dayjs().add(5, 'minute').toDate(),
+    expiresAt: dayjs().add(5, "minute").toDate(),
     token: generateMfaToken(),
-  }
+  };
 
   return await prisma.mfaToken.upsert({
-    where: { 
+    where: {
       userId_type: {
-        userId: user.id ,
-        type: "email"
+        userId: user.id,
+        type: "email",
       },
     },
     update: mfaToken,
@@ -53,76 +53,80 @@ export function getUserMfaMethods(user: User) {
   return prisma.mfaMethod.findMany({
     where: { userId: user.id, active: true },
   });
-
 }
 
-export async function createMfaToken({type, user}: {type: MfaMethod["type"]; user: User}) {
+export async function createMfaToken({
+  type,
+  user,
+}: {
+  type: MfaMethod["type"];
+  user: User;
+}) {
   const token = generateMfaToken();
   return prisma.mfaToken.upsert({
     where: {
       userId_type: {
         userId: user.id,
         type: type,
-      }
+      },
     },
     create: {
       userId: user.id,
       type: type,
-      expiresAt: dayjs().add(5, 'minute').toDate(),
+      expiresAt: dayjs().add(5, "minute").toDate(),
       token,
     },
     update: {
-      expiresAt: dayjs().add(5, 'minute').toDate(),
+      expiresAt: dayjs().add(5, "minute").toDate(),
       token,
-    }
+    },
   });
 }
 
 export async function resetMfaToken({
-  type, 
-  user
+  type,
+  user,
 }: {
-  type: MfaMethod["type"]; 
-  user: User
+  type: MfaMethod["type"];
+  user: User;
 }) {
-  const mfaToken = await createMfaToken({type, user})
-  await sendMfaTokenEmail(user.email, mfaToken.token)
+  const mfaToken = await createMfaToken({ type, user });
+  await sendMfaTokenEmail(user.email, mfaToken.token);
 }
 
 export async function updateUserMfaMethod({
-  user, 
-  type, 
-  active
-}: { user: User } & Pick<MfaMethod, "active" | "type">
-) {
+  user,
+  type,
+  active,
+}: { user: User } & Pick<MfaMethod, "active" | "type">) {
   const mfaMethod = await prisma.mfaMethod.upsert({
-    where: { 
+    where: {
       userId_type: {
-        userId: user.id, 
-        type: type
+        userId: user.id,
+        type: type,
       },
     },
-    update: { 
+    update: {
       active: active,
       updatedAt: new Date(),
       verifiedAt: active ? undefined : null,
     },
-    create: { 
-      userId: user.id, 
-      type: type, 
+    create: {
+      userId: user.id,
+      type: type,
       active: active,
     },
   });
-  
+
   if (active) {
-    const mfaToken = await createMfaToken({type, user})
-    await sendMfaTokenEmail(user.email, mfaToken.token)
+    const mfaToken = await createMfaToken({ type, user });
+    await sendMfaTokenEmail(user.email, mfaToken.token);
   } else {
     await prisma.mfaToken.deleteMany({
       where: {
         userId: user.id,
         type: type,
-      }
+      },
     });
   }
 
@@ -134,11 +138,11 @@ export async function verifyMfaMethod({
   type,
   token,
 }: {
-  user: User, 
-  type: MfaMethod["type"], 
-  token: string
+  user: User;
+  type: MfaMethod["type"];
+  token: string;
 }) {
-  const mfaToken = await validateAndDestroyMfaToken({user, type, token });
+  const mfaToken = await validateAndDestroyMfaToken({ user, type, token });
 
   if (!mfaToken) {
     return false;
@@ -149,15 +153,15 @@ export async function verifyMfaMethod({
       userId_type: {
         userId: user.id,
         type: type,
-      }
+      },
     },
     data: {
       active: true,
       updatedAt: new Date(),
       verifiedAt: new Date(),
-    }
+    },
   });
-  
+
   return mfaMethod ? true : false;
 }
 
@@ -166,9 +170,9 @@ export async function validateAndDestroyMfaToken({
   type,
   token,
 }: {
-  user: User, 
-  type: MfaMethod["type"], 
-  token: string
+  user: User;
+  type: MfaMethod["type"];
+  token: string;
 }): Promise<boolean> {
   const mfaToken = await prisma.mfaToken.findFirst({
     where: {
@@ -178,17 +182,17 @@ export async function validateAndDestroyMfaToken({
       expiresAt: {
         gte: new Date(),
       },
-    }
+    },
   });
 
   if (!mfaToken) {
     return false;
   }
 
-  await prisma.mfaToken.delete({  
+  await prisma.mfaToken.delete({
     where: {
       id: mfaToken.id,
-    }
+    },
   });
 
   return true;

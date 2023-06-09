@@ -7,8 +7,16 @@ import { redirect, json } from "@remix-run/server-runtime";
 import { Button } from "~/components/button/Button";
 import { TextInput } from "~/components/input/text/TextInput";
 import { MFA_TYPE, isMfaType } from "~/models/mfa";
-import { getUserMfaMethods, resetMfaToken, validateAndDestroyMfaToken } from "~/models/mfa.server";
-import { getMfaStatus, getUser, mfaActivateUserSession } from "~/session.server";
+import {
+  getUserMfaMethods,
+  resetMfaToken,
+  validateAndDestroyMfaToken,
+} from "~/models/mfa.server";
+import {
+  getMfaStatus,
+  getUser,
+  mfaActivateUserSession,
+} from "~/session.server";
 import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
@@ -19,7 +27,9 @@ export async function loader({ request }: LoaderArgs) {
   if (mfaStatus !== "pending") return redirect("/dashboard");
 
   const mfaMethods = await getUserMfaMethods(user);
-  const activeMfaMethods = mfaMethods.filter((mfa) => mfa.active && mfa.verifiedAt).map((mfa) => mfa.type);
+  const activeMfaMethods = mfaMethods
+    .filter((mfa) => mfa.active && mfa.verifiedAt)
+    .map((mfa) => mfa.type);
 
   return json({ activeMfaMethods });
 }
@@ -40,11 +50,11 @@ export async function action({ request }: LoaderArgs) {
     typeof reset === "string" &&
     reset === "true"
   ) {
-    await resetMfaToken({ type, user })
+    await resetMfaToken({ type, user });
     return json({
       reset: true,
-      errors: { token: null }
-    })
+      errors: { token: null },
+    });
   }
 
   const token = formData.get("token");
@@ -60,7 +70,7 @@ export async function action({ request }: LoaderArgs) {
     const tokenValid = await validateAndDestroyMfaToken({
       user,
       type,
-      token
+      token,
     });
 
     if (tokenValid) {
@@ -72,8 +82,7 @@ export async function action({ request }: LoaderArgs) {
     {
       reset: false,
       errors: {
-        token:
-          "Could not verify MFA token. Retry or request a new token.",
+        token: "Could not verify MFA token. Retry or request a new token.",
       },
     },
     { status: 400 }
@@ -92,7 +101,8 @@ export default function Mfa() {
         <Box display="flex" flexDirection="column" gap="1rem">
           <Typography variant="h3">Email MFA</Typography>
           <Typography>
-            You have been sent a 6 digit token to your email address. Please enter it below to complete the login process.
+            You have been sent a 6 digit token to your email address. Please
+            enter it below to complete the login process.
           </Typography>
           <Form method="post">
             <TextInput
@@ -100,26 +110,32 @@ export default function Mfa() {
               label="MFA Token"
               inputRef={tokenRef}
               autoFocus={true}
-              error={actionData?.errors?.token || ''}
+              error={actionData?.errors?.token || ""}
             />
             <input type="hidden" name="type" value={MFA_TYPE.EMAIL} />
-            <Button type="submit" variant="contained" sx={{ display: "block", mt: "1rem" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ display: "block", mt: "1rem" }}
+            >
               Complete
             </Button>
           </Form>
           <Form method="post">
             <input type="hidden" name="type" value={MFA_TYPE.EMAIL} />
             <input type="hidden" name="reset" value="true" />
-            <Button type="submit" variant="outlined" sx={{ display: "block", mt: "1rem" }}>
+            <Button
+              type="submit"
+              variant="outlined"
+              sx={{ display: "block", mt: "1rem" }}
+            >
               Resend MFA Token
             </Button>
             <Typography variant="caption">
               This will invalidate any previously sent tokens.
             </Typography>
             {actionData?.reset === true && (
-              <Typography variant="caption">
-                New token sent.
-              </Typography>
+              <Typography variant="caption">New token sent.</Typography>
             )}
           </Form>
         </Box>

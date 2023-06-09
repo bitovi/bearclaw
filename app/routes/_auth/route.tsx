@@ -32,7 +32,8 @@ export default function Index() {
         paddingRight="16px"
         sx={{
           color: "white",
-          background: "linear-gradient(167.62deg, #192869 19.38%, #0B1433 101.5%)",
+          background:
+            "linear-gradient(167.62deg, #192869 19.38%, #0B1433 101.5%)",
         }}
       >
         <Box
@@ -44,7 +45,7 @@ export default function Index() {
           top="-40px"
           sx={{
             background: "#3507EE",
-            transform: "rotate(18deg)"
+            transform: "rotate(18deg)",
           }}
         />
         <Box
@@ -56,7 +57,7 @@ export default function Index() {
           bottom="-40px"
           sx={{
             background: "#420BD8",
-            transform: "rotate(-18deg)"
+            transform: "rotate(-18deg)",
           }}
         />
         <Box
@@ -100,7 +101,7 @@ export default function Index() {
         sx={{
           backgroundColor: "white",
           borderTopLeftRadius: "16px 24px",
-          borderBottomLeftRadius: "16px 24px"
+          borderBottomLeftRadius: "16px 24px",
         }}
       >
         <Box maxWidth="700px" padding={{ xs: "5rem 1rem", md: "unset" }}>
@@ -120,7 +121,9 @@ export default function Index() {
             "linear-gradient(167.62deg, #192869 19.38%, #0B1433 101.5%)",
         }}
       >
-        <Typography fontWeight={700} fontSize="1.4rem">BEARCLAW</Typography>
+        <Typography fontWeight={700} fontSize="1.4rem">
+          BEARCLAW
+        </Typography>
       </Box>
     </Box>
   );

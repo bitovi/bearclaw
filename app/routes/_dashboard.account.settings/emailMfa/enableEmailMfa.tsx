@@ -39,7 +39,7 @@ export async function verifyEmailMfaAction(
     const mfaMethod = await verifyMfaMethod({
       user,
       type: MFA_TYPE.EMAIL,
-      token
+      token,
     });
 
     return json({ form: "emailMfaVerify", success: !!mfaMethod });
@@ -67,16 +67,27 @@ export function VerifyEmailMfa({ mfaEmailStatus }: { mfaEmailStatus: string }) {
       <Box my={2} display="flex" flexDirection="column" gap="1rem">
         <Typography fontWeight="700">Enable Email MFA</Typography>
         <Typography>
-          You have been sent a 6 digit token to your email address. Please enter it below to enable email MFA.
+          You have been sent a 6 digit token to your email address. Please enter
+          it below to enable email MFA.
         </Typography>
         <Form method="post">
           <TextInput
             name="token"
             label="MFA Token"
-            error={(response?.success === false && response.form === "emailMfaVerify") ? "Invalid token, please try again." : undefined}
+            error={
+              response?.success === false && response.form === "emailMfaVerify"
+                ? "Invalid token, please try again."
+                : undefined
+            }
           />
           <input type="hidden" name="form" value="emailMfaVerify" />
-          <Button type="submit" variant="contained" sx={{ display: "block", mt: "1rem" }}>Verify</Button>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ display: "block", mt: "1rem" }}
+          >
+            Verify
+          </Button>
         </Form>
         <Form method="post">
           <input type="hidden" name="action" value="emailMfaEnable" />
@@ -86,6 +97,5 @@ export function VerifyEmailMfa({ mfaEmailStatus }: { mfaEmailStatus: string }) {
     );
   }
 
-  return null
+  return null;
 }
-

@@ -25,13 +25,13 @@ export type DataObject = {
 
 type DataObjectResponse = {
   data_objects: DataObject[];
-}
+};
 
 export async function getAllDataObjects(userId: string, orgId: string) {
   try {
     const response = await fetch(getPath(userId, orgId));
     const data: DataObjectResponse = await response.json();
-    return data.data_objects
+    return data.data_objects;
   } catch (error) {
     console.error(error);
     return [];

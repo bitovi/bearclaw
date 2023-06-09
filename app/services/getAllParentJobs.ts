@@ -21,7 +21,7 @@ type ParentJobResponse = {
     size: number;
     status: string;
     type: string;
-  }>
+  }>;
 };
 
 export type ParentJob = {
@@ -33,7 +33,9 @@ export type ParentJob = {
   type: string; // TODO: make this an enum
 };
 
-function transformApiParentJob(job: ParentJobResponse["data"][number]): ParentJob {
+function transformApiParentJob(
+  job: ParentJobResponse["data"][number]
+): ParentJob {
   return {
     _id: job._id,
     analyzedAt: job.dateAnalyzed,
@@ -56,7 +58,7 @@ export const getAllParentJobs = async ({
       `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs?userId=${userId}&groupId=${organizationId}`
     );
     const data: ParentJobResponse["data"] = await response.json();
-    return data.map((job) => transformApiParentJob(job))
+    return data.map((job) => transformApiParentJob(job));
   } catch (error) {
     console.error(error);
     return [];

@@ -1,10 +1,6 @@
 import { Onboarding } from "~/routes/_auth.onboarding/components/Onboarding";
 import { json, redirect } from "@remix-run/node";
-import type {
-  ActionArgs,
-  LoaderArgs,
-  V2_MetaFunction
-} from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { useActionData } from "@remix-run/react";
 import { getUser } from "~/session.server";
 import { onboardUser } from "./data.server";
@@ -67,13 +63,12 @@ export default function Route() {
         response={
           actionData
             ? {
-              success: true,
-              data: {},
-            }
+                success: true,
+                data: {},
+              }
             : undefined
         }
       />
     </div>
   );
 }
-

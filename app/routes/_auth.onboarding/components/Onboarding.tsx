@@ -45,12 +45,7 @@ export function Onboarding({ response, redirectTo }: Props) {
           </Stepper>
           <Form method="post" action="/onboarding">
             <input type="hidden" name="redirectTo" value={redirectTo} />
-            <Box
-              display="flex"
-              overflow="hidden"
-              width="100%"
-              minWidth="100%"
-            >
+            <Box display="flex" overflow="hidden" width="100%" minWidth="100%">
               {questions.map((step, stepIndex) => (
                 <Box
                   key={step.title}
@@ -62,7 +57,13 @@ export function Onboarding({ response, redirectTo }: Props) {
                     transform: `translateX(${activeStep * -100}%)`,
                   }}
                 >
-                  <Typography my={4} fontSize={{ xs: "1rem", sm: "1.1rem", md: "1.3rem" }} fontWeight="500">{step.description}</Typography>
+                  <Typography
+                    my={4}
+                    fontSize={{ xs: "1rem", sm: "1.1rem", md: "1.3rem" }}
+                    fontWeight="500"
+                  >
+                    {step.description}
+                  </Typography>
                   <Box
                     display="grid"
                     gridTemplateColumns={{ xs: "1fr", md: "repeat(2, 1fr)" }}
@@ -72,9 +73,7 @@ export function Onboarding({ response, redirectTo }: Props) {
                       <div key={question.name}>
                         {question.type === "text" && (
                           <TextInput
-                            tabIndex={
-                              activeStep === stepIndex ? undefined : -1
-                            }
+                            tabIndex={activeStep === stepIndex ? undefined : -1}
                             fullWidth
                             label={question.label}
                             name={question.name}
