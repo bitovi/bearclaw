@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import dayjs from "dayjs";
-import { withRouter } from "storybook-addon-react-router-v6";
 
 import Table from "./Table";
 
