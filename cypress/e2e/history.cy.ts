@@ -24,13 +24,15 @@ describe("History", () => {
 
     // Inspect history table
     // padding in time as the endpoint is slow
-    cy.wait(5000)
+    cy.wait(1000)
       .findByRole("table")
       .within(() => {
         cy.contains("th", "Timestamp");
         cy.contains("th", "Data Object");
         cy.contains("th", "Filename");
-        cy.contains("th", "ID");
+        cy.contains("th", "Id");
+        cy.contains("th", "Type");
+        cy.contains("th", "Status");
         // Default fetching will have data rows
         cy.get("tbody").within(() => {
           cy.findAllByRole("row").should("have.length.gt", 0);
@@ -40,10 +42,18 @@ describe("History", () => {
         cy.findAllByTitle(/copy to clipboard/i).eq(2).realClick().click({ force: true });
       });
 
+    cy.findByLabelText(/type/i).click();
+
+    cy.findByRole("option", { name: /data object/i }).click();
+
     // search for a string that will yield no results
     cy.wait(2000)
       .findByRole("textbox")
       .type("zdfasfdafdsfad");
+    const params = new URLSearchParams();
+    params.append("filter", "contains(dataObject,zdfasfdafdsfad)");
+    // Confirm our filtering/searching is wiring up to the URL correctly
+    cy.location("search").should("include", params.toString());
 
     cy.get("tbody").within(() => {
       // no table row data to display
@@ -56,6 +66,10 @@ describe("History", () => {
       .invoke("readText")
       .then((data) => {
         cy.findByRole("textbox").clear().type(data);
+        const params = new URLSearchParams();
+        params.append("filter", `contains(dataObject,${data})`);
+        // Confirm our filtering/searching is wiring up to the URL correctly
+        cy.location("search").should("include", params.toString());
       });
 
     cy.get("tbody").within(() => {

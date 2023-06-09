@@ -13,11 +13,18 @@ export async function loader({ request }: LoaderArgs) {
   if (token) {
     const result = await validateUserEmailByToken(token);
     if (result.error) {
-      return json({ isVerified: false, error: "Could not verify. Token is expired or invalid." });
+      return json({
+        isVerified: false,
+        error: "Could not verify. Token is expired or invalid.",
+      });
     }
     const redirectTo = url.searchParams.get("redirectTo");
     if (redirectTo) {
-      return json({ isVerified: true, error: null, redirectTo: safeRedirect(redirectTo) });
+      return json({
+        isVerified: true,
+        error: null,
+        redirectTo: safeRedirect(redirectTo),
+      });
     }
     return json({ isVerified: true, error: null, redirectTo: "/dashboard" });
   }
@@ -55,22 +62,18 @@ export default function Route() {
       gap={1}
     >
       {error ? (
-        <Typography>
-          {error}
-        </Typography>
+        <Typography>{error}</Typography>
       ) : (
         <Typography>
-          Please verify your email address. Check your inbox for a
-          verification link.
+          Please verify your email address. Check your inbox for a verification
+          link.
         </Typography>
       )}
-      <Link to="/verificationEmailResend">
-        Resend verification email
-      </Link>
+      <Link to="/verificationEmailResend">Resend verification email</Link>
       <Typography>
         TESTING: Email messaging is not connected yet.{" "}
         <Link to="/fakeMail">View verification emails here</Link>
       </Typography>
     </Box>
-  )
+  );
 }

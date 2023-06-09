@@ -1,37 +1,60 @@
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import { Link, useSearchParams } from "@remix-run/react";
 
 import { ButtonLink } from "../buttonLink/ButtonLink";
-import { Box, MenuItem, Select } from '@mui/material';
+import { Box, MenuItem, Select } from "@mui/material";
+import { buildNewSearchParams } from "~/utils/buildNewSearchParams";
 
 function usePagination({
   totalItems,
   perPageOptions = [10, 25, 50],
 }: {
   totalItems: number;
-  perPageOptions?: Array<number>
+  perPageOptions?: Array<number>;
 }) {
   const [searchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || '1');
-  const perPage = parseInt(searchParams.get("perPage") || '10');
+  const currentPage = parseInt(searchParams.get("page") || "1");
+  const perPage = parseInt(searchParams.get("perPage") || "10");
   const totalPages = Math.ceil(totalItems / perPage);
-  const startItemIndex = ((currentPage - 1) * perPage) + 1;
-  const endItemIndex = currentPage * perPage > totalItems ? totalItems : currentPage * perPage;
-  const firstPageLink = currentPage === 1 ? undefined : `?${buildNewSearchParams(searchParams, { perPage, page: 1 })}`;
-  const lastPageLink = currentPage === totalPages ? undefined : `?${buildNewSearchParams(searchParams, { perPage, page: totalPages })}`;
-  const prevPageLink = currentPage <= 1 ? undefined : `?${buildNewSearchParams(searchParams, { perPage, page: currentPage - 1 })}`;
-  const nextPageLink = currentPage >= totalPages ? undefined : `?${buildNewSearchParams(searchParams, { perPage, page: currentPage + 1 })}`;
+  const startItemIndex = (currentPage - 1) * perPage + 1;
+  const endItemIndex =
+    currentPage * perPage > totalItems ? totalItems : currentPage * perPage;
+  const firstPageLink =
+    currentPage === 1
+      ? undefined
+      : `?${buildNewSearchParams(searchParams, { perPage, page: 1 })}`;
+  const lastPageLink =
+    currentPage === totalPages
+      ? undefined
+      : `?${buildNewSearchParams(searchParams, { perPage, page: totalPages })}`;
+  const prevPageLink =
+    currentPage <= 1
+      ? undefined
+      : `?${buildNewSearchParams(searchParams, {
+          perPage,
+          page: currentPage - 1,
+        })}`;
+  const nextPageLink =
+    currentPage >= totalPages
+      ? undefined
+      : `?${buildNewSearchParams(searchParams, {
+          perPage,
+          page: currentPage + 1,
+        })}`;
 
-  const optionLinks = perPageOptions.map(option => ({
+  const optionLinks = perPageOptions.map((option) => ({
     key: option,
     value: option,
-    link: `?${buildNewSearchParams(searchParams, { perPage: option, page: 1 })}`,
-  }))
+    link: `?${buildNewSearchParams(searchParams, {
+      perPage: option,
+      page: 1,
+    })}`,
+  }));
 
   return {
     currentPage,
@@ -45,14 +68,14 @@ function usePagination({
     lastPageLink,
     prevPageLink,
     nextPageLink,
-  }
+  };
 }
 export function LinkPagination({
   totalItems,
   perPageOptions = [10, 25, 50],
 }: {
   totalItems: number;
-  perPageOptions?: Array<number>
+  perPageOptions?: Array<number>;
 }) {
   const {
     perPage,
@@ -89,8 +112,17 @@ export function LinkPagination({
           </MenuItem>
         ))}
       </Select>
-      <Typography >{startItemIndex}-{endItemIndex} of {totalItems}</Typography>
-      <Box display="flex" sx={{ "div, div:hover, a, a:hover, :visited, a:focus": { color: "grey.800" } }}>
+      <Typography>
+        {startItemIndex}-{endItemIndex} of {totalItems}
+      </Typography>
+      <Box
+        display="flex"
+        sx={{
+          "div, div:hover, a, a:hover, :visited, a:focus": {
+            color: "grey.800",
+          },
+        }}
+      >
         <ButtonLink
           aria-label="first page"
           to={firstPageLink}
@@ -122,16 +154,4 @@ export function LinkPagination({
       </Box>
     </Toolbar>
   );
-}
-
-function buildNewSearchParams(searchParams: URLSearchParams, newValues: Record<string, string | number | null>): string {
-  const newSearchParams = new URLSearchParams(searchParams);
-  for (const [key, value] of Object.entries(newValues)) {
-    if (value === null) {
-      newSearchParams.delete(key);
-    } else {
-      newSearchParams.set(key, value.toString());
-    }
-  }
-  return newSearchParams.toString();
 }

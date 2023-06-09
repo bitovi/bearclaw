@@ -5,18 +5,21 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import React, { useEffect, useMemo, useState } from "react";
-import { Box, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, IconButton, Skeleton, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { TextInput } from "../input";
 import { Link } from "../link";
 import { copyText } from "./utils/copyText";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { NavigationFilter } from "./NavigationFilter";
 import { LinkPagination } from "./LinkPagination";
 
+export type DropdownOption = {
+  value: string;
+  label: string;
+};
 interface TableProps<T> {
   tableData: Array<T> | undefined;
   tableTitle: string;
@@ -25,35 +28,89 @@ interface TableProps<T> {
   search?: boolean;
   onRowClick?: (entry: T) => void;
   linkKey?: keyof T;
+  searchFields?: DropdownOption[];
 }
 
-const Search = ({
-  onHandleChange,
-  searchString,
+export function SkeletonTable({
+  search,
+  searchFields,
+  tableTitle,
+  tableContainerStyles,
+  headers,
 }: {
-  onHandleChange: (
-    ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  searchString: string;
-}) => {
+  search: boolean;
+  searchFields: DropdownOption[];
+  tableTitle: string;
+  tableContainerStyles?: SxProps<Theme>;
+  headers: string[];
+}) {
   return (
-    <Toolbar sx={{ justifyContent: "flex-end" }}>
-      <TextInput
-        name="search"
-        inputProps={{
-          sx: { maxHeight: "20px", minWidth: "300px" },
-        }}
-        onChange={onHandleChange}
-        placeholder="Search"
-        value={searchString}
-        sx={{ minWidth: "200px" }}
-      />
-      <IconButton>
-        <FilterListIcon />
-      </IconButton>
-    </Toolbar>
+    <Paper sx={{ mb: 2 }}>
+      <Box padding={2}>
+        <Typography variant="h6" color="text.primary" data-testid="table-title">
+          {tableTitle}
+        </Typography>
+      </Box>
+      {search && searchFields && (
+        <NavigationFilter
+          dropdownLabel="Type"
+          dropdownOptions={searchFields}
+          searchLabel="Search"
+        />
+      )}
+      <TableContainer sx={tableContainerStyles}>
+        <Table sx={{ minWidth: 650 }} stickyHeader>
+          <TableHead>
+            <TableRow
+              sx={{
+                "& th": {
+                  color: "text.secondary",
+                },
+              }}
+            >
+              {headers.map((str, i) => {
+                return (
+                  <TableCell
+                    sx={{ fontColor: "text.secondary" }}
+                    key={`str-${i}`}
+                  >
+                    {str}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {headers.map((row) => {
+              return (
+                <TableRow key={row}>
+                  <TableCell component="th" scope="row">
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
-};
+}
 
 function TableRowLink<T>({
   entry,
@@ -76,6 +133,7 @@ function TableRowLink<T>({
     };
   }, [textCopied]);
 
+  // TODO -- resolve validateDOMNesting error re: <a/>'s being children of <tbody>
   return (
     <TableRow
       component={Link}
@@ -145,23 +203,10 @@ export default function InvoiceTable<T>({
   headers = [],
   tableContainerStyles = {},
   search,
-  onRowClick = () => { },
+  onRowClick = () => {},
   linkKey,
+  searchFields,
 }: TableProps<T extends Record<string, any> ? T : never>) {
-  const [searchString, setSearchString] = useState("");
-
-  const filteredTabledEntries = useMemo(() => {
-    if (!searchString) return tableData;
-
-    return tableData.filter((entry) => {
-      let result = false;
-      for (const key in entry) {
-        if (entry[key].toLowerCase().includes(searchString)) result = true;
-      }
-      return result;
-    });
-  }, [searchString, tableData]);
-
   return (
     <Paper sx={{ mb: 2 }}>
       <Box padding={2}>
@@ -169,10 +214,11 @@ export default function InvoiceTable<T>({
           {tableTitle}
         </Typography>
       </Box>
-      {search && (
-        <Search
-          onHandleChange={(ev) => setSearchString(ev.target.value)}
-          searchString={searchString}
+      {search && searchFields && (
+        <NavigationFilter
+          dropdownLabel="Type"
+          dropdownOptions={searchFields}
+          searchLabel="Search"
         />
       )}
       <TableContainer sx={tableContainerStyles}>
@@ -198,7 +244,7 @@ export default function InvoiceTable<T>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredTabledEntries.map((entry, i) => {
+            {tableData.map((entry, i) => {
               return linkKey ? (
                 <TableRowLink linkKey={linkKey} key={i} entry={entry} />
               ) : (

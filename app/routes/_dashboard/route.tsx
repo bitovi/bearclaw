@@ -1,12 +1,12 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
-import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
 import { Header } from "./header";
 import { MainSideNav } from "./sidenav";
-import { Loading } from "~/components/loading/Loading";
+
 import { getOrgId, getUser, requireUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
 import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
@@ -31,7 +31,6 @@ export async function loader({ request }: LoaderArgs) {
   const user = await requireUser(request);
   const organizationId = await getOrgId(request);
   let orgUser: OrganizationUsers | null = null;
-
 
   if (organizationId) {
     orgUser = await retrieveOrganizationUser({
@@ -77,7 +76,6 @@ export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
   const { canViewUsers } = useLoaderData<typeof loader>();
-  const navigation = useNavigation();
 
   return (
     <Box
@@ -90,12 +88,7 @@ export default function Index() {
       }}
     >
       <Header />
-      <Box
-        display="flex"
-        height="100%"
-        width="100%"
-        overflow="hidden"
-      >
+      <Box display="flex" height="100%" width="100%" overflow="hidden">
         <Box width="250px">
           <MainSideNav canViewUsers={canViewUsers} />
         </Box>
@@ -107,15 +100,9 @@ export default function Index() {
           padding={4}
           sx={{ backgroundColor: "white", borderTopLeftRadius: "16px" }}
         >
-          {navigation.state === "loading" ? (
-            <div>
-              <Loading />
-            </div>
-          ) : (
-            <main>
-              <Outlet />
-            </main>
-          )}
+          <main>
+            <Outlet />
+          </main>
         </Box>
       </Box>
     </Box>

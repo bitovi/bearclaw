@@ -8,8 +8,34 @@ const fixture_getRSBOMDetail = require("./fixtures/getRSBOMDetail.js");
 
 const baseURL = process.env.BEARCLAW_URL;
 
+function parseFilterParam(filterParam) {
+  // regex to return values within "contains(______,______)"
+  // 0 index will be field, 1 index will be value
+  const result = filterParam?.match(/\((.*?)\)/)?.[1].split(",");
+  return {
+    _searchField: result?.[0],
+    _searchString: result?.[1],
+  };
+}
+
 const handlers = [
   rest.get(`${baseURL}/claw/get_rsboms_cyclonedx`, (req, res, ctx) => {
+    const { _searchField, _searchString } = parseFilterParam(
+      req.url.searchParams.get("filter")
+    );
+
+    if (_searchField && _searchString) {
+      const filteredList =
+        fixture_getRSBOMSCyclonedx.bc_rsbom_cyclonedx_aggregate.filter(
+          (item) => {
+            return item[_searchField]
+              .toLowerCase()
+              .includes(_searchString.toLowerCase());
+          }
+        );
+      return res(ctx.json({ bc_rsbom_cyclonedx_aggregate: filteredList }));
+    }
+
     return res(ctx.json(fixture_getRSBOMSCyclonedx));
   }),
   rest.get(`${baseURL}/claw/get_rsboms_cyclonedx/*`, (req, res, ctx) => {

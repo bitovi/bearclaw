@@ -175,8 +175,9 @@ export default function Route() {
   useEffect(() => {
     if (actionData?.key) {
       setBannerOpen(true);
+      setModalOpen(false);
     }
-  }, [actionData?.key]);
+  }, [actionData]);
 
   if (loaderError) {
     return <Box textAlign="center">{loaderError}</Box>;

@@ -72,15 +72,12 @@ export async function getUser(request: Request) {
 
   const user = await getUserById(userId);
   if (user) return user;
-
   throw await logout(request);
 }
 
-export async function getOrgandUserId(
-  request: Request
-): Promise<{
-  userId: User["id"],
-  organizationId: Organization["id"]
+export async function getOrgandUserId(request: Request): Promise<{
+  userId: User["id"];
+  organizationId: Organization["id"];
 }> {
   const session = await getSession(request);
   const organizationId = session.get(ORGANIZATION_KEY);

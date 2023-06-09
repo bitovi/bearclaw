@@ -14,8 +14,7 @@ import Table from "~/components/table/Table";
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
-  const jobs = await getAllParentJobs({ userId, organizationId })
-
+  const jobs = await getAllParentJobs({ userId, organizationId });
   return json({ user, jobs, userId, organizationId });
 }
 
@@ -27,13 +26,14 @@ export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
   const { userId, organizationId, user, jobs } = useLoaderData<typeof loader>();
-
   return (
     <Box display="flex" flexDirection="column" gap="2rem">
       <Box display="flex" alignItems="center">
         <Box flex="1">
           <Typography>Dashboard</Typography>
-          <Typography fontSize="34px" fontWeight="400" lineHeight={2}>Welcome {user?.firstName}</Typography>
+          <Typography fontSize="34px" fontWeight="400" lineHeight={2}>
+            Welcome {user?.firstName}
+          </Typography>
         </Box>
         <Box border="1px dashed #999" padding="1rem">
           <Upload userId={userId} organizationId={organizationId} />
@@ -104,12 +104,12 @@ export default function Index() {
                 fileName: job.filename,
                 type: job.type,
                 status: job.status,
-                objectId: job._id
-              }
+                objectId: job._id,
+              };
             })}
           />
         ) : (
-            <Box component={Paper} variant="outlined" padding={2}>
+          <Box component={Paper} variant="outlined" padding={2}>
             <Typography fontStyle="italic">No activity yet</Typography>
           </Box>
         )}

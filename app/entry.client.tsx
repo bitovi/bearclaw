@@ -5,12 +5,18 @@
  */
 
 import { RemixBrowser, useLocation, useMatches } from "@remix-run/react";
-import { startTransition, StrictMode, useMemo, useState, useEffect } from "react";
+import {
+  startTransition,
+  StrictMode,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import { hydrateRoot } from "react-dom/client";
 import * as Sentry from "@sentry/remix";
-import { CacheProvider } from '@emotion/react';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import { CacheProvider } from "@emotion/react";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import ClientStyleContext from "./styles/ClientStyleContext";
 import createEmotionCache from "./styles/createEmotionCache";
 import theme from "./styles/theme";
@@ -35,7 +41,9 @@ interface ClientStylingCacheProviderProps {
   children: React.ReactNode;
 }
 
-function ClientStylingCacheProvider({ children }: ClientStylingCacheProviderProps) {
+function ClientStylingCacheProvider({
+  children,
+}: ClientStylingCacheProviderProps) {
   const [cache, setCache] = useState(createEmotionCache());
 
   const clientStyleContextValue = useMemo(
@@ -44,7 +52,7 @@ function ClientStylingCacheProvider({ children }: ClientStylingCacheProviderProp
         setCache(createEmotionCache());
       },
     }),
-    [],
+    []
   );
 
   return (

@@ -18,10 +18,9 @@ export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
   const { userId, organizationId } = useLoaderData<typeof loader>();
-
   return (
     <div>
       <Upload userId={userId} organizationId={organizationId} />
     </div>
-  )
+  );
 }
