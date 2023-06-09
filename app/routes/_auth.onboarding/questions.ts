@@ -12,7 +12,7 @@ type QuestionType =
       label: string;
       placeholder: string;
       required: boolean;
-      options: { value: string; label: string, selected?: boolean }[];
+      options: { value: string; label: string; selected?: boolean }[];
     };
 
 export const questions: Array<{
@@ -22,7 +22,8 @@ export const questions: Array<{
 }> = [
   {
     title: "Personal Info",
-    description: "This type of information helps us keep your account safe and also helps in case you need a speedy recovery.",
+    description:
+      "This type of information helps us keep your account safe and also helps in case you need a speedy recovery.",
     questions: [
       {
         name: "firstName",
@@ -56,7 +57,8 @@ export const questions: Array<{
   },
   {
     title: "Professional Experience",
-    description: "This info helps us to make BearClaw with you and your needs in mind.",
+    description:
+      "This info helps us to make BearClaw with you and your needs in mind.",
     questions: [
       {
         name: "role",

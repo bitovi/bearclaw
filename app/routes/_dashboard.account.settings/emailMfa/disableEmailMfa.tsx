@@ -26,8 +26,7 @@ export async function disableEmailMfaAction(request: ActionArgs["request"]) {
   return json({ form: "emailMfaDisable", success: true });
 }
 
-export default function DisableEmailMfa(
-) {
+export default function DisableEmailMfa() {
   const [showDisableEmailMfa, setShowDisableEmailMfa] = useState(false);
 
   return (
@@ -35,13 +34,15 @@ export default function DisableEmailMfa(
       {showDisableEmailMfa ? (
         <>
           <Typography fontWeight="700">Disable Email MFA</Typography>
-          <Typography>
-            Are you sure you want to disable email MFA?
-          </Typography>
+          <Typography>Are you sure you want to disable email MFA?</Typography>
           <Form method="post">
             <input type="hidden" name="form" value="emailMfaDisable" />
-            <Button type="submit" variant="outlined">Disable</Button>
-            <Button type="button" onClick={() => setShowDisableEmailMfa(false)}>Cancel</Button>
+            <Button type="submit" variant="outlined">
+              Disable
+            </Button>
+            <Button type="button" onClick={() => setShowDisableEmailMfa(false)}>
+              Cancel
+            </Button>
           </Form>
         </>
       ) : (

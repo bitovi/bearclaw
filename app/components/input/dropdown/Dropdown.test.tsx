@@ -43,9 +43,11 @@ describe("Dropdown", () => {
   });
 
   it("returns expected number of options", async () => {
-    render(<Dropdown value="" options={[{ value: 1 }, { value: 2 }, { value: 3 }]} />);
+    render(
+      <Dropdown value="" options={[{ value: 1 }, { value: 2 }, { value: 3 }]} />
+    );
     userEvent.click(screen.getByRole("button"));
-    await screen.findAllByRole("option")
+    await screen.findAllByRole("option");
     expect(screen.getAllByRole("option").length).toBe(3);
   });
 
@@ -60,8 +62,6 @@ describe("Dropdown", () => {
     );
 
     expect(await screen.findByText("good")).toBeInTheDocument();
-    expect(
-      screen.queryByText("bad")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("bad")).not.toBeInTheDocument();
   });
 });

@@ -26,8 +26,6 @@ The dev environment needs Postgres to match production and its just easier to se
 
 Download and install [Docker](https://www.docker.com/). The recommended settings should be fine.
 
-
-
 - Initial setup:
 
   ```sh

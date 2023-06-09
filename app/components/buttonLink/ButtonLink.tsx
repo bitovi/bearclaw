@@ -18,7 +18,10 @@ export function ButtonLink({ to, children, variant, sx, ...props }: Props) {
         cursor: to ? "pointer" : "not-allowed",
       }}
       aria-label={props["aria-label"]}
-      title={props.title || props["aria-label"] && props["aria-label"].toUpperCase()}
+      title={
+        props.title ||
+        (props["aria-label"] && props["aria-label"].toUpperCase())
+      }
     >
       {children}
     </Button>

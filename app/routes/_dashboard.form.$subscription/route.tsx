@@ -138,11 +138,7 @@ function FormComponent() {
           className={"py-3"}
         />
         {paymentMounted && (
-          <Button
-            type="submit"
-            name="submit-payment"
-            disabled={loading}
-          >
+          <Button type="submit" name="submit-payment" disabled={loading}>
             {loading ? <Loading /> : "Subscribe"}
           </Button>
         )}

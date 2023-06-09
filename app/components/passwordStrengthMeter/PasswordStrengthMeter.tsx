@@ -15,14 +15,14 @@ export function PasswordStrengthMeter({ strength }: { strength: number }) {
     strength === 1
       ? "error.dark"
       : strength === 2
-        ? "warning.dark"
-        : strength === 3
-          ? "warning.light"
-          : strength === 4
-            ? "info.main"
-            : strength === 5
-              ? "success.main"
-              : "gray.300";
+      ? "warning.dark"
+      : strength === 3
+      ? "warning.light"
+      : strength === 4
+      ? "info.main"
+      : strength === 5
+      ? "success.main"
+      : "gray.300";
 
   return (
     <Box display="flex" gap={1}>
