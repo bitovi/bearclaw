@@ -1,6 +1,4 @@
 import type { Meta, StoryFn } from "@storybook/react";
-import { MemoryRouter } from "react-router-dom";
-
 import { Link } from "./Link";
 
 const meta = {
@@ -15,9 +13,9 @@ const meta = {
 export default meta;
 
 const Template: StoryFn<typeof meta> = () => (
-  <MemoryRouter>
+  <div>
     Click <Link to="/">Link Here</Link>.
-  </MemoryRouter>
+  </div>
 );
 
 export const _Link = Template.bind({});

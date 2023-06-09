@@ -31,5 +31,9 @@ export const _Table: Story = {
     tableData: fixture_InvoiceTable(),
     headers: ["Invoice Id", "Date", "Invoice Amount"],
     search: true,
+    searchFields: [
+      { value: "dataObject", label: "Data Object" },
+      { value: "filename", label: "Filename" },
+    ],
   },
 };
