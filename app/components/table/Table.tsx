@@ -22,10 +22,11 @@ export type DropdownOption = {
 };
 interface TableProps<T> {
   tableData: Array<T> | undefined;
-  tableTitle: string;
+  tableTitle?: string;
   headers: string[];
   tableContainerStyles?: SxProps<Theme>;
   search?: boolean;
+  pagination?: boolean;
   onRowClick?: (entry: T) => void;
   linkKey?: keyof T;
   searchFields?: DropdownOption[];
@@ -206,14 +207,21 @@ export default function InvoiceTable<T>({
   onRowClick = () => {},
   linkKey,
   searchFields,
+  pagination,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   return (
     <Paper sx={{ mb: 2 }}>
-      <Box padding={2}>
-        <Typography variant="h6" color="text.primary" data-testid="table-title">
-          {tableTitle}
-        </Typography>
-      </Box>
+      {tableTitle && (
+        <Box padding={2}>
+          <Typography
+            variant="h6"
+            color="text.primary"
+            data-testid="table-title"
+          >
+            {tableTitle}
+          </Typography>
+        </Box>
+      )}
       {search && searchFields && (
         <NavigationFilter
           dropdownLabel="Type"
@@ -277,7 +285,7 @@ export default function InvoiceTable<T>({
           </TableBody>
         </Table>
       </TableContainer>
-      <LinkPagination totalItems={tableData.length} />
+      {pagination && <LinkPagination totalItems={tableData.length} />}
     </Paper>
   );
 }

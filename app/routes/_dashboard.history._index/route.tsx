@@ -62,6 +62,7 @@ export default function Route() {
                   "Status",
                 ]}
                 tableContainerStyles={{ maxHeight: "600px" }}
+                pagination
                 search
                 searchFields={[
                   {
