@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Box } from "@mui/material";
 import HistoryTable, { SkeletonTable } from "../../components/table";
 import { defer } from "@remix-run/node";
@@ -5,19 +6,26 @@ import type { LoaderArgs } from "@remix-run/node";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { Await, useLoaderData } from "@remix-run/react";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
-import { Suspense } from "react";
+import { getOrgandUserId } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
+  const { userId, organizationId } = await getOrgandUserId(request);
   try {
     const url = new URL(request.url);
-    const searchParams = url.searchParams;
-    const rsbomList = retrieveRSBOMList(searchParams);
+    const page = url.searchParams.get("page");
+    const perPage = url.searchParams.get("perPage");
+    const rsbomList = await retrieveRSBOMList({
+      userId,
+      organizationId,
+      page,
+      perPage,
+    });
 
     return defer({ rsbomList, error: "" });
   } catch (e) {
     const error = (e as Error).message;
     console.error(error);
-    return defer({ error, rsbomList: [] });
+    return defer({ error, rsbomList: null });
   }
 }
 
@@ -51,7 +59,7 @@ export default function Route() {
             <Box>
               <HistoryTable<RSBOMListEntry>
                 tableTitle={"Lists"}
-                tableData={rsbomList || undefined}
+                tableData={rsbomList?.data || undefined}
                 linkKey="dataObject"
                 headers={[
                   "Id",
