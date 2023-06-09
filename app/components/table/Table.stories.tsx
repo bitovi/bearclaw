@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import dayjs from "dayjs";
+import { withRouter } from "storybook-addon-react-router-v6";
 
 import Table from "./Table";
 
@@ -31,5 +32,9 @@ export const _Table: Story = {
     tableData: fixture_InvoiceTable(),
     headers: ["Invoice Id", "Date", "Invoice Amount"],
     search: true,
+    searchFields: [
+      { value: "dataObject", label: "Data Object" },
+      { value: "filename", label: "Filename" },
+    ],
   },
 };

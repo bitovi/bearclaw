@@ -1,12 +1,17 @@
 import * as path from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
+import * as styles from "../app/styles/theme";
 
 const config = {
   stories: [
     "../app/components/**/*.stories.mdx",
     "../app/components/**/*.stories.@(ts|tsx)",
   ],
-  addons: ["@storybook/addon-links", "@storybook/addon-essentials"],
+  addons: [
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "storybook-addon-react-router-v6",
+  ],
   framework: {
     name: "@storybook/react-vite",
     options: {},
