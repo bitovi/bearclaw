@@ -47,9 +47,7 @@ export default function Route() {
     <Suspense
       fallback={
         <SkeletonTable
-          search
           searchFields={[]}
-          tableTitle="History"
           headers={[
             "Id",
             "Filename",
@@ -65,10 +63,11 @@ export default function Route() {
         {([dataObjectList, filenameList]) => {
           if (
             (!dataObjectList && !filenameList) ||
-            (!dataObjectList.length && filenameList.length)
+            (!dataObjectList.length && !filenameList.length)
           ) {
             return <NoResults />;
           }
+
           return (
             <Box paddingY={2}>
               <SearchTable<RSBOMListEntry>

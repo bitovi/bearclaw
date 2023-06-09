@@ -39,9 +39,9 @@ export function SkeletonTable({
   tableContainerStyles,
   headers,
 }: {
-  search: boolean;
-  searchFields: DropdownOption[];
-  tableTitle: string;
+  search?: boolean;
+  searchFields?: DropdownOption[];
+  tableTitle?: string;
   tableContainerStyles?: SxProps<Theme>;
   headers: string[];
 }) {
