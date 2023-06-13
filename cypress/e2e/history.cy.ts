@@ -38,8 +38,15 @@ describe("History", () => {
 
     cy.findByRole("option", { name: /data object/i }).click();
 
+    cy.findByTestId(/lists table/i).as("historyTable");
+
     // search for a string that will yield no results
-    cy.wait(2000).findByRole("textbox").type("zdfasfdafdsfad");
+    cy.wait(2000)
+      .get("@historyTable")
+      .within(() => {
+        cy.findByRole("textbox").type("zdfasfdafdsfad");
+      });
+
     const params = new URLSearchParams();
     params.append("filter", "contains(dataObject,zdfasfdafdsfad)");
     // Confirm our filtering/searching is wiring up to the URL correctly
@@ -55,7 +62,9 @@ describe("History", () => {
       .its("navigator.clipboard")
       .invoke("readText")
       .then((data) => {
-        cy.findByRole("textbox").clear().type(data);
+        cy.get("@historyTable").within(() => {
+          cy.findByRole("textbox").clear().type(data);
+        });
         const params = new URLSearchParams();
         params.append("filter", `contains(dataObject,${data})`);
         // Confirm our filtering/searching is wiring up to the URL correctly

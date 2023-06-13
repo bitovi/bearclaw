@@ -210,7 +210,7 @@ export default function InvoiceTable<T>({
   pagination,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   return (
-    <Paper sx={{ mb: 2 }}>
+    <Paper sx={{ mb: 2 }} data-testid={`${tableTitle || Math.random()} table`}>
       {tableTitle && (
         <Box padding={2}>
           <Typography
@@ -230,11 +230,7 @@ export default function InvoiceTable<T>({
         />
       )}
       <TableContainer sx={tableContainerStyles}>
-        <Table
-          data-testid={`${tableTitle || Math.random()} table`}
-          sx={{ minWidth: 650 }}
-          stickyHeader
-        >
+        <Table sx={{ minWidth: 650 }} stickyHeader>
           <TableHead>
             <TableRow
               sx={{
