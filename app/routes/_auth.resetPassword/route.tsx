@@ -16,7 +16,10 @@ import {
   PasswordStrengthMeter,
   getPasswordStrength,
 } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
-import { isResetPasswordTokenValid, resetPasswordByToken } from "~/models/user.server";
+import {
+  isResetPasswordTokenValid,
+  resetPasswordByToken,
+} from "~/models/user.server";
 import { TextInput } from "~/components/input";
 import { Typography } from "@mui/material";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
@@ -38,9 +41,9 @@ export async function action({ request }: ActionArgs) {
     return json(
       {
         errors: {
-          password: "Password is invalid"
+          password: "Password is invalid",
         },
-        success: false
+        success: false,
       },
       { status: 400 }
     );
@@ -52,7 +55,7 @@ export async function action({ request }: ActionArgs) {
         errors: {
           password: "Password is required",
         },
-        success: false
+        success: false,
       },
       { status: 400 }
     );
@@ -64,7 +67,7 @@ export async function action({ request }: ActionArgs) {
         errors: {
           password: "Password is too short",
         },
-        success: false
+        success: false,
       },
       { status: 400 }
     );
@@ -114,9 +117,7 @@ export default function ResetPage() {
         <Typography>
           Invalid or expired token. Please request a new password reset.
         </Typography>
-        <ButtonLink to="/forgotPassword" >
-          Reset password
-        </ButtonLink>
+        <ButtonLink to="/forgotPassword">Reset password</ButtonLink>
       </Box>
     );
   }

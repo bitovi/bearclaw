@@ -17,18 +17,29 @@ type Props = Omit<SelectProps, "error"> & {
   }>;
 };
 
-export function Dropdown({ label, value, options, disabled, error, ...props }: Props) {
+export function Dropdown({
+  label,
+  value,
+  options,
+  disabled,
+  error,
+  ...props
+}: Props) {
   const domId = useId();
 
   return (
     <FormControl fullWidth disabled={disabled} error={!!error}>
       <InputLabel id={domId}>{label}</InputLabel>
-      <Select labelId={domId} label={label} id={`select-${domId}`} defaultValue={options.find(o => o.selected)?.value} value={value} {...props}>
+      <Select
+        labelId={domId}
+        label={label}
+        id={`select-${domId}`}
+        defaultValue={options.find((o) => o.selected)?.value}
+        value={value}
+        {...props}
+      >
         {options.map((option) => (
-          <MenuItem
-            key={option.value}
-            value={option.value}
-          >
+          <MenuItem key={option.value} value={option.value}>
             {option.label || option.value}
           </MenuItem>
         ))}

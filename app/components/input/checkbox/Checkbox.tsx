@@ -9,6 +9,9 @@ export function Checkbox(props: Props) {
   const { label, ...restOfProps } = props;
 
   return (
-    <FormControlLabel control={<MuiCheckbox defaultChecked {...restOfProps} />} label={label} />
-  )
+    <FormControlLabel
+      control={<MuiCheckbox defaultChecked {...restOfProps} />}
+      label={label}
+    />
+  );
 }

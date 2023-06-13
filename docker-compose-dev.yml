@@ -1,6 +1,6 @@
-version: '3.8'
+version: "3.8"
 services:
-  postgres: 
+  postgres:
     image: postgres:14.1-alpine
     restart: always
     environment:
@@ -8,11 +8,11 @@ services:
       POSTGRES_PASSWORD: B34rCl4w
       POSTGRES_DB: bearclaw
     ports:
-      - '5432:5432'
-    volumes: 
+      - "5432:5432"
+    volumes:
       - db:/var/lib/postgresql/data
   web:
-    build: 
+    build:
       context: ./
       dockerfile: ./Dockerfile-dev
       args:
