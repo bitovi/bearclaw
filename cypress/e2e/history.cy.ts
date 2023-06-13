@@ -4,17 +4,6 @@ describe("History", () => {
   });
 
   it("Displays rSBOM history in a table", () => {
-    // give Cypress permissions to read clipboard
-    Cypress.automation("remote:debugger:protocol", {
-      command: "Browser.grantPermissions",
-      params: {
-        permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
-        origin: window.location.origin,
-      },
-    }).catch((e) => {
-      console.log("error", e.message);
-    });
-
     cy.createAndVerifyAccount();
 
     // Navigate to History page
@@ -39,7 +28,10 @@ describe("History", () => {
         });
 
         // realClick allows us to engage the copy to clipboard behavior in the cy environment
-        cy.findAllByTitle(/copy to clipboard/i).eq(2).realClick().click({ force: true });
+        cy.findAllByTitle(/copy to clipboard/i)
+          .eq(2)
+          .realClick()
+          .click({ force: true });
       });
 
     cy.findByLabelText(/type/i).click();
@@ -47,9 +39,7 @@ describe("History", () => {
     cy.findByRole("option", { name: /data object/i }).click();
 
     // search for a string that will yield no results
-    cy.wait(2000)
-      .findByRole("textbox")
-      .type("zdfasfdafdsfad");
+    cy.wait(2000).findByRole("textbox").type("zdfasfdafdsfad");
     const params = new URLSearchParams();
     params.append("filter", "contains(dataObject,zdfasfdafdsfad)");
     // Confirm our filtering/searching is wiring up to the URL correctly
@@ -116,25 +106,24 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.wait(1000)
-      .findByLabelText(/first page/i)
+    cy.wait(1000).findByLabelText(/first page/i);
 
-    cy.findByLabelText(/previous page/i)
+    cy.findByLabelText(/previous page/i);
 
-    cy.findByRole("link", { name: /last page/i })
+    cy.findByRole("link", { name: /last page/i });
 
     cy.findByRole("link", { name: /next page/i }).click();
 
-    cy.location('search')
-      .should('include', 'page=2')
-      .should('include', 'perPage=10');
+    cy.location("search")
+      .should("include", "page=2")
+      .should("include", "perPage=10");
 
     cy.findByLabelText(/Rows per page/i).click();
 
     cy.findByRole("link", { name: /show 25/i }).click();
 
-    cy.location('search')
-      .should('include', 'page=1')
-      .should('include', 'perPage=25');
+    cy.location("search")
+      .should("include", "page=1")
+      .should("include", "perPage=25");
   });
 });

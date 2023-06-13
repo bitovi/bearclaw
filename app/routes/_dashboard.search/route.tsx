@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
-import { LoaderArgs, defer } from "@remix-run/node";
-import { Await, useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
+import { useLoaderData, useNavigation } from "@remix-run/react";
 import { NoResults } from "./components/noResults";
-import { Suspense } from "react";
 import { SkeletonTable } from "~/components/table";
-import { RSBOMListEntry } from "~/models/rsbomTypes";
+import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import SearchTable from "~/components/table";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { parseFilterParam } from "~/utils/parseFilterParam";
@@ -16,14 +16,14 @@ export async function loader({ request }: LoaderArgs) {
 
     // if user vists /search with no query, return no results
     if (!searchParams.has("filter"))
-      return defer({ filenameList: [], dataObjectList: [], error: "" });
+      return json({ filenameList: [], dataObjectList: [], error: "" });
 
     // TODO Resolve this
     // On our end manage making separate queries to Data Object and Filename until Search logic/API can be settled
     const { _searchString } = parseFilterParam(searchParams.get("filter"));
 
     if (!_searchString) {
-      return defer({ filenameList: [], dataObjectList: [], error: "" });
+      return json({ filenameList: [], dataObjectList: [], error: "" });
     }
 
     const dataObjectParam = new URLSearchParams();
@@ -32,16 +32,16 @@ export async function loader({ request }: LoaderArgs) {
     const filenameParam = new URLSearchParams();
     filenameParam.append("filter", `contains=(filename,${_searchString})`);
 
-    const dataObjectList = retrieveRSBOMList(dataObjectParam);
-    const filenameList = retrieveRSBOMList(filenameParam);
+    const dataObjectList = await retrieveRSBOMList(dataObjectParam);
+    const filenameList = await retrieveRSBOMList(filenameParam);
 
     // //
 
-    return defer({ dataObjectList, filenameList, error: "" });
+    return json({ dataObjectList, filenameList, error: "" });
   } catch (e) {
     const error = (e as Error).message;
     console.error(error);
-    return defer({ error, dataObjectList: [], filenameList: [] });
+    return json({ error, dataObjectList: [], filenameList: [] });
   }
 }
 
@@ -49,70 +49,65 @@ export default function Route() {
   const { dataObjectList, filenameList, error } =
     useLoaderData<typeof loader>();
 
-  return (
-    <Suspense
-      fallback={
-        <SkeletonTable
-          searchFields={[]}
-          headers={[
-            "Id",
-            "Filename",
-            "Timestamp",
-            "Data Object",
-            "Type",
-            "Status",
-          ]}
-        />
-      }
-    >
-      <Await resolve={Promise.all([dataObjectList, filenameList, error])}>
-        {([dataObjectList, filenameList, error]) => {
-          if (error) {
-            return <Box>{error}</Box>;
-          }
-          if (
-            (!dataObjectList && !filenameList) ||
-            (!dataObjectList.length && !filenameList.length)
-          ) {
-            return <NoResults />;
-          }
+  const navigation = useNavigation();
 
-          return (
-            <Box paddingY={2}>
-              <>
-                <SearchTable<RSBOMListEntry>
-                  tableData={dataObjectList || undefined}
-                  tableTitle="Search By Data Object"
-                  linkKey="dataObject"
-                  headers={[
-                    "Id",
-                    "Filename",
-                    "Timestamp",
-                    "Data Object",
-                    "Type",
-                    "Status",
-                  ]}
-                  tableContainerStyles={{ maxHeight: "600px" }}
-                />
-                <SearchTable<RSBOMListEntry>
-                  tableData={filenameList || undefined}
-                  tableTitle="Search By Filename"
-                  linkKey="dataObject"
-                  headers={[
-                    "Id",
-                    "Filename",
-                    "Timestamp",
-                    "Data Object",
-                    "Type",
-                    "Status",
-                  ]}
-                  tableContainerStyles={{ maxHeight: "600px" }}
-                />
-              </>
-            </Box>
-          );
-        }}
-      </Await>
-    </Suspense>
+  if (error) {
+    return <Box>{error}</Box>;
+  }
+
+  if (
+    (!dataObjectList && !filenameList) ||
+    (!dataObjectList.length && !filenameList.length)
+  ) {
+    return <NoResults />;
+  }
+
+  if (navigation.state === "loading") {
+    return (
+      <SkeletonTable
+        searchFields={[]}
+        headers={[
+          "Id",
+          "Filename",
+          "Timestamp",
+          "Data Object",
+          "Type",
+          "Status",
+        ]}
+      />
+    );
+  }
+
+  return (
+    <Box paddingY={2}>
+      <SearchTable<RSBOMListEntry>
+        tableData={dataObjectList || undefined}
+        tableTitle="Search By Data Object"
+        linkKey="dataObject"
+        headers={[
+          "Id",
+          "Filename",
+          "Timestamp",
+          "Data Object",
+          "Type",
+          "Status",
+        ]}
+        tableContainerStyles={{ maxHeight: "600px" }}
+      />
+      <SearchTable<RSBOMListEntry>
+        tableData={filenameList || undefined}
+        tableTitle="Search By Filename"
+        linkKey="dataObject"
+        headers={[
+          "Id",
+          "Filename",
+          "Timestamp",
+          "Data Object",
+          "Type",
+          "Status",
+        ]}
+        tableContainerStyles={{ maxHeight: "600px" }}
+      />
+    </Box>
   );
 }

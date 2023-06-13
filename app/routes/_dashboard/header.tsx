@@ -18,7 +18,7 @@ const GlobalSearch = () => {
 
   const apiCall = useCallback(() => {
     const queryParams = new URLSearchParams();
-    queryParams.append("filter", `contains=(search,${searchString})`);
+    queryParams.append("filter", `contains(search,${searchString})`);
     navigate(`/search?${queryParams}`);
   }, [searchString, navigate]);
 

@@ -138,7 +138,7 @@ function TableRowLink<T>({
   return (
     <TableRow
       component={Link}
-      to={`./${entry[linkKey]}`}
+      to={`/history/${entry[linkKey]}`}
       sx={{
         "&:last-child td, &:last-child th": { border: 0 },
         textDecoration: "unset",
@@ -230,7 +230,11 @@ export default function InvoiceTable<T>({
         />
       )}
       <TableContainer sx={tableContainerStyles}>
-        <Table sx={{ minWidth: 650 }} stickyHeader>
+        <Table
+          data-testid={`${tableTitle || Math.random()} table`}
+          sx={{ minWidth: 650 }}
+          stickyHeader
+        >
           <TableHead>
             <TableRow
               sx={{

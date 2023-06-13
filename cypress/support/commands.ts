@@ -174,10 +174,12 @@ function createAndVerifyAccount(
 
   cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
   cy.findByLabelText(/password/i).type(loginForm.password);
-  cy.findByRole("button", { name: /create account/i })
+  cy.wait(1000)
+    .findByRole("button", { name: /create account/i })
     .should("be.visible")
     .click({ force: true });
-  cy.findByRole("link", { name: /View verification emails here/i })
+  cy.wait(2000)
+    .findByRole("link", { name: /View verification emails here/i })
     .should("be.visible")
     .click({ force: true });
 
@@ -187,7 +189,7 @@ function createAndVerifyAccount(
     .click({ force: true });
 
   cy.findByText(/verified successfully/i);
-  cy.wait(1000);  
+  cy.wait(1000);
   cy.findByRole("link", { name: /Continue/i }).click();
 }
 
