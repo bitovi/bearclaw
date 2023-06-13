@@ -11,9 +11,8 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 
 import { TextInput } from "../input";
 import { Form, useNavigate, useSearchParams } from "@remix-run/react";
-import { useCallback, useMemo, useState } from "react";
+import { useRef } from "react";
 import type { DropdownOption } from "./Table";
-import { useDebounceApiCall } from "~/hooks/useDebounceApiCall";
 import { buildNewSearchParams } from "~/utils/buildNewSearchParams";
 
 function parseFilterParam(filterParam: string | null) {
@@ -28,40 +27,52 @@ function parseFilterParam(filterParam: string | null) {
 
 function useFiltering() {
   const [searchParams] = useSearchParams();
+
   const navigate = useNavigate();
+
   const { _searchField, _searchString } = parseFilterParam(
     searchParams.get("filter")
   );
-  const [searchString, setSearchString] = useState(_searchString || "");
-  const [searchField, setSearchField] = useState(_searchField || "");
 
-  const updatedSearchParams = useMemo(() => {
-    return buildNewSearchParams(searchParams, {
-      filter: `contains(${searchField},${searchString})`,
+  const refTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const debounceFilterQuery = ({
+    searchString,
+    searchField,
+  }: {
+    searchString?: string | undefined;
+    searchField?: string | undefined;
+  }) => {
+    const toSearchString =
+      searchString === "" || !!searchString
+        ? searchString
+        : _searchString || "";
+
+    const toSearchField =
+      searchField === "" || !!searchField ? searchField : _searchField || "";
+
+    const updatedSearchParams = buildNewSearchParams(searchParams, {
+      filter: `contains(${toSearchField},${toSearchString})`,
     });
-  }, [searchString, searchField, searchParams]);
 
-  const handleSearchString = (val: string) => {
-    setSearchString(val);
+    if (!refTimer.current) {
+      refTimer.current = setTimeout(
+        () => navigate(`./?${updatedSearchParams}`),
+        500
+      );
+    } else {
+      clearTimeout(refTimer.current);
+      refTimer.current = setTimeout(
+        () => navigate(`./?${updatedSearchParams}`),
+        500
+      );
+    }
   };
-
-  const handleSearchField = (val: string) => {
-    setSearchField(val);
-  };
-
-  const apiCall = useCallback(() => {
-    navigate(`./?${updatedSearchParams}`);
-  }, [updatedSearchParams, navigate]);
-
-  useDebounceApiCall({
-    apiCall,
-  });
 
   return {
-    searchField,
-    searchString,
-    handleSearchString,
-    handleSearchField,
+    searchField: _searchField,
+    searchString: _searchString,
+    debounceFilterQuery,
   };
 }
 
@@ -74,8 +85,7 @@ export function NavigationFilter({
   dropdownLabel: string;
   searchLabel: string;
 }) {
-  const { searchField, searchString, handleSearchString, handleSearchField } =
-    useFiltering();
+  const { searchField, searchString, debounceFilterQuery } = useFiltering();
 
   const dropdownOptions = [{ value: "", label: "Select a Field" }].concat(
     _dropdownOptions
@@ -90,32 +100,41 @@ export function NavigationFilter({
             inputProps={{
               sx: { maxHeight: "20px" },
             }}
-            onChange={({ target }) => handleSearchString(target.value)}
+            onChange={({ target }) =>
+              debounceFilterQuery({ searchString: target.value })
+            }
             label={searchLabel}
-            value={searchString}
+            defaultValue={searchString || ""}
             sx={{ minWidth: "200px" }}
           />
-          <FormControl fullWidth>
-            <InputLabel id={`filter-${dropdownLabel}-select`}>
-              {dropdownLabel}
-            </InputLabel>
-            <Select
-              onChange={({ target }) => handleSearchField(target.value)}
-              labelId={`filter-${dropdownLabel}-select-label`}
-              id={`filter-${dropdownLabel}-select`}
-              value={searchField}
-              displayEmpty
-              label={dropdownLabel} // To ensure MUI notched outline styling, we still need to pass a value to the label prop
-            >
-              {dropdownOptions.map((opt) => {
-                return (
-                  <MenuItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
+          {dropdownOptions.length && (
+            <FormControl fullWidth>
+              <InputLabel id={`filter-${dropdownLabel}-select`}>
+                {dropdownLabel}
+              </InputLabel>
+              <Select
+                onChange={({ target }) =>
+                  debounceFilterQuery({ searchField: target.value })
+                }
+                labelId={`filter-${dropdownLabel}-select-label`}
+                id={`filter-${dropdownLabel}-select`}
+                value={
+                  dropdownOptions.find((r) => r.value === searchField)?.value ||
+                  ""
+                }
+                displayEmpty
+                label={dropdownLabel} // To ensure MUI notched outline styling, we still need to pass a value to the label prop
+              >
+                {dropdownOptions.map((opt) => {
+                  return (
+                    <MenuItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          )}
           <IconButton>
             <FilterListIcon />
           </IconButton>
