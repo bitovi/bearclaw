@@ -21,6 +21,11 @@ export async function loader({ request }: LoaderArgs) {
     // TODO Resolve this
     // On our end manage making separate queries to Data Object and Filename until Search logic/API can be settled
     const { _searchString } = parseFilterParam(searchParams.get("filter"));
+
+    if (!_searchString) {
+      return defer({ filenameList: [], dataObjectList: [], error: "" });
+    }
+
     const dataObjectParam = new URLSearchParams();
     dataObjectParam.append("filter", `contains=(dataObject,${_searchString})`);
 
@@ -29,6 +34,7 @@ export async function loader({ request }: LoaderArgs) {
 
     const dataObjectList = retrieveRSBOMList(dataObjectParam);
     const filenameList = retrieveRSBOMList(filenameParam);
+
     // //
 
     return defer({ dataObjectList, filenameList, error: "" });
@@ -59,8 +65,11 @@ export default function Route() {
         />
       }
     >
-      <Await resolve={Promise.all([filenameList, dataObjectList])}>
-        {([dataObjectList, filenameList]) => {
+      <Await resolve={Promise.all([dataObjectList, filenameList, error])}>
+        {([dataObjectList, filenameList, error]) => {
+          if (error) {
+            return <Box>{error}</Box>;
+          }
           if (
             (!dataObjectList && !filenameList) ||
             (!dataObjectList.length && !filenameList.length)
@@ -70,90 +79,40 @@ export default function Route() {
 
           return (
             <Box paddingY={2}>
-              <SearchTable<RSBOMListEntry>
-                tableData={dataObjectList || undefined}
-                tableTitle="Search By Data Object"
-                linkKey="dataObject"
-                headers={[
-                  "Id",
-                  "Filename",
-                  "Timestamp",
-                  "Data Object",
-                  "Type",
-                  "Status",
-                ]}
-                tableContainerStyles={{ maxHeight: "600px" }}
-              />
-              <SearchTable<RSBOMListEntry>
-                tableData={filenameList || undefined}
-                tableTitle="Search By Filename"
-                linkKey="dataObject"
-                headers={[
-                  "Id",
-                  "Filename",
-                  "Timestamp",
-                  "Data Object",
-                  "Type",
-                  "Status",
-                ]}
-                tableContainerStyles={{ maxHeight: "600px" }}
-              />
+              <>
+                <SearchTable<RSBOMListEntry>
+                  tableData={dataObjectList || undefined}
+                  tableTitle="Search By Data Object"
+                  linkKey="dataObject"
+                  headers={[
+                    "Id",
+                    "Filename",
+                    "Timestamp",
+                    "Data Object",
+                    "Type",
+                    "Status",
+                  ]}
+                  tableContainerStyles={{ maxHeight: "600px" }}
+                />
+                <SearchTable<RSBOMListEntry>
+                  tableData={filenameList || undefined}
+                  tableTitle="Search By Filename"
+                  linkKey="dataObject"
+                  headers={[
+                    "Id",
+                    "Filename",
+                    "Timestamp",
+                    "Data Object",
+                    "Type",
+                    "Status",
+                  ]}
+                  tableContainerStyles={{ maxHeight: "600px" }}
+                />
+              </>
             </Box>
           );
         }}
       </Await>
-      {/* <Await resolve={dataObjectList}>
-        {(dataObjectList) => {
-          if (!dataObjectList || !dataObjectList.length) {
-            return <NoResults />;
-          }
-          return (
-            <Box paddingY={2}>
-              <SearchTable<RSBOMListEntry>
-                tableData={dataObjectList || undefined}
-                tableTitle="Search By Data Object"
-                linkKey="dataObject"
-                headers={[
-                  "Id",
-                  "Filename",
-                  "Timestamp",
-                  "Data Object",
-                  "Type",
-                  "Status",
-                ]}
-                tableContainerStyles={{ maxHeight: "600px" }}
-              />
-            </Box>
-          );
-        }}
-      </Await>
-      <Await resolve={filenameList}>
-        {(filenameList) => {
-          console.log("filenamelist", filenameList);
-
-          if (!filenameList || !filenameList.length) {
-            return <NoResults />;
-          }
-          return (
-            <Box>
-              <SearchTable<RSBOMListEntry>
-                tableData={filenameList || undefined}
-                tableTitle="Search By Filename"
-                linkKey="dataObject"
-                headers={[
-                  "Id",
-                  "Filename",
-                  "Timestamp",
-                  "Data Object",
-                  "Type",
-                  "Status",
-                ]}
-                tableContainerStyles={{ maxHeight: "600px" }}
-              />
-            </Box>
-          );
-        }}
-      </Await> */}
     </Suspense>
   );
 }
