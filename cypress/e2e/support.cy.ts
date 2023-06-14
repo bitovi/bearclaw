@@ -27,7 +27,8 @@ describe("Support", () => {
 
     cy.findByText(/thank you/i);
 
-    cy.findByRole("button", { name: /submit/i })
+    cy.wait(1000)
+      .findByRole("button", { name: /submit/i })
       .should("be.visible")
       .click({ force: true });
 
