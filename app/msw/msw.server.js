@@ -18,31 +18,50 @@ function parseFilterParam(filterParam) {
   };
 }
 
+function paginateResults(data, url) {
+  const offset = parseInt(url.searchParams.get("page[offset]"));
+  const limit = parseInt(url.searchParams.get("page[limit]"));
+  const perPage = limit || 10;
+
+  return {
+    data: data?.slice(offset || 0, (offset+limit) || 10),
+    metadata: {
+      page: {
+        "current-page": Math.floor((offset/perPage) + 1),
+        "per-page": limit,
+        total: data.length,
+        "last-page": Math.ceil(data.length/perPage)
+      }
+    }
+  }
+}
+
 const handlers = [
-  rest.get(`${baseURL}/claw/get_rsboms_cyclonedx`, (req, res, ctx) => {
+  rest.get(`${baseURL}/bear/get_rsboms_cyclonedx`, (req, res, ctx) => {
+    const data = fixture_getRSBOMSCyclonedx.bc_rsbom_cyclonedx_aggregate;
     const { _searchField, _searchString } = parseFilterParam(
       req.url.searchParams.get("filter")
     );
 
     if (_searchField && _searchString) {
       const filteredList =
-        fixture_getRSBOMSCyclonedx.bc_rsbom_cyclonedx_aggregate.filter(
+        data.filter(
           (item) => {
             return item[_searchField]
               .toLowerCase()
               .includes(_searchString.toLowerCase());
           }
         );
-      return res(ctx.json({ bc_rsbom_cyclonedx_aggregate: filteredList }));
+      return res(ctx.json(paginateResults(filteredList, req.url)));
     }
-
-    return res(ctx.json(fixture_getRSBOMSCyclonedx));
+    
+    return res(ctx.json(paginateResults(data, req.url)));
   }),
   rest.get(`${baseURL}/claw/get_rsboms_cyclonedx/*`, (req, res, ctx) => {
     return res(ctx.json(fixture_getRSBOMDetail));
   }),
   rest.get(`${baseURL}/claw/get_all_parent_jobs`, (req, res, ctx) => {
-    return res(ctx.json(fixture_getAllParentJobs));
+    return res(ctx.json(paginateResults(fixture_getAllParentJobs, req.url)))
   }),
 ];
 

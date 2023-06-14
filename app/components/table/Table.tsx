@@ -29,6 +29,7 @@ interface TableProps<T> {
   onRowClick?: (entry: T) => void;
   linkKey?: keyof T;
   searchFields?: DropdownOption[];
+  totalItems?: number;
 }
 
 export function SkeletonTable({
@@ -206,6 +207,7 @@ export default function InvoiceTable<T>({
   onRowClick = () => {},
   linkKey,
   searchFields,
+  totalItems,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   return (
     <Paper sx={{ mb: 2 }}>
@@ -277,7 +279,7 @@ export default function InvoiceTable<T>({
           </TableBody>
         </Table>
       </TableContainer>
-      <LinkPagination totalItems={tableData.length} />
+      {totalItems && <LinkPagination totalItems={totalItems} />}
     </Paper>
   );
 }

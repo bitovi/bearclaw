@@ -1,3 +1,6 @@
+import type { ApiRequestParams, ApiResponseWrapper } from "~/models/apiUtils.server";
+import { buildApiSearchParams } from "~/models/apiUtils.server";
+
 // Example response
 // {
 //   "data": [
@@ -13,16 +16,14 @@
 //   "processingTime": 0.028655666974373162
 // }
 
-type ParentJobResponse = {
-  data: Array<{
-    _id: string;
-    dateAnalyzed: string;
-    filename: string;
-    size: number;
-    status: string;
-    type: string;
-  }>;
-};
+type ParentJobResponse = ApiResponseWrapper<Array<{
+  _id: string;
+  dateAnalyzed: string;
+  filename: string;
+  size: number;
+  status: string;
+  type: string;
+}>>;
 
 export type ParentJob = {
   _id: string;
@@ -46,21 +47,18 @@ function transformApiParentJob(
   };
 }
 
-export const getAllParentJobs = async ({
-  userId,
-  organizationId,
-}: {
-  userId: string;
-  organizationId: string;
-}): Promise<ParentJob[]> => {
+export const getAllParentJobs = async (params: ApiRequestParams) => {
   try {
     const response = await fetch(
-      `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs?userId=${userId}&groupId=${organizationId}`
+      `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs?${buildApiSearchParams(params)}`
     );
-    const data: ParentJobResponse["data"] = await response.json();
-    return data.map((job) => transformApiParentJob(job));
+    const json: ParentJobResponse = await response.json();
+    return {
+      ...json,
+      data: json.data.map((job) => transformApiParentJob(job))
+    }
   } catch (error) {
     console.error(error);
-    return [];
+    return null;
   }
 };
