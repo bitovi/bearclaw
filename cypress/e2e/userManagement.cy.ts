@@ -23,6 +23,10 @@ describe("User Management & Invitation", () => {
     resetPassword: "myreallystrongpassword",
   };
 
+  before(() => {
+    cy.deleteOrgsAndUsers();
+  });
+
   after(() => {
     cy.deleteOrgsAndUsers();
   });
@@ -36,7 +40,8 @@ describe("User Management & Invitation", () => {
 
     cy.findByText(/organization users/i);
 
-    cy.get("tbody > tr").should("have.length", 0);
+    // length of 1 as the Owner will be the only listing displayed
+    cy.get("tbody > tr").should("have.length", 1);
 
     cy.findAllByRole("button", { name: /remove/i }).should("have.length", 0);
     cy.wait(500)
@@ -200,11 +205,10 @@ describe("User Management & Invitation", () => {
     cy.findByText(/organization users/i);
 
     cy.get("tbody").within(() => {
-      cy.get("tr")
-        .should("have.length", 2)
-        .eq(0)
-        .should("be.visible")
-        .click({ force: true });
+      // Two new users plus the owner
+      cy.get("tr").should("have.length", 3);
+
+      cy.get("input").eq(0).click({ force: true });
     });
 
     cy.findByRole("button", { name: /remove/i })
@@ -214,7 +218,7 @@ describe("User Management & Invitation", () => {
     cy.findByText(/User deleted/i);
 
     cy.get("tbody").within(() => {
-      cy.get("tr").should("have.length", 1);
+      cy.get("tr").should("have.length", 2);
     });
   });
 
