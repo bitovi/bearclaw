@@ -1,6 +1,5 @@
-function getPath(userId: string, orgId: string) {
-  return `${process.env.BEARCLAW_URL}/claw/get_data_objects_by_user?userId=${userId}&groupId=${orgId}`;
-}
+import type { ApiRequestParams } from "~/models/apiUtils.server";
+import { buildApiSearchParams } from "~/models/apiUtils.server";
 
 export type DataObject = {
   createdByUserId: string;
@@ -27,9 +26,9 @@ type DataObjectResponse = {
   data_objects: DataObject[];
 };
 
-export async function getAllDataObjects(userId: string, orgId: string) {
+export async function getAllDataObjects(params: ApiRequestParams): Promise<DataObject[]> {
   try {
-    const response = await fetch(getPath(userId, orgId));
+    const response = await fetch(`${process.env.BEARCLAW_URL}/claw/get_data_objects_by_user?${buildApiSearchParams(params)}`);
     const data: DataObjectResponse = await response.json();
     return data.data_objects;
   } catch (error) {
