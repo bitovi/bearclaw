@@ -15,7 +15,7 @@ export default function Account() {
           <SideNav
             navMenu={[
               {
-                label: "Settings",
+                text: "Settings",
                 to: "/account/settings",
               },
               {

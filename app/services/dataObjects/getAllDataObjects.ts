@@ -28,7 +28,8 @@ type DataObjectResponse = {
 
 export async function getAllDataObjects(params: ApiRequestParams): Promise<DataObject[]> {
   try {
-    const response = await fetch(`${process.env.BEARCLAW_URL}/claw/get_data_objects_by_user?${buildApiSearchParams(params)}`);
+    const url = `${process.env.BEARCLAW_URL}/claw/get_data_objects?${buildApiSearchParams(params)}`;
+    const response = await fetch(url);
     const data: DataObjectResponse = await response.json();
     return data.data_objects;
   } catch (error) {

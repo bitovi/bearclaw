@@ -18,6 +18,7 @@ import { Checkbox } from "~/components/input/checkbox/Checkbox";
 import { getUserMfaMethods, resetMfaToken } from "~/models/mfa.server";
 import { MFA_TYPE } from "~/models/mfa";
 import { retrieveOrgUserOwner } from "~/models/organizationUsers.server";
+import { useParentFormCopy } from "../_auth/route";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -141,6 +142,7 @@ export async function action({ request }: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 
 export default function LoginPage() {
+  const formCopy = useParentFormCopy();
   const [searchParams] = useSearchParams();
 
   const redirectTo = safeRedirect(searchParams.get("redirectTo"), "/dashboard");
@@ -168,7 +170,7 @@ export default function LoginPage() {
           textAlign="center"
         >
           <TextInput
-            label="Email address"
+            label={formCopy?.email || "Email address"}
             name="email"
             type="email"
             autoComplete="email"
@@ -179,7 +181,7 @@ export default function LoginPage() {
             inputProps={{ readOnly: !!guestEmail }}
           />
           <TextInput
-            label="Password"
+            label={formCopy?.password || "Passowrd"}
             name="password"
             type="password"
             autoComplete="password"
@@ -190,18 +192,19 @@ export default function LoginPage() {
           <input type="hidden" name="redirectTo" value={redirectTo} />
 
           <Button type="submit" variant="contained">
-            Log in
+            label={formCopy?.login || "Login"}
           </Button>
           <Checkbox id="remember" name="remember" label="Remember me" />
           <div>
-            Don't have an account?{" "}
+            {formCopy?.noAccountMessage || "Don't have an account?"}
+            {" "}
             <Link
               to={{
                 pathname: "/join",
                 search: searchParams.toString(),
               }}
             >
-              Sign up
+              {formCopy?.noAccountLoginLink || "Sign up"}
             </Link>
           </div>
           <div>
@@ -211,7 +214,7 @@ export default function LoginPage() {
                 search: searchParams.toString(),
               }}
             >
-              Forgot password?
+              {formCopy?.forgotPasswordLink || "Forgot password?"}
             </Link>
           </div>
         </Box>
