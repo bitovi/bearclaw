@@ -205,10 +205,9 @@ export async function addOrganizationUser(
   userId: string,
   organizationId: string
 ) {
-  const lookUpUser = await prisma.user.findUnique({ where: { id: userId } });
-  if (!lookUpUser) return;
   const orgUser = await createOrganizationUser({
-    userId: lookUpUser?.id,
+    userId,
+    accountStatus: "Active",
     organizationId,
     permissions: {
       subscriptionView: true,

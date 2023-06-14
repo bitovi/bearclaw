@@ -189,13 +189,13 @@ function EnhancedTableToolbar({
       <Stack py={2} pr={2} gap={2} direction="row" alignItems="center">
         <TextInput
           name="search"
+          label="Search"
           inputProps={{
             sx: { minWidth: "300px" },
           }}
           onChange={({ target }) =>
             debounceFilterQuery({ searchString: target.value, searchField: "" })
           }
-          placeholder="Search"
           defaultValue={searchString}
           sx={{ minWidth: "200px" }}
         />

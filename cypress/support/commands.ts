@@ -66,6 +66,24 @@ declare global {
        *    const loginDetails = createAndVeryAccount();
        */
       createAndVerifyAccount: typeof createAndVerifyAccount;
+
+      /**
+       * Creates a user, sets them in session, and seeds their organization with provided number of members
+       * @returns {typeof seedOrganization}
+       * @memberof Chainable
+       * @example
+       *   cy.seedOrganization('test@email.com', 10)
+       */
+      seedOrganization: typeof seedOrganization;
+
+      /**
+       * Wipes orgs and users from database
+       * @returns {typeof deleteOrgsAndUsers}
+       * @memberof Chainable
+       * @example
+       *   cy.deleteOrgsAndUsers()
+       */
+      deleteOrgsAndUsers: typeof deleteOrgsAndUsers;
     }
   }
 }
@@ -101,6 +119,18 @@ function cleanupAccount({ email }: { email?: string } = {}) {
     });
   }
   cy.clearCookie("__session");
+}
+
+function seedOrganization(ownerEmail: string, memberCount = 0) {
+  cy.exec(
+    `npx ts-node --require tsconfig-paths/register ./cypress/support/seed-organization.ts "${ownerEmail}" ${memberCount}`
+  );
+}
+
+function deleteOrgsAndUsers() {
+  cy.exec(
+    "npx ts-node --require tsconfig-paths/register ./cypress/support/delete-orgs-and-users.ts"
+  );
 }
 
 function deleteUserByEmail(email: string) {
@@ -196,3 +226,5 @@ Cypress.Commands.add("cleanupAccount", cleanupAccount);
 Cypress.Commands.add("visitAndCheck", visitAndCheck);
 Cypress.Commands.add("getStripeElement", getStripeElement);
 Cypress.Commands.add("createAndVerifyAccount", createAndVerifyAccount);
+Cypress.Commands.add("seedOrganization", seedOrganization);
+Cypress.Commands.add("deleteOrgsAndUsers", deleteOrgsAndUsers);
