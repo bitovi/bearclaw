@@ -29,7 +29,11 @@ export const _Table: Story = {
   args: {
     tableTitle: "Invoices",
     tableData: fixture_InvoiceTable(),
-    headers: ["Invoice Id", "Date", "Invoice Amount"],
+    headers: [
+      { label: "Invoice Id", value: "invoiceId", sortable: false },
+      { label: "Date", value: "date", sortable: false },
+      { label: "Invoice Amount", value: "invoiceAmount", sortable: false },
+    ],
     search: true,
     searchFields: [
       { value: "dataObject", label: "Data Object" },

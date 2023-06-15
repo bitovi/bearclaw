@@ -62,7 +62,11 @@ export default function Route() {
       <DetailTable
         tableTitle={expandedRSBOM?.metadata?.component?.name || "rSBOM Details"}
         tableData={[]}
-        headers={["Header 1", "Header 2", "Header 3"]}
+        headers={[
+          { label: "Header 1", value: "header1", sortable: false },
+          { label: "Header 2", value: "header2", sortable: false },
+          { label: "Header 3", value: "header3", sortable: false },
+        ]}
         search
       />
 

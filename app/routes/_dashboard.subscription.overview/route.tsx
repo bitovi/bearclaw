@@ -12,7 +12,11 @@ import Card from "./components/card";
 import dayjs from "dayjs";
 import { useMemo } from "react";
 
-const InvoiceTableHeaders = ["Invoice ID", "Date", "Invoice Amount"];
+const InvoiceTableHeaders = [
+  { label: "Invoice ID", value: "Invoice_ID", sortable: false },
+  { label: "Date", value: "Date", sortable: false },
+  { label: "Invoice Amount", value: "Invoice_amount", sortable: false },
+];
 
 export default function Route() {
   const navigate = useNavigate();

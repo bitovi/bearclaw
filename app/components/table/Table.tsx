@@ -6,7 +6,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
-import { Box, IconButton, Skeleton, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Skeleton,
+  Stack,
+  TableSortLabel,
+  Typography,
+} from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import { Link } from "../link";
 import { copyText } from "./utils/copyText";
@@ -15,6 +22,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { NavigationFilter } from "./NavigationFilter";
 import { LinkPagination } from "./LinkPagination";
+import { useSorting } from "~/hooks/useSorting";
 
 export type DropdownOption = {
   value: string;
@@ -23,9 +31,10 @@ export type DropdownOption = {
 interface TableProps<T> {
   tableData: Array<T> | undefined;
   tableTitle: string;
-  headers: string[];
+  headers: { label: string; value: string; sortable: boolean }[];
   tableContainerStyles?: SxProps<Theme>;
   search?: boolean;
+  sortableFields?: Array<keyof T>;
   onRowClick?: (entry: T) => void;
   linkKey?: keyof T;
   searchFields?: DropdownOption[];
@@ -198,6 +207,34 @@ function TableRowLink<T>({
   );
 }
 
+function HeaderSortCell({
+  headCell,
+  sortDirection,
+  active,
+  direction,
+  onClick,
+}: {
+  headCell: { value: string; label: string; sortable: boolean };
+  sortDirection: "asc" | "desc" | false;
+  active: boolean;
+  direction: "asc" | "desc" | undefined;
+  onClick: () => void;
+}) {
+  return (
+    <TableCell
+      key={headCell.value}
+      align={"left"}
+      padding={"normal"}
+      sortDirection={sortDirection}
+      sx={{ fontColor: "text.secondary" }}
+    >
+      <TableSortLabel active={active} direction={direction} onClick={onClick}>
+        {headCell.label}
+      </TableSortLabel>
+    </TableCell>
+  );
+}
+
 export default function InvoiceTable<T>({
   tableData = [],
   tableTitle,
@@ -209,6 +246,7 @@ export default function InvoiceTable<T>({
   searchFields,
   totalItems,
 }: TableProps<T extends Record<string, any> ? T : never>) {
+  const { currentSort, sortQuery } = useSorting();
   return (
     <Paper sx={{ mb: 2 }}>
       <Box padding={2}>
@@ -233,13 +271,28 @@ export default function InvoiceTable<T>({
                 },
               }}
             >
-              {headers.map((str, i) => {
+              {headers.map((header, i) => {
+                if (header.sortable) {
+                  const active = Object.keys(currentSort).includes(
+                    header.value
+                  );
+                  return (
+                    <HeaderSortCell
+                      key={`str-${i}`}
+                      active={active}
+                      headCell={header}
+                      sortDirection={currentSort?.[header.value] || false}
+                      onClick={() => sortQuery(header.value)}
+                      direction={currentSort?.[header.value] || "asc"}
+                    />
+                  );
+                }
                 return (
                   <TableCell
                     sx={{ fontColor: "text.secondary" }}
                     key={`str-${i}`}
                   >
-                    {str}
+                    {header.label}
                   </TableCell>
                 );
               })}
