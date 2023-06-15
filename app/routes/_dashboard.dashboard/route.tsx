@@ -118,7 +118,7 @@ export default function Index() {
               { label: "File Name", value: "filename", sortable: true },
               { label: "Type", value: "type", sortable: true },
               { label: "Status", value: "status", sortable: true },
-              { label: "Object ID", value: "objectId", sortable: true },
+              { label: "Object ID", value: "_id", sortable: true },
             ]}
             totalItems={jobs.metadata?.page.total}
             tableData={jobs.data.map((job) => {

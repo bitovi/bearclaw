@@ -17,20 +17,20 @@ function parseSortParam(sortString) {
 }
 
 function fieldSorter(fields) {
-  return function (a, b) {
+  return (a, b) => {
     return fields
-      .map(function (o) {
-        var dir = 1;
-        if (o[0] === "-") {
+      .map((fieldString) => {
+        let dir = 1;
+        if (fieldString[0] === "-") {
           dir = -1;
-          o = o.substring(1);
+          fieldString = fieldString.substring(1);
         }
-        if (a[o] > b[o]) return dir;
-        if (a[o] < b[o]) return -dir;
+        if (a[fieldString] > b[fieldString]) return dir;
+        if (a[fieldString] < b[fieldString]) return -dir;
         return 0;
       })
-      .reduce(function firstNonZeroValue(p, n) {
-        return p ? p : n;
+      .reduce((acc, curr) => {
+        return acc ? acc : curr;
       }, 0);
   };
 }
