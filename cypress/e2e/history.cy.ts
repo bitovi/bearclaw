@@ -16,7 +16,7 @@ describe("History", () => {
     cy.wait(1000)
       .findByRole("table")
       .within(() => {
-        cy.contains("th", "Timestamp");
+        cy.contains("th", "Date");
         cy.contains("th", "Data Object");
         cy.contains("th", "Filename");
         cy.contains("th", "Id");
@@ -38,7 +38,7 @@ describe("History", () => {
 
     cy.findByRole("option", { name: /data object/i }).click();
 
-    cy.findByTestId(/lists table/i).as("historyTable");
+    cy.findByTestId(/lists-table/i).as("historyTable");
 
     // search for a string that will yield no results
     cy.wait(2000)
@@ -107,7 +107,7 @@ describe("History", () => {
     cy.task("deleteFolder", downloadsFolder);
   });
 
-  it("Allows pagination of results", () => {
+  it("Allows sorting and pagination of results", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to History page
@@ -115,6 +115,60 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
+    // Sorting
+    cy.wait(1000)
+      .get("tbody")
+      .within(() => {
+        cy.get("a")
+          .eq(0)
+          .within(() => {
+            cy.get("td").eq(1).as("firstTableFileName");
+          });
+      });
+
+    cy.findByText(/filename/i).click({ force: true });
+
+    cy.wait(1000).location("search").should("include", "sort=filename");
+
+    cy.wait(1000)
+      .get("tbody")
+      .within(() => {
+        cy.get("a")
+          .eq(0)
+          .within(() => {
+            cy.get("td")
+              .eq(1)
+              .as("ascTableFileName")
+              .then(($data) => {
+                cy.wrap($data).should(
+                  "not.equal",
+                  cy.get("@firstTableFileName")
+                );
+              });
+          });
+      });
+
+    cy.findByText(/filename/i).click({ force: true });
+
+    cy.wait(1000).location("search").should("include", "sort=-filename");
+
+    cy.wait(1000)
+      .get("tbody")
+      .within(() => {
+        cy.get("a")
+          .eq(0)
+          .within(() => {
+            cy.get("td")
+              .eq(0)
+              .then(($data) => {
+                cy.wrap($data)
+                  .should("not.equal", cy.get("@firstTableFileName"))
+                  .should("not.equal", "@ascTableFileName");
+              });
+          });
+      });
+
+    //Pagination
     cy.wait(1000).findByLabelText(/first page/i);
 
     cy.findByLabelText(/previous page/i);

@@ -248,7 +248,7 @@ export default function InvoiceTable<T>({
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const { currentSort, sortQuery } = useSorting();
   return (
-    <Paper sx={{ mb: 2 }}>
+    <Paper sx={{ mb: 2 }} data-testid={`${tableTitle}-table`}>
       {tableTitle && (
         <Box padding={2}>
           <Typography
@@ -338,7 +338,7 @@ export default function InvoiceTable<T>({
           </TableBody>
         </Table>
       </TableContainer>
-      {totalItems && <LinkPagination totalItems={totalItems} />}
+      {!!totalItems && <LinkPagination totalItems={totalItems} />}
     </Paper>
   );
 }

@@ -8,32 +8,53 @@ import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import SearchTable from "~/components/table";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { parseFilterParam } from "~/utils/parseFilterParam";
+import { getOrgandUserId } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
+  const { userId, organizationId } = await getOrgandUserId(request);
   try {
     const url = new URL(request.url);
-    const searchParams = url.searchParams;
+    const page = url.searchParams.get("page");
+    const perPage = url.searchParams.get("perPage");
+    const filter = url.searchParams.get("filter");
+    const sort = url.searchParams.get("sort");
 
     // if user vists /search with no query, return no results
-    if (!searchParams.has("filter"))
-      return json({ filenameList: [], dataObjectList: [], error: "" });
+    if (!filter)
+      return json({
+        error: "",
+        dataObjectList: null,
+        filenameList: null,
+      });
 
     // TODO Resolve this
     // On our end manage making separate queries to Data Object and Filename until Search logic/API can be settled
-    const { _searchString } = parseFilterParam(searchParams.get("filter"));
+    const { _searchString } = parseFilterParam(filter);
 
     if (!_searchString) {
-      return json({ filenameList: [], dataObjectList: [], error: "" });
+      return json({
+        error: "",
+        dataObjectList: null,
+        filenameList: null,
+      });
     }
 
-    const dataObjectParam = new URLSearchParams();
-    dataObjectParam.append("filter", `contains=(dataObject,${_searchString})`);
-
-    const filenameParam = new URLSearchParams();
-    filenameParam.append("filter", `contains=(filename,${_searchString})`);
-
-    const dataObjectList = await retrieveRSBOMList(dataObjectParam);
-    const filenameList = await retrieveRSBOMList(filenameParam);
+    const dataObjectList = await retrieveRSBOMList({
+      userId,
+      organizationId,
+      page,
+      perPage,
+      filter: `contains=(dataObject,${_searchString})`,
+      sort,
+    });
+    const filenameList = await retrieveRSBOMList({
+      userId,
+      organizationId,
+      page,
+      perPage,
+      filter: `contains=(filename,${_searchString})`,
+      sort,
+    });
 
     // //
 
@@ -41,9 +62,26 @@ export async function loader({ request }: LoaderArgs) {
   } catch (e) {
     const error = (e as Error).message;
     console.error(error);
-    return json({ error, dataObjectList: [], filenameList: [] });
+    return json({
+      error,
+      dataObjectList: null,
+      filenameList: null,
+    });
   }
 }
+
+const tableHeaders = [
+  {
+    label: "Id",
+    value: "id",
+    sortable: false,
+  },
+  { label: "Filename", value: "filename", sortable: true },
+  { label: "Date", value: "@timestamp", sortable: true },
+  { label: "Object Id", value: "dataObject", sortable: true },
+  { label: "Type", value: "mime-type", sortable: true },
+  { label: "Status", value: "completedStatus", sortable: true },
+];
 
 export default function Route() {
   const { dataObjectList, filenameList, error } =
@@ -57,7 +95,7 @@ export default function Route() {
 
   if (
     (!dataObjectList && !filenameList) ||
-    (!dataObjectList.length && !filenameList.length)
+    (!dataObjectList.data.length && !filenameList.data.length)
   ) {
     return <NoResults />;
   }
@@ -81,39 +119,21 @@ export default function Route() {
   return (
     <Box paddingY={2}>
       <SearchTable<RSBOMListEntry>
-        tableData={dataObjectList || undefined}
+        tableData={dataObjectList.data || undefined}
+        // TODO Disabled until Search API is determined
+        // totalItems={dataObjectList.metadata?.page.total}
         tableTitle="Search By Data Object"
         linkKey="dataObject"
-        headers={[
-          {
-            label: "Id",
-            value: "id",
-            sortable: false,
-          },
-          { label: "Filename", value: "filename", sortable: false },
-          { label: "Date", value: "@timestamp", sortable: true },
-          { label: "Object Id", value: "dataObject", sortable: false },
-          { label: "Type", value: "mime-type", sortable: false },
-          { label: "Status", value: "completedStatus", sortable: true },
-        ]}
+        headers={tableHeaders}
         tableContainerStyles={{ maxHeight: "600px" }}
       />
       <SearchTable<RSBOMListEntry>
-        tableData={filenameList || undefined}
+        tableData={filenameList.data || undefined}
+        // TODO Disabled until Search API is determined
+        // totalItems={filenameList.metadata?.page.total}
         tableTitle="Search By Filename"
         linkKey="dataObject"
-        headers={[
-          {
-            label: "Id",
-            value: "id",
-            sortable: false,
-          },
-          { label: "Filename", value: "filename", sortable: false },
-          { label: "Date", value: "@timestamp", sortable: true },
-          { label: "Object Id", value: "dataObject", sortable: false },
-          { label: "Type", value: "mime-type", sortable: false },
-          { label: "Status", value: "completedStatus", sortable: true },
-        ]}
+        headers={tableHeaders}
         tableContainerStyles={{ maxHeight: "600px" }}
       />
     </Box>
