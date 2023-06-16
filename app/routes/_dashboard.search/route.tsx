@@ -85,12 +85,16 @@ export default function Route() {
         tableTitle="Search By Data Object"
         linkKey="dataObject"
         headers={[
-          "Id",
-          "Filename",
-          "Timestamp",
-          "Data Object",
-          "Type",
-          "Status",
+          {
+            label: "Id",
+            value: "id",
+            sortable: false,
+          },
+          { label: "Filename", value: "filename", sortable: false },
+          { label: "Date", value: "@timestamp", sortable: true },
+          { label: "Object Id", value: "dataObject", sortable: false },
+          { label: "Type", value: "mime-type", sortable: false },
+          { label: "Status", value: "completedStatus", sortable: true },
         ]}
         tableContainerStyles={{ maxHeight: "600px" }}
       />
@@ -99,12 +103,16 @@ export default function Route() {
         tableTitle="Search By Filename"
         linkKey="dataObject"
         headers={[
-          "Id",
-          "Filename",
-          "Timestamp",
-          "Data Object",
-          "Type",
-          "Status",
+          {
+            label: "Id",
+            value: "id",
+            sortable: false,
+          },
+          { label: "Filename", value: "filename", sortable: false },
+          { label: "Date", value: "@timestamp", sortable: true },
+          { label: "Object Id", value: "dataObject", sortable: false },
+          { label: "Type", value: "mime-type", sortable: false },
+          { label: "Status", value: "completedStatus", sortable: true },
         ]}
         tableContainerStyles={{ maxHeight: "600px" }}
       />

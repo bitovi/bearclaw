@@ -54,15 +54,22 @@ export default function Route() {
                 tableData={rsbomList || undefined}
                 linkKey="dataObject"
                 headers={[
-                  "Id",
-                  "Filename",
-                  "Timestamp",
-                  "Data Object",
-                  "Type",
-                  "Status",
+                  { label: "Id", value: "id", sortable: false },
+                  { label: "Filename", value: "filename", sortable: false },
+                  { label: "Timestamp", value: "@timestamp", sortable: false },
+                  {
+                    label: "Data Object",
+                    value: "dataObject",
+                    sortable: false,
+                  },
+                  { label: "Type", value: "mime-type", sortable: false },
+                  {
+                    label: "Status",
+                    value: "completedStatus",
+                    sortable: false,
+                  },
                 ]}
                 tableContainerStyles={{ maxHeight: "600px" }}
-                pagination
                 search
                 searchFields={[
                   {

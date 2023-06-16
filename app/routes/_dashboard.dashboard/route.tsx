@@ -98,7 +98,12 @@ export default function Index() {
         {jobs.length > 0 ? (
           <Table
             tableTitle="Recent Activity"
-            headers={["File Name", "Type", "Status", "Object ID"]}
+            headers={[
+              { label: "File Name", value: "filename", sortable: true },
+              { label: "Type", value: "type", sortable: true },
+              { label: "Status", value: "status", sortable: true },
+              { label: "Object ID", value: "_id", sortable: true },
+            ]}
             tableData={jobs.map((job) => {
               return {
                 fileName: job.filename,
