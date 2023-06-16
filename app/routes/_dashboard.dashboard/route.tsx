@@ -14,7 +14,15 @@ import Table from "~/components/table/Table";
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
-  const jobs = await getAllParentJobs({ userId, organizationId });
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page");
+  const perPage = url.searchParams.get("perPage");
+  const jobs = await getAllParentJobs({
+    userId,
+    organizationId,
+    page,
+    perPage,
+  });
   return json({ user, jobs, userId, organizationId });
 }
 
@@ -95,7 +103,7 @@ export default function Index() {
         </Box>
       </Box>
       <Box>
-        {jobs.length > 0 ? (
+        {jobs && jobs.data.length > 0 ? (
           <Table
             tableTitle="Recent Activity"
             headers={[
@@ -104,7 +112,8 @@ export default function Index() {
               { label: "Status", value: "status", sortable: true },
               { label: "Object ID", value: "_id", sortable: true },
             ]}
-            tableData={jobs.map((job) => {
+            totalItems={jobs.metadata?.page.total}
+            tableData={jobs.data.map((job) => {
               return {
                 fileName: job.filename,
                 type: job.type,

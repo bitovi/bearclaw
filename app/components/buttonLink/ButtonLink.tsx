@@ -14,6 +14,7 @@ export function ButtonLink({ to, children, variant, sx, ...props }: Props) {
       component={to ? Link : "div"}
       aria-disabled={!to}
       to={to}
+      prefetch="intent"
       variant={variant}
       sx={{
         ...sx,

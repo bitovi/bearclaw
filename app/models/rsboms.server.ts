@@ -1,19 +1,18 @@
+import type { ApiRequestParams, ApiResponseWrapper } from "./apiUtils.server";
+import { buildApiSearchParams } from "./apiUtils.server";
 import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
 
 const baseURL = process.env.BEARCLAW_URL;
 
 export async function retrieveRSBOMList(
-  searchParams: URLSearchParams
-): Promise<RSBOMListEntry[]> {
-  /**
-    TODO: utilize userId and/or orgId to retrieve particular file histories 
-    */
-
+  params: ApiRequestParams = {}
+) {
+  const searchParams = buildApiSearchParams(params);
   const response = await fetch(
-    `${baseURL}/claw/get_rsboms_cyclonedx?${searchParams.toString()}`
+    `${baseURL}/bear/get_rsboms_cyclonedx?${searchParams}`
   );
-  const { bc_rsbom_cyclonedx_aggregate } = await response.json();
-  return bc_rsbom_cyclonedx_aggregate;
+  const json: ApiResponseWrapper<RSBOMListEntry[]> = await response.json();
+  return json;
 }
 
 export async function retrieveRSBOMDetails({
