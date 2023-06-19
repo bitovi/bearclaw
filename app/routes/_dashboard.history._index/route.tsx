@@ -67,21 +67,6 @@ export default function Route() {
                 totalItems={rsbomList?.metadata?.page.total}
                 linkKey="dataObject"
                 headers={[
-<<<<<<< HEAD
-                  { label: "Id", value: "id", sortable: false },
-                  { label: "Filename", value: "filename", sortable: false },
-                  { label: "Timestamp", value: "@timestamp", sortable: false },
-                  {
-                    label: "Data Object",
-                    value: "dataObject",
-                    sortable: false,
-                  },
-                  { label: "Type", value: "mime-type", sortable: false },
-                  {
-                    label: "Status",
-                    value: "completedStatus",
-                    sortable: false,
-=======
                   { label: "Id", value: "id", sortable: true },
                   { label: "Filename", value: "filename", sortable: true },
                   { label: "Date", value: "@timestamp", sortable: true },
@@ -95,7 +80,6 @@ export default function Route() {
                     label: "Status",
                     value: "completedStatus",
                     sortable: true,
->>>>>>> dev
                   },
                 ]}
                 tableContainerStyles={{ maxHeight: "600px" }}
