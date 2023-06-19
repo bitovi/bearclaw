@@ -1,5 +1,14 @@
 const cloneDeep = require("lodash/cloneDeep");
 
+/**
+ * Takes the "sort" query paramter from a URL and builds an object
+ * from it whose keys are the specified fields and values are
+ * either "asc" or "desc" depending on the string, such as:
+ *
+ * { [sortField]: 'asc' | 'desc' }
+ * @param {*} sortString the "sort" query paramter from a URL
+ * @returns
+ */
 function parseSortParam(sortString) {
   if (!sortString) return undefined;
   const fields = sortString.split(",");
@@ -12,7 +21,6 @@ function parseSortParam(sortString) {
       obj[field] = "asc";
     }
   }
-  // { [sortField]: 'asc' | 'desc' }
   return obj;
 }
 
