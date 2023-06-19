@@ -17,10 +17,18 @@ describe("User Management & Invitation", () => {
     resetPassword: "testPassword2",
   };
 
+  const differentOwnerAccount = {
+    email: "differentOwnerAccount-test@bigbear.ai",
+    password: "myreallystrongpassword",
+    resetPassword: "myreallystrongpassword",
+  };
+
+  before(() => {
+    cy.deleteOrgsAndUsers();
+  });
+
   after(() => {
-    cy.cleanupAccount({ email: ownerAccount.email });
-    cy.cleanupAccount({ email: newUserAccount.email });
-    cy.cleanupAccount({ email: existingUserAccount.email });
+    cy.deleteOrgsAndUsers();
   });
 
   it("Invite user", () => {
@@ -32,7 +40,8 @@ describe("User Management & Invitation", () => {
 
     cy.findByText(/organization users/i);
 
-    cy.get("tbody > tr").should("have.length", 0);
+    // length of 1 as the Owner will be the only listing displayed
+    cy.get("tbody > tr").should("have.length", 1);
 
     cy.findAllByRole("button", { name: /remove/i }).should("have.length", 0);
     cy.wait(500)
@@ -196,11 +205,10 @@ describe("User Management & Invitation", () => {
     cy.findByText(/organization users/i);
 
     cy.get("tbody").within(() => {
-      cy.get("tr")
-        .should("have.length", 2)
-        .eq(0)
-        .should("be.visible")
-        .click({ force: true });
+      // Two new users plus the owner
+      cy.get("tr").should("have.length", 3);
+
+      cy.get("input").eq(0).click({ force: true });
     });
 
     cy.findByRole("button", { name: /remove/i })
@@ -210,7 +218,132 @@ describe("User Management & Invitation", () => {
     cy.findByText(/User deleted/i);
 
     cy.get("tbody").within(() => {
-      cy.get("tr").should("have.length", 1);
+      cy.get("tr").should("have.length", 2);
+    });
+  });
+
+  it("Works with Sorting, Filtering, and Pagination", () => {
+    cy.seedOrganization(differentOwnerAccount.email, 15);
+    cy.visit("/login");
+
+    cy.wait(1000)
+      .findByRole("textbox", { name: /email/i })
+      .type(differentOwnerAccount.email);
+    cy.findByLabelText(/password/i).type(differentOwnerAccount.password);
+    cy.findByRole("button", { name: /log in/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByRole("link", { name: /View verification emails here/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByTestId(differentOwnerAccount.email)
+      .findByRole("link", { name: /verify your email/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByText(/verified successfully/i);
+    cy.wait(1000);
+    cy.findByRole("link", { name: /Continue/i }).click();
+
+    cy.wait(1000)
+      .findByText(/user management/i)
+      .click({ force: true });
+
+    // Sorting
+    cy.wait(1000)
+      .get("tbody")
+      .within(() => {
+        cy.get("tr")
+          .eq(0)
+          .within(() => {
+            cy.get("td").eq(1).as("firstTableEmail");
+          });
+      });
+
+    cy.findByText(/email/i).click({ force: true });
+
+    cy.wait(1000).location("search").should("include", "sort=email");
+
+    cy.wait(1000)
+      .get("tbody")
+      .within(() => {
+        cy.get("tr")
+          .eq(0)
+          .within(() => {
+            cy.get("td")
+              .eq(1)
+              .as("ascTableEmail")
+              .then(($data) => {
+                cy.wrap($data).should("not.equal", cy.get("@firstTableEmail"));
+              });
+          });
+      });
+
+    cy.findByText(/email/i).click({ force: true });
+
+    cy.wait(1000).location("search").should("include", "sort=-email");
+
+    cy.wait(1000)
+      .get("tbody")
+      .within(() => {
+        cy.get("tr")
+          .eq(0)
+          .within(() => {
+            cy.get("td")
+              .eq(1)
+              .then(($data) => {
+                cy.wrap($data)
+                  .should("not.equal", cy.get("@firstTableEmail"))
+                  .should("not.equal", "@ascTableEmail");
+              });
+          });
+      });
+
+    // Pagination
+    cy.wait(1000).findByLabelText(/first page/i);
+
+    cy.findByLabelText(/previous page/i);
+
+    cy.findByRole("link", { name: /last page/i });
+
+    cy.findByRole("link", { name: /next page/i }).click();
+
+    cy.location("search")
+      .should("include", "page=2")
+      .should("include", "perPage=10");
+
+    cy.findByLabelText(/Rows per page/i).click();
+
+    cy.findByRole("link", { name: /show 25/i }).click();
+
+    cy.location("search")
+      .should("include", "page=1")
+      .should("include", "perPage=25");
+
+    // Filter
+    cy.get("tbody").within(() => {
+      cy.findAllByRole("rowheader").should("have.length.gt", 0);
+    });
+
+    cy.wait(1000)
+      .get("main")
+      .within(() => {
+        // random string to yield no results
+        cy.findByRole("textbox", { name: /search/i }).type(
+          "asjdkfhdaskjlfhasdkjl"
+        );
+      });
+
+    const params = new URLSearchParams();
+    params.append("filter", "contains(,asjdkfhdaskjlfhasdkjl)");
+    // Confirm our filtering/searching is wiring up to the URL correctly
+    cy.location("search").should("include", params.toString());
+
+    cy.get("tbody").within(() => {
+      // no table row data to display
+      cy.findAllByRole("rowheader").should("have.length", 0);
     });
   });
 });
