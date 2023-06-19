@@ -27,19 +27,26 @@ describe("History", () => {
     cy.wait(1000)
       .findByRole("table")
       .within(() => {
-        cy.contains("th", "Timestamp");
-        cy.contains("th", "Data Object");
-        cy.contains("th", "Filename");
-        cy.contains("th", "Id");
-        cy.contains("th", "Type");
-        cy.contains("th", "Status");
+        cy.findAllByRole("columnheader").contains(/timestamp/i);
+        cy.findAllByRole("columnheader").contains(/Data Object/i);
+        cy.findAllByRole("columnheader").contains(/filename/i);
+        cy.findAllByRole("columnheader").contains(/id/i);
+        cy.findAllByRole("columnheader").contains(/type/i);
+        cy.findAllByRole("columnheader").contains(/status/i);
+
         // Default fetching will have data rows
-        cy.get("tbody").within(() => {
-          cy.findAllByRole("row").should("have.length.gt", 0);
-        });
+        cy.findAllByRole("rowgroup")
+          .eq(1)
+          .as("tableBody")
+          .within(() => {
+            cy.findAllByRole("row").should("have.length.gt", 0);
+          });
 
         // realClick allows us to engage the copy to clipboard behavior in the cy environment
-        cy.findAllByTitle(/copy to clipboard/i).eq(2).realClick().click({ force: true });
+        cy.findAllByTitle(/copy to clipboard/i)
+          .eq(2)
+          .realClick()
+          .click({ force: true });
       });
 
     cy.findByLabelText(/type/i).click();
@@ -47,15 +54,13 @@ describe("History", () => {
     cy.findByRole("option", { name: /data object/i }).click();
 
     // search for a string that will yield no results
-    cy.wait(2000)
-      .findByRole("textbox")
-      .type("zdfasfdafdsfad");
+    cy.wait(2000).findByRole("textbox").type("zdfasfdafdsfad");
     const params = new URLSearchParams();
     params.append("filter", "contains(dataObject,zdfasfdafdsfad)");
     // Confirm our filtering/searching is wiring up to the URL correctly
     cy.location("search").should("include", params.toString());
 
-    cy.get("tbody").within(() => {
+    cy.get("@tableBody").within(() => {
       // no table row data to display
       cy.findAllByRole("row").should("have.length", 0);
     });
@@ -72,7 +77,7 @@ describe("History", () => {
         cy.location("search").should("include", params.toString());
       });
 
-    cy.get("tbody").within(() => {
+    cy.get("@tableBody").within(() => {
       // one result to display
       cy.findAllByRole("row").should("have.length", 1).click({ force: true });
     });
@@ -90,7 +95,8 @@ describe("History", () => {
       .click({ force: true });
 
     cy.wait(1000)
-      .get("tbody")
+      .findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
         cy.findAllByRole("row").eq(3).click({ force: true });
       });
@@ -116,25 +122,24 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.wait(1000)
-      .findByLabelText(/first page/i)
+    cy.wait(1000).findByLabelText(/first page/i);
 
-    cy.findByLabelText(/previous page/i)
+    cy.findByLabelText(/previous page/i);
 
-    cy.findByRole("link", { name: /last page/i })
+    cy.findByRole("link", { name: /last page/i });
 
     cy.findByRole("link", { name: /next page/i }).click();
 
-    cy.location('search')
-      .should('include', 'page=2')
-      .should('include', 'perPage=10');
+    cy.location("search")
+      .should("include", "page=2")
+      .should("include", "perPage=10");
 
     cy.findByLabelText(/Rows per page/i).click();
 
     cy.findByRole("link", { name: /show 25/i }).click();
 
-    cy.location('search')
-      .should('include', 'page=1')
-      .should('include', 'perPage=25');
+    cy.location("search")
+      .should("include", "page=1")
+      .should("include", "perPage=25");
   });
 });
