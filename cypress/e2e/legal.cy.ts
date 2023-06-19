@@ -23,9 +23,9 @@ describe("Legal", () => {
 
     cy.findByText(/this is privacy copy/i);
 
-    cy.findAllByRole("link").contains(/privacy \& policy/i);
+    cy.findAllByRole("link").contains(/privacy & policy/i);
     cy.findAllByRole("link")
-      .contains(/terms \& conditions/i)
+      .contains(/terms & conditions/i)
       .click({
         force: true,
       });
