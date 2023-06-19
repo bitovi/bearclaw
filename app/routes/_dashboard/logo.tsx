@@ -11,7 +11,12 @@ export function Logo() {
         style={{ transform: "rotate(-22deg)", filter: "brightness(0)" }}
       />
       <div>
-        <Typography fontWeight="900" fontSize="2rem" display="inline">
+        <Typography
+          fontWeight="900"
+          fontSize="2rem"
+          display="inline"
+          color="rgba(0, 0, 0, 0.87)"
+        >
           BEAR
         </Typography>
         <Typography
@@ -19,12 +24,13 @@ export function Logo() {
           fontSize="2rem"
           color="#F5F5F5"
           display="inline"
+          borderColor={"blue"}
           sx={{
             textShadow: `
-                -1px -1px 0 #222222,  
-                1px -1px 0 #222222,
-                -1px 1px 0 #222222,
-                1px 1px 0 #222222`,
+                -1px -1px 0 #0037FF,  
+                1px -1px 0 #0037FF,
+                -1px 1px 0 #0037FF,
+                1px 1px 0 #0037FF`,
           }}
         >
           CLAW

@@ -32,11 +32,26 @@ export function useFiltering(pathname?: string) {
       filter: `contains(${toSearchField},${toSearchString})`,
     });
 
+<<<<<<< HEAD
     clearTimeout(refTimer.current || undefined);
     refTimer.current = setTimeout(
       () => navigate(`${path}${updatedSearchParams}`),
       500
     );
+=======
+    if (!refTimer.current) {
+      refTimer.current = setTimeout(
+        () => navigate(`${path}${updatedSearchParams}`),
+        500
+      );
+    } else {
+      clearTimeout(refTimer.current);
+      refTimer.current = setTimeout(
+        () => navigate(`${path}${updatedSearchParams}`),
+        500
+      );
+    }
+>>>>>>> dev
   };
 
   return {
