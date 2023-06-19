@@ -9,15 +9,28 @@ import Divider from "@mui/material/Divider";
 import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
 import { getOrgandUserId, getUser } from "~/session.server";
 import { getAllParentJobs } from "~/services/getAllParentJobs";
+import type { ParentJob } from "~/services/getAllParentJobs";
 import Table from "~/components/table/Table";
+
+interface ParentJobTable
+  extends Omit<ParentJob, "analyzedAt" | "size" | "_id"> {
+  objectId: string;
+}
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
   const url = new URL(request.url);
   const page = url.searchParams.get("page");
-  const perPage = url.searchParams.get("perPage")
-  const jobs = await getAllParentJobs({ userId, organizationId, page, perPage });
+  const perPage = url.searchParams.get("perPage");
+  const sort = url.searchParams.get("sort");
+  const jobs = await getAllParentJobs({
+    userId,
+    organizationId,
+    page,
+    perPage,
+    sort,
+  });
   return json({ user, jobs, userId, organizationId });
 }
 
@@ -99,13 +112,18 @@ export default function Index() {
       </Box>
       <Box>
         {jobs && jobs.data.length > 0 ? (
-          <Table
+          <Table<ParentJobTable>
             tableTitle="Recent Activity"
-            headers={["File Name", "Type", "Status", "Object ID"]}
+            headers={[
+              { label: "File Name", value: "filename", sortable: true },
+              { label: "Type", value: "type", sortable: true },
+              { label: "Status", value: "status", sortable: true },
+              { label: "Object ID", value: "_id", sortable: true },
+            ]}
             totalItems={jobs.metadata?.page.total}
             tableData={jobs.data.map((job) => {
               return {
-                fileName: job.filename,
+                filename: job.filename,
                 type: job.type,
                 status: job.status,
                 objectId: job._id,

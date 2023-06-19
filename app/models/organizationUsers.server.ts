@@ -1,8 +1,8 @@
 import type { OrganizationUsers } from "@prisma/client";
 import { prisma } from "~/db.server";
-import { getUserById } from "./user.server";
 
-import { faker } from "@faker-js/faker";
+import { parseFilterParam } from "~/utils/parseFilterParam";
+import { parseSortParam } from "~/utils/parseSortParam";
 
 export type { OrganizationUsers } from "@prisma/client";
 
@@ -23,6 +23,7 @@ export type OrganizationMember = {
   email: string;
   accountStatus: string | null;
   id: string;
+  owner: boolean;
 };
 
 export async function createOrganizationUser({
@@ -48,39 +49,100 @@ export async function createOrganizationUser({
     },
   });
 }
+const SortableOrgUserEntries = ["accountStatus", "name", "email"];
 
-export async function retrieveUsersOfOrganization({
-  organizationId,
-}: {
-  organizationId: string;
-}): Promise<OrganizationMember[]> {
+export async function retrieveUsersOfOrganization(
+  organizationId: string,
+  searchParams: URLSearchParams
+): Promise<{ orgUsers: OrganizationMember[]; totalOrgUsers: number }> {
+  const page = parseInt(searchParams.get("page") || "");
+  const perPage = parseInt(searchParams.get("perPage") || "10");
+  const skip = page > 1 ? perPage * (page - 1) : 0;
+  const take = perPage || 10;
+
+  const { _searchString } = parseFilterParam(searchParams.get("filter"));
+
+  const sort = parseSortParam(searchParams.get("sort")) || {};
+
+  let orderBy: Record<string, "asc" | "desc" | Record<string, "asc" | "desc">>;
+
+  // Manage sorting that could occur on OrganizationUser record or User Record
+  if (!SortableOrgUserEntries.includes(Object.keys(sort)[0])) {
+    orderBy = {};
+  } else if ("accountStatus" in sort) {
+    orderBy = {
+      accountStatus: sort.accountStatus,
+    };
+  } else {
+    const sortEntries = Object.entries(sort);
+    orderBy = {
+      user: {
+        [sortEntries[0][0] === "name" ? "firstName" : sortEntries[0][0]]:
+          sortEntries[0][1],
+      },
+    };
+  }
+
   const orgUsers = await prisma.organizationUsers.findMany({
+    skip,
+    take,
+    orderBy,
+    include: {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+      },
+    },
+    where: {
+      organizationId,
+      user: {
+        OR: [
+          {
+            firstName: {
+              startsWith: _searchString || "",
+              mode: "insensitive",
+            },
+          },
+          {
+            lastName: {
+              startsWith: _searchString || "",
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              startsWith: _searchString || "",
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+    },
+  });
+
+  const totalOrgUsers = await prisma.organizationUsers.count({
     where: {
       organizationId,
     },
   });
-  const users = await Promise.all(
-    orgUsers
-      // does not return the owner of the particular organization
-      .filter((orgUser) => !orgUser.owner)
-      .map(async (orgUser): Promise<OrganizationMember> => {
-        const user = await getUserById(orgUser.userId);
-        if (!user) {
-          throw new Error("Organization member not found");
-        }
-        // TODO: REMOVE NAME FAKER ONCE ONBOARDING IS HOOKED UP TO ACCOUNT CREATION FLOW
-        return {
-          name: `${user.firstName || faker.name.firstName()} ${
-            user.lastName || faker.name.lastName()
-          }`,
-          email: user.email,
-          accountStatus: orgUser.accountStatus,
-          id: orgUser.id,
-        };
-      })
-  );
 
-  return users;
+  return {
+    orgUsers: orgUsers.map((user) => {
+      return {
+        name: `${user.user.firstName || user.user.email.split("@")[0]} ${
+          user.user.lastName || user.user.email.split("@")[1]
+        }`,
+        email: user.user.email,
+        accountStatus: user.owner ? "Owner" : user.accountStatus,
+        id: user.id,
+        owner: user.owner,
+      };
+    }),
+    totalOrgUsers,
+  };
 }
 
 export async function retrieveOrganizationUsersByUserId({
@@ -143,10 +205,9 @@ export async function addOrganizationUser(
   userId: string,
   organizationId: string
 ) {
-  const lookUpUser = await prisma.user.findUnique({ where: { id: userId } });
-  if (!lookUpUser) return;
   const orgUser = await createOrganizationUser({
-    userId: lookUpUser?.id,
+    userId,
+    accountStatus: "Active",
     organizationId,
     permissions: {
       subscriptionView: true,

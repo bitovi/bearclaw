@@ -13,3 +13,14 @@ Cypress.on("uncaught:exception", (err) => {
     return false;
   }
 });
+
+Cypress.automation("remote:debugger:protocol", {
+  // give Cypress permissions to read clipboard
+  command: "Browser.grantPermissions",
+  params: {
+    permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
+    origin: window.location.origin,
+  },
+}).catch((e) => {
+  console.log("error", e.message);
+});

@@ -4,17 +4,6 @@ describe("History", () => {
   });
 
   it("Displays rSBOM history in a table", () => {
-    // give Cypress permissions to read clipboard
-    Cypress.automation("remote:debugger:protocol", {
-      command: "Browser.grantPermissions",
-      params: {
-        permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"],
-        origin: window.location.origin,
-      },
-    }).catch((e) => {
-      console.log("error", e.message);
-    });
-
     cy.createAndVerifyAccount();
 
     // Navigate to History page
@@ -27,7 +16,7 @@ describe("History", () => {
     cy.wait(1000)
       .findByRole("table")
       .within(() => {
-        cy.findAllByRole("columnheader").contains(/timestamp/i);
+        cy.findAllByRole("columnheader").contains(/date/i);
         cy.findAllByRole("columnheader").contains(/Data Object/i);
         cy.findAllByRole("columnheader").contains(/filename/i);
         cy.findAllByRole("columnheader").contains(/id/i);
@@ -53,8 +42,15 @@ describe("History", () => {
 
     cy.findByRole("option", { name: /data object/i }).click();
 
+    cy.findByTestId(/lists-table/i).as("historyTable");
+
     // search for a string that will yield no results
-    cy.wait(2000).findByRole("textbox").type("zdfasfdafdsfad");
+    cy.wait(2000)
+      .get("@historyTable")
+      .within(() => {
+        cy.findByRole("textbox").type("zdfasfdafdsfad");
+      });
+
     const params = new URLSearchParams();
     params.append("filter", "contains(dataObject,zdfasfdafdsfad)");
     // Confirm our filtering/searching is wiring up to the URL correctly
@@ -70,7 +66,9 @@ describe("History", () => {
       .its("navigator.clipboard")
       .invoke("readText")
       .then((data) => {
-        cy.findByRole("textbox").clear().type(data);
+        cy.get("@historyTable").within(() => {
+          cy.findByRole("textbox").clear().type(data);
+        });
         const params = new URLSearchParams();
         params.append("filter", `contains(dataObject,${data})`);
         // Confirm our filtering/searching is wiring up to the URL correctly
@@ -114,7 +112,7 @@ describe("History", () => {
     cy.task("deleteFolder", downloadsFolder);
   });
 
-  it("Allows pagination of results", () => {
+  it("Allows sorting and pagination of results", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to History page
@@ -122,6 +120,62 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
+    // Sorting
+    cy.wait(1000)
+      .findAllByRole("rowgroup")
+      .eq(1)
+      .as("tableBody")
+      .within(() => {
+        cy.get("a")
+          .eq(0)
+          .within(() => {
+            cy.findAllByRole("cell").eq(1).as("firstTableFileName");
+          });
+      });
+
+    cy.findByText(/filename/i).click({ force: true });
+
+    cy.wait(1000).location("search").should("include", "sort=filename");
+
+    cy.wait(1000)
+      .get("@tableBody")
+      .within(() => {
+        cy.get("a")
+          .eq(0)
+          .within(() => {
+            cy.findAllByRole("cell")
+              .eq(1)
+              .as("ascTableFileName")
+              .then(($data) => {
+                cy.wrap($data).should(
+                  "not.equal",
+                  cy.get("@firstTableFileName")
+                );
+              });
+          });
+      });
+
+    cy.findByText(/filename/i).click({ force: true });
+
+    cy.wait(1000).location("search").should("include", "sort=-filename");
+
+    cy.wait(1000)
+      .get("@tableBody")
+      .within(() => {
+        cy.get("a")
+          .eq(0)
+          .within(() => {
+            cy.findAllByRole("cell")
+              .eq(0)
+              .then(($data) => {
+                cy.wrap($data)
+                  .should("not.equal", cy.get("@firstTableFileName"))
+                  .should("not.equal", "@ascTableFileName");
+              });
+          });
+      });
+
+    //Pagination
     cy.wait(1000).findByLabelText(/first page/i);
 
     cy.findByLabelText(/previous page/i);

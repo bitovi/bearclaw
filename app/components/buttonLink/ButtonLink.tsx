@@ -9,6 +9,8 @@ type Props = ButtonProps & {
 export function ButtonLink({ to, children, variant, sx, ...props }: Props) {
   return (
     <Button
+      disableRipple
+      disableFocusRipple
       component={to ? Link : "div"}
       aria-disabled={!to}
       to={to}
