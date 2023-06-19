@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { Outlet } from "@remix-run/react";
 import { SideNav } from "~/components/sideNav/SideNav";
+import { StarTwoTone } from "@mui/icons-material";
 
 export default function Account() {
   return (
@@ -16,6 +17,11 @@ export default function Account() {
               {
                 label: "Settings",
                 to: "/account/settings",
+              },
+              {
+                label: "Legal",
+                to: "/account/legal",
+                icon: <StarTwoTone />,
               },
             ]}
           />
