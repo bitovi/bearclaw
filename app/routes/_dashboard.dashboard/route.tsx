@@ -16,8 +16,13 @@ export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
   const url = new URL(request.url);
   const page = url.searchParams.get("page");
-  const perPage = url.searchParams.get("perPage")
-  const jobs = await getAllParentJobs({ userId, organizationId, page, perPage });
+  const perPage = url.searchParams.get("perPage");
+  const jobs = await getAllParentJobs({
+    userId,
+    organizationId,
+    page,
+    perPage,
+  });
   return json({ user, jobs, userId, organizationId });
 }
 
@@ -101,7 +106,12 @@ export default function Index() {
         {jobs && jobs.data.length > 0 ? (
           <Table
             tableTitle="Recent Activity"
-            headers={["File Name", "Type", "Status", "Object ID"]}
+            headers={[
+              { label: "File Name", value: "filename", sortable: true },
+              { label: "Type", value: "type", sortable: true },
+              { label: "Status", value: "status", sortable: true },
+              { label: "Object ID", value: "_id", sortable: true },
+            ]}
             totalItems={jobs.metadata?.page.total}
             tableData={jobs.data.map((job) => {
               return {

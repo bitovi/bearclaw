@@ -88,7 +88,13 @@ export default function Index() {
       }}
     >
       <Header />
-      <Box display="flex" height="100%" width="100%" overflow="hidden">
+      <Box
+        display="flex"
+        height="100%"
+        width="100%"
+        overflow="hidden"
+        bgcolor={"#F5F5F5"}
+      >
         <Box width="250px">
           <MainSideNav canViewUsers={canViewUsers} />
         </Box>
