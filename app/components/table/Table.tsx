@@ -48,9 +48,9 @@ export function SkeletonTable({
   tableContainerStyles,
   headers,
 }: {
-  search: boolean;
-  searchFields: DropdownOption[];
-  tableTitle: string;
+  search?: boolean;
+  searchFields?: DropdownOption[];
+  tableTitle?: string;
   tableContainerStyles?: SxProps<Theme>;
   headers: string[];
 }) {
@@ -147,7 +147,7 @@ function TableRowLink<T>({
   return (
     <TableRow
       component={Link}
-      to={`./${entry[linkKey]}`}
+      to={`/history/${entry[linkKey]}`}
       sx={{
         "&:last-child td, &:last-child th": { border: 0 },
         textDecoration: "unset",
@@ -248,12 +248,18 @@ export default function InvoiceTable<T>({
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const { currentSort, sortQuery } = useSorting();
   return (
-    <Paper sx={{ mb: 2 }}>
-      <Box padding={2}>
-        <Typography variant="h6" color="text.primary" data-testid="table-title">
-          {tableTitle}
-        </Typography>
-      </Box>
+    <Paper sx={{ mb: 2 }} data-testid={`${tableTitle}-table`}>
+      {tableTitle && (
+        <Box padding={2}>
+          <Typography
+            variant="h6"
+            color="text.primary"
+            data-testid="table-title"
+          >
+            {tableTitle}
+          </Typography>
+        </Box>
+      )}
       {search && searchFields && (
         <NavigationFilter
           dropdownLabel="Type"
@@ -332,7 +338,7 @@ export default function InvoiceTable<T>({
           </TableBody>
         </Table>
       </TableContainer>
-      {totalItems && <LinkPagination totalItems={totalItems} />}
+      {!!totalItems && <LinkPagination totalItems={totalItems} />}
     </Paper>
   );
 }

@@ -31,13 +31,17 @@ export async function loader({ request }: LoaderArgs) {
     if (!orgUser) {
       return redirect("/");
     }
-
-    const users = await retrieveUsersOfOrganization({ organizationId });
-
     if (!orgUser.orgUsersView) {
       // if user does not have appropriate view privileges, redirect
       return redirect("/");
     }
+    const urlParams = new URL(request.url).searchParams;
+
+    const { orgUsers, totalOrgUsers } = await retrieveUsersOfOrganization(
+      organizationId,
+      urlParams
+    );
+
     return json({
       permissions: {
         viewUsers: orgUser.orgUsersView,
@@ -45,7 +49,8 @@ export async function loader({ request }: LoaderArgs) {
         deleteUsers: orgUser.orgUsersCreate,
         createUsers: orgUser.orgUsersCreate,
       },
-      users,
+      users: orgUsers,
+      totalUsers: totalOrgUsers,
       error: null,
     });
   } catch (e) {
@@ -57,6 +62,7 @@ export async function loader({ request }: LoaderArgs) {
         createUsers: null,
       },
       users: [],
+      totalUsers: null,
       error: (e as Error).message,
     });
   }
@@ -154,6 +160,7 @@ export default function Route() {
     permissions,
     error: loaderError,
     users,
+    totalUsers,
   } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const submit = useSubmit();
@@ -194,6 +201,7 @@ export default function Route() {
       )}
       <UserTable
         users={users}
+        totalUsers={totalUsers}
         handleAddUser={toggleAddUserModal}
         handleRemoveUser={permissions.deleteUsers ? deleteUser : undefined}
       />

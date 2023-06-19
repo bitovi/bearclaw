@@ -21,7 +21,6 @@ function parseSortParam(sortString) {
       obj[field] = "asc";
     }
   }
-
   return obj;
 }
 

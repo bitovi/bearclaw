@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const { setupServer } = require("msw/node");
 const { rest } = require("msw");
+
 const fixture_getRSBOMSCyclonedx = require("./fixtures/getRSBOMSCyclonedx.js");
 const fixture_getAllParentJobs = require("./fixtures/getAllParentJobs.js");
 const fixture_getRSBOMDetail = require("./fixtures/getRSBOMDetail.js");
@@ -34,9 +35,7 @@ const handlers = [
     return res(ctx.json(fixture_getRSBOMDetail));
   }),
   rest.get(`${baseURL}/claw/get_all_parent_jobs`, (req, res, ctx) => {
-    return res(
-      ctx.json(processParams(fixture_getAllParentJobs, req.url), req.url)
-    );
+    return res(ctx.json(processParams(fixture_getAllParentJobs, req.url)));
   }),
 ];
 

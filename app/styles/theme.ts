@@ -14,6 +14,14 @@ declare module "@mui/material/styles" {
       focusVisible?: string;
     };
   }
+
+  interface Palette {
+    appbar?: Palette["primary"];
+  }
+
+  interface PaletteOptions {
+    appbar?: PaletteOptions["primary"];
+  }
 }
 
 declare module "@mui/material/Button" {
@@ -110,6 +118,18 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiAppBar: {
+      variants: [
+        {
+          props: {
+            color: "primary",
+          },
+          style: {
+            backgroundColor: "#F5F5F5",
+          },
+        },
+      ],
+    },
     MuiAlert: {
       variants: [
         {

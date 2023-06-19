@@ -15,12 +15,14 @@ export async function loader({ request }: LoaderArgs) {
     const page = url.searchParams.get("page");
     const perPage = url.searchParams.get("perPage");
     const filter = url.searchParams.get("filter");
+    const sort = url.searchParams.get("sort");
     const rsbomList = await retrieveRSBOMList({
       userId,
       organizationId,
       page,
       perPage,
       filter,
+      sort,
     });
 
     return json({ rsbomList, error: "" });
@@ -65,6 +67,7 @@ export default function Route() {
                 totalItems={rsbomList?.metadata?.page.total}
                 linkKey="dataObject"
                 headers={[
+<<<<<<< HEAD
                   { label: "Id", value: "id", sortable: false },
                   { label: "Filename", value: "filename", sortable: false },
                   { label: "Timestamp", value: "@timestamp", sortable: false },
@@ -78,6 +81,21 @@ export default function Route() {
                     label: "Status",
                     value: "completedStatus",
                     sortable: false,
+=======
+                  { label: "Id", value: "id", sortable: true },
+                  { label: "Filename", value: "filename", sortable: true },
+                  { label: "Date", value: "@timestamp", sortable: true },
+                  {
+                    label: "Data Object",
+                    value: "dataObject",
+                    sortable: true,
+                  },
+                  { label: "Type", value: "mime-type", sortable: true },
+                  {
+                    label: "Status",
+                    value: "completedStatus",
+                    sortable: true,
+>>>>>>> dev
                   },
                 ]}
                 tableContainerStyles={{ maxHeight: "600px" }}
