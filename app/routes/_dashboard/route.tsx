@@ -106,7 +106,9 @@ export default function Index() {
           padding={4}
           sx={{ backgroundColor: "white", borderTopLeftRadius: "16px" }}
         >
-          <Outlet />
+          <main>
+            <Outlet />
+          </main>
         </Box>
       </Box>
     </Box>
