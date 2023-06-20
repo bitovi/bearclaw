@@ -3,6 +3,7 @@ import { Typography } from "@mui/material";
 import { Outlet } from "@remix-run/react";
 import { SideNav } from "~/components/sideNav/SideNav";
 import { StarTwoTone } from "@mui/icons-material";
+import PersonIcon from "@mui/icons-material/Person";
 
 export default function Account() {
   return (
@@ -14,6 +15,11 @@ export default function Account() {
         <Box width={{ xs: "auto", md: "240px" }}>
           <SideNav
             navMenu={[
+              {
+                label: "Account",
+                to: "/account",
+                icon: <PersonIcon />,
+              },
               {
                 label: "Settings",
                 to: "/account/settings",
