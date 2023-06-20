@@ -25,14 +25,20 @@ describe("Global Search", () => {
     cy.location("search").should("include", params.toString());
 
     cy.findByTestId(/search by data object-table/i).within(() => {
-      cy.get("tbody").within(() => {
-        cy.findAllByRole("row").should("have.length.gt", 0);
-      });
+      cy.findAllByRole("rowgroup")
+        .eq(1)
+        .as("dataObjectTableBody")
+        .within(() => {
+          cy.findAllByRole("row").should("have.length.gt", 0);
+        });
     });
     cy.findByTestId(/search by filename-table/i).within(() => {
-      cy.get("tbody").within(() => {
-        cy.findAllByRole("row").should("have.length.gt", 0);
-      });
+      cy.findAllByRole("rowgroup")
+        .eq(1)
+        .as("filenameTableBody")
+        .within(() => {
+          cy.findAllByRole("row").should("have.length.gt", 0);
+        });
     });
 
     // Random & empty string yields no results
@@ -49,7 +55,7 @@ describe("Global Search", () => {
 
     cy.get("@globalSearch").clear().type("a");
 
-    cy.findByTestId(/search by data object-table/i).within(() => {
+    cy.get("@dataObjectTableBody").within(() => {
       // realClick allows us to engage the copy to clipboard behavior in the cy environment
       cy.findAllByTitle(/copy to clipboard/i)
         .eq(2)
@@ -68,17 +74,19 @@ describe("Global Search", () => {
         cy.location("search").should("include", params.toString());
       });
 
-    cy.wait(1000)
-      .findByTestId(/search by data object-table/i)
-      .within(() => {
-        cy.get("tbody").within(() => {
+    cy.findByTestId(/search by data object-table/i).within(() => {
+      cy.findAllByRole("rowgroup")
+        .eq(1)
+        .within(() => {
           cy.findAllByRole("row").should("have.length", 1);
         });
-      });
+    });
     cy.findByTestId(/search by filename-table/i).within(() => {
-      cy.get("tbody").within(() => {
-        cy.findAllByRole("row").should("have.length", 0);
-      });
+      cy.findAllByRole("rowgroup")
+        .eq(1)
+        .within(() => {
+          cy.findAllByRole("row").should("have.length", 0);
+        });
     });
   });
 
@@ -99,16 +107,17 @@ describe("Global Search", () => {
     cy.findByText(/search by filename/i);
 
     // Sorting
-    cy.wait(1000)
-      .get("tbody")
-      .eq(0)
-      .within(() => {
-        cy.get("a")
-          .eq(1)
-          .within(() => {
-            cy.get("td").eq(1).as("firstTableDataObjectFileName");
-          });
-      });
+    cy.findByTestId(/search by data object-table/i).within(() => {
+      cy.findAllByRole("rowgroup")
+        .eq(1)
+        .within(() => {
+          cy.get("a")
+            .eq(0)
+            .within(() => {
+              cy.findAllByRole("cell").eq(1).as("firstTableDataObjectFileName");
+            });
+        });
+    });
 
     cy.findAllByText(/filename/i)
       .eq(0)
@@ -117,20 +126,23 @@ describe("Global Search", () => {
     cy.wait(1000).location("search").should("include", "sort=filename");
 
     cy.wait(1000)
-      .get("tbody")
-      .eq(0)
+      .findByTestId(/search by data object-table/i)
       .within(() => {
-        cy.get("a")
-          .eq(0)
+        cy.findAllByRole("rowgroup")
+          .eq(1)
           .within(() => {
-            cy.get("td")
-              .eq(1)
-              .as("ascTableDataObjectFileName")
-              .then(($data) => {
-                cy.wrap($data).should(
-                  "not.equal",
-                  cy.get("@firstTableDataObjectFileName")
-                );
+            cy.get("a")
+              .eq(0)
+              .within(() => {
+                cy.findAllByRole("cell")
+                  .eq(1)
+                  .as("ascTableDataObjectFileName")
+                  .then(($data) => {
+                    cy.wrap($data).should(
+                      "not.equal",
+                      cy.get("@firstTableDataObjectFileName")
+                    );
+                  });
               });
           });
       });
@@ -142,18 +154,24 @@ describe("Global Search", () => {
     cy.wait(1000).location("search").should("include", "sort=-filename");
 
     cy.wait(1000)
-      .get("tbody")
-      .eq(0)
+      .findByTestId(/search by data object-table/i)
       .within(() => {
-        cy.get("a")
-          .eq(0)
+        cy.findAllByRole("rowgroup")
+          .eq(1)
           .within(() => {
-            cy.get("td")
+            cy.get("a")
               .eq(0)
-              .then(($data) => {
-                cy.wrap($data)
-                  .should("not.equal", cy.get("@firstTableDataObjectFileName"))
-                  .should("not.equal", "@ascTableDataObjectFileName");
+              .within(() => {
+                cy.findAllByRole("cell")
+                  .eq(1)
+                  .then(($data) => {
+                    cy.wrap($data)
+                      .should(
+                        "not.equal",
+                        cy.get("@firstTableDataObjectFileName")
+                      )
+                      .should("not.equal", "@ascTableDataObjectFileName");
+                  });
               });
           });
       });

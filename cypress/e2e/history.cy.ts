@@ -16,16 +16,20 @@ describe("History", () => {
     cy.wait(1000)
       .findByRole("table")
       .within(() => {
-        cy.contains("th", "Date");
-        cy.contains("th", "Data Object");
-        cy.contains("th", "Filename");
-        cy.contains("th", "Id");
-        cy.contains("th", "Type");
-        cy.contains("th", "Status");
+        cy.findAllByRole("columnheader").contains(/date/i);
+        cy.findAllByRole("columnheader").contains(/Data Object/i);
+        cy.findAllByRole("columnheader").contains(/filename/i);
+        cy.findAllByRole("columnheader").contains(/id/i);
+        cy.findAllByRole("columnheader").contains(/type/i);
+        cy.findAllByRole("columnheader").contains(/status/i);
+
         // Default fetching will have data rows
-        cy.get("tbody").within(() => {
-          cy.findAllByRole("row").should("have.length.gt", 0);
-        });
+        cy.findAllByRole("rowgroup")
+          .eq(1)
+          .as("tableBody")
+          .within(() => {
+            cy.findAllByRole("row").should("have.length.gt", 0);
+          });
 
         // realClick allows us to engage the copy to clipboard behavior in the cy environment
         cy.findAllByTitle(/copy to clipboard/i)
@@ -52,7 +56,7 @@ describe("History", () => {
     // Confirm our filtering/searching is wiring up to the URL correctly
     cy.location("search").should("include", params.toString());
 
-    cy.get("tbody").within(() => {
+    cy.get("@tableBody").within(() => {
       // no table row data to display
       cy.findAllByRole("row").should("have.length", 0);
     });
@@ -71,7 +75,7 @@ describe("History", () => {
         cy.location("search").should("include", params.toString());
       });
 
-    cy.get("tbody").within(() => {
+    cy.get("@tableBody").within(() => {
       // one result to display
       cy.findAllByRole("row").should("have.length", 1).click({ force: true });
     });
@@ -89,7 +93,8 @@ describe("History", () => {
       .click({ force: true });
 
     cy.wait(1000)
-      .get("tbody")
+      .findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
         cy.findAllByRole("row").eq(3).click({ force: true });
       });
@@ -117,12 +122,14 @@ describe("History", () => {
 
     // Sorting
     cy.wait(1000)
-      .get("tbody")
+      .findAllByRole("rowgroup")
+      .eq(1)
+      .as("tableBody")
       .within(() => {
         cy.get("a")
           .eq(0)
           .within(() => {
-            cy.get("td").eq(1).as("firstTableFileName");
+            cy.findAllByRole("cell").eq(1).as("firstTableFileName");
           });
       });
 
@@ -131,12 +138,12 @@ describe("History", () => {
     cy.wait(1000).location("search").should("include", "sort=filename");
 
     cy.wait(1000)
-      .get("tbody")
+      .get("@tableBody")
       .within(() => {
         cy.get("a")
           .eq(0)
           .within(() => {
-            cy.get("td")
+            cy.findAllByRole("cell")
               .eq(1)
               .as("ascTableFileName")
               .then(($data) => {
@@ -153,12 +160,12 @@ describe("History", () => {
     cy.wait(1000).location("search").should("include", "sort=-filename");
 
     cy.wait(1000)
-      .get("tbody")
+      .get("@tableBody")
       .within(() => {
         cy.get("a")
           .eq(0)
           .within(() => {
-            cy.get("td")
+            cy.findAllByRole("cell")
               .eq(0)
               .then(($data) => {
                 cy.wrap($data)

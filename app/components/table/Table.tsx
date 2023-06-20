@@ -152,17 +152,23 @@ function TableRowLink<T>({
         "&:last-child td, &:last-child th": { border: 0 },
         textDecoration: "unset",
       }}
+      role="row"
     >
       {Object.entries(entry).map(([field, fieldValue], i) => {
         if (i === 0) {
           return (
-            <TableCell key={`${field}-${i}`} component="th" scope="row">
+            <TableCell
+              key={`${field}-${i}`}
+              component={Box}
+              scope="row"
+              role="cell"
+            >
               {fieldValue}
             </TableCell>
           );
         }
         return (
-          <TableCell key={`${fieldValue}-${i}`}>
+          <TableCell key={`${fieldValue}-${i}`} component={Box} role="cell">
             {field === linkKey ? (
               <Stack direction="row" alignItems="center">
                 <Box
@@ -268,14 +274,16 @@ export default function InvoiceTable<T>({
         />
       )}
       <TableContainer sx={tableContainerStyles}>
-        <Table sx={{ minWidth: 650 }} stickyHeader>
-          <TableHead>
+        <Table sx={{ minWidth: 650 }} stickyHeader component={Box} role="table">
+          <TableHead component={Box} role="rowgroup">
             <TableRow
               sx={{
                 "& th": {
                   color: "text.secondary",
                 },
               }}
+              role="row"
+              component={Box}
             >
               {headers.map((header, i) => {
                 if (header.sortable) {
@@ -297,6 +305,8 @@ export default function InvoiceTable<T>({
                   <TableCell
                     sx={{ fontColor: "text.secondary" }}
                     key={`str-${i}`}
+                    role="columnheader"
+                    component={Box}
                   >
                     {header.label}
                   </TableCell>
@@ -304,12 +314,14 @@ export default function InvoiceTable<T>({
               })}
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody component={Box} role="rowgroup">
             {tableData.map((entry, i) => {
               return linkKey ? (
                 <TableRowLink linkKey={linkKey} key={i} entry={entry} />
               ) : (
                 <TableRow
+                  component={Box}
+                  role="row"
                   key={i}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   onClick={() => onRowClick(entry)}
@@ -318,8 +330,9 @@ export default function InvoiceTable<T>({
                     if (i === 0) {
                       return (
                         <TableCell
+                          component={Box}
                           key={`${field}-${i}`}
-                          component="th"
+                          role="cell"
                           scope="row"
                         >
                           {fieldValue}
@@ -327,7 +340,11 @@ export default function InvoiceTable<T>({
                       );
                     }
                     return (
-                      <TableCell key={`${fieldValue}-${i}`}>
+                      <TableCell
+                        key={`${fieldValue}-${i}`}
+                        component={Box}
+                        role="cell"
+                      >
                         {fieldValue}
                       </TableCell>
                     );

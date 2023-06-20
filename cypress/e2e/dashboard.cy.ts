@@ -7,12 +7,13 @@ describe("History", () => {
     cy.createAndVerifyAccount();
     // Sorting
     cy.wait(1000)
-      .get("tbody")
+      .findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
-        cy.get("tr")
+        cy.findAllByRole("row")
           .eq(0)
           .within(() => {
-            cy.get("td").eq(0).as("firstTableType");
+            cy.findAllByRole("cell").eq(0).as("firstTableType");
           });
       });
 
@@ -21,12 +22,13 @@ describe("History", () => {
     cy.wait(1000).location("search").should("include", "sort=type");
 
     cy.wait(1000)
-      .get("tbody")
+      .findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
-        cy.get("tr")
+        cy.findAllByRole("row")
           .eq(0)
           .within(() => {
-            cy.get("td")
+            cy.findAllByRole("cell")
               .eq(0)
               .as("ascTableType")
               .then(($data) => {
@@ -40,12 +42,13 @@ describe("History", () => {
     cy.wait(1000).location("search").should("include", "sort=-type");
 
     cy.wait(1000)
-      .get("tbody")
+      .findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
-        cy.get("tr")
+        cy.findAllByRole("row")
           .eq(0)
           .within(() => {
-            cy.get("td")
+            cy.findAllByRole("cell")
               .eq(0)
               .then(($data) => {
                 cy.wrap($data)
