@@ -2,28 +2,20 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { Outlet } from "@remix-run/react";
 import { SideNav } from "~/components/sideNav/SideNav";
-import { StarTwoTone } from "@mui/icons-material";
+import { usePageCopy } from "../_dashboard/copy";
 
 export default function Account() {
+  const copy = usePageCopy("account");
+
   return (
     <Box>
       <Box>
-        <Typography variant="h1">Account</Typography>
+        <Typography variant="h1">{copy?.headline}</Typography>
       </Box>
       <Box display="flex" flexDirection={{ xs: "column", md: "row" }}>
         <Box width={{ xs: "auto", md: "240px" }}>
           <SideNav
-            navMenu={[
-              {
-                text: "Settings",
-                to: "/account/settings",
-              },
-              {
-                label: "Legal",
-                to: "/account/legal",
-                icon: <StarTwoTone />,
-              },
-            ]}
+            navMenu={copy?.subNavLinks || []}
           />
         </Box>
         <Box flex="1">

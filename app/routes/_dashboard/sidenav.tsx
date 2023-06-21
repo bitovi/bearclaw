@@ -1,27 +1,12 @@
 import { Box } from "@mui/material";
-import { SideNav } from "~/components/sideNav/SideNav";
-
-import { getClient } from "~/lib/sanity/getClient.server";
 import { useLoaderData } from "@remix-run/react";
-import type { loader } from "./route";
-
-export async function sideNavLoader() {
-  const query = `*[_type == 'dashboardSideNav'][0]{...}`;
-  const { links, dividerAfter } = await getClient().fetch<{
-    links: Array<{
-      text: string,
-      to: string,
-      icon: string,
-      requiredPermissions: Array<string>
-    }>,
-    dividerAfter: number
-  }>(query)
-
-  return { navLinks: links, dividerAfter }
-}
+import { SideNav } from "~/components/sideNav/SideNav";
+import { loader } from "./route";
+import { useSideNavCopy } from "./copy";
 
 export function MainSideNav() {
-  const { permissions, sideNavLoaderData: { navLinks, dividerAfter} } = useLoaderData<typeof loader>();
+  const { permissions } = useLoaderData<typeof loader>();
+  const copy = useSideNavCopy();
   
   return (
     <Box
@@ -47,8 +32,8 @@ export function MainSideNav() {
       <Box padding="1.5rem 1rem" maxHeight="100%" sx={{ overflowY: "auto" }}>
         <SideNav 
           userPermissions={permissions} 
-          dividerAfter={dividerAfter} 
-          navMenu={navLinks} 
+          dividerAfter={copy?.dividerAfter} 
+          navMenu={copy?.links || []} 
           iconColor="#0037FF" 
         />
       </Box>

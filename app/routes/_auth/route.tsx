@@ -1,8 +1,8 @@
 import type { V2_MetaFunction } from "@remix-run/node";
-import { Outlet, useLoaderData, useMatches } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import { Box, Typography } from "@mui/material";
-import { getClient } from "~/lib/sanity/getClient.server";
 import { PortableText } from '@portabletext/react'
+import { fetchAuthCopy } from "./copy";
 
 export const meta: V2_MetaFunction = () => [
   {
@@ -10,54 +10,10 @@ export const meta: V2_MetaFunction = () => [
   },
 ];
 
-export type AuthSidebarCopy = {
-  _type: "content"
-  _id: "authSidebar"
-  content: any
-}
-
-function isAuthSidebarCopy (copy: any): copy is AuthSidebarCopy {
-  return copy._id === "authSidebar"
-}
-
-export type AuthFormCopy = {
-  _id: "authForm"
-  email: string,
-  password: string
-  rememberMe: string
-  createAccount: string
-  login: string
-  noAccountMessage: string
-  noAccountLoginLink: string
-  existingAccountMessage: string
-  existingAccountLoginLink: string
-  forgotPasswordLink: string
-  alreadyKnowPasswordLink: string
-  alreadyKnowPasswordMessage: string
-  sendPasswordReset: string
-}
-
-export function isAuthFormCopy (copy: any): copy is AuthFormCopy {
-  return copy._id === "authForm"
-}
-
 export async function loader() {
-  const query = `*[_id == "authSidebar" || _id == "authForm"]{...}`;
-  const pageCopy = await getClient().fetch<[AuthSidebarCopy | AuthFormCopy]>(query)
-
-  const sidebarCopy = pageCopy.find(isAuthSidebarCopy)
-  const formCopy = pageCopy.find(isAuthFormCopy)
+  const { sidebarCopy, formCopy } = await fetchAuthCopy();
 
   return { sidebarCopy, formCopy }
-}
-
-/**
- * Hook to access the form copy from the parent route
- */
-export function useParentFormCopy(): AuthFormCopy | null {
-  const matches = useMatches();
-  const copyMatch = matches.find(match => match.data.formCopy)?.data.formCopy
-  return isAuthFormCopy(copyMatch) ? copyMatch : null
 }
 
 export default function Index() {

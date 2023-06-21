@@ -9,7 +9,7 @@ import { validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
 import { forgotPassword } from "~/models/user.server";
 import { TextInput } from "~/components/input";
-import { useParentFormCopy } from "../_auth/route";
+import { useParentFormCopy } from "../_auth/copy";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);

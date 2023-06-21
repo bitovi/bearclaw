@@ -3,7 +3,7 @@ import type { StructureBuilder, StructureContext } from "sanity/desk";
 export function deskStructure(S: StructureBuilder, ctx: StructureContext ) {
 
   return S.list()
-    .title('App')
+    .title('App Content')
     .items([
       S.listItem()
         .title('Authentication')
@@ -30,10 +30,10 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext ) {
             ])
       ),
       S.listItem()
-        .title('Dashboard Controls')
+        .title('Dashboard')
         .child(
           S.list()
-            .title('Controls')
+            .title('Dashboard')
             .items([
               S.listItem()
                 .title('Navigation')
@@ -43,19 +43,13 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext ) {
                   .schemaType('dashboardSideNav')
                     .documentId('dashboardSideNav')
               ),
-            ])
-      ),
-      S.listItem()
-        .title('Content')
-        .child(
-          S.list()
-            .title('Content')
-            .items([
-              ...S.documentTypeListItems()
-              .filter(listItem => ![
-                'authForm',
-                'dashboardSideNav',
-              ].includes(`${listItem.getId()}`))
+              S.listItem()
+                .title('Pages')
+                .child(
+                  S.documentList()
+                    .title('Pages')
+                    .filter('_type == "page"')
+                ),
             ])
         )
     ])

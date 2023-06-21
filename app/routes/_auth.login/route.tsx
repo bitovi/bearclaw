@@ -18,7 +18,7 @@ import { Checkbox } from "~/components/input/checkbox/Checkbox";
 import { getUserMfaMethods, resetMfaToken } from "~/models/mfa.server";
 import { MFA_TYPE } from "~/models/mfa";
 import { retrieveOrgUserOwner } from "~/models/organizationUsers.server";
-import { useParentFormCopy } from "../_auth/route";
+import { useParentFormCopy } from "../_auth/copy";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -192,7 +192,7 @@ export default function LoginPage() {
           <input type="hidden" name="redirectTo" value={redirectTo} />
 
           <Button type="submit" variant="contained">
-            label={formCopy?.login || "Login"}
+            {formCopy?.login || "Login"}
           </Button>
           <Checkbox id="remember" name="remember" label="Remember me" />
           <div>

@@ -14,7 +14,7 @@ import {
   PasswordStrengthMeter,
 } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
 import { TextInput } from "~/components/input";
-import { useParentFormCopy } from "../_auth/route";
+import { useParentFormCopy } from "../_auth/copy";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);

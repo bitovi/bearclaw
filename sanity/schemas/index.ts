@@ -1,11 +1,13 @@
-import dashboardSideNav from "./appFrame/dashboardSideNav";
+import dashboardSideNav from "./dashboardSideNav";
 import content from "./content";
 import link from "./link";
 import authForm from "./forms/authForm";
+import page from "./page";
 
 export const schemaTypes = [
-  content,
-  link,
   authForm,
+  content,
   dashboardSideNav,
+  link,
+  page,
 ]

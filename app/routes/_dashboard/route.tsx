@@ -5,13 +5,14 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
 import { Header } from "./header";
-import { MainSideNav, sideNavLoader } from "./sidenav";
+import { MainSideNav } from "./sidenav";
 
 import { getOrgId, getUser, requireUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
 import { getOrgUserPermissions, retrieveOrganizationUser } from "~/models/organizationUsers.server";
 import type { OrganizationUsers } from "~/models/organizationUsers.server";
 import { safeRedirect } from "~/utils";
+import { fetchDashboardCopy } from "./copy";
 
 export async function loader({ request }: LoaderArgs) {
   const isLoggedIn = await getUser(request);
@@ -39,12 +40,12 @@ export async function loader({ request }: LoaderArgs) {
     });
   }
 
-  const sideNavLoaderData = await sideNavLoader()
+  const copy = await fetchDashboardCopy()
   const permissions = getOrgUserPermissions(orgUser);
 
   if (user.emailVerifiedAt) {
     return json({
-      sideNavLoaderData,
+      copy,
       isVerified: true,
       permissions
     });
@@ -72,7 +73,7 @@ export async function loader({ request }: LoaderArgs) {
   return json({
     isVerified,
     canViewUsers: orgUser ? orgUser.orgUsersView : false,
-    sideNavLoaderData,
+    copy,
     permissions,
   });
 }
