@@ -10,6 +10,14 @@ function textToRange(text: string) {
   return { min, max };
 }
 
+export function rangeToText(
+  min: number | null | undefined,
+  max: number | null | undefined
+) {
+  if (!min || !max) return "";
+  return `${min}_${max}`;
+}
+
 export async function onboardUser(user: User, data: Partial<OnboardingData>) {
   const organization = await getOwnerOrganization({ userId: user.id });
   invariant(organization, "User must have an organization to update");

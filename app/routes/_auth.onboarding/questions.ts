@@ -20,6 +20,7 @@ export type QuestionType =
 export const questions: Array<{
   title: string;
   description: string;
+  disabled?: boolean;
   questions: QuestionType[];
 }> = [
   {
@@ -116,3 +117,5 @@ export const questions: Array<{
     ],
   },
 ];
+
+export type Question = (typeof questions)[number];

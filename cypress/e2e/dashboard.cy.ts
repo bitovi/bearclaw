@@ -1,4 +1,4 @@
-describe("History", () => {
+describe("Dashboard", () => {
   afterEach(() => {
     cy.cleanupAccount();
   });

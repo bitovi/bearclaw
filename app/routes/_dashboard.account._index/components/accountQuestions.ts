@@ -1,4 +1,5 @@
-import { QuestionType, questions } from "~/routes/_auth.onboarding/questions";
+import { questions } from "~/routes/_auth.onboarding/questions";
+import type { QuestionType } from "~/routes/_auth.onboarding/questions";
 
 const emailQuestion: QuestionType = {
   name: "email",
@@ -13,6 +14,7 @@ const accountQuestion: typeof questions = [
   {
     title: "Account Information",
     description: "Your account email",
+    disabled: true,
     questions: [emailQuestion],
   },
 ];

@@ -11,6 +11,7 @@ const config = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "storybook-addon-react-router-v6",
+    "storybook-addon-mock",
   ],
   framework: {
     name: "@storybook/react-vite",
