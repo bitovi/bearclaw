@@ -30,7 +30,6 @@ describe("join and authenticate tests", () => {
     cy.createAndVerifyAccount(loginForm);
 
     // Automatically logged in after sign up
-    cy.findByRole("link", { name: /workflows/i });
     cy.findByRole("link", { name: /support/i });
 
     // Logout shows the login screen
@@ -219,7 +218,7 @@ describe("join and authenticate tests", () => {
     cy.findByRole("button", { name: /log in/i })
       .should("be.visible")
       .click({ force: true });
-    cy.findByRole("link", { name: /workflows/i });
+    cy.findByRole("link", { name: /dashboard/i });
   });
 });
 

@@ -1,6 +1,8 @@
-import type { V2_MetaFunction } from "@remix-run/node";
+import { json } from "@remix-run/server-runtime";
+import type { V2_MetaFunction } from "@remix-run/react";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { Box, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { PortableText } from '@portabletext/react'
 import { fetchAuthCopy } from "./copy";
 
@@ -11,9 +13,8 @@ export const meta: V2_MetaFunction = () => [
 ];
 
 export async function loader() {
-  const { sidebarCopy, formCopy } = await fetchAuthCopy();
-
-  return { sidebarCopy, formCopy }
+  const copy = await fetchAuthCopy();
+  return json(copy)
 }
 
 export default function Index() {
@@ -111,7 +112,7 @@ export default function Index() {
         }}
       >
         <Typography fontWeight={700} fontSize="1.4rem">
-          BEARCLAW
+          TROY
         </Typography>
       </Box>
     </Box>

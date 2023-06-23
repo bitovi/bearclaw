@@ -1,6 +1,6 @@
 import { useMatches } from "@remix-run/react"
-import { getClient } from "~/lib/sanity/getClient.server"
-import type { PageCopy, SideNavCopy } from "./types";
+import { getClient } from "~/services/sanity/getClient"
+import type { PageCopy, PageCopyKeyed, SideNavCopy } from "./types";
 import { isPageCopy, isSideNavCopy } from "./types";
 
 export async function fetchDashboardCopy() {
@@ -8,16 +8,17 @@ export async function fetchDashboardCopy() {
     _id == "dashboardSideNav" ||
     _type == "page"
   ]{...}`;
-
-  const copy = await getClient().fetch<[
-    SideNavCopy | PageCopy
-  ]>(query)
+  try {
+    const copy = await getClient().fetch<[
+      SideNavCopy | PageCopy
+    ]>(query)
+    const sideNavCopy = copy.find(isSideNavCopy)
+    const pageCopy = copy.filter(isPageCopy)
   
-  const sideNavCopy = copy.find(isSideNavCopy)
-  const pageCopy = copy.filter(isPageCopy)
-  console.log(pageCopy)
-
-  return { sideNavCopy, pageCopy }
+    return { sideNavCopy, pageCopy }
+  } catch(err) {
+    console.log(err)
+  }
 }
 
 /**
@@ -33,11 +34,21 @@ export function useSideNavCopy(): SideNavCopy | null {
 /**
  * Hook to access the page copy from the parent route
  */
-export function usePageCopy(key: string): PageCopy | null {
+export function usePageCopy(key: string): PageCopyKeyed | null {
   const matches = useMatches();
   const pages = matches.find(match => match.data?.copy?.pageCopy)?.data.copy.pageCopy
   if (!pages) return null
   const copyMatch = pages.find((page: any) => isPageCopy(page) && page.key === key)
 
-  return isPageCopy(copyMatch) ? copyMatch : null
+  return isPageCopy(copyMatch) ? {
+    ...copyMatch,
+    content: copyMatch.content?.reduce((acc, content) => ({
+        ...acc,
+        [content.key]: content.value
+    }), {}),
+    richContent: copyMatch.richContent?.reduce((acc, content) => ({
+        ...acc,
+        [content.key]: content.value
+    }), {})
+  } : null
 }

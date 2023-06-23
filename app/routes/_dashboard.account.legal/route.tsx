@@ -1,20 +1,12 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { json } from "@remix-run/node";
-import type { LoaderArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useSearchParams } from "@remix-run/react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { usePageCopy } from "../_dashboard/copy";
-import { RichTextField } from "~/components/richTextField/RichTextField";
-
-export async function loader({ request }: LoaderArgs) {
-  const url = new URL(request.url);
-
-  const pageType = url.searchParams.get("pageType");
-  return json({ pageType: pageType === "terms" ? "terms" : "privacy" });
-}
+import { PortableText } from "@portabletext/react";
 
 export default function Route() {
-  const { pageType } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
+  const pageType = searchParams.get("pageType") === "terms" ? "terms" : "privacy";
   const copy = usePageCopy("account");
 
   return (
@@ -27,7 +19,7 @@ export default function Route() {
         >
           <ButtonLink
             name="privacyPolicy"
-            to={`./?pageType=privacy`}
+            to={`?pageType=privacy`}
             variant="buttonMedium"
             title="See privacy policy"
             sx={{ position: "relative" }}
@@ -40,7 +32,7 @@ export default function Route() {
             <Typography
               color={pageType === "privacy" ? "primary.main" : "text.secondary"}
             >
-              {copy?.content?.find((c) => c.key === "privacyTab")?.value}
+              {copy?.content?.privacyTab}
             </Typography>
           </ButtonLink>
         </Box>
@@ -49,28 +41,27 @@ export default function Route() {
         >
           <ButtonLink
             name="termsAndConditions"
-            to={"./?pageType=terms"}
+            to={"?pageType=terms"}
             title="See terms & conditions"
             variant="buttonMedium"
             sx={{ position: "relative" }}
             aria-label={
               pageType === "terms"
-                ? `terms-button-selected`
+                ? "terms-button-selected"
                 : "terms-button-unselected"
             }
           >
             <Typography
               color={pageType === "terms" ? "primary.main" : "text.secondary"}
             >
-              {copy?.content?.find((c) => c.key === "termsTab")?.value}
+              {copy?.content?.termsTab}
             </Typography>
           </ButtonLink>
         </Box>
       </Stack>
       <Box>
-        <RichTextField
-          contentKey={pageType === "terms" ? "terms" : "privacy"}
-          richContent={copy?.richContent}
+        <PortableText
+          value={copy?.richContent?.[pageType === "terms" ? "terms" : "privacy"] || []}
         />
       </Box>
     </Box>

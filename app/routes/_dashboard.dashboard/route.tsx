@@ -25,7 +25,7 @@ export async function loader({ request }: LoaderArgs) {
   const page = url.searchParams.get("page");
   const perPage = url.searchParams.get("perPage");
   const sort = url.searchParams.get("sort");
-  const jobs = await getAllParentJobs({
+  const jobs = await getAllParentJobs({ 
     userId,
     organizationId,
     page,

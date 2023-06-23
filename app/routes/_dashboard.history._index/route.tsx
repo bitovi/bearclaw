@@ -10,6 +10,7 @@ import { getOrgandUserId } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
+
   try {
     const url = new URL(request.url);
     const page = url.searchParams.get("page");

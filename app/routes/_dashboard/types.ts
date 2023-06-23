@@ -49,6 +49,11 @@ export type PageCopy = {
   }>
 }
 
+export type PageCopyKeyed = Omit<PageCopy, "content"|"richContent"> & {
+  content?: Record<string, string>
+  richContent?: Record<string, PortableTextBlock[]>
+}
+
 export function isPageCopy (copy: any): copy is PageCopy {
   return copy && copy._type === "page" && copy.key
 }

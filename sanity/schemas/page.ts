@@ -29,7 +29,7 @@ export default {
     {
       name: 'subNavLinks',
       title: 'Sub-Navigation Links',
-      description: 'The links that display in the page sub-navigation. Changing the order here will change the order in the UI.',
+      description: 'Optional links that display in the sub-navigation on some pages. Changing the order here will change the order in the UI.',
       type: 'array',
       of: [ {type: 'link'} ]
     },
