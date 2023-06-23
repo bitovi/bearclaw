@@ -6,7 +6,7 @@ import { NoResults } from "./components/noResults";
 import { SkeletonTable } from "~/components/table";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import SearchTable from "~/components/table";
-import { retrieveRSBOMList } from "~/models/rsboms.server";
+import { retrieveRSBOMSearchResults } from "~/models/rsboms.server";
 import { parseFilterParam } from "~/utils/parseFilterParam";
 import { getOrgandUserId } from "~/session.server";
 
@@ -23,49 +23,36 @@ export async function loader({ request }: LoaderArgs) {
     if (!filter)
       return json({
         error: "",
-        dataObjectList: null,
-        filenameList: null,
+        searchResults: null,
       });
 
-    // TODO Resolve this
-    // On our end manage making separate queries to Data Object and Filename until Search logic/API can be settled
     const { _searchString } = parseFilterParam(filter);
 
     if (!_searchString) {
       return json({
         error: "",
-        dataObjectList: null,
-        filenameList: null,
+        searchResults: null,
       });
     }
 
-    const dataObjectList = await retrieveRSBOMList({
-      userId,
-      organizationId,
-      page,
-      perPage,
-      filter: `contains=(dataObject,${_searchString})`,
-      sort,
-    });
-    const filenameList = await retrieveRSBOMList({
-      userId,
-      organizationId,
-      page,
-      perPage,
-      filter: `contains=(filename,${_searchString})`,
-      sort,
-    });
+    const searchResults = await retrieveRSBOMSearchResults(
+      {
+        userId,
+        organizationId,
+        page,
+        perPage,
+        sort,
+      },
+      _searchString
+    );
 
-    // //
-
-    return json({ dataObjectList, filenameList, error: "" });
+    return json({ searchResults, error: "" });
   } catch (e) {
     const error = (e as Error).message;
     console.error(error);
     return json({
       error,
-      dataObjectList: null,
-      filenameList: null,
+      searchResults: null,
     });
   }
 }
@@ -84,8 +71,7 @@ const tableHeaders = [
 ];
 
 export default function Route() {
-  const { dataObjectList, filenameList, error } =
-    useLoaderData<typeof loader>();
+  const { searchResults, error } = useLoaderData<typeof loader>();
 
   const navigation = useNavigation();
 
@@ -93,10 +79,7 @@ export default function Route() {
     return <Box>{error}</Box>;
   }
 
-  if (
-    (!dataObjectList && !filenameList) ||
-    (!dataObjectList.data.length && !filenameList.data.length)
-  ) {
+  if (!searchResults || !searchResults.data.length) {
     return <NoResults />;
   }
 
@@ -119,19 +102,10 @@ export default function Route() {
   return (
     <Box paddingY={2}>
       <SearchTable<RSBOMListEntry>
-        tableData={dataObjectList.data || undefined}
+        tableData={searchResults.data || undefined}
         // TODO Disabled until Search API is determined
-        // totalItems={dataObjectList.metadata?.page.total}
-        tableTitle="Search By Data Object"
-        linkKey="dataObject"
-        headers={tableHeaders}
-        tableContainerStyles={{ maxHeight: "600px" }}
-      />
-      <SearchTable<RSBOMListEntry>
-        tableData={filenameList.data || undefined}
-        // TODO Disabled until Search API is determined
-        // totalItems={filenameList.metadata?.page.total}
-        tableTitle="Search By Filename"
+        // totalItems={searchResults.metadata?.page.total}
+        tableTitle="Search Results"
         linkKey="dataObject"
         headers={tableHeaders}
         tableContainerStyles={{ maxHeight: "600px" }}

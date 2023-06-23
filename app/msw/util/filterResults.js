@@ -15,6 +15,7 @@ module.exports = function filterResults(data, url) {
 
   if (_searchField && _searchString) {
     const filteredList = data.filter((item) => {
+      if (!item[_searchField]) return false;
       return item[_searchField]
         .toLowerCase()
         .includes(_searchString.toLowerCase());

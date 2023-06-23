@@ -1,5 +1,5 @@
 module.exports = {
-  bc_rsbom_cyclonedx_aggregate: [
+  data: [
     {
       bomFormat: "CycloneDX",
       specVersion: "1.4",

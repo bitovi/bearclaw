@@ -16,26 +16,17 @@ describe("Global Search", () => {
       .should("be.visible")
       .type("a");
 
-    cy.wait(1000).findByText(/search by data object/i);
-    cy.findByText(/search by filename/i);
+    cy.wait(1000).findByText(/search results/i);
 
     const params = new URLSearchParams();
     params.append("filter", "contains(search,a)");
     // Confirm our filtering/searching is wiring up to the URL correctly
     cy.location("search").should("include", params.toString());
 
-    cy.findByTestId(/search by data object-table/i).within(() => {
+    cy.findByTestId(/search results-table/i).within(() => {
       cy.findAllByRole("rowgroup")
         .eq(1)
         .as("dataObjectTableBody")
-        .within(() => {
-          cy.findAllByRole("row").should("have.length.gt", 0);
-        });
-    });
-    cy.findByTestId(/search by filename-table/i).within(() => {
-      cy.findAllByRole("rowgroup")
-        .eq(1)
-        .as("filenameTableBody")
         .within(() => {
           cy.findAllByRole("row").should("have.length.gt", 0);
         });
@@ -47,7 +38,7 @@ describe("Global Search", () => {
 
     // Add results before testing their disappearance
     cy.get("@globalSearch").type("a");
-    cy.wait(1000).findByText(/search by data object/i);
+    cy.wait(1000).findByText(/search results/i);
 
     cy.get("@globalSearch").clear().type("adfjaklsdjflaksjdfsadf");
     cy.wait(1000).findByText(/sorry, no results found/i);
@@ -74,18 +65,11 @@ describe("Global Search", () => {
         cy.location("search").should("include", params.toString());
       });
 
-    cy.findByTestId(/search by data object-table/i).within(() => {
+    cy.findByTestId(/search results-table/i).within(() => {
       cy.findAllByRole("rowgroup")
         .eq(1)
         .within(() => {
           cy.findAllByRole("row").should("have.length", 1);
-        });
-    });
-    cy.findByTestId(/search by filename-table/i).within(() => {
-      cy.findAllByRole("rowgroup")
-        .eq(1)
-        .within(() => {
-          cy.findAllByRole("row").should("have.length", 0);
         });
     });
   });
@@ -103,11 +87,10 @@ describe("Global Search", () => {
       .should("be.visible")
       .type("a");
 
-    cy.wait(1000).findByText(/search by data object/i);
-    cy.findByText(/search by filename/i);
+    cy.wait(1000).findByText(/search results/i);
 
     // Sorting
-    cy.findByTestId(/search by data object-table/i).within(() => {
+    cy.findByTestId(/search results/i).within(() => {
       cy.findAllByRole("rowgroup")
         .eq(1)
         .within(() => {
@@ -126,7 +109,7 @@ describe("Global Search", () => {
     cy.wait(1000).location("search").should("include", "sort=filename");
 
     cy.wait(1000)
-      .findByTestId(/search by data object-table/i)
+      .findByTestId(/search results-table/i)
       .within(() => {
         cy.findAllByRole("rowgroup")
           .eq(1)
@@ -154,7 +137,7 @@ describe("Global Search", () => {
     cy.wait(1000).location("search").should("include", "sort=-filename");
 
     cy.wait(1000)
-      .findByTestId(/search by data object-table/i)
+      .findByTestId(/search results-table/i)
       .within(() => {
         cy.findAllByRole("rowgroup")
           .eq(1)

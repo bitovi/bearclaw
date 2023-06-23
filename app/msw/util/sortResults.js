@@ -33,8 +33,10 @@ function fieldSorter(fields) {
           dir = -1;
           fieldString = fieldString.substring(1);
         }
-        if (a[fieldString] > b[fieldString]) return dir;
-        if (a[fieldString] < b[fieldString]) return -dir;
+        if (a[fieldString].toLowerCase() > b[fieldString].toLowerCase())
+          return dir;
+        if (a[fieldString].toLowerCase() < b[fieldString].toLowerCase())
+          return -dir;
         return 0;
       })
       .reduce((acc, curr) => {
