@@ -19,7 +19,7 @@ export default function Route() {
         >
           <ButtonLink
             name="privacyPolicy"
-            to={`?pageType=privacy`}
+            to={`./?pageType=privacy`}
             variant="buttonMedium"
             title="See privacy policy"
             sx={{ position: "relative" }}
@@ -41,7 +41,7 @@ export default function Route() {
         >
           <ButtonLink
             name="termsAndConditions"
-            to={"?pageType=terms"}
+            to={"./?pageType=terms"}
             title="See terms & conditions"
             variant="buttonMedium"
             sx={{ position: "relative" }}
