@@ -1,4 +1,4 @@
-import{j as P}from"./jsx-runtime-ad672792.js";import{r as s}from"./index-f1f749bf.js";import{p as H,j as g,L as F,m as M,u as T,D as U,k as O,N as $}from"./index-e50b599f.js";import{_ as A}from"./iframe-6527cfb4.js";/**
+import{j as P}from"./jsx-runtime-ad672792.js";import{r as s}from"./index-f1f749bf.js";import{p as H,j as g,L as F,m as M,u as T,D as U,k as O,N as $}from"./index-e50b599f.js";import{_ as A}from"./iframe-0bcf849d.js";/**
  * @remix-run/react v1.17.0
  *
  * Copyright (c) Remix Software Inc.
@@ -40,4 +40,4 @@ import{j as P}from"./jsx-runtime-ad672792.js";import{r as s}from"./index-f1f749b
       ${t||""}
     `;return"to"in a?P(C,{ref:n,...a,className:o,"data-testid":"internal-link",children:r}):P("a",{ref:n,...a,"data-testid":"external-link",className:o,children:r})});try{R.displayName="Link",R.__docgenInfo={description:`returns either a Link component or anchor element,
 dependent upon whether user passes a "to" or "href" prop, respectively.`,displayName:"Link",props:{}}}catch{}export{R as L,C as a};
-//# sourceMappingURL=Link-bd180d99.js.map
+//# sourceMappingURL=Link-b633aa11.js.map
