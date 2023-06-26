@@ -1,86 +1,13 @@
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
+import { useLoaderData } from "@remix-run/react";
 import { SideNav } from "~/components/sideNav/SideNav";
-import type { NavItem } from "~/components/sideNav/SideNav";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
-import HistoryIcon from "@mui/icons-material/History";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import LogoutIcon from "@mui/icons-material/Logout";
-import SchemaIcon from "@mui/icons-material/Schema";
-// import BiotechIcon from "@mui/icons-material/Biotech";
-// import LinkIcon from "@mui/icons-material/Link";
-import SupportIcon from "@mui/icons-material/Support";
-import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import type { loader } from "./route";
+import { useSideNavCopy } from "./copy";
 
-const _navMenuFirst = [
-  {
-    label: "Dashboard",
-    to: "/dashboard",
-    icon: <DashboardIcon />,
-  },
-  {
-    label: "History",
-    to: "/history",
-    icon: <HistoryIcon />,
-  },
-  {
-    label: "Workflows",
-    to: "/workflows",
-    icon: <SchemaIcon />,
-  },
-  // {
-  //   label: "Analysis",
-  //   to: "/analysis",
-  //   icon: <BiotechIcon />,
-  // },
-  // {
-  //   label: "Supply Chain",
-  //   to: "/supplyChain",
-  //   icon: <LinkIcon />,
-  // },
-];
-
-const _navMenuSecond = [
-  {
-    label: "Subscriptions",
-    to: "/subscription/overview",
-    icon: <WorkspacePremiumIcon />,
-  },
-  {
-    label: "Account",
-    to: "/account",
-    icon: <AccountBoxIcon />,
-  },
-  {
-    label: "Support",
-    to: "/support",
-    icon: <SupportIcon />,
-  },
-  // {
-  //   label: "Account",
-  //   to: "/account",
-  //   icon: <AccountBoxIcon />,
-  // },
-  {
-    label: "Logout",
-    to: "/logout",
-    icon: <LogoutIcon />,
-  },
-];
-
-export function MainSideNav({ canViewUsers }: { canViewUsers: boolean }) {
-  const navMenu = [
-    ..._navMenuFirst,
-    canViewUsers
-      ? {
-          label: "User Management",
-          to: "/manageUser",
-          icon: <PersonSearchIcon />,
-        }
-      : undefined,
-    ..._navMenuSecond,
-  ].filter((res) => res !== undefined) as NavItem[];
-
+export function MainSideNav() {
+  const { permissions } = useLoaderData<typeof loader>();
+  const copy = useSideNavCopy();
+  
   return (
     <Box
       position="relative"
@@ -103,7 +30,12 @@ export function MainSideNav({ canViewUsers }: { canViewUsers: boolean }) {
         }}
       />
       <Box padding="1.5rem 1rem" maxHeight="100%" sx={{ overflowY: "auto" }}>
-        <SideNav dividerAfter={3} iconColor="#0037FF" navMenu={navMenu} />
+        <SideNav 
+          userPermissions={permissions} 
+          dividerAfter={copy?.dividerAfter} 
+          navMenu={copy?.links || []} 
+          iconColor="#0037FF" 
+        />
       </Box>
     </Box>
   );

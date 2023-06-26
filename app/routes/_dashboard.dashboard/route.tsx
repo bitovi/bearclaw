@@ -11,6 +11,7 @@ import { getOrgandUserId, getUser } from "~/session.server";
 import { getAllParentJobs } from "~/services/getAllParentJobs";
 import type { ParentJob } from "~/services/getAllParentJobs";
 import Table from "~/components/table/Table";
+import { usePageCopy } from "../_dashboard/copy";
 
 interface ParentJobTable
   extends Omit<ParentJob, "analyzedAt" | "size" | "_id"> {
@@ -24,7 +25,7 @@ export async function loader({ request }: LoaderArgs) {
   const page = url.searchParams.get("page");
   const perPage = url.searchParams.get("perPage");
   const sort = url.searchParams.get("sort");
-  const jobs = await getAllParentJobs({
+  const jobs = await getAllParentJobs({ 
     userId,
     organizationId,
     page,
@@ -41,12 +42,14 @@ export async function action(args: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
+  const copy = usePageCopy("dashboard");
   const { userId, organizationId, user, jobs } = useLoaderData<typeof loader>();
+
   return (
     <Box display="flex" flexDirection="column" gap="2rem">
       <Box display="flex" alignItems="center">
         <Box flex="1">
-          <Typography>Dashboard</Typography>
+          <Typography>{copy?.headline}</Typography>
           <Typography fontSize="34px" fontWeight="400" lineHeight={2}>
             Welcome {user?.firstName}
           </Typography>

@@ -14,6 +14,7 @@ import {
   PasswordStrengthMeter,
 } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
 import { TextInput } from "~/components/input";
+import { useParentFormCopy } from "../_auth/copy";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -126,6 +127,7 @@ export async function action({ request }: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Sign Up" }];
 
 export default function Join() {
+  const formCopy = useParentFormCopy();
   const [searchParams] = useSearchParams();
 
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
@@ -153,7 +155,7 @@ export default function Join() {
       <Form method="post">
         <Box display="flex" flexDirection="column" gap={2}>
           <TextInput
-            label="Email"
+            label={formCopy?.email || "Email address"}
             name="email"
             id="email"
             required
@@ -165,7 +167,7 @@ export default function Join() {
             inputProps={{ readOnly: !!guestEmail }}
           />
           <TextInput
-            label="Password"
+            label={formCopy?.password || "Password"}
             id="password"
             inputRef={passwordRef}
             onChange={(value) => {
@@ -183,17 +185,18 @@ export default function Join() {
           <input type="hidden" name="redirectTo" value={redirectTo} />
 
           <Button type="submit" variant="contained">
-            Create Account
+            {formCopy?.createAccount || "Create Account"}
           </Button>
           <div>
-            Already have an account?{" "}
+            {formCopy?.existingAccountMessage || "Already have an account?"}
+            {" "}
             <Link
               to={{
                 pathname: "/login",
                 search: searchParams.toString(),
               }}
             >
-              Log in
+              {formCopy?.existingAccountLoginLink || "Log in"}
             </Link>
           </div>
         </Box>

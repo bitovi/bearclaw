@@ -332,7 +332,8 @@ describe("User Management & Invitation", () => {
       .within(() => {
         // random string to yield no results
         cy.findByRole("textbox", { name: /search/i }).type(
-          "asjdkfhdaskjlfhasdkjl"
+          "asjdkfhdaskjlfhasdkjl",
+          { force: true }
         );
       });
 

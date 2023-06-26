@@ -1,6 +1,10 @@
-import type { V2_MetaFunction } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
-import { Box, Divider, Typography } from "@mui/material";
+import { json } from "@remix-run/server-runtime";
+import type { V2_MetaFunction } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { PortableText } from '@portabletext/react'
+import { fetchAuthCopy } from "./copy";
 
 export const meta: V2_MetaFunction = () => [
   {
@@ -8,7 +12,14 @@ export const meta: V2_MetaFunction = () => [
   },
 ];
 
+export async function loader() {
+  const copy = await fetchAuthCopy();
+  return json(copy)
+}
+
 export default function Index() {
+  const { sidebarCopy } = useLoaderData<typeof loader>();
+
   return (
     <Box
       component="main"
@@ -67,28 +78,7 @@ export default function Index() {
           flexDirection="column"
           gap={2}
         >
-          <Typography fontWeight="400" fontSize="1.5rem">
-            Value Prop Title
-          </Typography>
-          <Typography fontWeight="400" fontSize="1rem">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod .
-          </Typography>
-          <img
-            style={{ borderRadius: "1rem" }}
-            src="https://placehold.co/320x220?text=Placeholder Image"
-            alt="Dashboard"
-          />
-
-          <Divider />
-
-          <Typography fontWeight="400" fontSize="1.5rem">
-            BEARCLAW Premium
-          </Typography>
-          <Typography fontWeight="400" fontSize="1rem">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua
-          </Typography>
+          <PortableText value={sidebarCopy?.content} />
         </Box>
       </Box>
       <Box
@@ -122,7 +112,7 @@ export default function Index() {
         }}
       >
         <Typography fontWeight={700} fontSize="1.4rem">
-          BEARCLAW
+          TROY
         </Typography>
       </Box>
     </Box>

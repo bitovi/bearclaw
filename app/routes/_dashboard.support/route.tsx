@@ -13,6 +13,7 @@ import { Banner } from "~/components/banner";
 import { TextInput } from "~/components/input";
 import { sendMail } from "~/services/mail/sendMail";
 import { getUser } from "~/session.server";
+import { usePageCopy } from "../_dashboard/copy";
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
@@ -62,6 +63,8 @@ export async function action({ request }: ActionArgs) {
 }
 
 const SuccessView = () => {
+  const copy = usePageCopy("support");
+
   return (
     <Form method="get">
       <Stack alignItems="center" gap={2}>
@@ -81,9 +84,9 @@ const SuccessView = () => {
           </Typography>
         </Skeleton>
 
-        <Typography variant="h4">Thank you</Typography>
+        <Typography variant="h4">{copy?.content?.successHeading}</Typography>
         <Typography variant="body1" color="text.primary">
-          You will be hearing from us soon!
+          {copy?.content?.successMessage}
         </Typography>
 
         <Button
@@ -96,7 +99,7 @@ const SuccessView = () => {
             maxWidth: "660px",
           }}
         >
-          Submit another form
+          {copy?.content?.successNewFormButton}
         </Button>
       </Stack>
     </Form>
@@ -105,6 +108,7 @@ const SuccessView = () => {
 
 export default function Route() {
   const actionData = useActionData<typeof action>();
+  const copy = usePageCopy("support");
 
   return (
     <Container>
@@ -114,11 +118,10 @@ export default function Route() {
         <>
           <Box>
             <Typography variant="h5" color="text.primary">
-              How can we help?
+              {copy?.headline}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Fill out the form and our team will get back to you within 24
-              hours.
+              {copy?.content?.subHeading}
             </Typography>
           </Box>
           <Stack paddingTop={2}>
@@ -126,16 +129,16 @@ export default function Route() {
               <Stack gap={2}>
                 <TextInput
                   name="subject"
-                  label="Subject"
+                  label={copy?.content?.subjectLabel}
                   required
                   autoFocus={true}
                   fullWidth
                   InputLabelProps={{ required: true }}
-                  placeholder="Please select a subject related to your inquiry."
+                  placeholder={copy?.content?.subjectPlaceholderText}
                 />
                 <TextInput
                   name="Additional details"
-                  label="Additional details"
+                  label={copy?.content?.detailsLabel}
                   required
                   fullWidth
                   InputLabelProps={{ required: true }}
@@ -150,7 +153,7 @@ export default function Route() {
                     alignSelf: "flex-end",
                   }}
                 >
-                  Submit
+                  {copy?.content?.submitButton}
                 </Button>
               </Stack>
             </Form>
