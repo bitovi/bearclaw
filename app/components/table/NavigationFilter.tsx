@@ -1,16 +1,15 @@
-import {
-  Toolbar,
-  Stack,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  IconButton,
-} from "@mui/material";
+
+import Toolbar from "@mui/material/Toolbar";
+import Stack from "@mui/material/Stack";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import { Form } from "@remix-run/react";
 
 import { TextInput } from "../input";
-import { Form } from "@remix-run/react";
 import type { DropdownOption } from "./Table";
 import { useFiltering } from "~/hooks/useFiltering";
 

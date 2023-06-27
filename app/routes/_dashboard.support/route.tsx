@@ -1,11 +1,10 @@
-import {
-  Box,
-  Stack,
-  Typography,
-  Container,
-  Button,
-  Skeleton,
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Button from "@mui/material/Button";
+import Skeleton from "@mui/material/Skeleton";
 import { json } from "@remix-run/node";
 import type { ActionArgs } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";

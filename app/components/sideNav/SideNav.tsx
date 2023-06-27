@@ -6,7 +6,7 @@ import StarIcon from "@mui/icons-material/Star";
 
 import { Link } from "~/components/link";
 import { useLocation } from "@remix-run/react";
-import { Divider } from "@mui/material";
+import Divider from "@mui/material/Divider";
 import React from "react";
 import { IconFromString } from "../iconFromString/IconFromString";
 

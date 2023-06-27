@@ -21,7 +21,7 @@ import { Loading } from "~/components/loading/Loading";
 import { useState } from "react";
 
 import { getActiveSubscriptions } from "~/services/subscriptions/getActiveSubscriptions";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 
 export async function loader({ params, request }: LoaderArgs) {
   const { subscription: priceId } = params;
@@ -127,8 +127,8 @@ function FormComponent() {
           typeof e === "string"
             ? e
             : typeof (e as Error).message === "string"
-            ? (e as Error).message
-            : "An error occured processing the Subscription payment";
+              ? (e as Error).message
+              : "An error occured processing the Subscription payment";
         setSubmissionError(error);
       } finally {
         setLoading(false);

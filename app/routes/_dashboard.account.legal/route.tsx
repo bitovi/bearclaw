@@ -1,4 +1,6 @@
-import { Box, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { useSearchParams } from "@remix-run/react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { usePageCopy } from "../_dashboard/copy";
