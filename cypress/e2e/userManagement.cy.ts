@@ -82,7 +82,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .type(newUserAccount.password);
 
-    cy.findByRole("button", { name: /create account/i })
+    cy.findByRole("button", { name: /sign up/i })
       .should("be.visible")
       .click({ force: true });
 
