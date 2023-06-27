@@ -149,7 +149,7 @@ describe("join and authenticate tests", () => {
       .should("be.visible")
       .click({ force: true });
     cy.findByText(/user already exists with this email/i);
-    cy.findByRole("link", { name: /log in/i });
+    cy.findByRole("link", { name: /sign in/i });
   });
 
   it("should allow you to reset password", () => {
