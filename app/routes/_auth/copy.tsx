@@ -29,6 +29,16 @@ export async function fetchAuthCopy() {
 export function useParentFormCopy(): AuthFormCopy | null {
   const matches = useMatches();
   const copyMatch = matches.find(match => match.data.formCopy)?.data.formCopy
-  
+
   return isAuthFormCopy(copyMatch) ? copyMatch : null
+}
+
+/**
+ * Hook to access the sidebar copy from the parent route
+ */
+export function useParentSidebarCopy(): AuthSidebarCopy | null {
+  const matches = useMatches();
+  const copyMatch = matches.find(match => match.data.sidebarCopy)?.data.sidebarCopy
+
+  return isAuthSidebarCopy(copyMatch) ? copyMatch : null
 }

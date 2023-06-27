@@ -68,5 +68,16 @@ export default {
       title: "Send password reset button",
       type: "string",
     },
+    {
+      name: "joinMessage",
+      title: "Join form message",
+      type: "string",
+    },
+    {
+      name: "joinAcceptTermsLabel",
+      title: "Join form accept terms label",
+      type: 'array', 
+      of: [{type: 'block'}]
+    },
   ]
 }
