@@ -82,7 +82,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .type(newUserAccount.password);
 
-    cy.findByRole("button", { name: /create account/i })
+    cy.findByRole("button", { name: /sign up/i })
       .should("be.visible")
       .click({ force: true });
 
@@ -332,7 +332,8 @@ describe("User Management & Invitation", () => {
       .within(() => {
         // random string to yield no results
         cy.findByRole("textbox", { name: /search/i }).type(
-          "asjdkfhdaskjlfhasdkjl"
+          "asjdkfhdaskjlfhasdkjl",
+          { force: true }
         );
       });
 

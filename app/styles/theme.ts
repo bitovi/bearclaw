@@ -94,7 +94,7 @@ const theme = createTheme({
       fontStyle: "normal",
       fontWeight: 500,
       fontSize: "20px",
-      lineHeight: "160%",
+      lineHeight: 1.6,
       letterSpacing: "0.15px",
     },
     subtitle2: {

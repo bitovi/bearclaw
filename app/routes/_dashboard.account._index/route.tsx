@@ -7,7 +7,7 @@ import { getOwnerOrganization } from "~/models/organization.server";
 import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
 import invariant from "tiny-invariant";
 import { useLoaderData } from "@remix-run/react";
-import { rangeToText } from "../_auth.onboarding/data.server";
+import { rangeToText } from "~/routes/_auth._sidebar.onboarding/data.server";
 import { FormCard } from "~/components/formCard";
 
 export async function loader({ request }: LoaderArgs) {

@@ -221,3 +221,19 @@ export async function addOrganizationUser(
   });
   return orgUser;
 }
+
+export function getOrgUserPermissions(orgUser: OrganizationUsers | null): Array<keyof Permissions> {
+  if (!orgUser) {
+    return [];
+  }
+
+  let permissions: Array<keyof Permissions> = []
+  if (orgUser.subscriptionView) permissions.push('subscriptionView');
+  if (orgUser.subscriptionEdit) permissions.push('subscriptionEdit');
+  if (orgUser.subscriptionCreate) permissions.push('subscriptionCreate');
+  if (orgUser.orgUsersView) permissions.push('orgUsersView');
+  if (orgUser.orgUsersEdit) permissions.push('orgUsersEdit');
+  if (orgUser.orgUsersCreate) permissions.push('orgUsersCreate');
+  
+  return permissions
+}

@@ -1,5 +1,5 @@
-import { questions } from "~/routes/_auth.onboarding/questions";
-import type { QuestionType } from "~/routes/_auth.onboarding/questions";
+import { questions } from "~/routes/_auth._sidebar.onboarding/questions";
+import type { QuestionType } from "~/routes/_auth._sidebar.onboarding/questions";
 
 const emailQuestion: QuestionType = {
   name: "email",

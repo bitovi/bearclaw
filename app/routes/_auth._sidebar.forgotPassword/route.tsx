@@ -1,7 +1,7 @@
+import { useEffect, useRef } from "react";
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import * as React from "react";
 import Box from "@mui/material/Box";
 
 import { getUserId } from "~/session.server";
@@ -9,6 +9,7 @@ import { validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
 import { forgotPassword } from "~/models/user.server";
 import { TextInput } from "~/components/input";
+import { useParentFormCopy } from "../_auth/copy";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -37,11 +38,12 @@ export async function action({ request }: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 
 export default function ForgotPage() {
+  const formCopy = useParentFormCopy();
   const [searchParams] = useSearchParams();
   const actionData = useActionData<typeof action>();
-  const emailRef = React.useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionData?.errors?.email) {
       emailRef.current?.focus();
     }
@@ -67,7 +69,7 @@ export default function ForgotPage() {
       <Form method="post" className="space-y-6">
         <Box display="flex" flexDirection="column" gap={2}>
           <TextInput
-            label="Email address"
+            label={formCopy?.email || "Email address"}
             inputRef={emailRef}
             id="email"
             required
@@ -78,28 +80,28 @@ export default function ForgotPage() {
             error={actionData?.errors?.email}
           />
           <Button type="submit" variant="contained">
-            Send password reset email
+            {formCopy?.sendPasswordReset || "Send password reset email"}
           </Button>
           <div>
-            Don't have an account?{" "}
+            {formCopy?.noAccountMessage || "Don't have an account?"}{" "}
             <Link
               to={{
                 pathname: "/join",
                 search: searchParams.toString(),
               }}
             >
-              Sign up
+              {formCopy?.noAccountLoginLink || "Sign up"}
             </Link>
           </div>
           <div>
-            Know your password?{" "}
+            {formCopy?.alreadyKnowPasswordMessage || "Know your password? "}{" "}
             <Link
               to={{
                 pathname: "/login",
                 search: searchParams.toString(),
               }}
             >
-              Login
+              {formCopy?.alreadyKnowPasswordLink || "Login"}
             </Link>
           </div>
         </Box>
