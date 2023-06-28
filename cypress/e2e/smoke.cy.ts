@@ -145,11 +145,11 @@ describe("join and authenticate tests", () => {
     cy.visitAndCheck("/join");
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
-    cy.findByRole("button", { name: /create account/i })
+    cy.findByRole("button", { name: /sign up/i })
       .should("be.visible")
       .click({ force: true });
     cy.findByText(/user already exists with this email/i);
-    cy.findByRole("link", { name: /log in/i });
+    cy.findByRole("link", { name: /sign in/i });
   });
 
   it("should allow you to reset password", () => {
@@ -235,7 +235,7 @@ describe("Non-authenticated users", () => {
 
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
-    cy.findByRole("button", { name: /create account/i })
+    cy.findByRole("button", { name: /sign up/i })
       .should("be.visible")
       .click({ force: true });
     cy.findByText(/too short/i);

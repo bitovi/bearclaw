@@ -1,3 +1,5 @@
+import type { PortableTextBlock } from "@portabletext/types"
+
 export type AuthFormCopy = {
   _id: "authForm"
   email: string,
@@ -13,6 +15,12 @@ export type AuthFormCopy = {
   alreadyKnowPasswordLink: string
   alreadyKnowPasswordMessage: string
   sendPasswordReset: string
+  joinMessage: string
+  joinAcceptTermsLabel: Array<{
+    _type: "content"
+    key: string
+    value: PortableTextBlock[]
+  }>
 }
 
 export type AuthSidebarCopy = {

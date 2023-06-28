@@ -15,6 +15,9 @@ import {
 } from "~/components/passwordStrengthMeter/PasswordStrengthMeter";
 import { TextInput } from "~/components/input";
 import { useParentFormCopy } from "../_auth/copy";
+import { PortableText } from "@portabletext/react";
+import { Checkbox, FormControlLabel } from "@mui/material";
+import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -147,14 +150,15 @@ export default function Join() {
   }, [actionData]);
 
   return (
-    <Box display="flex" flexDirection="column" justifyContent="center">
+    <Box display="flex" flexDirection="column" alignItems="center" textAlign="center" gap="2rem" maxWidth="436px" >
+      <AuthLogoHeader message={formCopy?.joinMessage} />
       {actionData?.errors.orgCreation && (
         <div>{actionData?.errors.orgCreation}</div>
       )}
-
-      <Form method="post">
+      <Box component={Form} method="post" display="flex" flexDirection="column" gap="2rem" width="100%">
         <Box display="flex" flexDirection="column" gap={2}>
           <TextInput
+            fullWidth
             label={formCopy?.email || "Email address"}
             name="email"
             id="email"
@@ -166,41 +170,59 @@ export default function Join() {
             defaultValue={guestEmail || ""}
             inputProps={{ readOnly: !!guestEmail }}
           />
-          <TextInput
-            label={formCopy?.password || "Password"}
-            id="password"
-            inputRef={passwordRef}
-            onChange={(value) => {
-              setPasswordStrength(getPasswordStrength(value.target.value));
-            }}
-            onBlur={(value) => {
-              setPasswordStrength(getPasswordStrength(value.target.value));
-            }}
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            error={actionData?.errors?.password}
-          />
-          <PasswordStrengthMeter strength={passwordStrength} />
-          <input type="hidden" name="redirectTo" value={redirectTo} />
-
-          <Button type="submit" variant="contained">
-            {formCopy?.createAccount || "Create Account"}
-          </Button>
-          <div>
-            {formCopy?.existingAccountMessage || "Already have an account?"}
-            {" "}
-            <Link
-              to={{
-                pathname: "/login",
-                search: searchParams.toString(),
+          <Box>
+            <TextInput
+              fullWidth
+              label={formCopy?.password || "Password"}
+              id="password"
+              inputRef={passwordRef}
+              onChange={(value) => {
+                setPasswordStrength(getPasswordStrength(value.target.value));
               }}
-            >
-              {formCopy?.existingAccountLoginLink || "Log in"}
-            </Link>
-          </div>
+              onBlur={(value) => {
+                setPasswordStrength(getPasswordStrength(value.target.value));
+              }}
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              error={actionData?.errors?.password}
+            />
+            <Box padding="0.25rem 0.75rem">
+              <PasswordStrengthMeter strength={passwordStrength} />
+            </Box>
+            <Box textAlign="left" padding="0 0.75rem">
+              <FormControlLabel
+                control={<Checkbox defaultChecked />}
+                label={formCopy?.joinAcceptTermsLabel
+                  ? <PortableText value={formCopy?.joinAcceptTermsLabel} />
+                  : "I accept the terms and conditions"
+                }
+              />
+            </Box>
+          </Box>
+          <input type="hidden" name="redirectTo" value={redirectTo} />
         </Box>
-      </Form>
+        <Box display="flex" justifyContent="center" >
+          <Box display="flex" flexDirection="column" gap="2rem" maxWidth="288px" >
+            <Button fullWidth type="submit" variant="contained">
+              {formCopy?.createAccount || "Create Account"}
+            </Button>
+            <div>
+              {formCopy?.existingAccountMessage || "Already have an account?"}
+              {" "}
+              <Link
+                to={{
+                  pathname: "/login",
+                  search: searchParams.toString(),
+                }}
+              >
+                {formCopy?.existingAccountLoginLink || "Log in"}
+              </Link>
+            </div>
+          </Box>
+        </Box>
+
+      </Box>
     </Box>
   );
 }

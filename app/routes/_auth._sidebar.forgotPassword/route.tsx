@@ -1,7 +1,7 @@
+import { useEffect, useRef } from "react";
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import * as React from "react";
 import Box from "@mui/material/Box";
 
 import { getUserId } from "~/session.server";
@@ -41,9 +41,9 @@ export default function ForgotPage() {
   const formCopy = useParentFormCopy();
   const [searchParams] = useSearchParams();
   const actionData = useActionData<typeof action>();
-  const emailRef = React.useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionData?.errors?.email) {
       emailRef.current?.focus();
     }
@@ -90,7 +90,7 @@ export default function ForgotPage() {
                 search: searchParams.toString(),
               }}
             >
-              {formCopy?.noAccountLoginLink || "Sign up"} 
+              {formCopy?.noAccountLoginLink || "Sign up"}
             </Link>
           </div>
           <div>
