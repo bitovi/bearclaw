@@ -8,6 +8,8 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { Link } from "~/components/link";
 import { CVECard } from "./component/cveCard";
 import { CVETable } from "./component/cveTable";
+import { SeverityTab } from "./component/severityTab";
+import { CVEDrawer } from "./component/cveDrawer";
 
 export async function loader({ params }: LoaderArgs) {
   const { dataObject } = params;
@@ -139,12 +141,8 @@ export default function Route() {
           },
         ]}
       />
+      <CVEDrawer />
       {/* <Box>{JSON.stringify(expandedRSBOM)}</Box> */}
-      <Drawer anchor="right" open={true}>
-        <Stack height="100%" width="100%" sx={{ backgroundColor: "#212121" }}>
-          Helloajklsdkjlsdfkjlashflkjdfkjlahsdjkhskljdkajsldfhkjhsdfjkhsdfjhdkjlhalskjfhakljsdfakjlshfdkjlhklj
-        </Stack>
-      </Drawer>
     </Stack>
   );
 }

@@ -4,21 +4,35 @@ import { rateSeverity } from "../utils/rateSeverity";
 
 interface SeverityTabProps {
   rating: string;
+  height: string;
+  width: string;
+  padding: string;
+  borderRadius: string;
+  position?: "flex-end" | "flex-start" | "center";
 }
 
-export function SeverityTab({ rating }: SeverityTabProps) {
+export function SeverityTab({
+  rating,
+  height,
+  width,
+  padding,
+  borderRadius,
+  position = "center",
+}: SeverityTabProps) {
   return (
     <Box
       display="flex"
-      height="62px"
-      borderRadius="0px 0px 28px 0px"
-      padding="0px 8px"
+      alignItems={position}
+      height={height}
+      width={width}
+      borderRadius={borderRadius}
+      padding={padding}
       color="#FFF"
       sx={{
         backgroundColor: WarningColors[rateSeverity(rating)],
       }}
     >
-      <Typography alignSelf="center">{rating}</Typography>
+      <Typography variant="h4">{rating}</Typography>
     </Box>
   );
 }

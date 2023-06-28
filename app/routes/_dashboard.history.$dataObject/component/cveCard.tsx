@@ -1,6 +1,6 @@
-import { Box, Stack, Checkbox, Typography, Card } from "@mui/material";
+import { Stack, Checkbox, Typography, Card } from "@mui/material";
 import { useRef } from "react";
-import { WarningColors, WarningText } from "../types";
+import { WarningText } from "../types";
 import { rateSeverity } from "../utils/rateSeverity";
 import { SeverityTab } from "./severityTab";
 

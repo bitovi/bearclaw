@@ -83,12 +83,13 @@ const theme = createTheme({
     h3: {
       fontStyle: "normal",
       fontWeight: 400,
-      fontSize: "48px",
+      fontSize: "34px",
       lineHeight: "116.7%",
+      letterSpacing: "-0.5px",
     },
     h4: {
       fontStyle: "normal",
-      fontSize: "34px",
+      fontSize: "24px",
       fontWeight: 400,
       lineHeight: "123.5%",
       letterSpacing: "0.25px",
