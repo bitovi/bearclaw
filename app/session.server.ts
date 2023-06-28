@@ -111,8 +111,9 @@ export async function requireUser(request: Request) {
   const user = await getUserById(userId);
   if (user) {
     if (!user.emailVerifiedAt) {
-      const searchParams = new URLSearchParams([["redirectTo", request.url]]);
-      throw redirect(`/verifyEmail?${searchParams}`);
+      const url = new URL(request.url);
+      const redirectTo = `redirectTo=${url.pathname}${url.search}`;
+      throw redirect(`/verifyEmail?${redirectTo}`);
     }
     return user;
   }
