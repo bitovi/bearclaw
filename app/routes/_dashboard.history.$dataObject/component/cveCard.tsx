@@ -10,7 +10,8 @@ interface CVECardProps {
   subcomponentCount: number;
   date: string;
   description: string;
-  onChange?: (checked: boolean) => void;
+  onCheck?: (checked: boolean) => void;
+  onRowClick?: (id: string) => void;
   orientation?: "row" | "column";
 }
 
@@ -20,24 +21,23 @@ export function CVECard({
   subcomponentCount,
   date,
   description,
-  onChange = () => {},
+  onRowClick = () => {},
+  onCheck = () => {},
   orientation = "row",
 }: CVECardProps) {
-  const checkBoxRef = useRef<HTMLInputElement>(null);
-  const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange?.(e.target.checked);
-  };
-
+  const checkboxRef = useRef<HTMLInputElement>(null);
   return (
     <Card
       elevation={1}
-      onClick={() => {
-        checkBoxRef.current?.click();
-      }}
       sx={{
         "&:hover": {
           backgroundColor: "primary.states.focusVisible",
         },
+      }}
+      onClick={(e) => {
+        if (e.target !== checkboxRef.current) {
+          onRowClick(name);
+        }
       }}
     >
       <Stack>
@@ -48,7 +48,14 @@ export function CVECard({
           justifyContent="space-between"
         >
           <Stack direction="row">
-            <SeverityTab rating={rating} />
+            <SeverityTab
+              rating={rating}
+              padding="0px 8px 0px 16px"
+              height="46px"
+              width="45px"
+              borderRadius="0px 0px 20px 0px"
+              position="center"
+            />
             <Stack
               alignItems={orientation === "row" ? "center" : ""}
               gap={1}
@@ -65,7 +72,10 @@ export function CVECard({
             </Stack>
           </Stack>
 
-          <Checkbox inputRef={checkBoxRef} onChange={handleChecked} />
+          <Checkbox
+            inputRef={checkboxRef}
+            onChange={(e) => onCheck?.(e.target.checked)}
+          />
         </Stack>
         <Stack
           padding="0px 16px 0px 48px"

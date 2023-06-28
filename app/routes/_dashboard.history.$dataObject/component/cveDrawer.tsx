@@ -19,11 +19,17 @@ import { rateSeverity } from "../utils/rateSeverity";
 import { WarningText } from "../types";
 import { Button } from "~/components/button";
 
-export function CVEDrawer() {
+interface CVEDrawerProps {
+  selectedCVE: any;
+  onClose: () => void;
+}
+
+export function CVEDrawer({ selectedCVE, onClose }: CVEDrawerProps) {
   return (
     <Drawer
+      onClose={onClose}
       anchor="right"
-      open={true}
+      open={!!selectedCVE}
       PaperProps={{
         sx: {
           borderRadius: "48px 0px 0px 0px",
@@ -60,6 +66,7 @@ export function CVEDrawer() {
             padding="0px 24px 16px 24px"
             borderRadius="32px 0px 56px 0px"
             position="flex-end"
+            textVariant="h4"
           />
           <Stack
             direction="row"
@@ -70,7 +77,10 @@ export function CVEDrawer() {
             <Typography color="#FFF" variant="h3">
               CVE-2023-1389
             </Typography>
-            <IconButton sx={{ height: "35px", width: "35px" }}>
+            <IconButton
+              sx={{ height: "35px", width: "35px" }}
+              onClick={onClose}
+            >
               <CloseIcon
                 sx={{ color: "#FFF", height: "35px", width: "35px" }}
               />

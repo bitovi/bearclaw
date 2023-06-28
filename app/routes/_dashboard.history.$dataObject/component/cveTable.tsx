@@ -8,11 +8,13 @@ import { useState } from "react";
 interface CveTableProps {
   cveData: any[];
   orientation: "column" | "row";
+  handleRowClick: (id: string) => void;
 }
 
 export function CVETable({
   cveData,
   orientation: _orienation = "row",
+  handleRowClick = () => {},
 }: CveTableProps) {
   const [orientation, setOrientation] = useState<"row" | "column">(_orienation);
 
@@ -72,6 +74,7 @@ export function CVETable({
               date={cve.date}
               description={cve.description}
               orientation={orientation}
+              onRowClick={handleRowClick}
             />
           );
         })}

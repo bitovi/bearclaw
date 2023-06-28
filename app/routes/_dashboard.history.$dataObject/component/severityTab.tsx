@@ -2,6 +2,18 @@ import { Box, Typography } from "@mui/material";
 import { WarningColors } from "../types";
 import { rateSeverity } from "../utils/rateSeverity";
 
+const textVariantValues = [
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "subtitle2",
+  "body1",
+  "body2",
+] as const;
+
 interface SeverityTabProps {
   rating: string;
   height: string;
@@ -9,6 +21,7 @@ interface SeverityTabProps {
   padding: string;
   borderRadius: string;
   position?: "flex-end" | "flex-start" | "center";
+  textVariant?: (typeof textVariantValues)[number];
 }
 
 export function SeverityTab({
@@ -18,6 +31,7 @@ export function SeverityTab({
   padding,
   borderRadius,
   position = "center",
+  textVariant = "body1",
 }: SeverityTabProps) {
   return (
     <Box
@@ -32,7 +46,7 @@ export function SeverityTab({
         backgroundColor: WarningColors[rateSeverity(rating)],
       }}
     >
-      <Typography variant="h4">{rating}</Typography>
+      <Typography variant={textVariant}>{rating}</Typography>
     </Box>
   );
 }
