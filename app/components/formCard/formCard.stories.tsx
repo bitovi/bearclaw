@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { FormCard } from "./formCard";
-import type { Question } from "~/routes/_auth.onboarding/questions";
+import type { Question } from "~/routes/_auth._sidebar.onboarding/questions";
 
 const question: Question = {
   title: "Personal Info",

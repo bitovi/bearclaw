@@ -1,8 +1,8 @@
 import { Box, Button, Card, Stack, Typography } from "@mui/material";
 import { useFetcher } from "@remix-run/react";
 import { Dropdown, TextInput } from "~/components/input";
-import type { Question } from "~/routes/_auth.onboarding/questions";
-import type { action as onboardingAction } from "~/routes/_auth.onboarding/route";
+import type { Question } from "~/routes/_auth._sidebar.onboarding/questions";
+import type { action as onboardingAction } from "~/routes/_auth._sidebar.onboarding/route";
 
 export function FormCard<
   FormData extends Record<string, string | number | undefined | null> | null
