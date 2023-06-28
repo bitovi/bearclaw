@@ -205,7 +205,7 @@ function createAndVerifyAccount(
   cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
   cy.findByLabelText(/password/i).type(loginForm.password);
   cy.wait(1000)
-    .findByRole("button", { name: /create account/i })
+    .findByRole("button", { name: /sign up/i })
     .should("be.visible")
     .click({ force: true });
   cy.wait(2000)

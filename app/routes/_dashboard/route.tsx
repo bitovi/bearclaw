@@ -1,6 +1,6 @@
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
@@ -9,9 +9,10 @@ import { MainSideNav } from "./sidenav";
 
 import { getOrgId, getUser, requireUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
-import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
+import { getOrgUserPermissions, retrieveOrganizationUser } from "~/models/organizationUsers.server";
 import type { OrganizationUsers } from "~/models/organizationUsers.server";
 import { safeRedirect } from "~/utils";
+import { fetchDashboardCopy } from "./copy";
 
 export async function loader({ request }: LoaderArgs) {
   const isLoggedIn = await getUser(request);
@@ -39,15 +40,20 @@ export async function loader({ request }: LoaderArgs) {
     });
   }
 
+  const copy = await fetchDashboardCopy()
+  const permissions = getOrgUserPermissions(orgUser);
+
   if (user.emailVerifiedAt) {
     return json({
+      copy,
       isVerified: true,
-      canViewUsers: orgUser ? orgUser.orgUsersView : false,
+      permissions
     });
   }
 
   const token = url.searchParams.get("token");
   const redirectTo = url.searchParams.get("redirectTo");
+  let isVerified = false;
 
   if (token) {
     const result = await validateUserEmailByToken(token);
@@ -61,21 +67,20 @@ export async function loader({ request }: LoaderArgs) {
       return redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
     }
 
-    return json({
-      isVerified: true,
-      canViewUsers: orgUser ? orgUser.orgUsersView : false,
-    });
+    isVerified = true;
   }
+
   return json({
-    isVerified: false,
+    isVerified,
     canViewUsers: orgUser ? orgUser.orgUsersView : false,
+    copy,
+    permissions,
   });
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-  const { canViewUsers } = useLoaderData<typeof loader>();
 
   return (
     <Box
@@ -96,7 +101,7 @@ export default function Index() {
         bgcolor={"#F5F5F5"}
       >
         <Box width="250px">
-          <MainSideNav canViewUsers={canViewUsers} />
+          <MainSideNav />
         </Box>
         <Box
           component={Paper}

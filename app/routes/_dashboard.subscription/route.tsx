@@ -79,12 +79,12 @@ export default function Route() {
         <SideNav
           navMenu={[
             {
-              label: "Overview",
+              text: "Overview",
               to: "/subscription/overview",
               icon: <PersonIcon />,
             },
             {
-              label: "Subscription",
+              text: "Subscription",
               to: "/subscription/manage",
               icon: <StarsRoundedIcon />,
             },

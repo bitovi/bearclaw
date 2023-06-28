@@ -8,20 +8,23 @@ import { Link } from "~/components/link";
 import { useLocation } from "@remix-run/react";
 import { Divider } from "@mui/material";
 import React from "react";
+import { IconFromString } from "../iconFromString/IconFromString";
 
 export type NavItem = {
-  label: string;
+  text: string;
   to: string;
-  icon?: React.ReactNode;
+  icon?: string | JSX.Element;
+  requiredPermissions?: string[];
 };
 
 type Props = {
   navMenu: NavItem[];
   iconColor?: string;
   dividerAfter?: number;
+  userPermissions?: string[];
 };
 
-export function SideNav({ navMenu, dividerAfter }: Props) {
+export function SideNav({ navMenu, dividerAfter, userPermissions = [] }: Props) {
   const location = useLocation();
   const currentPath = location?.pathname;
 
@@ -38,7 +41,10 @@ export function SideNav({ navMenu, dividerAfter }: Props) {
   return (
     <nav>
       <List>
-        {navMenu.map((item, index) => {
+        {navMenu.filter((item) => item.requiredPermissions 
+          ? item.requiredPermissions.every((permission) => userPermissions.includes(permission))
+          : true
+        ).map((item, index) => {
           return (
             <React.Fragment key={index}>
               <ListItemButton
@@ -47,9 +53,12 @@ export function SideNav({ navMenu, dividerAfter }: Props) {
                 selected={bestRouteMatch === item.to}
               >
                 <ListItemIcon>
-                  {item.icon ? item.icon : <StarIcon />}
+                  {item.icon && typeof item.icon === "string" 
+                    ? <IconFromString icon={item.icon || ""} fallback={<StarIcon />} />
+                    : item.icon 
+                  }
                 </ListItemIcon>
-                <ListItemText>{item.label}</ListItemText>
+                <ListItemText>{item.text}</ListItemText>
               </ListItemButton>
               {dividerAfter && dividerAfter === index && (
                 <Divider component="li" sx={{ marginY: 2 }} />

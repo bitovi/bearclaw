@@ -117,7 +117,7 @@ export async function requireUser(request: Request) {
     }
     return user;
   }
-
+  
   throw await logout(request);
 }
 
