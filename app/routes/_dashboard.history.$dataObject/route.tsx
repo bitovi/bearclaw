@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Drawer, Stack, Typography } from "@mui/material";
 import { json, redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -6,6 +6,8 @@ import { retrieveRSBOMDetails } from "~/models/rsboms.server";
 import DetailTable from "../../components/table";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { Link } from "~/components/link";
+import { CVECard } from "./component/cveCard";
+import { CVETable } from "./component/cveTable";
 
 export async function loader({ params }: LoaderArgs) {
   const { dataObject } = params;
@@ -37,7 +39,7 @@ export default function Route() {
         <Box alignSelf={"flex-end"} paddingBottom={2}>
           <Button
             LinkComponent={Link}
-            variant="contained"
+            variant="text"
             href={
               "data:text/json;charset=utf-8," +
               encodeURIComponent(JSON.stringify(expandedRSBOM, undefined, 2))
@@ -54,23 +56,105 @@ export default function Route() {
               justifyContent={"space-between"}
               alignItems="center"
             >
-              Download <FileDownloadIcon />
+              <FileDownloadIcon /> Download RSBOM
             </Typography>
           </Button>
         </Box>
       )}
-      <DetailTable
-        tableTitle={expandedRSBOM?.metadata?.component?.name || "rSBOM Details"}
-        tableData={[]}
-        headers={[
-          { label: "Header 1", value: "header1", sortable: false },
-          { label: "Header 2", value: "header2", sortable: false },
-          { label: "Header 3", value: "header3", sortable: false },
-        ]}
-        search
-      />
 
+      <CVETable
+        orientation="row"
+        cveData={[
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+          {
+            name: "CVE-2005-0125",
+            rating: "2.0",
+            date: "Published 02/15/2005",
+            subcomponent: [{}, {}, {}],
+            description:
+              "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
+          },
+        ]}
+      />
       {/* <Box>{JSON.stringify(expandedRSBOM)}</Box> */}
+      <Drawer anchor="right" open={true}>
+        <Stack height="100%" width="100%" sx={{ backgroundColor: "#212121" }}>
+          Helloajklsdkjlsdfkjlashflkjdfkjlahsdjkhskljdkajsldfhkjhsdfjkhsdfjhdkjlhalskjfhakljsdfakjlshfdkjlhklj
+        </Stack>
+      </Drawer>
     </Stack>
   );
 }
+/**
+ *     <CVECard
+          name="CVE-2005-0125"
+          rating={"2.0"}
+          date="Published 02/15/2005"
+          subcomponentCount={5}
+          description="Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw..."
+          orientation="column"
+        />
+ */
