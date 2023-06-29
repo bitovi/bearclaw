@@ -9,7 +9,10 @@ import { MainSideNav } from "./sidenav";
 
 import { getOrgId, getUser, requireUser } from "~/session.server";
 import { validateUserEmailByToken } from "~/models/user.server";
-import { getOrgUserPermissions, retrieveOrganizationUser } from "~/models/organizationUsers.server";
+import {
+  getOrgUserPermissions,
+  retrieveOrganizationUser,
+} from "~/models/organizationUsers.server";
 import type { OrganizationUsers } from "~/models/organizationUsers.server";
 import { safeRedirect } from "~/utils";
 import { fetchDashboardCopy } from "./copy";
@@ -40,14 +43,14 @@ export async function loader({ request }: LoaderArgs) {
     });
   }
 
-  const copy = await fetchDashboardCopy()
+  const copy = await fetchDashboardCopy();
   const permissions = getOrgUserPermissions(orgUser);
 
   if (user.emailVerifiedAt) {
     return json({
       copy,
       isVerified: true,
-      permissions
+      permissions,
     });
   }
 
@@ -81,7 +84,6 @@ export async function loader({ request }: LoaderArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-
   return (
     <Box
       display="flex"

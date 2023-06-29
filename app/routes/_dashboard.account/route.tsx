@@ -14,9 +14,7 @@ export default function Account() {
       </Box>
       <Box display="flex" flexDirection={{ xs: "column", md: "row" }}>
         <Box width={{ xs: "auto", md: "240px" }}>
-          <SideNav
-            navMenu={copy?.subNavLinks || []}
-          />
+          <SideNav navMenu={copy?.subNavLinks || []} />
         </Box>
         <Box flex="1">
           <Outlet />

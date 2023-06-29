@@ -63,9 +63,9 @@ export default function Route() {
         response={
           actionData
             ? {
-              success: true,
-              data: {},
-            }
+                success: true,
+                data: {},
+              }
             : undefined
         }
       />

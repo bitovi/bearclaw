@@ -150,12 +150,26 @@ export default function Join() {
   }, [actionData]);
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" textAlign="center" gap="2rem" maxWidth="436px" >
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      textAlign="center"
+      gap="2rem"
+      maxWidth="436px"
+    >
       <AuthLogoHeader message={formCopy?.joinMessage} />
       {actionData?.errors.orgCreation && (
         <div>{actionData?.errors.orgCreation}</div>
       )}
-      <Box component={Form} method="post" display="flex" flexDirection="column" gap="2rem" width="100%">
+      <Box
+        component={Form}
+        method="post"
+        display="flex"
+        flexDirection="column"
+        gap="2rem"
+        width="100%"
+      >
         <Box display="flex" flexDirection="column" gap={2}>
           <TextInput
             fullWidth
@@ -193,23 +207,30 @@ export default function Join() {
             <Box textAlign="left" padding="0 0.75rem">
               <FormControlLabel
                 control={<Checkbox defaultChecked />}
-                label={formCopy?.joinAcceptTermsLabel
-                  ? <PortableText value={formCopy?.joinAcceptTermsLabel} />
-                  : "I accept the terms and conditions"
+                label={
+                  formCopy?.joinAcceptTermsLabel ? (
+                    <PortableText value={formCopy?.joinAcceptTermsLabel} />
+                  ) : (
+                    "I accept the terms and conditions"
+                  )
                 }
               />
             </Box>
           </Box>
           <input type="hidden" name="redirectTo" value={redirectTo} />
         </Box>
-        <Box display="flex" justifyContent="center" >
-          <Box display="flex" flexDirection="column" gap="2rem" maxWidth="288px" >
+        <Box display="flex" justifyContent="center">
+          <Box
+            display="flex"
+            flexDirection="column"
+            gap="2rem"
+            maxWidth="288px"
+          >
             <Button fullWidth type="submit" variant="contained">
               {formCopy?.createAccount || "Create Account"}
             </Button>
             <div>
-              {formCopy?.existingAccountMessage || "Already have an account?"}
-              {" "}
+              {formCopy?.existingAccountMessage || "Already have an account?"}{" "}
               <Link
                 to={{
                   pathname: "/login",
@@ -221,7 +242,6 @@ export default function Join() {
             </div>
           </Box>
         </Box>
-
       </Box>
     </Box>
   );

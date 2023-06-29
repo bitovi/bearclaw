@@ -6,7 +6,8 @@ import { PortableText } from "@portabletext/react";
 
 export default function Route() {
   const [searchParams] = useSearchParams();
-  const pageType = searchParams.get("pageType") === "terms" ? "terms" : "privacy";
+  const pageType =
+    searchParams.get("pageType") === "terms" ? "terms" : "privacy";
   const copy = usePageCopy("account");
 
   return (
@@ -61,7 +62,10 @@ export default function Route() {
       </Stack>
       <Box>
         <PortableText
-          value={copy?.richContent?.[pageType === "terms" ? "terms" : "privacy"] || []}
+          value={
+            copy?.richContent?.[pageType === "terms" ? "terms" : "privacy"] ||
+            []
+          }
         />
       </Box>
     </Box>

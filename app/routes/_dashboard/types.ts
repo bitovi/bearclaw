@@ -1,59 +1,59 @@
-import type { PortableTextBlock } from '@portabletext/types'
+import type { PortableTextBlock } from "@portabletext/types";
 
 export type CopyLink = {
-  _type: "link"
-  _key: string
-  text: string
-  icon?: string
-  ariaLabel?: string
-  to: string
-  newTab?: boolean
+  _type: "link";
+  _key: string;
+  text: string;
+  icon?: string;
+  ariaLabel?: string;
+  to: string;
+  newTab?: boolean;
   requiredPermissions: Array<
-  | "subscriptionView"
-  | "subscriptionEdit"
-  | "subscriptionCreate"
-  | "orgUsersView"
-  | "orgUsersEdit"
-  | "orgUsersCreate"
-  >
-}
+    | "subscriptionView"
+    | "subscriptionEdit"
+    | "subscriptionCreate"
+    | "orgUsersView"
+    | "orgUsersEdit"
+    | "orgUsersCreate"
+  >;
+};
 
 export type SideNavCopy = {
-  _type: "dashboardSideNav"
-  _id: "dashboardSideNav"
-  dividerAfter?: number
-  links: Array<CopyLink>
-}
+  _type: "dashboardSideNav";
+  _id: "dashboardSideNav";
+  dividerAfter?: number;
+  links: Array<CopyLink>;
+};
 
-export function isSideNavCopy (copy: any): copy is SideNavCopy {
-  return copy._id === "dashboardSideNav"
+export function isSideNavCopy(copy: any): copy is SideNavCopy {
+  return copy._id === "dashboardSideNav";
 }
 
 export type PageCopy = {
-  _type: "page"
-  _id: string
-  key: string
-  breadcrumb: string
-  title: string
-  headline: string
-  subNavLinks?: Array<CopyLink>
+  _type: "page";
+  _id: string;
+  key: string;
+  breadcrumb: string;
+  title: string;
+  headline: string;
+  subNavLinks?: Array<CopyLink>;
   content?: Array<{
-    _type: "content"
-    key: string
-    value: string
-  }>
+    _type: "content";
+    key: string;
+    value: string;
+  }>;
   richContent?: Array<{
-    _type: "content"
-    key: string
-    value: PortableTextBlock[]
-  }>
-}
+    _type: "content";
+    key: string;
+    value: PortableTextBlock[];
+  }>;
+};
 
-export type PageCopyKeyed = Omit<PageCopy, "content"|"richContent"> & {
-  content?: Record<string, string>
-  richContent?: Record<string, PortableTextBlock[]>
-}
+export type PageCopyKeyed = Omit<PageCopy, "content" | "richContent"> & {
+  content?: Record<string, string>;
+  richContent?: Record<string, PortableTextBlock[]>;
+};
 
-export function isPageCopy (copy: any): copy is PageCopy {
-  return copy && copy._type === "page" && copy.key
+export function isPageCopy(copy: any): copy is PageCopy {
+  return copy && copy._type === "page" && copy.key;
 }

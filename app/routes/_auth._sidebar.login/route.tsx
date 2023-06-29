@@ -196,8 +196,7 @@ export default function LoginPage() {
           </Button>
           <Checkbox id="remember" name="remember" label="Remember me" />
           <div>
-            {formCopy?.noAccountMessage || "Don't have an account?"}
-            {" "}
+            {formCopy?.noAccountMessage || "Don't have an account?"}{" "}
             <Link
               to={{
                 pathname: "/join",

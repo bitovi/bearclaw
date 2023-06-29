@@ -4,9 +4,7 @@ import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
 
 const baseURL = process.env.BEARCLAW_URL;
 
-export async function retrieveRSBOMList(
-  params: ApiRequestParams = {}
-) {
+export async function retrieveRSBOMList(params: ApiRequestParams = {}) {
   const searchParams = buildApiSearchParams(params);
   const response = await fetch(
     `${baseURL}/bear/get_rsboms_cyclonedx?${searchParams}`

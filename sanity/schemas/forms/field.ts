@@ -1,7 +1,7 @@
 export default {
   name: 'formField',
   type: 'document',
-	title: 'Form field',
+  title: 'Form field',
   fields: [
     {
       name: 'label',
@@ -13,5 +13,5 @@ export default {
       title: 'Name',
       type: 'string',
     },
-  ]
+  ],
 }
