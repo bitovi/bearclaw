@@ -35,8 +35,7 @@ export async function retrieveRSBOMDetails({
 }
 
 export async function retrieveRSBOMSearchResults(
-  params: ApiRequestParams = {},
-  searchString: string
+  params: ApiRequestParams = {}
 ) {
   const searchParams = buildApiSearchParams(params);
   const historyResponse = await fetch(
@@ -44,6 +43,11 @@ export async function retrieveRSBOMSearchResults(
   );
   const historyJSON: ApiResponseWrapper<RSBOMListEntry[]> =
     await historyResponse.json();
+
+  // VVV TODO Remove once API is online and mocking is no longer necessary
+
+  const searchString = params.search;
+  if (!searchString) return historyJSON;
 
   const detailResponseList = await Promise.all(
     historyJSON.data.map((r) =>
@@ -86,4 +90,6 @@ export async function retrieveRSBOMSearchResults(
     ...historyJSON,
     data: finalResult,
   };
+
+  // ^^^ TODO Remove once API is online and mocking is no longer necessary
 }

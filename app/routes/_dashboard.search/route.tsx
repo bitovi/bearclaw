@@ -7,7 +7,6 @@ import { SkeletonTable } from "~/components/table";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import SearchTable from "~/components/table";
 import { retrieveRSBOMSearchResults } from "~/models/rsboms.server";
-import { parseFilterParam } from "~/utils/parseFilterParam";
 import { getOrgandUserId } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
@@ -16,35 +15,24 @@ export async function loader({ request }: LoaderArgs) {
     const url = new URL(request.url);
     const page = url.searchParams.get("page");
     const perPage = url.searchParams.get("perPage");
-    const filter = url.searchParams.get("filter");
+    const search = url.searchParams.get("search");
     const sort = url.searchParams.get("sort");
 
     // if user vists /search with no query, return no results
-    if (!filter)
+    if (!search)
       return json({
         error: "",
         searchResults: null,
       });
 
-    const { _searchString } = parseFilterParam(filter);
-
-    if (!_searchString) {
-      return json({
-        error: "",
-        searchResults: null,
-      });
-    }
-
-    const searchResults = await retrieveRSBOMSearchResults(
-      {
-        userId,
-        organizationId,
-        page,
-        perPage,
-        sort,
-      },
-      _searchString
-    );
+    const searchResults = await retrieveRSBOMSearchResults({
+      userId,
+      organizationId,
+      page,
+      perPage,
+      sort,
+      search,
+    });
 
     return json({ searchResults, error: "" });
   } catch (e) {

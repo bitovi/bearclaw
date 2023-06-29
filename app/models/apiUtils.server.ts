@@ -21,6 +21,7 @@ export type ApiRequestParams = {
   perPage?: string | null;
   filter?: string | null;
   sort?: string | null;
+  search?: string | null;
 };
 
 export function buildApiSearchParams(params: ApiRequestParams): string {
@@ -38,6 +39,9 @@ export function buildApiSearchParams(params: ApiRequestParams): string {
   }
   if (params.sort) {
     searchParams.push(`sort=${params.sort}`);
+  }
+  if (params.search) {
+    searchParams.push(`search=${params.search}`);
   }
   return searchParams.join("&");
 }

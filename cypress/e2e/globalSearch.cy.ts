@@ -19,7 +19,7 @@ describe("Global Search", () => {
     cy.wait(1000).findByText(/search results/i);
 
     const params = new URLSearchParams();
-    params.append("filter", "contains(search,a)");
+    params.append("search", "a");
     // Confirm our filtering/searching is wiring up to the URL correctly
     cy.location("search").should("include", params.toString());
 
@@ -60,7 +60,7 @@ describe("Global Search", () => {
       .then((data) => {
         cy.get("@globalSearch").clear().type(data);
         const params = new URLSearchParams();
-        params.append("filter", `contains(search,${data})`);
+        params.append("search", data);
         // Confirm our filtering/searching is wiring up to the URL correctly
         cy.location("search").should("include", params.toString());
       });

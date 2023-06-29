@@ -7,18 +7,18 @@ import { TextInput } from "~/components/input";
 import { useNavigate, useSearchParams } from "@remix-run/react";
 import { useCallback, useState } from "react";
 import { useDebounceApiCall } from "~/hooks/useDebounceApiCall";
-import { parseFilterParam } from "~/utils/parseFilterParam";
 
 const GlobalSearch = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const { _searchString } = parseFilterParam(searchParams.get("filter"));
-  const [searchString, setSearchString] = useState(_searchString || "");
+  const [searchString, setSearchString] = useState(
+    searchParams.get("search") || ""
+  );
 
   const apiCall = useCallback(() => {
     const queryParams = new URLSearchParams();
-    queryParams.append("filter", `contains(search,${searchString})`);
+    queryParams.append("search", searchString);
     navigate(`/search?${queryParams}`);
   }, [searchString, navigate]);
 
