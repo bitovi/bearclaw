@@ -38,7 +38,6 @@ export async function action({ request }: ActionArgs) {
   };
 
   const response = await onboardUser(user, onboardingData);
-
   if (response) {
     const redirectTo = formData.get("redirectTo")?.toString();
     if (redirectTo) {

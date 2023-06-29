@@ -8,6 +8,7 @@ import { useId } from "react";
 
 type Props = Omit<SelectProps, "error"> & {
   label?: string;
+  labelPosition?: number;
   error?: boolean | string | null;
   disabled?: boolean;
   options: Array<{
@@ -23,13 +24,16 @@ export function Dropdown({
   options,
   disabled,
   error,
+  labelPosition,
   ...props
 }: Props) {
   const domId = useId();
 
   return (
     <FormControl fullWidth disabled={disabled} error={!!error}>
-      <InputLabel id={domId}>{label}</InputLabel>
+      <InputLabel id={domId} sx={{ top: labelPosition || 0 }}>
+        {label}
+      </InputLabel>
       <Select
         labelId={domId}
         label={label}
