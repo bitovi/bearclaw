@@ -1,13 +1,12 @@
-import {
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  ButtonGroup,
-  Drawer,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import { Button } from "~/components/button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import AlertTitle from "@mui/material/AlertTitle";
 import Accordion from "@mui/material/Accordion";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -17,19 +16,20 @@ import ShareIcon from "@mui/icons-material/Share";
 import { SeverityTab } from "./severityTab";
 import { rateSeverity } from "../utils/rateSeverity";
 import { WarningText } from "../types";
-import { Button } from "~/components/button";
+import type { CveData } from "~/models/rsbomTypes";
 
 interface CVEDrawerProps {
-  selectedCVE: any;
+  open: boolean;
+  selectedCVE: CveData | undefined;
   onClose: () => void;
 }
 
-export function CVEDrawer({ selectedCVE, onClose }: CVEDrawerProps) {
+export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
   return (
     <Drawer
       onClose={onClose}
       anchor="right"
-      open={!!selectedCVE}
+      open={open}
       PaperProps={{
         sx: {
           borderRadius: "48px 0px 0px 0px",
@@ -60,7 +60,7 @@ export function CVEDrawer({ selectedCVE, onClose }: CVEDrawerProps) {
           alignSelf="stretch"
         >
           <SeverityTab
-            rating="8.8"
+            rating={selectedCVE?.rating || "0"}
             height={"112px"}
             width="84px"
             padding="0px 24px 16px 24px"
@@ -75,7 +75,7 @@ export function CVEDrawer({ selectedCVE, onClose }: CVEDrawerProps) {
             justifyContent={"space-between"}
           >
             <Typography color="#FFF" variant="h3">
-              CVE-2023-1389
+              {selectedCVE?.name || "CVE Name Not Found"}
             </Typography>
             <IconButton
               sx={{ height: "35px", width: "35px" }}
@@ -106,38 +106,29 @@ export function CVEDrawer({ selectedCVE, onClose }: CVEDrawerProps) {
             <Box>
               <AlertTitle>Source</AlertTitle>
               <Typography variant="body2">
-                Tenable Network Security, Inc.
+                {selectedCVE?.source?.name}
               </Typography>
             </Box>
             <Box>
               <AlertTitle>Base Score</AlertTitle>
-              <Typography>{WarningText[rateSeverity("8.8")]}</Typography>
-              <Typography variant="body2">8.8</Typography>
+              <Typography>
+                {WarningText[rateSeverity(selectedCVE?.rating || "0")]}
+              </Typography>
+              <Typography variant="body2">{selectedCVE?.rating}</Typography>
               <Typography></Typography>
             </Box>
             <Box>
               <AlertTitle>Published Date</AlertTitle>
-              <Typography variant="body2">
-                Tenable Network Security, Inc.
-              </Typography>
+              <Typography variant="body2">{selectedCVE?.date}</Typography>
             </Box>
             <Box>
               <AlertTitle>Last Modified</AlertTitle>
-              <Typography variant="body2">
-                Tenable Network Security, Inc.
-              </Typography>
+              <Typography variant="body2">UNDEFINED</Typography>
             </Box>
             <Box gridColumn={"span 2"}>
               <AlertTitle>Description</AlertTitle>
               <Typography variant="body2">
-                TP-Link Archer AX21 (AX1800) firmware versions before 1.1.4
-                Build 20230219 contained a command injection vulnerability in
-                the country form of the /cgi-bin/luci;stok=/locale endpoint on
-                the web management interface. Specifically, the country
-                parameter of the write operation was not sanitized before being
-                used in a call to popen(), allowing an unauthenticated attacker
-                to inject commands, which would be run as root, with a simple
-                POST request.
+                {selectedCVE?.description}
               </Typography>
               <Typography variant="h6" color="#FFF" paddingY={3}>
                 Resources

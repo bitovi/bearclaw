@@ -1,12 +1,16 @@
-import { Box, Stack, ToggleButton, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import GridViewIcon from "@mui/icons-material/GridView";
 import { CVECard } from "./cveCard";
 import { useState } from "react";
+import type { CveData } from "~/models/rsbomTypes";
 
 interface CveTableProps {
-  cveData: any[];
+  cveData: CveData[];
   orientation: "column" | "row";
   handleRowClick: (id: string) => void;
 }
@@ -68,9 +72,9 @@ export function CVETable({
           return (
             <CVECard
               key={`${cve.name}-${i}`}
-              name={cve.name}
+              name={cve.name || "CVE Name Not Found"}
               rating={cve.rating}
-              subcomponentCount={cve.subcomponent.length}
+              subcomponentCount={cve.subcomponent?.length || 0}
               date={cve.date}
               description={cve.description}
               orientation={orientation}

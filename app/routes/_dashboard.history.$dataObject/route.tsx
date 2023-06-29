@@ -1,82 +1,19 @@
-import { Box, Button, Drawer, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { json, redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { retrieveRSBOMDetails } from "~/models/rsboms.server";
-import DetailTable from "../../components/table";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { Link } from "~/components/link";
-import { CVECard } from "./component/cveCard";
 import { CVETable } from "./component/cveTable";
-import { SeverityTab } from "./component/severityTab";
 import { CVEDrawer } from "./component/cveDrawer";
 import { useState } from "react";
-
-const cveFixtureData = [
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-  {
-    name: "CVE-2005-0125",
-    rating: "2.0",
-    date: "Published 02/15/2005",
-    subcomponent: [{}, {}, {}],
-    description: "Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw...",
-  },
-];
+import { CVEBreakdown } from "./component/cveBreakdown";
+import { rateVulnerability } from "./utils/vulenerabilityRating.server";
+import type { CveData } from "~/models/rsbomTypes";
 
 export async function loader({ params }: LoaderArgs) {
   const { dataObject } = params;
@@ -88,17 +25,33 @@ export async function loader({ params }: LoaderArgs) {
     const expandedRSBOM = await retrieveRSBOMDetails({
       dataObjectId: dataObject,
     });
-    return json({ expandedRSBOM, error: "" });
+
+    const vulnerabilties: CveData[] = expandedRSBOM.vulnerabilities.map(
+      (vul) => {
+        return {
+          name: vul.id,
+          rating: rateVulnerability(vul.properties),
+          date: "Published 02/15/2005",
+          description: vul.description,
+          source: vul.source,
+        };
+      }
+    );
+    return json({ expandedRSBOM, vulnerabilties, error: "" });
   } catch (e) {
     const error = (e as Error).message;
     console.error(error);
-    return json({ expandedRSBOM: null, error });
+    return json({ expandedRSBOM: null, vulnerabilties: [], error });
   }
 }
 
 export default function Route() {
-  const { expandedRSBOM, error } = useLoaderData<typeof loader>();
-  const [selectedCVE, setSelectedCVE] = useState();
+  const { expandedRSBOM, vulnerabilties, error } =
+    useLoaderData<typeof loader>();
+  const [selectedCVE, setSelectedCVE] =
+    useState<(typeof vulnerabilties)[number]>();
+
+  const [visible, setVisible] = useState(false);
 
   if (error) {
     return <Box>{error}</Box>;
@@ -132,29 +85,27 @@ export default function Route() {
           </Button>
         </Box>
       )}
-
+      <Box paddingY={4}>
+        <CVEBreakdown
+          id={expandedRSBOM?.metadata?.component?.["bom-ref"]}
+          type={expandedRSBOM?.metadata?.component?.["mime-type"]}
+          date={"UNDEFINED"}
+          vulnerabilties={vulnerabilties}
+        />
+      </Box>
       <CVETable
         orientation="row"
-        cveData={cveFixtureData}
+        cveData={vulnerabilties}
         handleRowClick={(id: string) => {
-          setSelectedCVE(cveFixtureData.find((cve) => cve.name === id));
+          setSelectedCVE(vulnerabilties.find((cve) => cve.name === id));
+          setVisible(true);
         }}
       />
       <CVEDrawer
+        open={visible}
         selectedCVE={selectedCVE}
-        onClose={() => setSelectedCVE(undefined)}
+        onClose={() => setVisible(false)}
       />
-      {/* <Box>{JSON.stringify(expandedRSBOM)}</Box> */}
     </Stack>
   );
 }
-/**
- *     <CVECard
-          name="CVE-2005-0125"
-          rating={"2.0"}
-          date="Published 02/15/2005"
-          subcomponentCount={5}
-          description="Published 03/15/2023 - TP-Link Archer AX21 (AX1800) firmw..."
-          orientation="column"
-        />
- */

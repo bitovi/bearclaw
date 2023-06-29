@@ -25,6 +25,15 @@ declare module "@mui/material/styles" {
       medium: string;
       high: string;
     };
+    red?: {
+      600: string;
+    };
+    orange?: {
+      800?: string;
+    };
+    purple?: {
+      600?: string;
+    };
   }
 }
 
@@ -63,6 +72,15 @@ const theme = createTheme({
       low: "#5E35B1",
       medium: "#EF6C00",
       high: "#E53935",
+    },
+    red: {
+      600: "#E53935",
+    },
+    orange: {
+      800: "#EF6C00",
+    },
+    purple: {
+      600: "#8E24AA",
     },
   },
   typography: {

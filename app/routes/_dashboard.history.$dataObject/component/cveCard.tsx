@@ -1,4 +1,7 @@
-import { Stack, Checkbox, Typography, Card } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import Checkbox from "@mui/material/Checkbox";
 import { useRef } from "react";
 import { WarningText } from "../types";
 import { rateSeverity } from "../utils/rateSeverity";
@@ -9,7 +12,7 @@ interface CVECardProps {
   rating: string;
   subcomponentCount: number;
   date: string;
-  description: string;
+  description?: string;
   onCheck?: (checked: boolean) => void;
   onRowClick?: (id: string) => void;
   orientation?: "row" | "column";
@@ -35,6 +38,7 @@ export function CVECard({
         },
       }}
       onClick={(e) => {
+        console.log("test", e.target !== checkboxRef.current);
         if (e.target !== checkboxRef.current) {
           onRowClick(name);
         }
@@ -92,8 +96,19 @@ export function CVECard({
           <Typography component={"p"} color="text.primary" variant="caption">
             {subcomponentCount} Severe Sub-components
           </Typography>
-          {orientation === "column" && (
-            <Typography component={"p"} color="text.primary" variant="caption">
+          {orientation === "column" && !!description && (
+            <Typography
+              component={Stack}
+              color="text.primary"
+              variant="caption"
+              sx={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: "2",
+                "-webkit-box-orient": "vertical",
+              }}
+            >
               {description}
             </Typography>
           )}

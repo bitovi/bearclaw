@@ -23,9 +23,38 @@ interface Component extends Normalized.Component {
 }
 
 // The data return from Bearclaw didn't quite lineup with the standardized CycloneDX format as far as I could tell. Small tweaks below to align it
-export interface ExpandedRSBOMEntry extends Omit<Normalized.Bom, "components"> {
+
+export interface EnhancedProperties extends Normalized.Property {
+  exploitability3?: {
+    attackcomplexity?: string;
+    attackvector?: string;
+    privilegesrequired?: string;
+    scope?: string;
+    userinteraction?: string;
+  };
+  exploitabilityScore3?: number;
+  exploitabilityScore?: number;
+}
+interface EnhancedVulnerability extends Normalized.Vulnerability {
+  properties: EnhancedProperties[];
+}
+
+export interface ExpandedRSBOMEntry
+  extends Omit<Normalized.Bom, "components" | "vulnerabilties"> {
   taskId: string;
   id: string;
   component: Component;
   "@timestamp": string;
+  vulnerabilities: EnhancedVulnerability[];
+}
+
+export interface CveData {
+  date: string;
+  name?: string | undefined;
+  rating: string;
+  description?: string | undefined;
+  subcomponent?: any[];
+  source?: {
+    name?: string;
+  };
 }
