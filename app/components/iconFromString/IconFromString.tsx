@@ -14,6 +14,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import CheckIcon from "@mui/icons-material/Check";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import StarTwoToneIcon from "@mui/icons-material/StarTwoTone";
+import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
 
 export const icons = {
   dashboard: <DashboardIcon />,
@@ -32,6 +33,7 @@ export const icons = {
   check: <CheckIcon />,
   checkCircleOutline: <CheckCircleOutlineIcon />,
   starTwoTone: <StarTwoToneIcon />,
+  addChartTwoTone: <AddchartTwoToneIcon />,
 } as const;
 
 function isIcon(icon: string): icon is keyof typeof icons {
