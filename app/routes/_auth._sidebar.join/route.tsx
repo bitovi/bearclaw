@@ -16,7 +16,7 @@ import {
 import { TextInput } from "~/components/input";
 import { useParentFormCopy } from "../_auth/copy";
 import { PortableText } from "@portabletext/react";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 
 export async function loader({ request }: LoaderArgs) {
@@ -150,12 +150,26 @@ export default function Join() {
   }, [actionData]);
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" textAlign="center" gap="2rem" maxWidth="436px" >
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      textAlign="center"
+      gap="2rem"
+      maxWidth="436px"
+    >
       <AuthLogoHeader message={formCopy?.joinMessage} />
       {actionData?.errors.orgCreation && (
         <div>{actionData?.errors.orgCreation}</div>
       )}
-      <Box component={Form} method="post" display="flex" flexDirection="column" gap="2rem" width="100%">
+      <Box
+        component={Form}
+        method="post"
+        display="flex"
+        flexDirection="column"
+        gap="2rem"
+        width="100%"
+      >
         <Box display="flex" flexDirection="column" gap={2}>
           <TextInput
             fullWidth
@@ -193,35 +207,49 @@ export default function Join() {
             <Box textAlign="left" padding="0 0.75rem">
               <FormControlLabel
                 control={<Checkbox defaultChecked />}
-                label={formCopy?.joinAcceptTermsLabel
-                  ? <PortableText value={formCopy?.joinAcceptTermsLabel} />
-                  : "I accept the terms and conditions"
+                label={
+                  formCopy?.joinAcceptTermsLabel ? (
+                    <PortableText value={formCopy?.joinAcceptTermsLabel} />
+                  ) : (
+                    "I accept the terms and conditions"
+                  )
                 }
               />
             </Box>
           </Box>
           <input type="hidden" name="redirectTo" value={redirectTo} />
         </Box>
-        <Box display="flex" justifyContent="center" >
-          <Box display="flex" flexDirection="column" gap="2rem" maxWidth="288px" >
-            <Button fullWidth type="submit" variant="contained">
-              {formCopy?.createAccount || "Create Account"}
-            </Button>
-            <div>
-              {formCopy?.existingAccountMessage || "Already have an account?"}
-              {" "}
-              <Link
-                to={{
-                  pathname: "/login",
-                  search: searchParams.toString(),
-                }}
-              >
-                {formCopy?.existingAccountLoginLink || "Log in"}
-              </Link>
-            </div>
-          </Box>
+        <Box width="66%" alignSelf="center">
+          <Button fullWidth type="submit" variant="buttonLarge">
+            {formCopy?.createAccount || "Create Account"}
+          </Button>
+          <Typography variant="body1" color="text.secondary">
+            or
+          </Typography>
+          <Button fullWidth variant="buttonLargeOutlined">
+            <Typography color="text.primary">Sign up with Github</Typography>
+          </Button>
         </Box>
+      </Box>
 
+      <Box>
+        <Typography component="span" variant="body2" color="text.secondary">
+          {formCopy?.existingAccountMessage || "Already have an account?"}{" "}
+        </Typography>
+        <Typography
+          component={Link}
+          to={{
+            pathname: "/login",
+            search: searchParams.toString(),
+          }}
+          sx={{
+            textDecoration: "none",
+          }}
+          color="primary.main"
+          variant="body2"
+        >
+          {formCopy?.existingAccountLoginLink || "Log in"}
+        </Typography>
       </Box>
     </Box>
   );

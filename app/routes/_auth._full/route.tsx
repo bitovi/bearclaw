@@ -8,7 +8,7 @@ import { json } from "@remix-run/server-runtime";
 
 export async function loader() {
   const copy = await fetchAuthCopy();
-  return json(copy)
+  return json(copy);
 }
 
 export default function Index() {
@@ -50,18 +50,24 @@ export default function Index() {
             transform: "rotate(18deg)",
           }}
         />
-        <Box width="100%" display="flex" justifyContent="space-between" alignItems="center" padding="2rem 3rem">
-          <Logo color="white" />
-          <Typography component={Link} to="/help" color="white" sx={{ textDecoration: "none" }}>
+        <Box
+          width="100%"
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          padding="2rem 3rem"
+        >
+          <Logo imageColor="white" />
+          <Typography
+            component={Link}
+            to="/help"
+            color="white"
+            sx={{ textDecoration: "none" }}
+          >
             Need help?
           </Typography>
         </Box>
-        <Box
-          flex="1"
-          position="relative"
-          margin="3rem"
-          sx={{ "& a": { color: "white" } }}
-        >
+        <Box flex="1" position="relative" margin="3rem">
           <Outlet />
         </Box>
       </Box>

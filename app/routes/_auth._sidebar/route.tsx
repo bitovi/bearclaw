@@ -1,11 +1,13 @@
 import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
-import { PortableText } from '@portabletext/react'
+import { PortableText } from "@portabletext/react";
 import { useParentSidebarCopy } from "../_auth/copy";
 import { json } from "@remix-run/server-runtime";
+import { Carousel } from "~/components/carousel";
+import { SideBarImage } from "~/components/authSidebarImages";
 
 export async function loader() {
-  return json({})
+  return json({});
 }
 
 export default function Index() {
@@ -69,6 +71,8 @@ export default function Index() {
           flexDirection="column"
           gap={2}
         >
+          <Carousel images={[SideBarImage, SideBarImage, SideBarImage]} />
+
           <PortableText value={copy?.content} />
         </Box>
       </Box>

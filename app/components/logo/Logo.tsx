@@ -1,15 +1,28 @@
-import { VariantInline } from "./VariantInline.svg"
-import { VariantStacked } from "./VariantStacked.svg"
+import { VariantInline } from "./VariantInline.svg";
+import { VariantStacked } from "./VariantStacked.svg";
 
 type Props = {
-  variant?: "inline" | "stacked"
-  width?: string
-  color?: string
-}
+  variant?: "inline" | "stacked";
+  width?: string;
+  imageColor?: string;
+  textColor?: string;
+};
 
-export function Logo({ color, variant, width }: Props) {
+export function Logo({ textColor, imageColor, variant, width }: Props) {
   if (variant === "stacked") {
-    return <VariantStacked width={width} color={color} />
+    return (
+      <VariantStacked
+        width={width}
+        imageColor={imageColor}
+        textColor={textColor}
+      />
+    );
   }
-  return <VariantInline width={width} color={color} />
+  return (
+    <VariantInline
+      width={width}
+      imageColor={imageColor}
+      textColor={textColor}
+    />
+  );
 }
