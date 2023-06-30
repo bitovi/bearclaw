@@ -1,10 +1,11 @@
-type QuestionType =
+export type QuestionType =
   | {
       name: string;
       type: "text";
       label: string;
       placeholder: string;
       required: boolean;
+      disabled?: boolean;
     }
   | {
       name: string;
@@ -13,11 +14,13 @@ type QuestionType =
       placeholder: string;
       required: boolean;
       options: { value: string; label: string; selected?: boolean }[];
+      disabled?: boolean;
     };
 
 export const questions: Array<{
   title: string;
   description: string;
+  disabled?: boolean;
   questions: QuestionType[];
 }> = [
   {
@@ -30,28 +33,28 @@ export const questions: Array<{
         type: "text",
         label: "First name",
         placeholder: "First name",
-        required: true,
+        required: false,
       },
       {
         name: "lastName",
         type: "text",
         label: "Last name",
         placeholder: "Last name",
-        required: true,
+        required: false,
       },
       {
         name: "phone",
         type: "text",
         label: "Phone number",
         placeholder: "Phone number",
-        required: true,
+        required: false,
       },
       {
         name: "emailSecondary",
         type: "text",
         label: "Secondary email",
         placeholder: "Secondary email",
-        required: true,
+        required: false,
       },
     ],
   },
@@ -65,7 +68,7 @@ export const questions: Array<{
         type: "select",
         label: "Your role",
         placeholder: "Your role",
-        required: true,
+        required: false,
         options: [
           { value: "c_level", label: "C Level" },
           { value: "senior_developer", label: "Senior Developer" },
@@ -79,7 +82,7 @@ export const questions: Array<{
         type: "select",
         label: "Size of team",
         placeholder: "Size of team",
-        required: true,
+        required: false,
         options: [
           { value: "1_10", label: "1-10" },
           { value: "11_25", label: "11-25" },
@@ -94,14 +97,14 @@ export const questions: Array<{
         type: "text",
         label: "Company name",
         placeholder: "Company name",
-        required: true,
+        required: false,
       },
       {
         name: "levelOfExperience",
         type: "select",
         label: "Level of experience",
         placeholder: "Level of experience",
-        required: true,
+        required: false,
         options: [
           { value: "0_2", label: "0-2 years" },
           { value: "3_5", label: "3-5 years" },
@@ -114,3 +117,5 @@ export const questions: Array<{
     ],
   },
 ];
+
+export type Question = (typeof questions)[number];

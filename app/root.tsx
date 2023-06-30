@@ -20,7 +20,12 @@ import ClientStyleContext from "./styles/ClientStyleContext";
 import { startMSW } from "./entry.server";
 
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: stylesheetUrl }];
+  return [
+    { rel: "stylesheet", href: stylesheetUrl },
+    { rel: "preconnect", href: "https://fonts.googleapis.com" },
+    { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true },
+    { href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap", rel: "stylesheet" },
+  ];
 };
 
 // process.env is not available in the browser

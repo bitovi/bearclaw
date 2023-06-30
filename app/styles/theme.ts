@@ -17,7 +17,7 @@ declare module "@mui/material/styles" {
   interface Palette {
     appbar?: Palette["primary"];
   }
-
+  
   interface PaletteOptions {
     appbar?: PaletteOptions["primary"];
     cve?: {
@@ -42,6 +42,7 @@ declare module "@mui/material/Button" {
     buttonLarge: true;
     buttonMedium: true;
     buttonLargeOutlined: true;
+    whiteOutlined: true;
   }
 }
 
@@ -85,7 +86,7 @@ const theme = createTheme({
   },
   typography: {
     fontFamily:
-      "-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif",
+      "Inter, -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif",
     h1: {
       fontSize: "2rem",
       fontWeight: 700,
@@ -93,10 +94,10 @@ const theme = createTheme({
       letterSpacing: "0.00938em",
     },
     h2: {
-      fontSize: "1.5rem",
-      fontWeight: 700,
-      lineHeight: 1.5,
-      letterSpacing: "0.00938em",
+      fontSize: "3.75rem",
+      fontWeight: 300,
+      lineHeight: 1.2,
+      letterSpacing: "-0.09375rem",
     },
     h3: {
       fontStyle: "normal",
@@ -114,8 +115,7 @@ const theme = createTheme({
     },
     h5: {
       fontStyle: "normal",
-      fontWeight: 400,
-      fontSize: "24px",
+      fontSize: "1.5rem",
       lineHeight: "133.4%",
     },
     h6: {
@@ -126,9 +126,10 @@ const theme = createTheme({
       letterSpacing: "0.15px",
     },
     subtitle2: {
-      fontSize: "16px",
+      fontSize: "0.875rem",
       fontWeight: 500,
-      letterSpacing: "0.15px",
+      letterSpacing: "0.00625rem",
+      lineHeight: "1.57",
     },
     body1: {
       fontStyle: "normal",
@@ -170,6 +171,15 @@ const theme = createTheme({
       ],
     },
     MuiButton: {
+      styleOverrides: {
+        root: {
+          "&.MuiButton-sizeSmall": {
+            fontSize: "0.8125rem",
+            padding: "4px 10px",
+            borderRadius: "8px",
+          },
+        },
+      },
       variants: [
         {
           props: { variant: "contained" },
@@ -228,6 +238,17 @@ const theme = createTheme({
             lineHeight: "24px",
             letterSpacing: "0.4px",
             textTransform: "uppercase",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.1",
+            },
+          },
+        },
+        {
+          props: { variant: "whiteOutlined" },
+          style: {
+            color: "white",
+            backgroundColor: "transparent",
+            border: "1px solid white",
             "&:hover": {
               backgroundColor: "transparent",
             },

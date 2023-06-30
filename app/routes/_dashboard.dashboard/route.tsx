@@ -4,7 +4,6 @@ import { json } from "@remix-run/server-runtime";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
 
 import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
 import { getOrgandUserId, getUser } from "~/session.server";
@@ -12,6 +11,12 @@ import { getAllParentJobs } from "~/services/getAllParentJobs";
 import type { ParentJob } from "~/services/getAllParentJobs";
 import Table from "~/components/table/Table";
 import { usePageCopy } from "../_dashboard/copy";
+import { getKeyMetrics } from "../../services/getKeyMetrics";
+import { MetricCard } from "./components/MetricCard";
+import { IconFromString } from "~/components/iconFromString/IconFromString";
+import { Ellipse } from "./components/Ellipse.svg";
+import { Button } from "~/components/button";
+import background from "./components/background.png";
 
 interface ParentJobTable
   extends Omit<ParentJob, "analyzedAt" | "size" | "_id"> {
@@ -25,14 +30,17 @@ export async function loader({ request }: LoaderArgs) {
   const page = url.searchParams.get("page");
   const perPage = url.searchParams.get("perPage");
   const sort = url.searchParams.get("sort");
-  const jobs = await getAllParentJobs({ 
-    userId,
-    organizationId,
-    page,
-    perPage,
-    sort,
-  });
-  return json({ user, jobs, userId, organizationId });
+  const [keyMetrics, jobs] = await Promise.all([
+    getKeyMetrics({ days: 7, userId, organizationId }),
+    getAllParentJobs({
+      userId,
+      organizationId,
+      page,
+      perPage,
+      sort,
+    }),
+  ])
+  return json({ user, keyMetrics, jobs, userId, organizationId });
 }
 
 export async function action(args: ActionArgs) {
@@ -43,7 +51,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
   const copy = usePageCopy("dashboard");
-  const { userId, organizationId, user, jobs } = useLoaderData<typeof loader>();
+  const { userId, keyMetrics, organizationId, user, jobs } = useLoaderData<typeof loader>();
 
   return (
     <Box display="flex" flexDirection="column" gap="2rem">
@@ -58,59 +66,56 @@ export default function Index() {
           <Upload userId={userId} organizationId={organizationId} />
         </Box>
       </Box>
-      <Divider />
-      <Box display="flex" gap="1.5rem" justifyContent="stretch">
+      <Box display="grid" gap="1rem" justifyContent="stretch" gridTemplateColumns={{ xs: "1fr", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}>
+        {/* TODO: Add proper sorting params to links */}
+        <MetricCard
+          variant="files"
+          count={keyMetrics?.totalFilesAnalyzed || 0}
+          message="Total files analyzed"
+          to="/history"
+        />
+        <MetricCard
+          variant="vulnerabilities"
+          count={keyMetrics?.totalVulnerabilitiesCaptured || 0}
+          message="Total vulnerabilities captured"
+          to="/history?sort=totalVulnerabilitiesCaptured"
+        />
+        <MetricCard
+          variant="cves"
+          count={keyMetrics?.numberofCriticalWarnings || 0}
+          message="CVEs with critical scores"
+          to="/history?sort=numberofCriticalWarnings"
+        />
         <Box
-          flex="1"
-          component={Paper}
-          variant="outlined"
-          padding="2rem 1rem"
+          minWidth="22.5rem"
           display="flex"
+          gap={1}
+          padding="1rem"
           justifyContent="center"
-          flexDirection="column"
-          alignItems="center"
+          alignItems="flex-start"
+          alignSelf="stretch"
+          borderRadius="20px"
+          color="white"
+          sx={{ background: "linear-gradient(189deg, rgba(51, 51, 51, 0.80) 0%, rgba(0, 0, 0, 0.80) 72.94%), lightgray 50% / cover no-repeat" }}
+          position="relative"
         >
-          <Typography color="#999">100</Typography>
-          <Typography color="#999">Total No. Of Files Analyzed</Typography>
-        </Box>
-        <Box
-          flex="1"
-          component={Paper}
-          variant="outlined"
-          padding="2rem 1rem"
-          display="flex"
-          justifyContent="center"
-          flexDirection="column"
-          alignItems="center"
-        >
-          <Typography color="#999">1,234</Typography>
-          <Typography color="#999">Total No. Of Files Analyzed</Typography>
-        </Box>
-        <Box
-          flex="1"
-          component={Paper}
-          variant="outlined"
-          padding="2rem 1rem"
-          display="flex"
-          justifyContent="center"
-          flexDirection="column"
-          alignItems="center"
-        >
-          <Typography color="#999">689</Typography>
-          <Typography color="#999">Total No. Of Vulnerabilities</Typography>
-        </Box>
-        <Box
-          flex="1"
-          component={Paper}
-          variant="outlined"
-          padding="2rem 1rem"
-          display="flex"
-          justifyContent="center"
-          flexDirection="column"
-          alignItems="center"
-        >
-          <Typography color="#999">3</Typography>
-          <Typography color="#999">Critical Level Warnings</Typography>
+          <Box component="img" src={background} position="absolute" top="0" left="0" height="100%" width="100%" sx={{ objectFit: "cover", opacity: 0.5, mixBlendMode: "overlay" }} />
+          <Box display="flex" flexDirection="column" gap={1}>
+            <Box display="flex" fontSize="2rem" alignItems="center" gap="0.5rem">
+              <IconFromString icon="addChartTwoTone" />
+              <Typography variant="h5">Workflows</Typography>
+            </Box>
+            <Typography variant="subtitle2">
+              Update plan to add more workflows.
+            </Typography>
+            <Box display="flex" gap="1rem">
+              <Button variant="whiteOutlined" size="small" >Update plan</Button>
+              <Button size="small" variant="whiteOutlined">View</Button>
+            </Box>
+          </Box>
+          <Box flex="1" display="flex" justifyContent="center" paddingTop={1}>
+            <Ellipse number={2} />
+          </Box>
         </Box>
       </Box>
       <Box>
