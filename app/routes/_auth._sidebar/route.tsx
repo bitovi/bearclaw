@@ -1,5 +1,6 @@
 import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import { PortableText } from "@portabletext/react";
 import { useParentSidebarCopy } from "../_auth/copy";
 import { json } from "@remix-run/server-runtime";
@@ -17,10 +18,10 @@ export default function Index() {
     <Box
       component="main"
       display="flex"
-      flexDirection={{ xs: "column-reverse", md: "row" }}
+      flexDirection={{ xs: "column-reverse", lg: "row" }}
       justifyContent="center"
       alignItems="stretch"
-      height={{ xs: "auto", md: "100%" }}
+      height={{ xs: "auto", lg: "100%" }}
       minHeight="100%"
       width="100%"
     >
@@ -28,7 +29,7 @@ export default function Index() {
         position="relative"
         flex="1"
         width="100%"
-        maxWidth={{ xs: "unset", md: "480px" }}
+        maxWidth={{ xs: "unset", lg: "480px" }}
         display="flex"
         justifyContent="center"
         alignItems="center"
@@ -64,17 +65,20 @@ export default function Index() {
             transform: "rotate(18deg)",
           }}
         />
-        <Box
+        <Stack
           position="relative"
-          margin={{ xs: "3rem", md: "3rem 3rem 3rem 6rem" }}
-          display="flex"
-          flexDirection="column"
+          padding={{ xs: "3rem", lg: "3rem 3rem 3rem 6rem" }}
+          justifyContent="center"
+          alignItems="center"
           gap={2}
         >
-          <Carousel images={[SideBarImage, SideBarImage, SideBarImage]} />
-
-          <PortableText value={copy?.content} />
-        </Box>
+          <Stack alignItems="center" width="320" height="210">
+            <Carousel images={[SideBarImage, SideBarImage, SideBarImage]} />
+          </Stack>
+          <Box paddingTop={4}>
+            <PortableText value={copy?.content} />
+          </Box>
+        </Stack>
       </Box>
       <Box
         flex="2"
@@ -85,7 +89,7 @@ export default function Index() {
           backgroundColor: "white",
         }}
       >
-        <Box maxWidth="700px" padding={{ xs: "5rem 1rem", md: "unset" }}>
+        <Box maxWidth="700px" padding={{ xs: "5rem 1rem", lg: "unset" }}>
           <Outlet />
         </Box>
       </Box>

@@ -5,11 +5,10 @@
 Table User {
   id String [pk]
   email String [unique, not null]
-  emailVerificationToken String
-  emailTokenCreatedAt DateTime [default: `now()`, not null]
   emailVerifiedAt DateTime
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  VerificationToken VerificationToken
   password Password
   resetPasswordToken ResetPasswordToken
   mfaMethods MfaMethod [not null]
@@ -81,6 +80,14 @@ Table ResetPasswordToken {
   userId String [unique, not null]
 }
 
+Table VerificationToken {
+  id String [pk]
+  numericCode Int [not null]
+  expiresAt DateTime [not null]
+  user User [not null]
+  userId String [unique, not null]
+}
+
 Table MfaMethod {
   id String [pk]
   type String [not null]
@@ -144,6 +151,8 @@ Ref: Subscription.organizationId - Organization.id [delete: Cascade]
 Ref: Password.userId - User.id [delete: Cascade]
 
 Ref: ResetPasswordToken.userId - User.id [delete: Cascade]
+
+Ref: VerificationToken.userId - User.id [delete: Cascade]
 
 Ref: MfaMethod.userId > User.id [delete: Cascade]
 

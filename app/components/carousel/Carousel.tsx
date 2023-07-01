@@ -1,4 +1,4 @@
-import { Box, Stack, Step, StepLabel, Stepper } from "@mui/material";
+import { Box, Stack, Step, Stepper } from "@mui/material";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
 import { useState } from "react";
@@ -8,12 +8,7 @@ export function Carousel({ images = [] }: { images: (() => JSX.Element)[] }) {
 
   return (
     <Box>
-      <Stack
-        direction="row"
-        width="320"
-        height="210"
-        sx={{ overflow: "hidden", paddingBottom: 4 }}
-      >
+      <Stack direction="row" sx={{ overflow: "hidden", paddingBottom: 3 }}>
         {images.map((N, i) => {
           return (
             <Box
@@ -43,6 +38,7 @@ export function Carousel({ images = [] }: { images: (() => JSX.Element)[] }) {
         <Stack direction="row">
           {images.map((_section, i) => (
             <Step
+              last={i + 1 === images.length}
               key={`step-${i}`}
               onClick={() => {
                 setActiveStep(i);

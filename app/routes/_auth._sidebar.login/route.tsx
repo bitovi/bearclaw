@@ -2,8 +2,8 @@ import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
-import { Box } from "@mui/material";
-
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
@@ -14,11 +14,11 @@ import {
 } from "~/models/organization.server";
 import { TextInput } from "~/components/input";
 import { Link } from "~/components/link/Link";
-import { Checkbox } from "~/components/input/checkbox/Checkbox";
 import { getUserMfaMethods, resetMfaToken } from "~/models/mfa.server";
 import { MFA_TYPE } from "~/models/mfa";
 import { retrieveOrgUserOwner } from "~/models/organizationUsers.server";
 import { useParentFormCopy } from "../_auth/copy";
+import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -161,15 +161,27 @@ export default function LoginPage() {
   }, [actionData]);
 
   return (
-    <Box>
-      <Form method="post">
-        <Box
-          display="flex"
-          gap="0.5rem"
-          flexDirection="column"
-          textAlign="center"
-        >
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      textAlign="center"
+      gap="2rem"
+      width={{ xs: "300px", md: "500px", lg: "700px" }}
+    >
+      <AuthLogoHeader message={"Sign into your account"} />
+
+      <Box
+        component={Form}
+        method="post"
+        display="flex"
+        flexDirection="column"
+        gap="2rem"
+        width="100%"
+      >
+        <Box display="flex" flexDirection="column" gap={2}>
           <TextInput
+            fullWidth
             label={formCopy?.email || "Email address"}
             name="email"
             type="email"
@@ -181,6 +193,7 @@ export default function LoginPage() {
             inputProps={{ readOnly: !!guestEmail }}
           />
           <TextInput
+            fullWidth
             label={formCopy?.password || "Passowrd"}
             name="password"
             type="password"
@@ -191,34 +204,53 @@ export default function LoginPage() {
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
 
-          <Button type="submit" variant="contained">
-            {formCopy?.login || "Login"}
-          </Button>
-          <Checkbox id="remember" name="remember" label="Remember me" />
-          <div>
-            {formCopy?.noAccountMessage || "Don't have an account?"}
-            {" "}
-            <Link
-              to={{
-                pathname: "/join",
-                search: searchParams.toString(),
-              }}
-            >
-              {formCopy?.noAccountLoginLink || "Sign up"}
-            </Link>
-          </div>
-          <div>
-            <Link
-              to={{
-                pathname: "/forgotPassword",
-                search: searchParams.toString(),
-              }}
-            >
-              {formCopy?.forgotPasswordLink || "Forgot password?"}
-            </Link>
-          </div>
+          <Typography
+            alignSelf="flex-end"
+            variant="body2"
+            color="primary.main"
+            component={Link}
+            to={{
+              pathname: "/forgotPassword",
+              search: searchParams.toString(),
+            }}
+          >
+            {formCopy?.forgotPasswordLink || "Forgot password?"}
+          </Typography>
+
+          <Box width="66%" alignSelf="center">
+            <Button fullWidth type="submit" variant="buttonLarge">
+              {formCopy?.login || "Login"}
+            </Button>
+            <Typography variant="body1" color="text.secondary" paddingY={2}>
+              or
+            </Typography>
+            <Button fullWidth variant="buttonLargeOutlined" disabled>
+              <Typography color="text.primary">Login with Github</Typography>
+            </Button>
+            <Box paddingTop={2}>
+              <Typography
+                component="span"
+                variant="body2"
+                color="text.secondary"
+              >
+                New user?{" "}
+              </Typography>
+
+              <Typography
+                component={Link}
+                variant="body2"
+                color="primary.main"
+                to={{
+                  pathname: "/join",
+                  search: searchParams.toString(),
+                }}
+              >
+                {"Create an account"}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
-      </Form>
+      </Box>
     </Box>
   );
 }

@@ -1,8 +1,8 @@
 export function SideBarImage() {
   return (
     <img
-      height="100%"
-      width="100%"
+      height="auto"
+      width="auto"
       src={require("~/../public/images/samplePhoto.png")}
       alt="Troy Dashboard Preview"
     />

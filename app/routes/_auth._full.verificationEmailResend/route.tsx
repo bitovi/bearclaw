@@ -3,13 +3,13 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 import { Link } from "~/components/link";
-import { resetEmailValidationToken } from "~/models/user.server";
+import { resetVerificationToken } from "~/models/verificationToken.server";
 import { getUser } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   invariant(user, "User is required");
-  await resetEmailValidationToken(user);
+  await resetVerificationToken(user);
 
   return json({});
 }

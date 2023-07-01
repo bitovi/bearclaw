@@ -156,11 +156,11 @@ export default function Join() {
       alignItems="center"
       textAlign="center"
       gap="2rem"
-      maxWidth="436px"
+      width={{ xs: "300px", md: "500px", lg: "700px" }}
     >
       <AuthLogoHeader message={formCopy?.joinMessage} />
       {actionData?.errors.orgCreation && (
-        <div>{actionData?.errors.orgCreation}</div>
+        <Typography>{actionData?.errors.orgCreation}</Typography>
       )}
       <Box
         component={Form}
@@ -223,10 +223,10 @@ export default function Join() {
           <Button fullWidth type="submit" variant="buttonLarge">
             {formCopy?.createAccount || "Create Account"}
           </Button>
-          <Typography variant="body1" color="text.secondary">
+          <Typography paddingY={1} variant="body1" color="text.secondary">
             or
           </Typography>
-          <Button fullWidth variant="buttonLargeOutlined">
+          <Button fullWidth variant="buttonLargeOutlined" disabled>
             <Typography color="text.primary">Sign up with Github</Typography>
           </Button>
         </Box>

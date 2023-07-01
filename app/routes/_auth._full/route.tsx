@@ -57,8 +57,9 @@ export default function Index() {
           alignItems="center"
           padding="2rem 3rem"
         >
-          <Logo imageColor="white" />
+          <Logo imageColor="white" textColor="white" />
           <Typography
+            variant="body2"
             component={Link}
             to="/help"
             color="white"
