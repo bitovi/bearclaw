@@ -32,7 +32,7 @@ const handlers = [
     );
   }),
   rest.get(`${baseURL}/bear/get_rsboms_cyclonedx/*`, (req, res, ctx) => {
-    return res(ctx.json(fixture_getRSBOMDetail));
+    return res(ctx.json(processParams(fixture_getRSBOMDetail, req.url)));
   }),
   rest.get(`${baseURL}/claw/get_all_parent_jobs`, (req, res, ctx) => {
     return res(ctx.json(processParams(fixture_getAllParentJobs, req.url)));
