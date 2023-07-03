@@ -40,6 +40,7 @@ export async function loader({ request, params }: LoaderArgs) {
           description: vul.description,
           source: vul.source,
           lastModified: vul.published,
+          subcomponents: vul.subcomponents,
         };
       }
     );

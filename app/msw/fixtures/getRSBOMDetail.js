@@ -196,6 +196,12 @@ module.exports = [
           { exploitabilityScore: 10.0 },
           { exploitabilityScore3: 3.9 },
         ],
+        subcomponents: [
+          { key: "mock" },
+          { key: "mock" },
+          { key: "mock" },
+          { key: "mock" },
+        ],
         id: "CVE-2020-28347",
         source: { name: "cve@mitre.org" },
         description:

@@ -45,6 +45,7 @@ export interface EnhancedProperties extends Normalized.Property {
 }
 interface EnhancedVulnerability extends Normalized.Vulnerability {
   properties: EnhancedProperties[];
+  subcomponents: any[];
 }
 
 export interface ExpandedRSBOMEntry
@@ -61,7 +62,7 @@ export interface CveData {
   name?: string | undefined;
   rating?: string;
   description?: string | undefined;
-  subcomponent?: any[];
+  subcomponents?: any[];
   source?: {
     name?: string;
   };

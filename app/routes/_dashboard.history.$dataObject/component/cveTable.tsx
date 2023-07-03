@@ -80,7 +80,7 @@ export function CVETable({
                 "CVE Name Not Found"
               }
               rating={cve.rating}
-              subcomponentCount={cve.subcomponent?.length}
+              subcomponentCount={cve.subcomponents?.length}
               date={cve.date}
               description={cve.description}
               orientation={orientation}

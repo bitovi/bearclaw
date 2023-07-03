@@ -62,16 +62,17 @@ const BreakdownEntry = ({
 
 const severityFilter = (vulnerabilties: CveData[], filterText: string) => {
   const totalVulnerabilityCount = vulnerabilties.filter((vul) => {
-    if (!vul.rating && vul.rating !== "0") return false;
+    if (!vul.rating) return false;
     return rateSeverity(vul.rating) === filterText;
   }).length;
 
   const totalSubComponentCount = vulnerabilties.reduce((acc, curr) => {
-    if (!curr.rating && curr.rating !== "0") {
+    if (!curr.rating) {
       return acc;
     }
     if (rateSeverity(curr.rating) === filterText) {
-      return acc + (curr?.subcomponent?.length || 0);
+      console.log("value", curr);
+      return acc + (curr?.subcomponents?.length || 0);
     }
     return acc;
   }, 0);
