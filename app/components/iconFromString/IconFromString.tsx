@@ -8,11 +8,13 @@ import BiotechIcon from "@mui/icons-material/Biotech";
 import LinkIcon from "@mui/icons-material/Link";
 import SupportIcon from "@mui/icons-material/Support";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PersonIcon from "@mui/icons-material/Person";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import CheckIcon from "@mui/icons-material/Check";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import StarTwoToneIcon from "@mui/icons-material/StarTwoTone";
+import AddchartTwoToneIcon from "@mui/icons-material/AddchartTwoTone";
 
 export const icons = {
   dashboard: <DashboardIcon />,
@@ -24,12 +26,14 @@ export const icons = {
   accountBox: <AccountBoxIcon />,
   support: <SupportIcon />,
   logout: <LogoutIcon />,
+  person: <PersonIcon />,
   personSearch: <PersonSearchIcon />,
   infoOutlined: <InfoOutlinedIcon />,
   warning: <WarningAmberIcon />,
   check: <CheckIcon />,
   checkCircleOutline: <CheckCircleOutlineIcon />,
   starTwoTone: <StarTwoToneIcon />,
+  addChartTwoTone: <AddchartTwoToneIcon />,
 } as const;
 
 function isIcon(icon: string): icon is keyof typeof icons {
