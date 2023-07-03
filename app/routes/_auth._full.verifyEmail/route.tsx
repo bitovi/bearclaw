@@ -10,6 +10,7 @@ import { safeRedirect } from "~/utils";
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const token = url.searchParams.get("token");
+  const redirectTo = url.searchParams.get("redirectTo");
   if (token) {
     const result = await validateUserEmailByToken(token);
     if (result.error) {
@@ -18,7 +19,6 @@ export async function loader({ request }: LoaderArgs) {
         error: "Could not verify. Token is expired or invalid.",
       });
     }
-    const redirectTo = url.searchParams.get("redirectTo");
     if (redirectTo) {
       return json({
         isVerified: true,
@@ -28,7 +28,11 @@ export async function loader({ request }: LoaderArgs) {
     }
     return json({ isVerified: true, error: null, redirectTo: "/dashboard" });
   }
-  return json({ isVerified: false, error: null, redirectTo: null });
+  return json({
+    isVerified: false,
+    error: null,
+    redirectTo: safeRedirect(redirectTo),
+  });
 }
 
 export default function Route() {
@@ -69,7 +73,15 @@ export default function Route() {
           link.
         </Typography>
       )}
-      <Link to="/verificationEmailResend">Resend verification email</Link>
+      <Link
+        to={
+          redirectTo
+            ? `/verificationEmailResend?redirectTo=${redirectTo}`
+            : "/verificationEmailResend"
+        }
+      >
+        Resend verification email
+      </Link>
       <Typography>
         TESTING: Email messaging is not connected yet.{" "}
         <Link to="/fakeMail">View verification emails here</Link>

@@ -178,7 +178,7 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
-                  id="panel1a-header"
+                  id="panel1a-header-1"
                 >
                   <Typography>Option 1</Typography>
                 </AccordionSummary>
@@ -194,7 +194,7 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
-                  id="panel1a-header"
+                  id="panel1a-header-2"
                 >
                   <Typography>Option 2</Typography>
                 </AccordionSummary>
@@ -210,7 +210,7 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
-                  id="panel1a-header"
+                  id="panel1a-header-3"
                 >
                   <Typography>Option 3</Typography>
                 </AccordionSummary>

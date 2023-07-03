@@ -5,11 +5,17 @@ import invariant from "tiny-invariant";
 import { Link } from "~/components/link";
 import { resetEmailValidationToken } from "~/models/user.server";
 import { getUser } from "~/session.server";
+import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
+  const url = new URL(request.url);
   invariant(user, "User is required");
-  await resetEmailValidationToken(user);
+  const redirectTo = safeRedirect(
+    url.searchParams.get("redirectTo"),
+    "/dashboard"
+  );
+  await resetEmailValidationToken(user, redirectTo);
 
   return json({});
 }

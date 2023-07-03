@@ -12,7 +12,7 @@ import { CVETable } from "./component/cveTable";
 import { CVEDrawer } from "./component/cveDrawer";
 import { useState } from "react";
 import { CVEBreakdown } from "./component/cveBreakdown";
-import { rateVulnerability } from "./utils/vulenerabilityRating.server";
+import { rateVulnerability } from "./utils/vulnerabilityRating.server";
 import type { CveData } from "~/models/rsbomTypes";
 import { usePageCopy } from "../_dashboard/copy";
 import { getOrgandUserId } from "~/session.server";
