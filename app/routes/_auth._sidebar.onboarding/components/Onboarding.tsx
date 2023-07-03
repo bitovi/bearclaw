@@ -67,7 +67,8 @@ export function Onboarding({ response, redirectTo }: Props) {
                   <Box
                     display="grid"
                     gridTemplateColumns={{ xs: "1fr", md: "repeat(2, 1fr)" }}
-                    gap={2}
+                    rowGap={2}
+                    columnGap={1}
                   >
                     {step.questions.map((question) => (
                       <div key={question.name}>

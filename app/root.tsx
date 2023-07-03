@@ -23,8 +23,15 @@ export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: stylesheetUrl },
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
-    { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true },
-    { href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap", rel: "stylesheet" },
+    {
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+      crossOrigin: "anonymous",
+    },
+    {
+      href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap",
+      rel: "stylesheet",
+    },
   ];
 };
 

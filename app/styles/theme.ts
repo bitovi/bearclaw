@@ -14,13 +14,26 @@ declare module "@mui/material/styles" {
       focusVisible?: string;
     };
   }
-
   interface Palette {
     appbar?: Palette["primary"];
   }
   
   interface PaletteOptions {
     appbar?: PaletteOptions["primary"];
+    cve?: {
+      low: string;
+      medium: string;
+      high: string;
+    };
+    red?: {
+      600: string;
+    };
+    orange?: {
+      800?: string;
+    };
+    purple?: {
+      600?: string;
+    };
   }
 }
 
@@ -56,6 +69,20 @@ const theme = createTheme({
     error: {
       main: "#D32F2F",
     },
+    cve: {
+      low: "#5E35B1",
+      medium: "#EF6C00",
+      high: "#E53935",
+    },
+    red: {
+      600: "#E53935",
+    },
+    orange: {
+      800: "#EF6C00",
+    },
+    purple: {
+      600: "#8E24AA",
+    },
   },
   typography: {
     fontFamily:
@@ -75,12 +102,13 @@ const theme = createTheme({
     h3: {
       fontStyle: "normal",
       fontWeight: 400,
-      fontSize: "48px",
+      fontSize: "34px",
       lineHeight: "116.7%",
+      letterSpacing: "-0.5px",
     },
     h4: {
       fontStyle: "normal",
-      fontSize: "34px",
+      fontSize: "24px",
       fontWeight: 400,
       lineHeight: "123.5%",
       letterSpacing: "0.25px",
