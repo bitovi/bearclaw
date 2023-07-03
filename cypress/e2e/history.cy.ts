@@ -81,7 +81,7 @@ describe("History", () => {
     });
 
     // we are on the RSBOM Details page
-    cy.findByTestId("table-title");
+    cy.findByText(/CVE List/i);
   });
 
   it("Allows user to download rSBOM JSON", () => {

@@ -11,6 +11,7 @@ import { useTextCopy } from "~/hooks/useTextCopy";
 import type { CveData } from "~/models/rsbomTypes";
 import { rateSeverity } from "../utils/rateSeverity";
 import { useMemo } from "react";
+import { usePageCopy } from "~/routes/_dashboard/copy";
 
 const BreakdownEntry = ({
   title,
@@ -90,16 +91,18 @@ export function CVEBreakdown({
   date,
   vulnerabilties,
 }: CVEBreakdownProps) {
+  const copy = usePageCopy("detail");
+
   const highSeverity = useMemo(
-    () => severityFilter(vulnerabilties, "HIGH"),
+    () => severityFilter(vulnerabilties, "highSeverityCVE"),
     [vulnerabilties]
   );
   const mediumSeverity = useMemo(
-    () => severityFilter(vulnerabilties, "MEDIUM"),
+    () => severityFilter(vulnerabilties, "mediumSeverityCVE"),
     [vulnerabilties]
   );
   const lowSeverity = useMemo(
-    () => severityFilter(vulnerabilties, "LOW"),
+    () => severityFilter(vulnerabilties, "lowSeverityCVE"),
     [vulnerabilties]
   );
 
@@ -121,15 +124,15 @@ export function CVEBreakdown({
         </Box>
         <Stack gap={2} sx={{ width: "33%" }} flex={1}>
           <BreakdownEntry
-            title={`${highSeverity.totalVulnerabilityCount} High Severity CVE`}
-            details={`${highSeverity.totalSubComponentCount} vulnerable subcomponents`}
+            title={`${highSeverity.totalVulnerabilityCount} ${copy?.content?.highSeverityCVE} ${copy?.content?.cve}`}
+            details={`${highSeverity.totalSubComponentCount} ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon sx={{ color: "red.600" }} fontSize="small" />
             }
           />
           <BreakdownEntry
-            title={`${mediumSeverity.totalVulnerabilityCount} High Severity CVE`}
-            details={`${mediumSeverity.totalSubComponentCount} vulnerable subcomponents`}
+            title={`${mediumSeverity.totalVulnerabilityCount} ${copy?.content?.mediumSeverityCVE} ${copy?.content?.cve}`}
+            details={`${mediumSeverity.totalSubComponentCount} ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon
                 sx={{ color: "orange.800" }}
@@ -138,8 +141,8 @@ export function CVEBreakdown({
             }
           />
           <BreakdownEntry
-            title={`${lowSeverity.totalVulnerabilityCount} High Severity CVE`}
-            details={`${lowSeverity.totalSubComponentCount} vulnerable subcomponents`}
+            title={`${lowSeverity.totalVulnerabilityCount} ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
+            details={`${lowSeverity.totalSubComponentCount} ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon
                 sx={{ color: "purple.600" }}
@@ -151,18 +154,18 @@ export function CVEBreakdown({
       </Stack>
       <Stack gap={2} sx={{ width: "33%" }}>
         <BreakdownEntry
-          title="Object ID"
+          title={copy?.content?.objectId || "Object ID"}
           details={id || "UNDEFINED"}
           Icon={<DataObjectIcon fontSize="small" />}
           copy={true}
         />
         <BreakdownEntry
-          title="Type"
+          title={copy?.content?.type || "Type"}
           details={type || "UNDEFINED"}
           Icon={<SourceIcon fontSize="small" />}
         />
         <BreakdownEntry
-          title="Analysis Date"
+          title={copy?.content?.analysisDate || "Analysis Date"}
           details={date}
           Icon={<CalendarTodayIcon fontSize="small" />}
         />

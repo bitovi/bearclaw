@@ -8,6 +8,7 @@ import GridViewIcon from "@mui/icons-material/GridView";
 import { CVECard } from "./cveCard";
 import { useState } from "react";
 import type { CveData } from "~/models/rsbomTypes";
+import { usePageCopy } from "~/routes/_dashboard/copy";
 
 interface CveTableProps {
   cveData: CveData[];
@@ -21,6 +22,7 @@ export function CVETable({
   handleRowClick = () => {},
 }: CveTableProps) {
   const [orientation, setOrientation] = useState<"row" | "column">(_orienation);
+  const copy = usePageCopy("detail");
 
   const handleToggle = (
     _e: React.MouseEvent<HTMLElement, MouseEvent>,
@@ -42,10 +44,10 @@ export function CVETable({
     <Box>
       <Stack position="relative">
         <Typography variant="h6" color="text.primary">
-          CVE List
+          {copy?.content?.cveList}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Select and pin desired CVEs for quick reference.
+          {copy?.content?.tableSubheader}
         </Typography>
         <Box position="absolute" bottom={0} right={0}>
           <ToggleButtonGroup
@@ -72,7 +74,11 @@ export function CVETable({
           return (
             <CVECard
               key={`${cve.name}-${i}`}
-              name={cve.name || "CVE Name Not Found"}
+              name={
+                cve.name ||
+                copy?.content?.cveTitleNotFound ||
+                "CVE Name Not Found"
+              }
               rating={cve.rating}
               subcomponentCount={cve.subcomponent?.length || 0}
               date={cve.date}

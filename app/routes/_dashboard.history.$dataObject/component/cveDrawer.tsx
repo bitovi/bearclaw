@@ -15,8 +15,8 @@ import OutboundIcon from "@mui/icons-material/Outbound";
 import ShareIcon from "@mui/icons-material/Share";
 import { SeverityTab } from "./severityTab";
 import { rateSeverity } from "../utils/rateSeverity";
-import { WarningText } from "../types";
 import type { CveData } from "~/models/rsbomTypes";
+import { usePageCopy } from "~/routes/_dashboard/copy";
 
 interface CVEDrawerProps {
   open: boolean;
@@ -25,6 +25,7 @@ interface CVEDrawerProps {
 }
 
 export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
+  const copy = usePageCopy("detail");
   return (
     <Drawer
       onClose={onClose}
@@ -93,7 +94,7 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
           sx={{ overflowY: "scroll" }}
         >
           <Typography variant="h6" color="#FFF">
-            Details
+            {copy?.content?.sidebar_details}
           </Typography>
           <Box
             display="grid"
@@ -104,53 +105,57 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
             paddingTop={2}
           >
             <Box>
-              <AlertTitle>Source</AlertTitle>
+              <AlertTitle> {copy?.content?.sidebar_source}</AlertTitle>
               <Typography variant="body2">
                 {selectedCVE?.source?.name}
               </Typography>
             </Box>
             <Box>
-              <AlertTitle>Base Score</AlertTitle>
+              <AlertTitle> {copy?.content?.sidebar_baseScore}</AlertTitle>
               <Typography>
-                {WarningText[rateSeverity(selectedCVE?.rating || "0")]}
+                {copy?.content?.[rateSeverity(selectedCVE?.rating || "0")]}
               </Typography>
               <Typography variant="body2">{selectedCVE?.rating}</Typography>
               <Typography></Typography>
             </Box>
             <Box>
-              <AlertTitle>Published Date</AlertTitle>
+              <AlertTitle> {copy?.content?.sidebar_publishedDate}</AlertTitle>
               <Typography variant="body2">{selectedCVE?.date}</Typography>
             </Box>
             <Box>
-              <AlertTitle>Last Modified</AlertTitle>
+              <AlertTitle> {copy?.content?.sidebar_lastModified}</AlertTitle>
               <Typography variant="body2">UNDEFINED</Typography>
             </Box>
             <Box gridColumn={"span 2"}>
-              <AlertTitle>Description</AlertTitle>
+              <AlertTitle> {copy?.content?.sidebar_description}</AlertTitle>
               <Typography variant="body2">
                 {selectedCVE?.description}
               </Typography>
               <Typography variant="h6" color="#FFF" paddingY={3}>
-                Resources
+                {copy?.content?.sidebar_resources}
               </Typography>
               <ButtonGroup fullWidth>
                 <Button
                   variant="buttonLargeOutlined"
                   sx={{ color: "#FFF", borderColor: "#FFF" }}
                 >
-                  <Typography paddingRight={2}>More Details</Typography>
+                  <Typography paddingRight={2}>
+                    {copy?.content?.sidebar_moreDetailsButton}
+                  </Typography>
                   <OutboundIcon />
                 </Button>
                 <Button
                   variant="buttonLargeOutlined"
                   sx={{ color: "#FFF", borderColor: "#FFF" }}
                 >
-                  <Typography paddingRight={1}>Share</Typography>
+                  <Typography paddingRight={1}>
+                    {copy?.content?.sidebar_shareButton}
+                  </Typography>
                   <ShareIcon />
                 </Button>
               </ButtonGroup>
               <Typography variant="h6" color="#FFF" paddingY={3}>
-                Additional Information
+                {copy?.content?.sidebar_additionalInformation}
               </Typography>
               <Accordion>
                 <AccordionSummary

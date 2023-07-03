@@ -3,9 +3,9 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
 import { useRef } from "react";
-import { WarningText } from "../types";
 import { rateSeverity } from "../utils/rateSeverity";
 import { SeverityTab } from "./severityTab";
+import { usePageCopy } from "~/routes/_dashboard/copy";
 
 interface CVECardProps {
   name: string;
@@ -29,6 +29,8 @@ export function CVECard({
   orientation = "row",
 }: CVECardProps) {
   const checkboxRef = useRef<HTMLInputElement>(null);
+  const copy = usePageCopy("detail");
+
   return (
     <Card
       elevation={1}
@@ -38,7 +40,6 @@ export function CVECard({
         },
       }}
       onClick={(e) => {
-        console.log("test", e.target !== checkboxRef.current);
         if (e.target !== checkboxRef.current) {
           onRowClick(name);
         }
@@ -71,7 +72,7 @@ export function CVECard({
                 {name}
               </Typography>
               <Typography color="text.secondary" variant="subtitle2">
-                {rating} {WarningText[rateSeverity(rating)]}
+                {rating} {copy?.content?.[rateSeverity(rating)]}
               </Typography>
             </Stack>
           </Stack>
@@ -94,7 +95,7 @@ export function CVECard({
             {date}
           </Typography>
           <Typography component={"p"} color="text.primary" variant="caption">
-            {subcomponentCount} Severe Sub-components
+            {subcomponentCount} {copy?.content?.severeSubComponents}
           </Typography>
           {orientation === "column" && !!description && (
             <Typography

@@ -14,6 +14,7 @@ import { useState } from "react";
 import { CVEBreakdown } from "./component/cveBreakdown";
 import { rateVulnerability } from "./utils/vulenerabilityRating.server";
 import type { CveData } from "~/models/rsbomTypes";
+import { usePageCopy } from "../_dashboard/copy";
 
 export async function loader({ params }: LoaderArgs) {
   const { dataObject } = params;
@@ -48,6 +49,7 @@ export async function loader({ params }: LoaderArgs) {
 export default function Route() {
   const { expandedRSBOM, vulnerabilties, error } =
     useLoaderData<typeof loader>();
+  const copy = usePageCopy("detail");
   const [selectedCVE, setSelectedCVE] =
     useState<(typeof vulnerabilties)[number]>();
 
@@ -60,31 +62,53 @@ export default function Route() {
   return (
     <Stack>
       {expandedRSBOM && (
-        <Box alignSelf={"flex-end"} paddingBottom={2}>
-          <Button
-            LinkComponent={Link}
-            variant="text"
-            href={
-              "data:text/json;charset=utf-8," +
-              encodeURIComponent(JSON.stringify(expandedRSBOM, undefined, 2))
-            }
-            download={`${
-              expandedRSBOM?.metadata?.component?.name || expandedRSBOM?.id
-            }.json`}
-          >
-            <Typography
-              component={Stack}
-              variant="body2"
-              direction="row"
-              minHeight="64px"
-              justifyContent={"space-between"}
-              alignItems="center"
-            >
-              <FileDownloadIcon /> Download RSBOM
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          alignContent="center"
+        >
+          <Stack gap={1}>
+            <Typography variant="h3" color="text.primary">
+              {copy?.content?.pageHeader}{" "}
+              {expandedRSBOM.metadata?.component?.name || "file upload"}
             </Typography>
-          </Button>
-        </Box>
+            <Typography variant="body2" color="text.secondary">
+              {copy?.headline}{" "}
+              {vulnerabilties.length > 0
+                ? copy?.content?.noVulnerabilities
+                : copy?.content?.someVulnerabilities}
+            </Typography>
+          </Stack>
+
+          <Box alignSelf={"flex-end"}>
+            <Button
+              LinkComponent={Link}
+              variant="text"
+              href={
+                "data:text/json;charset=utf-8," +
+                encodeURIComponent(JSON.stringify(expandedRSBOM, undefined, 2))
+              }
+              download={`${
+                expandedRSBOM?.metadata?.component?.name || expandedRSBOM?.id
+              }.json`}
+            >
+              <Typography
+                component={Stack}
+                variant="body2"
+                direction="row"
+                minHeight="64px"
+                justifyContent={"space-between"}
+                alignItems="center"
+              >
+                <FileDownloadIcon />
+                {copy?.content?.downloadRSBOM}
+              </Typography>
+            </Button>
+          </Box>
+        </Stack>
       )}
+
       <Box paddingY={4}>
         <CVEBreakdown
           id={expandedRSBOM?.metadata?.component?.["bom-ref"]}
