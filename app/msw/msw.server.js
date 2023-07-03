@@ -31,7 +31,7 @@ const handlers = [
       )
     );
   }),
-  rest.get(`${baseURL}/claw/get_rsboms_cyclonedx/*`, (req, res, ctx) => {
+  rest.get(`${baseURL}/bear/get_rsboms_cyclonedx/*`, (req, res, ctx) => {
     return res(ctx.json(fixture_getRSBOMDetail));
   }),
   rest.get(`${baseURL}/claw/get_all_parent_jobs`, (req, res, ctx) => {

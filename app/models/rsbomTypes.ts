@@ -7,6 +7,14 @@ export interface RSBOMListEntry {
   id: string;
 }
 
+export interface TableEnhancedRSBOMListEntry
+  extends Omit<RSBOMListEntry, "@timestamp"> {
+  "@timestamp": {
+    date: string;
+    time: string;
+  };
+}
+
 // this section of response from Bearclaw appeared to be missing from the Cyclonedx format standard
 interface CyclonedxFile {
   fileInfo?: {
@@ -49,12 +57,13 @@ export interface ExpandedRSBOMEntry
 }
 
 export interface CveData {
-  date: string;
+  date?: string;
   name?: string | undefined;
-  rating: string;
+  rating?: string;
   description?: string | undefined;
   subcomponent?: any[];
   source?: {
     name?: string;
   };
+  lastModified?: string | undefined;
 }

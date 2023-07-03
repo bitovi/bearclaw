@@ -29,6 +29,6 @@ export function rateVulnerability(vul: EnhancedProperties[] | undefined) {
         return !!curr || curr === 0 ? acc + curr : acc;
       }, 0)
       .toFixed(1)
-      .toString() || "0"
+      .toString() || undefined
   );
 }
