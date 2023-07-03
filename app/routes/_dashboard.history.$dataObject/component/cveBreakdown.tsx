@@ -60,21 +60,19 @@ const BreakdownEntry = ({
   );
 };
 
-interface CVEBreakdownProps {
-  id: string | undefined;
-  type: string | undefined;
-  date: string;
-  vulnerabilties: CveData[];
-}
-
 const severityFilter = (vulnerabilties: CveData[], filterText: string) => {
   const totalVulnerabilityCount = vulnerabilties.filter((vul) => {
+    if (!vul.rating) return false;
     return rateSeverity(vul.rating) === filterText;
   }).length;
 
   const totalSubComponentCount = vulnerabilties.reduce((acc, curr) => {
+    if (!curr.rating) {
+      return acc;
+    }
     if (rateSeverity(curr.rating) === filterText) {
-      return acc + (curr?.subcomponent?.length || 0);
+      console.log("value", curr);
+      return acc + (curr?.subcomponents?.length || 0);
     }
     return acc;
   }, 0);
@@ -84,6 +82,13 @@ const severityFilter = (vulnerabilties: CveData[], filterText: string) => {
     totalSubComponentCount,
   };
 };
+
+interface CVEBreakdownProps {
+  id: string | undefined;
+  type: string | undefined;
+  date: string | undefined;
+  vulnerabilties: CveData[];
+}
 
 export function CVEBreakdown({
   id,
@@ -153,22 +158,28 @@ export function CVEBreakdown({
         </Stack>
       </Stack>
       <Stack gap={2} sx={{ width: "33%" }}>
-        <BreakdownEntry
-          title={copy?.content?.objectId || "Object ID"}
-          details={id || "UNDEFINED"}
-          Icon={<DataObjectIcon fontSize="small" />}
-          copy={true}
-        />
-        <BreakdownEntry
-          title={copy?.content?.type || "Type"}
-          details={type || "UNDEFINED"}
-          Icon={<SourceIcon fontSize="small" />}
-        />
-        <BreakdownEntry
-          title={copy?.content?.analysisDate || "Analysis Date"}
-          details={date}
-          Icon={<CalendarTodayIcon fontSize="small" />}
-        />
+        {id && (
+          <BreakdownEntry
+            title={copy?.content?.objectId || "Object ID"}
+            details={id}
+            Icon={<DataObjectIcon fontSize="small" />}
+            copy={true}
+          />
+        )}
+        {type && (
+          <BreakdownEntry
+            title={copy?.content?.type || "Type"}
+            details={type}
+            Icon={<SourceIcon fontSize="small" />}
+          />
+        )}
+        {date && (
+          <BreakdownEntry
+            title={copy?.content?.analysisDate || "Analysis Date"}
+            details={date}
+            Icon={<CalendarTodayIcon fontSize="small" />}
+          />
+        )}
       </Stack>
     </Stack>
   );

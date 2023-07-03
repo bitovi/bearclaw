@@ -59,16 +59,19 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
           alignItems="flex-end"
           gap="16px"
           alignSelf="stretch"
+          padding={!selectedCVE?.rating ? "40px 0px 0px 48px" : "unset"}
         >
-          <SeverityTab
-            rating={selectedCVE?.rating || "0"}
-            height={"112px"}
-            width="84px"
-            padding="0px 24px 16px 24px"
-            borderRadius="32px 0px 56px 0px"
-            position="flex-end"
-            textVariant="h4"
-          />
+          {selectedCVE?.rating && (
+            <SeverityTab
+              rating={selectedCVE.rating}
+              height={"112px"}
+              width="84px"
+              padding="0px 24px 16px 24px"
+              borderRadius="32px 0px 56px 0px"
+              position="flex-end"
+              textVariant="h4"
+            />
+          )}
           <Stack
             direction="row"
             paddingBottom={1}
@@ -104,33 +107,47 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
             gap={2}
             paddingTop={2}
           >
-            <Box>
-              <AlertTitle> {copy?.content?.sidebar_source}</AlertTitle>
-              <Typography variant="body2">
-                {selectedCVE?.source?.name}
-              </Typography>
-            </Box>
-            <Box>
-              <AlertTitle> {copy?.content?.sidebar_baseScore}</AlertTitle>
-              <Typography>
-                {copy?.content?.[rateSeverity(selectedCVE?.rating || "0")]}
-              </Typography>
-              <Typography variant="body2">{selectedCVE?.rating}</Typography>
-              <Typography></Typography>
-            </Box>
-            <Box>
-              <AlertTitle> {copy?.content?.sidebar_publishedDate}</AlertTitle>
-              <Typography variant="body2">{selectedCVE?.date}</Typography>
-            </Box>
-            <Box>
-              <AlertTitle> {copy?.content?.sidebar_lastModified}</AlertTitle>
-              <Typography variant="body2">UNDEFINED</Typography>
-            </Box>
+            {selectedCVE?.source?.name && (
+              <Box>
+                <AlertTitle> {copy?.content?.sidebar_source}</AlertTitle>
+                <Typography variant="body2">
+                  {selectedCVE.source.name}
+                </Typography>
+              </Box>
+            )}
+            {selectedCVE?.rating && (
+              <Box>
+                <AlertTitle> {copy?.content?.sidebar_baseScore}</AlertTitle>
+                <Typography>
+                  {copy?.content?.[rateSeverity(selectedCVE.rating)]}
+                </Typography>
+                <Typography variant="body2">{selectedCVE.rating}</Typography>
+                <Typography></Typography>
+              </Box>
+            )}
+            {selectedCVE?.date && (
+              <Box>
+                <AlertTitle> {copy?.content?.sidebar_publishedDate}</AlertTitle>
+                <Typography variant="body2">{selectedCVE.date}</Typography>
+              </Box>
+            )}
+            {selectedCVE?.lastModified && (
+              <Box>
+                <AlertTitle> {copy?.content?.sidebar_lastModified}</AlertTitle>
+                <Typography variant="body2">
+                  {selectedCVE.lastModified}
+                </Typography>
+              </Box>
+            )}
             <Box gridColumn={"span 2"}>
-              <AlertTitle> {copy?.content?.sidebar_description}</AlertTitle>
-              <Typography variant="body2">
-                {selectedCVE?.description}
-              </Typography>
+              {selectedCVE?.description && (
+                <>
+                  <AlertTitle> {copy?.content?.sidebar_description}</AlertTitle>
+                  <Typography variant="body2">
+                    {selectedCVE.description}
+                  </Typography>
+                </>
+              )}
               <Typography variant="h6" color="#FFF" paddingY={3}>
                 {copy?.content?.sidebar_resources}
               </Typography>

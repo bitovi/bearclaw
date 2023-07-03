@@ -4,9 +4,7 @@ import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
 
 const baseURL = process.env.BEARCLAW_URL;
 
-export async function retrieveRSBOMList(
-  params: ApiRequestParams = {}
-) {
+export async function retrieveRSBOMList(params: ApiRequestParams = {}) {
   const searchParams = buildApiSearchParams(params);
   const response = await fetch(
     `${baseURL}/bear/get_rsboms_cyclonedx?${searchParams}`
@@ -16,21 +14,22 @@ export async function retrieveRSBOMList(
 }
 
 export async function retrieveRSBOMDetails({
-  userId: _userId,
-  orgId: _orgId,
+  userId,
+  organizationId,
   dataObjectId,
 }: {
   userId?: string;
-  orgId?: string;
+  organizationId?: string;
   dataObjectId: string;
 }): Promise<ExpandedRSBOMEntry> {
-  /**
-    TODO: utilize userId and/or orgId to retrieve particular file histories 
-    */
+  const searchParams = buildApiSearchParams({
+    userId,
+    organizationId,
+  });
 
   const response = await fetch(
-    `${baseURL}/claw/get_rsboms_cyclonedx/${dataObjectId}`
+    `${baseURL}/bear/get_rsboms_cyclonedx/${dataObjectId}?${searchParams}`
   );
-  const { bc_rsbom_cyclonedx_aggregate } = await response.json();
-  return bc_rsbom_cyclonedx_aggregate[0];
+  const { data } = await response.json();
+  return data[0];
 }

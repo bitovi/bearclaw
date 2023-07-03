@@ -9,9 +9,9 @@ import { usePageCopy } from "~/routes/_dashboard/copy";
 
 interface CVECardProps {
   name: string;
-  rating: string;
-  subcomponentCount: number;
-  date: string;
+  rating?: string;
+  subcomponentCount?: number;
+  date?: string;
   description?: string;
   onCheck?: (checked: boolean) => void;
   onRowClick?: (id: string) => void;
@@ -53,14 +53,16 @@ export function CVECard({
           justifyContent="space-between"
         >
           <Stack direction="row">
-            <SeverityTab
-              rating={rating}
-              padding="0px 8px 0px 16px"
-              height="46px"
-              width="45px"
-              borderRadius="0px 0px 20px 0px"
-              position="center"
-            />
+            {rating && (
+              <SeverityTab
+                rating={rating}
+                padding="0px 8px 0px 16px"
+                height="46px"
+                width="45px"
+                borderRadius="0px 0px 20px 0px"
+                position="center"
+              />
+            )}
             <Stack
               alignItems={orientation === "row" ? "center" : ""}
               gap={1}
@@ -71,9 +73,11 @@ export function CVECard({
               <Typography color="text.primary" variant="subtitle2">
                 {name}
               </Typography>
-              <Typography color="text.secondary" variant="subtitle2">
-                {rating} {copy?.content?.[rateSeverity(rating)]}
-              </Typography>
+              {rating && (
+                <Typography color="text.secondary" variant="subtitle2">
+                  {rating} {copy?.content?.[rateSeverity(rating)]}
+                </Typography>
+              )}
             </Stack>
           </Stack>
 
@@ -91,12 +95,16 @@ export function CVECard({
           alignSelf="stretch"
           paddingBottom={1}
         >
-          <Typography component={"p"} color="text.primary" variant="caption">
-            {date}
-          </Typography>
-          <Typography component={"p"} color="text.primary" variant="caption">
-            {subcomponentCount} {copy?.content?.severeSubComponents}
-          </Typography>
+          {date && (
+            <Typography component={"p"} color="text.primary" variant="caption">
+              {date}
+            </Typography>
+          )}
+          {(!!subcomponentCount || subcomponentCount === 0) && (
+            <Typography component={"p"} color="text.primary" variant="caption">
+              {subcomponentCount} {copy?.content?.severeSubComponents}
+            </Typography>
+          )}
           {orientation === "column" && !!description && (
             <Typography
               component={Stack}

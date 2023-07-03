@@ -15,16 +15,21 @@ import { CVEBreakdown } from "./component/cveBreakdown";
 import { rateVulnerability } from "./utils/vulnerabilityRating.server";
 import type { CveData } from "~/models/rsbomTypes";
 import { usePageCopy } from "../_dashboard/copy";
+import { getOrgandUserId } from "~/session.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
   const { dataObject } = params;
   if (!dataObject) {
     return redirect("/history");
   }
 
   try {
+    const { userId, organizationId } = await getOrgandUserId(request);
+
     const expandedRSBOM = await retrieveRSBOMDetails({
       dataObjectId: dataObject,
+      userId,
+      organizationId,
     });
 
     const vulnerabilties: CveData[] = expandedRSBOM.vulnerabilities.map(
@@ -32,12 +37,14 @@ export async function loader({ params }: LoaderArgs) {
         return {
           name: vul.id,
           rating: rateVulnerability(vul.properties),
-          date: "Published 02/15/2005",
           description: vul.description,
           source: vul.source,
+          lastModified: vul.published,
+          subcomponents: vul.subcomponents,
         };
       }
     );
+
     return json({ expandedRSBOM, vulnerabilties, error: "" });
   } catch (e) {
     const error = (e as Error).message;
@@ -58,7 +65,6 @@ export default function Route() {
   if (error) {
     return <Box>{error}</Box>;
   }
-
   return (
     <Stack>
       {expandedRSBOM && (
@@ -76,8 +82,8 @@ export default function Route() {
             <Typography variant="body2" color="text.secondary">
               {copy?.headline}{" "}
               {vulnerabilties.length > 0
-                ? copy?.content?.noVulnerabilities
-                : copy?.content?.someVulnerabilities}
+                ? copy?.content?.someVulnerabilities
+                : copy?.content?.noVulnerabilities}
             </Typography>
           </Stack>
 
@@ -113,18 +119,21 @@ export default function Route() {
         <CVEBreakdown
           id={expandedRSBOM?.metadata?.component?.["bom-ref"]}
           type={expandedRSBOM?.metadata?.component?.["mime-type"]}
-          date={"UNDEFINED"}
+          date={undefined}
           vulnerabilties={vulnerabilties}
         />
       </Box>
-      <CVETable
-        orientation="row"
-        cveData={vulnerabilties}
-        handleRowClick={(id: string) => {
-          setSelectedCVE(vulnerabilties.find((cve) => cve.name === id));
-          setVisible(true);
-        }}
-      />
+      {!!vulnerabilties.length && (
+        <CVETable
+          orientation="row"
+          cveData={vulnerabilties}
+          handleRowClick={(id: string) => {
+            setSelectedCVE(vulnerabilties.find((cve) => cve.name === id));
+            setVisible(true);
+          }}
+        />
+      )}
+
       <CVEDrawer
         open={visible}
         selectedCVE={selectedCVE}
