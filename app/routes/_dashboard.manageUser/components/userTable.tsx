@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { visuallyHidden } from "@mui/utils";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { TextInput } from "~/components/input";
 import { Button } from "~/components/button";
 
@@ -200,9 +200,11 @@ export function UserTable({
 }) {
   const [selected, setSelected] = useState<readonly string[]>([]);
 
+  const nonOwnerUsers = useMemo(() => users.filter((n) => !n.owner), [users]);
+
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected: string[] = users.map((n) => n.id);
+      const newSelected: string[] = nonOwnerUsers.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -251,7 +253,7 @@ export function UserTable({
             <EnhancedTableHead
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
-              rowCount={users.length}
+              rowCount={nonOwnerUsers.length}
             />
             <TableBody>
               {users.map((row, index) => {

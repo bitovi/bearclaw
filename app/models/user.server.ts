@@ -66,7 +66,10 @@ export async function createUser(
   return { user, orgId: organization?.id, error };
 }
 
-export async function resetEmailValidationToken(user: User) {
+export async function resetEmailValidationToken(
+  user: User,
+  redirectTo?: string
+) {
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: {
@@ -75,7 +78,7 @@ export async function resetEmailValidationToken(user: User) {
       emailVerificationToken: createId(),
     },
   });
-  await sendEmailVerificationEmail(updatedUser);
+  await sendEmailVerificationEmail(updatedUser, redirectTo);
 
   return updatedUser;
 }
