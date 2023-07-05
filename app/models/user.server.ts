@@ -23,7 +23,7 @@ export function sendEmailVerificationEmail({
   verificationToken,
 }: {
   user: User;
-  redirectTo?: string;
+  redirectTo?: string | null;
   verificationToken: number;
 }) {
   const redirectParam = redirectTo

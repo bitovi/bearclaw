@@ -38,13 +38,17 @@ export async function deleteVerificationTokenByUserId(userId: string) {
   });
 }
 
-export async function resetVerificationToken(user: User) {
+export async function resetVerificationToken(
+  user: User,
+  redirectTo?: string | null
+) {
   await deleteVerificationTokenByUserId(user.id);
   const verificationToken = await createVerificationToken(user.id);
 
   await sendEmailVerificationEmail({
     user,
     verificationToken: verificationToken.numericCode,
+    redirectTo,
   });
 }
 

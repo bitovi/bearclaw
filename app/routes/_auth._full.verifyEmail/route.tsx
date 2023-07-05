@@ -14,72 +14,19 @@ import { validateUser } from "~/models/user.server";
 import { safeRedirect } from "~/utils";
 import { Button } from "~/components/button";
 import Stack from "@mui/material/Stack";
-import { TextInput } from "~/components/input";
-import type { TextFieldProps } from "@mui/material/TextField";
 import { useRef } from "react";
 import React from "react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { getUser } from "~/session.server";
 import { retrieveVerificationToken } from "~/models/verificationToken.server";
 import { Loading } from "~/components/loading/Loading";
-
-interface CodeInputBoxProps extends Omit<Partial<TextFieldProps>, "onKeyDown"> {
-  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
-}
-const CodeInputBox = React.forwardRef<HTMLInputElement, CodeInputBoxProps>(
-  (props, ref) => {
-    const { onKeyDown, ...textInputProps } = props;
-    return (
-      <TextInput
-        inputRef={ref}
-        variant="standard"
-        autoComplete="off"
-        inputProps={{
-          placeholder: "-",
-          onKeyDown,
-          required: true,
-          sx: {
-            textAlign: "center",
-            "&[type=number]": {
-              MozAppearance: "textfield",
-            },
-            "&::-webkit-outer-spin-button": {
-              WebkitAppearance: "none",
-              margin: 0,
-            },
-            "&::-webkit-inner-spin-button": {
-              WebkitAppearance: "none",
-              margin: 0,
-            },
-          },
-          type: "number",
-        }}
-        InputProps={{
-          disableUnderline: true,
-          sx: {
-            color: "#FFF",
-          },
-        }}
-        sx={{
-          width: "56px",
-          height: "56px",
-          display: "flex",
-          flexDirection: "row",
-          borderRadius: "8px",
-          border: "1px solid #FFF",
-          color: "#FFF",
-        }}
-        {...textInputProps}
-      />
-    );
-  }
-);
+import { CodeInputBox } from "./components/codeInputBox";
+import { useParentFormCopy } from "../_auth/copy";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const user = await getUser(request);
   const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
-
   return json({
     redirectTo,
     email: user?.email,
@@ -158,9 +105,11 @@ const onInputKeydown = ({
   nextRef?: React.RefObject<HTMLInputElement>;
 }) => {
   if (!e.currentTarget.value && e.code === "Backspace") {
+    // if the User backspaces in an empty input, focus state to the previous input
     previousRef?.current?.focus();
   }
   if (e.currentTarget.value && e.code !== "Backspace") {
+    // if the User attempts to enter more than a one digit, block and focus next input
     e.preventDefault();
     nextRef?.current?.focus();
   }
@@ -169,6 +118,7 @@ const onInputKeydown = ({
 export default function Route() {
   const { redirectTo, email } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const formCopy = useParentFormCopy();
   const navigation = useNavigation();
 
   const digit1Ref = useRef<HTMLInputElement>(null);
@@ -188,11 +138,15 @@ export default function Route() {
       justifyContent="center"
       gap={1}
     >
-      <Typography variant="h5">Please check your email!</Typography>
+      <Typography variant="h5">
+        {formCopy?.checkYourEmail || "Please check your email!"}
+      </Typography>
       <Typography variant="body2">
-        We've emailed a 6-digit confirmation code to{" "}
-        {email || "your provided email"}, please enter the code below to verify
-        your account.
+        {formCopy?.verifyEmailInstructionPart1 ||
+          "We've emailed a 6-digit confirmation code to"}{" "}
+        {email || "your provided email"},{" "}
+        {formCopy?.verifyEmailInstructionPart2 ||
+          "please enter the code below to verify your account."}
       </Typography>
       {actionData?.error && (
         <Typography paddingTop={2} color="error" variant="body1">
@@ -276,13 +230,13 @@ export default function Route() {
           navigation.state === "loading" ? (
             <Loading />
           ) : (
-            "VERIFY"
+            formCopy?.verifyEmailButton || "VERIFY"
           )}
         </Button>
       </Form>
       <Box>
         <Typography component="span" variant="body2">
-          Don't have a code?{" "}
+          {formCopy?.dontHaveCode || "Don't have a code?"}{" "}
         </Typography>
         <Typography
           component={Link}
@@ -290,7 +244,7 @@ export default function Route() {
           color="secondary.main"
           variant="body2"
         >
-          Resend code
+          {formCopy?.resendCode || "Resend code"}
         </Typography>
       </Box>
       <ButtonLink
@@ -302,7 +256,7 @@ export default function Route() {
         }}
       >
         <KeyboardArrowLeftIcon />
-        Return to Sign In
+        {formCopy?.returnToSignInCTA || "Return to Sign In"}
       </ButtonLink>
       <br />
       <br />

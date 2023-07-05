@@ -28,6 +28,7 @@ import { Loading } from "~/components/loading/Loading";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
+
   if (!user) return json({});
   if (user && !user.emailVerifiedAt) {
     await logout(request);
@@ -142,8 +143,8 @@ export const meta: V2_MetaFunction = () => [{ title: "Sign Up" }];
 
 export default function Join() {
   const formCopy = useParentFormCopy();
-  const [searchParams] = useSearchParams();
 
+  const [searchParams] = useSearchParams();
   const [passwordStrength, setPasswordStrength] = useState<number>(0);
   const redirectTo = searchParams.get("redirectTo") ?? undefined;
   const guestEmail = searchParams.get("email");
@@ -171,7 +172,12 @@ export default function Join() {
       gap="2rem"
       width={{ xs: "300px", md: "500px", lg: "700px" }}
     >
-      <AuthLogoHeader message={formCopy?.joinMessage} />
+      <AuthLogoHeader
+        message={
+          formCopy?.joinSubHeader ||
+          "Getting started is absolutely free. Fill in the fields to create your account."
+        }
+      />
       {actionData?.errors.orgCreation && (
         <Typography>{actionData?.errors.orgCreation}</Typography>
       )}
@@ -246,7 +252,7 @@ export default function Join() {
             navigation.state === "loading" ? (
               <Loading />
             ) : (
-              formCopy?.createAccount || "Create Account"
+              formCopy?.createAccountButton || "Sign Up"
             )}
           </Button>
           <Typography paddingY={1} variant="body1" color="text.secondary">
@@ -261,7 +267,9 @@ export default function Join() {
               true
             }
           >
-            <Typography color="text.primary">Sign up with Github</Typography>
+            <Typography color="text.primary">
+              {formCopy?.signUpWithGithub || "Sign up with Github"}
+            </Typography>
           </Button>
         </Box>
       </Box>
@@ -282,7 +290,7 @@ export default function Join() {
           color="primary.main"
           variant="body2"
         >
-          {formCopy?.existingAccountLoginLink || "Log in"}
+          {formCopy?.existingAccountLoginLink || "Sign in here"}
         </Typography>
       </Box>
     </Box>

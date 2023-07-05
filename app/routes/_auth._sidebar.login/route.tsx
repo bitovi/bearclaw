@@ -27,6 +27,7 @@ import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
+
   if (!user) return json({});
   if (user && !user.emailVerifiedAt) {
     await logout(request);
@@ -178,7 +179,9 @@ export default function LoginPage() {
       gap="2rem"
       width={{ xs: "300px", md: "500px", lg: "700px" }}
     >
-      <AuthLogoHeader message={"Sign into your account"} />
+      <AuthLogoHeader
+        message={formCopy?.loginSubHeader || "Sign into your account"}
+      />
 
       <Box
         component={Form}
@@ -250,7 +253,9 @@ export default function LoginPage() {
                 true
               }
             >
-              <Typography color="text.primary">Login with Github</Typography>
+              <Typography color="text.primary">
+                {formCopy?.loginWithGithub || "Login with Github"}
+              </Typography>
             </Button>
             <Box paddingTop={2}>
               <Typography
@@ -258,7 +263,7 @@ export default function LoginPage() {
                 variant="body2"
                 color="text.secondary"
               >
-                New user?{" "}
+                {formCopy?.noAccountMessage || "New User?"}{" "}
               </Typography>
 
               <Typography
@@ -270,7 +275,7 @@ export default function LoginPage() {
                   search: searchParams.toString(),
                 }}
               >
-                {"Create an account"}
+                {formCopy?.noAccountLoginLink || "Create an account"}
               </Typography>
             </Box>
           </Box>

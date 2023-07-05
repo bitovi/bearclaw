@@ -3,8 +3,9 @@ import Box from "@mui/material/Box";
 import { Logo } from "~/components/logo/Logo";
 import { Link } from "~/components/link";
 import { Typography } from "@mui/material";
-import { fetchAuthCopy } from "../_auth/copy";
+import { fetchAuthCopy, useParentFormCopy } from "../_auth/copy";
 import { json } from "@remix-run/server-runtime";
+import { PortableText } from "@portabletext/react";
 
 export async function loader() {
   const copy = await fetchAuthCopy();
@@ -12,6 +13,8 @@ export async function loader() {
 }
 
 export default function Index() {
+  const formCopy = useParentFormCopy();
+
   return (
     <Box
       component="main"
@@ -63,9 +66,20 @@ export default function Index() {
             component={Link}
             to="/help"
             color="white"
-            sx={{ textDecoration: "none" }}
+            sx={{
+              textDecoration: "none",
+              color: "white",
+              "& a": {
+                color: "white",
+                textDecoration: "none",
+              },
+            }}
           >
-            Need help?
+            {formCopy?.needHelp ? (
+              <PortableText value={formCopy.needHelp} />
+            ) : (
+              "Need Help?"
+            )}
           </Typography>
         </Box>
         <Box flex="1" position="relative" margin="3rem">
