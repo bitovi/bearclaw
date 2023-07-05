@@ -10,6 +10,7 @@ Browser-based UI to interact with the BearClaw software analysis tool.
 - [GitHub Actions](https://github.com/features/actions) for deploy on merge to production and staging environments
 - Email/Password Authentication with [cookie-based sessions](https://remix.run/utils/sessions#md-createcookiesessionstorage)
 - Database ORM with [Prisma](https://prisma.io)
+- Headless CRM with [Sanity](https://www.sanity.io/)
 - Styling with [Tailwind](https://tailwindcss.com/)
 - End-to-end testing with [Cypress](https://cypress.io)
 - Local third party request mocking with [MSW](https://mswjs.io)
@@ -20,23 +21,36 @@ Browser-based UI to interact with the BearClaw software analysis tool.
 
 ## Development
 
-### Docker
+> The dev environment needs Postgres to match production. Using a Docker container to do this is the simplest method.
 
-The dev environment needs Postgres to match production and its just easier to set all that up with a Docker container so you just need to install Docker and teh rest can be magic.
+1. Download and install [Docker](https://www.docker.com/). The recommended settings should be fine.
 
-Download and install [Docker](https://www.docker.com/). The recommended settings should be fine.
+2. Create your `.env` file in the root folder. Fill it out by doing one of the following:
 
-- Initial setup:
+- (Simple) Ask a Project Manager or Team Lead for a link to an existing Environment Vars document. Copy all values into the `.env` file.
+- (Advanced) Supply your own environment variables using `.env.example` as a guideline.
 
-  ```sh
-  npm run setup
-  ```
+3. Run the initial setup in a terminal:
 
-- Start dev server:
+```sh
+npm run setup
+```
 
-  ```sh
-  npm run dev
-  ```
+4. Start Docker database in a separate terminal:
+
+```sh
+npm run database
+```
+
+5.  Start dev server in a separate terminal:
+
+```sh
+npm run dev
+```
+
+<!-- Is there any need to include this? should we remove this and the related script? -->
+
+> Alternatively `npm run docker` will combine steps 4 & 5 by running everything in Docker. However, Remix is slower in a container.
 
 This starts your app in development mode with hot module reload, rebuilding assets on file changes.
 
@@ -64,11 +78,41 @@ This project uses Prisma to manage and interact with the database. Use migration
 
 [Tailwind](https://tailwindcss.com/docs/) for now
 
+### Content Management
+
+[Sanity](https://www.sanity.io/docs)
+[Troy UI Content on Sanity](https://bigbear-troy.sanity.studio/)
+
+All UI content is stored on Sanity’s servers, request editing permissions from Project or Team Manager. For development, Sanity only needs to run locally when changing schemas or altering the editor UI.
+
+If you do need to run Sanity locally, do the following:
+
+1. Request editing permissions form Project or Team Manager.
+
+2. Install Sanity
+
+```
+npm create sanity@latest
+```
+
+3. in a separate terminal instance, from the root directory
+
+```
+$ cd sanity
+$ npm run dev
+```
+
 ### Automation: Husky
 
 [Husky Docs](https://typicode.github.io/husky/#/)
 
 Husky hooks can add automated checks to various development steps. Currently, validation (lint, test, etc) will run when creating a commit. If the validation step fails, the commit will be blocked.
+
+If you have very good reason and absolutely must make a commit without running tests:
+
+```
+git commit -m "your message" --no-verify
+```
 
 ## Deployment
 
@@ -141,7 +185,15 @@ We use Cypress for our End-to-End tests in this project. You'll find those in th
 
 We use [`@testing-library/cypress`](https://testing-library.com/cypress) for selecting elements on the page semantically.
 
-To run these tests in development, run `npm run test:e2e:dev` which will start the dev server for the app as well as the Cypress client. Make sure the database is running in docker as described above.
+To run these tests in development, the following script will start the dev server for the app as well as the Cypress client.
+
+```
+// Make sure the database is first running in docker as described above.
+
+npm run test:e2e:dev
+```
+
+- Choose `e2e testing` and `electron browser` when prompted.
 
 We have a utility for testing authenticated features without having to go through the login flow:
 
@@ -159,6 +211,12 @@ afterEach(() => {
 ```
 
 That way, we can keep your local db clean and keep your tests isolated from one another.
+
+> Tip: If you want to run unit tests, linter, and typescript check without e2e:
+>
+> ```
+> npm run validate:quick
+> ```
 
 ### Vitest
 
