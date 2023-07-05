@@ -1,7 +1,12 @@
 import Box from "@mui/material/Box";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import Typography from "@mui/material/Typography";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Link } from "~/components/link";
@@ -16,42 +21,59 @@ import React from "react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { getUser } from "~/session.server";
 import { retrieveVerificationToken } from "~/models/verificationToken.server";
+import { Loading } from "~/components/loading/Loading";
 
-const CodeInputBox = React.forwardRef<
-  HTMLInputElement,
-  Partial<TextFieldProps>
->((props, ref) => {
-  return (
-    <TextInput
-      inputRef={ref}
-      variant="standard"
-      inputProps={{
-        required: true,
-        maxLength: 1,
-        type: "text",
-        sx: {
-          textAlign: "center",
-        },
-      }}
-      InputProps={{
-        disableUnderline: true,
-        sx: {
+interface CodeInputBoxProps extends Omit<Partial<TextFieldProps>, "onKeyDown"> {
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+}
+const CodeInputBox = React.forwardRef<HTMLInputElement, CodeInputBoxProps>(
+  (props, ref) => {
+    const { onKeyDown, ...textInputProps } = props;
+    return (
+      <TextInput
+        inputRef={ref}
+        variant="standard"
+        autoComplete="off"
+        inputProps={{
+          placeholder: "-",
+          onKeyDown,
+          required: true,
+          sx: {
+            textAlign: "center",
+            "&[type=number]": {
+              MozAppearance: "textfield",
+            },
+            "&::-webkit-outer-spin-button": {
+              WebkitAppearance: "none",
+              margin: 0,
+            },
+            "&::-webkit-inner-spin-button": {
+              WebkitAppearance: "none",
+              margin: 0,
+            },
+          },
+          type: "number",
+        }}
+        InputProps={{
+          disableUnderline: true,
+          sx: {
+            color: "#FFF",
+          },
+        }}
+        sx={{
+          width: "56px",
+          height: "56px",
+          display: "flex",
+          flexDirection: "row",
+          borderRadius: "8px",
+          border: "1px solid #FFF",
           color: "#FFF",
-        },
-      }}
-      sx={{
-        width: "56px",
-        height: "56px",
-        display: "flex",
-        flexDirection: "row",
-        borderRadius: "8px",
-        border: "1px solid #FFF",
-        color: "#FFF",
-      }}
-      {...props}
-    />
-  );
-});
+        }}
+        {...textInputProps}
+      />
+    );
+  }
+);
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -109,9 +131,45 @@ export async function action({ request }: ActionArgs) {
   });
 }
 
+const onInputChange = ({
+  e,
+  previousRef,
+  nextRef,
+}: {
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
+  previousRef?: React.RefObject<HTMLInputElement>;
+  nextRef?: React.RefObject<HTMLInputElement>;
+}) => {
+  if (e.target.value.length) {
+    nextRef?.current?.focus();
+  }
+  if (e.target.value.length === 0) {
+    previousRef?.current?.focus();
+  }
+};
+
+const onInputKeydown = ({
+  e,
+  previousRef,
+  nextRef,
+}: {
+  e: React.KeyboardEvent<HTMLInputElement>;
+  previousRef?: React.RefObject<HTMLInputElement>;
+  nextRef?: React.RefObject<HTMLInputElement>;
+}) => {
+  if (!e.currentTarget.value && e.code === "Backspace") {
+    previousRef?.current?.focus();
+  }
+  if (e.currentTarget.value && e.code !== "Backspace") {
+    e.preventDefault();
+    nextRef?.current?.focus();
+  }
+};
+
 export default function Route() {
   const { redirectTo, email } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
 
   const digit1Ref = useRef<HTMLInputElement>(null);
   const digit2Ref = useRef<HTMLInputElement>(null);
@@ -154,74 +212,72 @@ export default function Route() {
         >
           <CodeInputBox
             ref={digit1Ref}
-            onChange={(e) => {
-              if (e.target.value.length === 1) {
-                digit2Ref.current?.focus();
-              }
-            }}
+            onChange={(e) => onInputChange({ e, nextRef: digit2Ref })}
+            onKeyDown={(e) => onInputKeydown({ e, nextRef: digit2Ref })}
             name={"digit1"}
             autoFocus
           />
           <CodeInputBox
             ref={digit2Ref}
-            onChange={(e) => {
-              if (e.target.value.length === 1) {
-                digit3Ref.current?.focus();
-              }
-              if (e.target.value.length === 0) {
-                digit1Ref.current?.focus();
-              }
-            }}
+            onChange={(e) =>
+              onInputChange({ e, nextRef: digit3Ref, previousRef: digit1Ref })
+            }
+            onKeyDown={(e) =>
+              onInputKeydown({ e, previousRef: digit1Ref, nextRef: digit3Ref })
+            }
             name={"digit2"}
           />
           <CodeInputBox
             ref={digit3Ref}
-            onChange={(e) => {
-              if (e.target.value.length === 1) {
-                digit4Ref.current?.focus();
-              }
-              if (e.target.value.length === 0) {
-                digit2Ref.current?.focus();
-              }
-            }}
+            onChange={(e) =>
+              onInputChange({ e, nextRef: digit4Ref, previousRef: digit2Ref })
+            }
+            onKeyDown={(e) =>
+              onInputKeydown({ e, previousRef: digit2Ref, nextRef: digit4Ref })
+            }
             name={"digit3"}
           />
           <CodeInputBox
             ref={digit4Ref}
-            onChange={(e) => {
-              if (e.target.value.length === 1) {
-                digit5Ref.current?.focus();
-              }
-              if (e.target.value.length === 0) {
-                digit3Ref.current?.focus();
-              }
-            }}
+            onChange={(e) =>
+              onInputChange({ e, nextRef: digit5Ref, previousRef: digit3Ref })
+            }
+            onKeyDown={(e) =>
+              onInputKeydown({ e, previousRef: digit3Ref, nextRef: digit5Ref })
+            }
             name={"digit4"}
           />
           <CodeInputBox
             ref={digit5Ref}
-            onChange={(e) => {
-              if (e.target.value.length === 1) {
-                digit6Ref.current?.focus();
-              }
-              if (e.target.value.length === 0) {
-                digit4Ref.current?.focus();
-              }
-            }}
+            onChange={(e) =>
+              onInputChange({ e, nextRef: digit6Ref, previousRef: digit4Ref })
+            }
+            onKeyDown={(e) =>
+              onInputKeydown({ e, previousRef: digit4Ref, nextRef: digit6Ref })
+            }
             name={"digit5"}
           />
           <CodeInputBox
             ref={digit6Ref}
-            onChange={(e) => {
-              if (e.target.value.length === 0) {
-                digit5Ref.current?.focus();
-              }
-            }}
+            onChange={(e) => onInputChange({ e, previousRef: digit5Ref })}
+            onKeyDown={(e) => onInputKeydown({ e, previousRef: digit5Ref })}
             name={"digit6"}
           />
         </Stack>
-        <Button type="submit" variant="buttonLarge" color="primary">
-          VERIFY
+        <Button
+          type="submit"
+          variant="buttonLarge"
+          color="primary"
+          disabled={
+            navigation.state === "submitting" || navigation.state === "loading"
+          }
+        >
+          {navigation.state === "submitting" ||
+          navigation.state === "loading" ? (
+            <Loading />
+          ) : (
+            "VERIFY"
+          )}
         </Button>
       </Form>
       <Box>

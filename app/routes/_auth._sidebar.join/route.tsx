@@ -1,10 +1,16 @@
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useNavigation,
+  useSearchParams,
+} from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 
-import { getUserId, createUserSession } from "~/session.server";
+import { getUser, createUserSession, logout } from "~/session.server";
 
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
@@ -18,11 +24,16 @@ import { useParentFormCopy } from "../_auth/copy";
 import { PortableText } from "@portabletext/react";
 import { Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
+import { Loading } from "~/components/loading/Loading";
 
 export async function loader({ request }: LoaderArgs) {
-  const userId = await getUserId(request);
-  if (userId) return redirect("/dashboard");
-  return json({});
+  const user = await getUser(request);
+  if (!user) return json({});
+  if (user && !user.emailVerifiedAt) {
+    await logout(request);
+    return json({});
+  }
+  return redirect("/dashboard");
 }
 
 export async function action({ request }: ActionArgs) {
@@ -138,6 +149,8 @@ export default function Join() {
   const guestEmail = searchParams.get("email");
 
   const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -220,13 +233,34 @@ export default function Join() {
           <input type="hidden" name="redirectTo" value={redirectTo} />
         </Box>
         <Box width="66%" alignSelf="center">
-          <Button fullWidth type="submit" variant="buttonLarge">
-            {formCopy?.createAccount || "Create Account"}
+          <Button
+            fullWidth
+            type="submit"
+            variant="buttonLarge"
+            disabled={
+              navigation.state === "submitting" ||
+              navigation.state === "loading"
+            }
+          >
+            {navigation.state === "submitting" ||
+            navigation.state === "loading" ? (
+              <Loading />
+            ) : (
+              formCopy?.createAccount || "Create Account"
+            )}
           </Button>
           <Typography paddingY={1} variant="body1" color="text.secondary">
             or
           </Typography>
-          <Button fullWidth variant="buttonLargeOutlined" disabled>
+          <Button
+            fullWidth
+            variant="buttonLargeOutlined"
+            disabled={
+              navigation.state === "submitting" ||
+              navigation.state === "loading" ||
+              true
+            }
+          >
             <Typography color="text.primary">Sign up with Github</Typography>
           </Button>
         </Box>

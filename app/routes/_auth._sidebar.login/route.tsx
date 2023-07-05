@@ -1,10 +1,15 @@
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData, useSearchParams } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  useSearchParams,
+} from "@remix-run/react";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { createUserSession, getUserId } from "~/session.server";
+import { createUserSession, getUser, logout } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
@@ -21,9 +26,13 @@ import { useParentFormCopy } from "../_auth/copy";
 import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 
 export async function loader({ request }: LoaderArgs) {
-  const userId = await getUserId(request);
-  if (userId) return redirect("/dashboard");
-  return json({});
+  const user = await getUser(request);
+  if (!user) return json({});
+  if (user && !user.emailVerifiedAt) {
+    await logout(request);
+    return json({});
+  }
+  return redirect("/dashboard");
 }
 
 export async function action({ request }: ActionArgs) {
@@ -144,7 +153,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 export default function LoginPage() {
   const formCopy = useParentFormCopy();
   const [searchParams] = useSearchParams();
-
+  const navigation = useNavigation();
   const redirectTo = safeRedirect(searchParams.get("redirectTo"), "/dashboard");
   const guestEmail = searchParams.get("email");
 
@@ -218,13 +227,29 @@ export default function LoginPage() {
           </Typography>
 
           <Box width="66%" alignSelf="center">
-            <Button fullWidth type="submit" variant="buttonLarge">
+            <Button
+              fullWidth
+              type="submit"
+              variant="buttonLarge"
+              disabled={
+                navigation.state === "submitting" ||
+                navigation.state === "loading"
+              }
+            >
               {formCopy?.login || "Login"}
             </Button>
             <Typography variant="body1" color="text.secondary" paddingY={2}>
               or
             </Typography>
-            <Button fullWidth variant="buttonLargeOutlined" disabled>
+            <Button
+              fullWidth
+              variant="buttonLargeOutlined"
+              disabled={
+                navigation.state === "submitting" ||
+                navigation.state === "loading" ||
+                true
+              }
+            >
               <Typography color="text.primary">Login with Github</Typography>
             </Button>
             <Box paddingTop={2}>

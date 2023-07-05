@@ -52,18 +52,16 @@ export async function loader({ request }: LoaderArgs) {
     return redirect(`/verify-email/${result.status}`);
   }
 
-  if (user.emailVerifiedAt) {
-    if (redirectTo && redirectTo !== "/") {
-      // Only redirect if an explicit redirect path was passed (don't use default)
-      // for example to /invite/$token
-      redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
-    } else {
-      return json({
-        copy,
-        isVerified: true,
-        permissions,
-      });
-    }
+  if (redirectTo && redirectTo !== "/") {
+    // Only redirect if an explicit redirect path was passed (don't use default)
+    // for example to /invite/$token
+    redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
+  } else {
+    return json({
+      copy,
+      isVerified: true,
+      permissions,
+    });
   }
 
   return redirect("/verify-email");
@@ -98,7 +96,7 @@ export default function Index() {
           height="100%"
           overflow="hidden auto"
           flex="1"
-          padding={4}
+          padding={6}
           sx={{ backgroundColor: "white", borderTopLeftRadius: "16px" }}
         >
           <main>
