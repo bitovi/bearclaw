@@ -72,6 +72,9 @@ export default function Index() {
           alignItems="center"
           gap={2}
         >
+          {/* TODO: Implement images in CMS 
+          https://usa-vbt.atlassian.net/browse/BA-166?atlOrigin=eyJpIjoiZTRkMTY5MzY1ODFkNGQ2ZmFiOTY2NDA5MjgzZDBmNjciLCJwIjoiaiJ9
+          */}
           <Stack alignItems="center" width="320" height="210">
             <Carousel images={[SideBarImage, SideBarImage, SideBarImage]} />
           </Stack>

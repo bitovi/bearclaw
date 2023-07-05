@@ -1,4 +1,6 @@
 export function DataCircle() {
+  //TODO implement this as a dynamic data circle
+  //https://usa-vbt.atlassian.net/browse/BA-165?atlOrigin=eyJpIjoiNTU0Mjk5ZjFjYmZkNDI0OWE1ODZmZjA3N2NlODlhMWYiLCJwIjoiaiJ9
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
