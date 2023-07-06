@@ -166,37 +166,58 @@ describe("join and authenticate tests", () => {
     cy.findByRole("link", { name: /forgot password/i })
       .should("be.visible")
       .click({ force: true });
-    cy.wait(500)
-      .findByRole("textbox", { name: /email/i })
-      .type(loginForm.email);
-    cy.findByRole("button", { name: /password reset/i })
-      .should("be.visible")
-      .click({ force: true });
-    cy.findByRole("link", { name: /View emails here/i })
-      .should("be.visible")
-      .click({ force: true });
-    cy.findAllByTestId(loginForm.email)
-      .first()
-      .findAllByRole("link", { name: /reset your password/i })
+    cy.wait(500).findByRole("textbox").type(loginForm.email);
+    cy.findByRole("button", { name: /reset password/i })
       .should("be.visible")
       .click({ force: true });
 
-    cy.wait(500)
-      .findByLabelText(/create new password/i)
-      .type("1");
+    cy.visitAndCheck("/fakeMail");
+
+    cy.findAllByTestId(loginForm.email)
+      .eq(0)
+      .within(() => {
+        cy.findByTestId("verification-token")
+          .invoke("text")
+          .then(($token) => {
+            cy.findByRole("link", { name: /enter your code here/i })
+              .should("be.visible")
+              .click({ force: true });
+            cy.wait(1000);
+            cy.focused().type($token);
+          });
+      });
+
+    cy.wait(2000).findByTestId("passwordInput").as("password").type("bad");
+
+    cy.findByTestId("confirmPasswordInput")
+      .as("confirmPassword")
+      .type("nogood");
+
     cy.findByRole("button", { name: /reset password/i })
       .should("be.visible")
       .click({ force: true });
+
+    cy.findByText(/passwords do not match/i);
+
+    cy.wait(500).get("@confirmPassword").clear().type("bad");
+
+    cy.findByRole("button", { name: /reset password/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(500);
     cy.findByText(/too short/i);
-    cy.wait(500)
-      .findByLabelText(/create new password/i)
-      .clear()
-      .type(loginForm.resetPassword);
+
+    cy.get("@password").clear().type(loginForm.resetPassword);
+    cy.get("@confirmPassword").clear().type(loginForm.resetPassword);
+
     cy.findByRole("button", { name: /reset password/i })
       .should("be.visible")
       .click({ force: true });
-    cy.findByText(/your password has been reset/i);
-    cy.findByRole("link", { name: /login/i })
+
+    cy.findByText(/your password has been successfully reset/i);
+
+    cy.findByRole("link", { name: /sign in/i })
       .should("be.visible")
       .click({ force: true });
 

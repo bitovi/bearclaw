@@ -20,6 +20,12 @@ export default {
       type: 'string',
     },
     {
+      name: 'forgotPasswordSubHeader',
+      title: 'Forgot Password Subheader',
+      type: 'string',
+    },
+    {name: 'forgotYourPassword', tite: 'Forgot your password?', type: 'string'},
+    {
       name: 'email',
       title: 'Email label',
       type: 'string',
@@ -27,6 +33,11 @@ export default {
     {
       name: 'password',
       title: 'Password label',
+      type: 'string',
+    },
+    {
+      name: 'confirmPassword',
+      title: 'Confirm Password Label',
       type: 'string',
     },
     {
@@ -42,6 +53,11 @@ export default {
     {
       name: 'login',
       title: 'Login button',
+      type: 'string',
+    },
+    {
+      name: 'signin',
+      title: 'Sign in button',
       type: 'string',
     },
     {
@@ -70,18 +86,19 @@ export default {
       type: 'string',
     },
     {
-      name: 'alreadyKnowPasswordMessage',
-      title: 'Already know password message',
-      type: 'string',
-    },
-    {
-      name: 'alreadyKnowPasswordLink',
-      title: 'Already know password login link',
-      type: 'string',
-    },
-    {
       name: 'sendPasswordReset',
       title: 'Send password reset button',
+      type: 'string',
+    },
+    {name: 'passwordRequestSent', title: 'Password Request Sent', type: 'string'},
+    {
+      name: 'passwordResetSuccessMessage',
+      title: 'Password Reset Success Message',
+      type: 'string',
+    },
+    {
+      name: 'passwordReset',
+      title: 'Password Reset',
       type: 'string',
     },
     {

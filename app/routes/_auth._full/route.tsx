@@ -61,26 +61,32 @@ export default function Index() {
           padding="2rem 3rem"
         >
           <Logo imageColor="white" textColor="white" />
-          <Typography
-            variant="body2"
-            component={Link}
-            to="/help"
-            color="white"
-            sx={{
-              textDecoration: "none",
-              color: "white",
-              "& a": {
-                color: "white",
+          {formCopy?.needHelp ? (
+            <Typography
+              variant="body2"
+              component={"div"}
+              color="white"
+              sx={{
                 textDecoration: "none",
-              },
-            }}
-          >
-            {formCopy?.needHelp ? (
+                color: "white",
+                "& a": {
+                  color: "white",
+                  textDecoration: "none",
+                },
+              }}
+            >
               <PortableText value={formCopy.needHelp} />
-            ) : (
-              "Need Help?"
-            )}
-          </Typography>
+            </Typography>
+          ) : (
+            <Typography
+              variant="body2"
+              component={Link}
+              to="/help"
+              color="white"
+            >
+              Need Help?
+            </Typography>
+          )}
         </Box>
         <Box flex="1" position="relative" margin="3rem">
           <Outlet />

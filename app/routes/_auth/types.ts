@@ -19,8 +19,6 @@ export type AuthFormCopy = {
   existingAccountMessage: string;
   existingAccountLoginLink: string;
   forgotPasswordLink: string;
-  alreadyKnowPasswordLink: string;
-  alreadyKnowPasswordMessage: string;
   sendPasswordReset: string;
   joinAcceptTermsLabel: Array<{
     _type: "content";
@@ -36,6 +34,13 @@ export type AuthFormCopy = {
   checkYourEmail: string;
   signUpWithGithub: string;
   loginWithGithub: string;
+  passwordRequestSent: string;
+  passwordResetSuccessMessage: string;
+  passwordReset: string;
+  signin: string;
+  forgotPasswordSubHeader: string;
+  forgotYourPassword: string;
+  confirmPassword: string;
 };
 
 export type AuthSidebarCopy = {

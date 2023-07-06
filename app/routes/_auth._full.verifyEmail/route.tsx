@@ -13,15 +13,12 @@ import { Link } from "~/components/link";
 import { validateUser } from "~/models/user.server";
 import { safeRedirect } from "~/utils";
 import { Button } from "~/components/button";
-import Stack from "@mui/material/Stack";
-import { useRef } from "react";
-import React from "react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
-import { getUser } from "~/session.server";
-import { retrieveVerificationToken } from "~/models/verificationToken.server";
+import { getUser, getUserId } from "~/session.server";
 import { Loading } from "~/components/loading/Loading";
-import { CodeInputBox } from "./components/codeInputBox";
 import { useParentFormCopy } from "../_auth/copy";
+import { CodeValidationInput } from "~/components/codeValidationInput";
+import { verifyValidationCode } from "~/utils/verifyDigitCode.server";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -33,100 +30,45 @@ export async function loader({ request }: LoaderArgs) {
   });
 }
 export async function action({ request }: ActionArgs) {
-  const user = await getUser(request);
+  const userId = await getUserId(request);
+  const formData = await request.formData();
 
-  if (!user) {
+  if (!userId) {
     return json({
       error: "User not found",
     });
   }
 
-  const formData = await request.formData();
   const redirectTo = formData.get("redirectTo");
-  const digit1 = formData.get("digit1");
-  const digit2 = formData.get("digit2");
-  const digit3 = formData.get("digit3");
-  const digit4 = formData.get("digit4");
-  const digit5 = formData.get("digit5");
-  const digit6 = formData.get("digit6");
 
-  if (digit1 && digit2 && digit3 && digit4 && digit5 && digit6) {
-    const num = parseInt(
-      `${digit1}${digit2}${digit3}${digit4}${digit5}${digit6}`
-    );
-    const verificationToken = await retrieveVerificationToken(user.id, num);
-    if (verificationToken.token) {
-      const validate = await validateUser(user.id);
-      if (!validate.error) {
-        return redirectTo
-          ? redirect(redirectTo.toString())
-          : redirect("/dashboard");
-      } else {
-        return json({
-          error: validate.error,
-        });
-      }
+  const { status, error } = await verifyValidationCode({
+    userId,
+    formData,
+  });
+
+  if (status) {
+    const validate = await validateUser(userId);
+    if (!validate.error) {
+      return redirectTo
+        ? redirect(redirectTo.toString())
+        : redirect("/dashboard");
     } else {
       return json({
-        error: verificationToken.error,
+        error: validate.error,
       });
     }
   }
 
   return json({
-    error: "Invalid code entry",
+    error,
   });
 }
-
-const onInputChange = ({
-  e,
-  previousRef,
-  nextRef,
-}: {
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
-  previousRef?: React.RefObject<HTMLInputElement>;
-  nextRef?: React.RefObject<HTMLInputElement>;
-}) => {
-  if (e.target.value.length) {
-    nextRef?.current?.focus();
-  }
-  if (e.target.value.length === 0) {
-    previousRef?.current?.focus();
-  }
-};
-
-const onInputKeydown = ({
-  e,
-  previousRef,
-  nextRef,
-}: {
-  e: React.KeyboardEvent<HTMLInputElement>;
-  previousRef?: React.RefObject<HTMLInputElement>;
-  nextRef?: React.RefObject<HTMLInputElement>;
-}) => {
-  if (!e.currentTarget.value && e.code === "Backspace") {
-    // if the User backspaces in an empty input, focus state to the previous input
-    previousRef?.current?.focus();
-  }
-  if (e.currentTarget.value && e.code !== "Backspace") {
-    // if the User attempts to enter more than a one digit, block and focus next input
-    e.preventDefault();
-    nextRef?.current?.focus();
-  }
-};
 
 export default function Route() {
   const { redirectTo, email } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const formCopy = useParentFormCopy();
   const navigation = useNavigation();
-
-  const digit1Ref = useRef<HTMLInputElement>(null);
-  const digit2Ref = useRef<HTMLInputElement>(null);
-  const digit3Ref = useRef<HTMLInputElement>(null);
-  const digit4Ref = useRef<HTMLInputElement>(null);
-  const digit5Ref = useRef<HTMLInputElement>(null);
-  const digit6Ref = useRef<HTMLInputElement>(null);
 
   return (
     <Box
@@ -155,69 +97,7 @@ export default function Route() {
       )}
       <Form method="POST" action="/verifyEmail">
         <input type="hidden" name="redirectTo" value={redirectTo} />
-        <Stack
-          paddingY={4}
-          direction="row"
-          width="100%"
-          gap={2}
-          justifyContent={"center"}
-          alignItems="center"
-          alignSelf="stretch"
-        >
-          <CodeInputBox
-            ref={digit1Ref}
-            onChange={(e) => onInputChange({ e, nextRef: digit2Ref })}
-            onKeyDown={(e) => onInputKeydown({ e, nextRef: digit2Ref })}
-            name={"digit1"}
-            autoFocus
-          />
-          <CodeInputBox
-            ref={digit2Ref}
-            onChange={(e) =>
-              onInputChange({ e, nextRef: digit3Ref, previousRef: digit1Ref })
-            }
-            onKeyDown={(e) =>
-              onInputKeydown({ e, previousRef: digit1Ref, nextRef: digit3Ref })
-            }
-            name={"digit2"}
-          />
-          <CodeInputBox
-            ref={digit3Ref}
-            onChange={(e) =>
-              onInputChange({ e, nextRef: digit4Ref, previousRef: digit2Ref })
-            }
-            onKeyDown={(e) =>
-              onInputKeydown({ e, previousRef: digit2Ref, nextRef: digit4Ref })
-            }
-            name={"digit3"}
-          />
-          <CodeInputBox
-            ref={digit4Ref}
-            onChange={(e) =>
-              onInputChange({ e, nextRef: digit5Ref, previousRef: digit3Ref })
-            }
-            onKeyDown={(e) =>
-              onInputKeydown({ e, previousRef: digit3Ref, nextRef: digit5Ref })
-            }
-            name={"digit4"}
-          />
-          <CodeInputBox
-            ref={digit5Ref}
-            onChange={(e) =>
-              onInputChange({ e, nextRef: digit6Ref, previousRef: digit4Ref })
-            }
-            onKeyDown={(e) =>
-              onInputKeydown({ e, previousRef: digit4Ref, nextRef: digit6Ref })
-            }
-            name={"digit5"}
-          />
-          <CodeInputBox
-            ref={digit6Ref}
-            onChange={(e) => onInputChange({ e, previousRef: digit5Ref })}
-            onKeyDown={(e) => onInputKeydown({ e, previousRef: digit5Ref })}
-            name={"digit6"}
-          />
-        </Stack>
+        <CodeValidationInput />
         <Button
           type="submit"
           variant="buttonLarge"

@@ -73,9 +73,8 @@ Table Password {
 
 Table ResetPasswordToken {
   id String [pk]
-  token String
+  numericCode Int [not null]
   expiresAt DateTime
-  createdAt DateTime [default: `now()`, not null]
   user User [not null]
   userId String [unique, not null]
 }

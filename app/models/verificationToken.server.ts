@@ -1,23 +1,21 @@
 import { prisma } from "~/db.server";
-import dayjs from "dayjs";
 import type { User } from "@prisma/client";
 import { sendEmailVerificationEmail } from "./user.server";
 
 export async function createVerificationToken(userId: string) {
-  const results = await prisma.verificationToken.findMany({
+  const numericCode = Math.floor(100000 + Math.random() * 900000);
+  return await prisma.verificationToken.upsert({
     where: {
       userId,
     },
-  });
-  if (results.length) {
-    await deleteVerificationTokenByUserId(userId);
-  }
-  const numericCode = Math.floor(100000 + Math.random() * 900000);
-  return await prisma.verificationToken.create({
-    data: {
+    create: {
       userId,
       numericCode,
-      expiresAt: dayjs().add(1, "day").toDate(),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    },
+    update: {
+      numericCode,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     },
   });
 }
@@ -30,19 +28,10 @@ export async function deleteVerificationToken(id: string) {
   });
 }
 
-export async function deleteVerificationTokenByUserId(userId: string) {
-  return await prisma.verificationToken.deleteMany({
-    where: {
-      userId,
-    },
-  });
-}
-
 export async function resetVerificationToken(
   user: User,
   redirectTo?: string | null
 ) {
-  await deleteVerificationTokenByUserId(user.id);
   const verificationToken = await createVerificationToken(user.id);
 
   await sendEmailVerificationEmail({
@@ -60,6 +49,9 @@ export async function retrieveVerificationToken(
     where: {
       userId,
       numericCode,
+      expiresAt: {
+        gt: new Date(),
+      },
     },
   });
   if (!token) {
@@ -68,13 +60,7 @@ export async function retrieveVerificationToken(
       error: "No token found for provided code",
     };
   }
-  if (dayjs().isAfter(token?.expiresAt)) {
-    await deleteVerificationToken(token?.id);
-    return {
-      token: false,
-      error: "Verification token has expired. Please request a new one.",
-    };
-  }
+
   await deleteVerificationToken(token.id);
   return {
     token: true,
