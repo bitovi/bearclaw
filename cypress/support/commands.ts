@@ -229,7 +229,7 @@ function createAndVerifyAccount(
     .should("be.visible")
     .click({ force: true });
 
-  cy.wait(1000)
+  cy.wait(2000)
     .get("main")
     .within(() => {
       cy.findByText(/dashboard/i);
