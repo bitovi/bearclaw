@@ -31,7 +31,7 @@ describe("User Management & Invitation", () => {
     cy.deleteOrgsAndUsers();
   });
 
-  it.skip("Invite user", () => {
+  it("Invite user", () => {
     cy.createAndVerifyAccount(ownerAccount);
 
     cy.findByRole("link", { name: /user management/i })
@@ -60,7 +60,7 @@ describe("User Management & Invitation", () => {
     cy.findByText(/invitation successfully sent/i);
   });
 
-  it.skip("Accept invitation -- New User", () => {
+  it("Accept invitation -- New User", () => {
     cy.visit("/fakeMail");
 
     cy.findByTestId(`${newUserAccount.email}-link`)
@@ -119,7 +119,7 @@ describe("User Management & Invitation", () => {
       .click({ force: true });
   });
 
-  it.skip("Accept invitation -- Existing User", () => {
+  it("Accept invitation -- Existing User", () => {
     cy.createAndVerifyAccount(existingUserAccount);
     cy.findByRole("link", { name: /logout/i })
       .should("be.visible")
@@ -192,7 +192,7 @@ describe("User Management & Invitation", () => {
       .click({ force: true });
   });
 
-  it.skip("Confirm new users on owner org table & user deletion", () => {
+  it("Confirm new users on owner org table & user deletion", () => {
     cy.visit("/login");
 
     cy.wait(500)
