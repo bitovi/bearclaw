@@ -41,7 +41,7 @@ const handlers = [
   rest.get(`${baseURL}/bear/get_metadata`, (req, res, ctx) => {
     return res(ctx.json(fixture_getMetadata));
   }),
-  rest.get(`${baseURL}/claw/upload`, (req, res, ctx) => {
+  rest.post(`${baseURL}/claw/upload`, (req, res, ctx) => {
     return res(ctx.json({ status: 200 }));
   }),
 ];

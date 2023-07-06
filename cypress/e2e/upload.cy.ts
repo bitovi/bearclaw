@@ -18,7 +18,9 @@ describe("Upload", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.wait(8000);
+    cy.wait(5000);
+
+    cy.findAllByText(/file uploaded fail/i).should("have.length", 0);
 
     cy.findByText(/File uploaded successfully/i);
   });
