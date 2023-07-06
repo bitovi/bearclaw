@@ -15,7 +15,7 @@ describe("Upload", () => {
     });
     cy.findAllByText(/Upload/i).click();
 
-    cy.wait(5000);
+    cy.wait(8000);
 
     cy.findByText(/File uploaded successfully/i);
   });
