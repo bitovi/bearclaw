@@ -1,7 +1,12 @@
 import * as React from "react";
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import Box from "@mui/material/Box";
 import { useParentFormCopy } from "../_auth/copy";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
@@ -14,6 +19,7 @@ import { Stack, Typography } from "@mui/material";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { CodeValidationInput } from "~/components/codeValidationInput";
 import { verifyPasswordCode } from "~/utils/verifyDigitCode.server";
+import { Loading } from "~/components/loading/Loading";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -129,6 +135,7 @@ export async function action({ request }: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 
 export default function ResetPage() {
+  const navigation = useNavigation();
   const formCopy = useParentFormCopy();
   const actionData = useActionData<typeof action>();
   const passwordRef = React.useRef<HTMLInputElement>(null);
@@ -300,8 +307,17 @@ export default function ResetPage() {
               type="submit"
               variant="buttonLarge"
               sx={{ marginY: 4 }}
+              disabled={
+                navigation.state === "loading" ||
+                navigation.state === "submitting"
+              }
             >
-              {formCopy?.sendPasswordReset || "Send password reset email"}
+              {navigation.state === "loading" ||
+              navigation.state === "submitting" ? (
+                <Loading />
+              ) : (
+                formCopy?.sendPasswordReset || "Send password reset email"
+              )}
             </Button>
             <ButtonLink
               variant="buttonMedium"

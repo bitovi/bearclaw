@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useNavigation } from "@remix-run/react";
 import Box from "@mui/material/Box";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
@@ -13,6 +13,7 @@ import { TextInput } from "~/components/input";
 import { useParentFormCopy } from "../_auth/copy";
 import { Stack, Typography } from "@mui/material";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
+import { Loading } from "~/components/loading/Loading";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -43,6 +44,7 @@ export async function action({ request }: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 
 export default function ForgotPage() {
+  const navigation = useNavigation();
   const formCopy = useParentFormCopy();
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
@@ -125,8 +127,17 @@ export default function ForgotPage() {
               type="submit"
               variant="buttonLarge"
               sx={{ marginY: 4 }}
+              disabled={
+                navigation.state === "loading" ||
+                navigation.state === "submitting"
+              }
             >
-              {formCopy?.sendPasswordReset || "Send password reset email"}
+              {navigation.state === "loading" ||
+              navigation.state === "submitting" ? (
+                <Loading />
+              ) : (
+                formCopy?.sendPasswordReset || "Send password reset email"
+              )}
             </Button>
             <ButtonLink
               variant="buttonMedium"
