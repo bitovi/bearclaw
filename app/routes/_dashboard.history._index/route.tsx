@@ -5,8 +5,10 @@ import { json } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { Await, useLoaderData } from "@remix-run/react";
-import type { RSBOMListEntry } from "~/models/rsbomTypes";
+import type { TableEnhancedRSBOMListEntry } from "~/models/rsbomTypes";
 import { getOrgandUserId } from "~/session.server";
+import type { ApiResponseWrapper } from "~/models/apiUtils.server";
+import { transformDate } from "./utils/transformDate.server";
 
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -17,7 +19,7 @@ export async function loader({ request }: LoaderArgs) {
     const perPage = url.searchParams.get("perPage");
     const filter = url.searchParams.get("filter");
     const sort = url.searchParams.get("sort");
-    const rsbomList = await retrieveRSBOMList({
+    const _rsbomList = await retrieveRSBOMList({
       userId,
       organizationId,
       page,
@@ -25,6 +27,14 @@ export async function loader({ request }: LoaderArgs) {
       filter,
       sort,
     });
+
+    const rsbomList: ApiResponseWrapper<TableEnhancedRSBOMListEntry[]> = {
+      ..._rsbomList,
+      data: _rsbomList.data.map((d) => ({
+        ...d,
+        "@timestamp": transformDate(d["@timestamp"]),
+      })),
+    };
 
     return json({ rsbomList, error: "" });
   } catch (e) {
@@ -36,7 +46,6 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function Route() {
   const { rsbomList, error } = useLoaderData<typeof loader>();
-
   return (
     <Suspense
       fallback={
@@ -62,7 +71,7 @@ export default function Route() {
           }
           return (
             <Box>
-              <HistoryTable<RSBOMListEntry>
+              <HistoryTable<TableEnhancedRSBOMListEntry>
                 tableTitle={"Lists"}
                 tableData={rsbomList?.data || undefined}
                 totalItems={rsbomList?.metadata?.page.total}

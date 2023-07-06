@@ -81,7 +81,7 @@ describe("History", () => {
     });
 
     // we are on the RSBOM Details page
-    cy.findByTestId("table-title");
+    cy.findByText(/CVE List/i);
   });
 
   it("Allows user to download rSBOM JSON", () => {
@@ -104,8 +104,12 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByTestId("table-title").then(($title) => {
-      cy.readFile(`cypress/downloads/${$title.text()}.json`, {});
+    cy.findByText(/results for/i).then(($title) => {
+      const result = $title
+        .text()
+        .split(/results for/i)[1]
+        .trim();
+      cy.readFile(`cypress/downloads/${result}.json`, {});
     });
 
     const downloadsFolder = Cypress.config("downloadsFolder");

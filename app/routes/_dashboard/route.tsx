@@ -110,7 +110,7 @@ export default function Index() {
           height="100%"
           overflow="hidden auto"
           flex="1"
-          padding={4}
+          padding={6}
           sx={{ backgroundColor: "white", borderTopLeftRadius: "16px" }}
         >
           <main>

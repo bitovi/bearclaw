@@ -5,10 +5,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { useEffect, useState } from "react";
 import {
   Box,
-  IconButton,
   Skeleton,
   Stack,
   TableSortLabel,
@@ -16,13 +14,11 @@ import {
 } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import { Link } from "../link";
-import { copyText } from "./utils/copyText";
 
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { NavigationFilter } from "./NavigationFilter";
 import { LinkPagination } from "./LinkPagination";
 import { useSorting } from "~/hooks/useSorting";
+import { useTextCopy } from "~/hooks/useTextCopy";
 
 export type DropdownOption = {
   value: string;
@@ -129,21 +125,11 @@ function TableRowLink<T>({
   entry: T extends Record<string, any> ? T : never;
   linkKey: keyof T;
 }) {
-  const [textCopied, setTextCopied] = useState(false);
+  const CopyIcon = useTextCopy({
+    copyValue: entry[linkKey],
+    buttonProps: { sx: { color: "action.active" } },
+  });
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout | undefined;
-    if (textCopied) {
-      timer = setTimeout(() => {
-        setTextCopied(false);
-      }, 500);
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [textCopied]);
-
-  // TODO -- resolve validateDOMNesting error re: <a/>'s being children of <tbody>
   return (
     <TableRow
       component={Link}
@@ -155,6 +141,19 @@ function TableRowLink<T>({
       role="row"
     >
       {Object.entries(entry).map(([field, fieldValue], i) => {
+        let result = fieldValue;
+        if (field.toLowerCase() === "@timestamp") {
+          result = (
+            <>
+              <Typography variant="body2" color="text.primary">
+                {fieldValue.date}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {fieldValue.time}
+              </Typography>
+            </>
+          );
+        }
         if (i === 0) {
           return (
             <TableCell
@@ -163,7 +162,7 @@ function TableRowLink<T>({
               scope="row"
               role="cell"
             >
-              {fieldValue}
+              {result}
             </TableCell>
           );
         }
@@ -172,6 +171,8 @@ function TableRowLink<T>({
             {field === linkKey ? (
               <Stack direction="row" alignItems="center">
                 <Box
+                  aria-label={fieldValue}
+                  title={fieldValue}
                   sx={{
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -179,32 +180,12 @@ function TableRowLink<T>({
                     maxWidth: "100px",
                   }}
                 >
-                  {fieldValue}
+                  {result}
                 </Box>
-
-                <IconButton
-                  aria-label="copy to clipboard"
-                  title="Copy to clipboard"
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "transparent",
-                    },
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setTextCopied(true);
-                    copyText(fieldValue);
-                  }}
-                >
-                  {textCopied ? (
-                    <CheckCircleIcon data-testid="copy-success-icon" />
-                  ) : (
-                    <ContentCopyIcon data-testid="copy-icon" />
-                  )}
-                </IconButton>
+                {CopyIcon}
               </Stack>
             ) : (
-              <>{fieldValue}</>
+              <>{result}</>
             )}
           </TableCell>
         );
@@ -228,6 +209,8 @@ function HeaderSortCell({
 }) {
   return (
     <TableCell
+      component={Box}
+      role="columnheader"
       key={headCell.value}
       align={"left"}
       padding={"normal"}
