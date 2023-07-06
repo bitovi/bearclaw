@@ -68,7 +68,8 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/sign up/i)
+    cy.findAllByRole("link")
+      .contains(/create an account/i)
       .should("be.visible")
       .click({ force: true });
 
@@ -82,7 +83,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .type(newUserAccount.password);
 
-    cy.findByRole("button", { name: /sign up/i })
+    cy.findByRole("button", { name: /create account/i })
       .should("be.visible")
       .click({ force: true });
 
