@@ -7,21 +7,15 @@ import Paper from "@mui/material/Paper";
 
 import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
 import { getOrgandUserId, getUser } from "~/session.server";
-import { getAllParentJobs } from "~/services/getAllParentJobs";
-import type { ParentJob } from "~/services/getAllParentJobs";
 import Table from "~/components/table/Table";
 import { usePageCopy } from "../_dashboard/copy";
-import { getKeyMetrics } from "../../services/getKeyMetrics";
+import { getKeyMetrics } from "../../services/bigBear/getKeyMetrics";
 import { MetricCard } from "./components/MetricCard";
 import { IconFromString } from "~/components/iconFromString/IconFromString";
 import { Ellipse } from "./components/Ellipse.svg";
 import { Button } from "~/components/button";
 import background from "./components/background.png";
-
-interface ParentJobTable
-  extends Omit<ParentJob, "analyzedAt" | "size" | "_id"> {
-  objectId: string;
-}
+import { getProcessingStatus } from "~/services/bigBear/getProcessingStatus";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -30,17 +24,16 @@ export async function loader({ request }: LoaderArgs) {
   const page = url.searchParams.get("page");
   const perPage = url.searchParams.get("perPage");
   const sort = url.searchParams.get("sort");
-  const [keyMetrics, jobs] = await Promise.all([
+  const [keyMetrics, uploads] = await Promise.all([
     getKeyMetrics({ days: 7, userId, organizationId }),
-    getAllParentJobs({
-      userId,
+    getProcessingStatus({
       organizationId,
       page,
       perPage,
       sort,
     }),
   ]);
-  return json({ user, keyMetrics, jobs, userId, organizationId });
+  return json({ user, keyMetrics, uploads, userId, organizationId });
 }
 
 export async function action(args: ActionArgs) {
@@ -51,7 +44,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
   const copy = usePageCopy("dashboard");
-  const { userId, keyMetrics, organizationId, user, jobs } =
+  const { userId, keyMetrics, organizationId, user, uploads } =
     useLoaderData<typeof loader>();
 
   return (
@@ -150,20 +143,23 @@ export default function Index() {
         </Box>
       </Box>
       <Box>
-        {jobs && jobs.data.length > 0 ? (
-          <Table<ParentJobTable>
+        {uploads && uploads.data.length > 0 ? (
+          <Table
             tableTitle="Recent Activity"
             headers={[
-              { label: "File Name", value: "filename", sortable: true },
-              { label: "Type", value: "type", sortable: true },
-              { label: "Status", value: "status", sortable: true },
-              { label: "Object ID", value: "_id", sortable: true },
+              { label: "File Name", value: "filename", sortable: false },
+              { label: "Type", value: "type", sortable: false },
+              { label: "Date", value: "date", sortable: false },
+              { label: "Status", value: "status", sortable: false },
+              { label: "Object ID", value: "_id", sortable: false },
             ]}
-            totalItems={jobs.metadata?.page.total}
-            tableData={jobs.data.map((job) => {
+            linkKey="objectId"
+            totalItems={uploads.metadata?.page.total}
+            tableData={uploads.data.map((job) => {
               return {
                 filename: job.filename,
                 type: job.type,
+                date: job,
                 status: job.status,
                 objectId: job._id,
               };
