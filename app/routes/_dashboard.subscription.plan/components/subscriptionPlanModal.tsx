@@ -4,8 +4,11 @@ import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loading } from "~/components/loading/Loading";
 import { SubscriptionStatus } from "~/models/subscriptionTypes";
-import type { InvoicePreview, Subscription } from "~/models/subscriptionTypes";
-import type { ExpandedPrice } from "~/models/subscriptionTypes";
+import type {
+  ExpandedPrice,
+  InvoicePreview,
+  Subscription
+} from "~/models/subscriptionTypes";
 import { previewSubscriptionUpdate } from "~/services/subscriptions/previewSubscription";
 
 enum ModalAction {
