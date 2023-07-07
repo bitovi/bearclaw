@@ -16,6 +16,8 @@ import { Ellipse } from "./components/Ellipse.svg";
 import { Button } from "~/components/button";
 import background from "./components/background.png";
 import { getProcessingStatus } from "~/services/bigBear/getProcessingStatus";
+import { Chip } from "@mui/material";
+import { toTitleCase } from "~/utils/string/toTitleCase";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -33,6 +35,7 @@ export async function loader({ request }: LoaderArgs) {
       sort,
     }),
   ]);
+  console.log(uploads)
   return json({ user, keyMetrics, uploads, userId, organizationId });
 }
 
@@ -149,21 +152,21 @@ export default function Index() {
             headers={[
               { label: "File Name", value: "filename", sortable: false },
               { label: "Type", value: "type", sortable: false },
-              { label: "Date", value: "date", sortable: false },
+              { label: "Date", value: "analyzedAt", sortable: false },
+              { label: "Size", value: "size", sortable: false },
               { label: "Status", value: "status", sortable: false },
               { label: "Object ID", value: "_id", sortable: false },
             ]}
-            linkKey="objectId"
+            linkKey="_id"
             totalItems={uploads.metadata?.page.total}
-            tableData={uploads.data.map((job) => {
-              return {
-                filename: job.filename,
-                type: job.type,
-                date: job,
-                status: job.status,
-                objectId: job._id,
-              };
-            })}
+            tableData={uploads.data.map((upload) => ({
+              filename: upload.filename,
+              type: upload.type,
+              analyzedAt: upload.analyzedAt,
+              size: upload.size,
+              status: <Chip label={toTitleCase(upload.status)} />,
+              _id: upload._id,
+            }))}
           />
         ) : (
           <Box component={Paper} variant="outlined" padding={2}>
