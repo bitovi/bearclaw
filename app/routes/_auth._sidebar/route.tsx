@@ -1,11 +1,11 @@
 import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
-import { PortableText } from '@portabletext/react'
+import { PortableText } from "@portabletext/react";
 import { useParentSidebarCopy } from "../_auth/copy";
 import { json } from "@remix-run/server-runtime";
 
 export async function loader() {
-  return json({})
+  return json({});
 }
 
 export default function Index() {

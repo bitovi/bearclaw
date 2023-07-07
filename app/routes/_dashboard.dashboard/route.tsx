@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderArgs) {
       perPage,
       sort,
     }),
-  ])
+  ]);
   return json({ user, keyMetrics, jobs, userId, organizationId });
 }
 
@@ -51,7 +51,8 @@ export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
   const copy = usePageCopy("dashboard");
-  const { userId, keyMetrics, organizationId, user, jobs } = useLoaderData<typeof loader>();
+  const { userId, keyMetrics, organizationId, user, jobs } =
+    useLoaderData<typeof loader>();
 
   return (
     <Box display="flex" flexDirection="column" gap="2rem">
@@ -66,7 +67,16 @@ export default function Index() {
           <Upload userId={userId} organizationId={organizationId} />
         </Box>
       </Box>
-      <Box display="grid" gap="1rem" justifyContent="stretch" gridTemplateColumns={{ xs: "1fr", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}>
+      <Box
+        display="grid"
+        gap="1rem"
+        justifyContent="stretch"
+        gridTemplateColumns={{
+          xs: "1fr",
+          md: "repeat(2, 1fr)",
+          lg: "repeat(4, 1fr)",
+        }}
+      >
         {/* TODO: Add proper sorting params to links */}
         <MetricCard
           variant="files"
@@ -96,12 +106,29 @@ export default function Index() {
           alignSelf="stretch"
           borderRadius="20px"
           color="white"
-          sx={{ background: "linear-gradient(189deg, rgba(51, 51, 51, 0.80) 0%, rgba(0, 0, 0, 0.80) 72.94%), lightgray 50% / cover no-repeat" }}
+          sx={{
+            background:
+              "linear-gradient(189deg, rgba(51, 51, 51, 0.80) 0%, rgba(0, 0, 0, 0.80) 72.94%), lightgray 50% / cover no-repeat",
+          }}
           position="relative"
         >
-          <Box component="img" src={background} position="absolute" top="0" left="0" height="100%" width="100%" sx={{ objectFit: "cover", opacity: 0.5, mixBlendMode: "overlay" }} />
+          <Box
+            component="img"
+            src={background}
+            position="absolute"
+            top="0"
+            left="0"
+            height="100%"
+            width="100%"
+            sx={{ objectFit: "cover", opacity: 0.5, mixBlendMode: "overlay" }}
+          />
           <Box display="flex" flexDirection="column" gap={1}>
-            <Box display="flex" fontSize="2rem" alignItems="center" gap="0.5rem">
+            <Box
+              display="flex"
+              fontSize="2rem"
+              alignItems="center"
+              gap="0.5rem"
+            >
               <IconFromString icon="addChartTwoTone" />
               <Typography variant="h5">Workflows</Typography>
             </Box>
@@ -109,8 +136,12 @@ export default function Index() {
               Update plan to add more workflows.
             </Typography>
             <Box display="flex" gap="1rem">
-              <Button variant="whiteOutlined" size="small" >Update plan</Button>
-              <Button size="small" variant="whiteOutlined">View</Button>
+              <Button variant="whiteOutlined" size="small">
+                Update plan
+              </Button>
+              <Button size="small" variant="whiteOutlined">
+                View
+              </Button>
             </Box>
           </Box>
           <Box flex="1" display="flex" justifyContent="center" paddingTop={1}>
