@@ -1,4 +1,6 @@
-import { Stack, Box, Typography } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import StarIcon from "@mui/icons-material/Star";
 
 const FeatureBox = ({

@@ -14,11 +14,11 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import { Box, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { unlink } from "fs/promises";
 import { Loading } from "~/components/loading/Loading";
 
-const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
 
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -41,6 +41,7 @@ export const action = async ({ request }: ActionArgs) => {
   formData.append("userId", userId);
   formData.append("groupId", organizationId);
 
+  const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
   const response = await fetch(CLAW_UPLOAD, {
     method: "POST",
     body: formData,

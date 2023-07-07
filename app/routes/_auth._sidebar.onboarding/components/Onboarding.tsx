@@ -8,7 +8,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import { useState } from "react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 type Props = {
   response?: {

@@ -1,20 +1,17 @@
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import {
-  Box,
-  Skeleton,
-  Stack,
-  TableSortLabel,
-  Typography,
-} from "@mui/material";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import Typography from "@mui/material/Typography";
 import type { SxProps, Theme } from "@mui/material";
 import { Link } from "../link";
-
 import { NavigationFilter } from "./NavigationFilter";
 import { LinkPagination } from "./LinkPagination";
 import { useSorting } from "~/hooks/useSorting";

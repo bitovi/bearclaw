@@ -9,9 +9,10 @@ import {
 } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
-
+import Typography from "@mui/material/Typography";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import { getUser, createUserSession } from "~/session.server";
-
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import {
@@ -21,7 +22,6 @@ import {
 import { TextInput } from "~/components/input";
 import { useParentFormCopy } from "../_auth/copy";
 import { PortableText } from "@portabletext/react";
-import { Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 import { ButtonLoader } from "~/components/buttonLoader";
 

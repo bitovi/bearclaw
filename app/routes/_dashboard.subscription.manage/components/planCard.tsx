@@ -1,4 +1,8 @@
-import { Card, Stack, Box, Typography, Divider } from "@mui/material";
+import Card from "@mui/material/Card";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 import StarIcon from "@mui/icons-material/Star";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
