@@ -14,7 +14,8 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import { Box, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { unlink } from "fs/promises";
 import { Loading } from "~/components/loading/Loading";
 

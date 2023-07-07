@@ -21,7 +21,7 @@ import {
   resetPasswordByToken,
 } from "~/models/user.server";
 import { TextInput } from "~/components/input";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 
 export async function loader({ request }: LoaderArgs) {
