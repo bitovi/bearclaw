@@ -1,13 +1,16 @@
-import { useOptionalUser } from "~/utils";
-import Box from "@mui/material/Box";
-import { url } from "gravatar";
-import { Logo } from "./logo";
-import { AppBar, Stack, Toolbar, Typography } from "@mui/material";
-import { TextInput } from "~/components/input";
-import { useNavigate, useSearchParams } from "@remix-run/react";
 import { useCallback, useState } from "react";
+import { useNavigate, useSearchParams } from "@remix-run/react";
+import { url } from "gravatar";
+import Box from "@mui/material/Box";
+import AppBar from "@mui/material/AppBar";
+import Stack from "@mui/material/Stack";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { useOptionalUser } from "~/utils";
+import { TextInput } from "~/components/input";
 import { useDebounceApiCall } from "~/hooks/useDebounceApiCall";
 import { parseFilterParam } from "~/utils/parseFilterParam";
+import { Logo } from "./logo";
 
 const GlobalSearch = () => {
   const [searchParams] = useSearchParams();

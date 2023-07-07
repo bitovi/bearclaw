@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 import HistoryTable, { SkeletonTable } from "../../components/table";
 import { json } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";

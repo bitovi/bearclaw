@@ -12,13 +12,12 @@ import { json, redirect } from "@remix-run/node";
 import { Link } from "~/components/link";
 import { validateUser } from "~/models/user.server";
 import { safeRedirect } from "~/utils";
-import { Button } from "~/components/button";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { getUser, getUserId } from "~/session.server";
-import { Loading } from "~/components/loading/Loading";
 import { useParentFormCopy } from "../_auth/copy";
 import { CodeValidationInput } from "~/components/codeValidationInput";
 import { verifyValidationCode } from "~/utils/verifyDigitCode.server";
+import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -71,82 +70,80 @@ export default function Route() {
   const navigation = useNavigation();
 
   return (
-    <Box
-      height="100%"
-      width="100%"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      gap={1}
-    >
-      <Typography variant="h5">
-        {formCopy?.checkYourEmail || "Please check your email!"}
-      </Typography>
-      <Typography variant="body2">
-        {formCopy?.verifyEmailInstructionPart1 ||
-          "We've emailed a 6-digit confirmation code to"}{" "}
-        {email || "your provided email"},{" "}
-        {formCopy?.verifyEmailInstructionPart2 ||
-          "please enter the code below to verify your account."}
-      </Typography>
-      {actionData?.error && (
-        <Typography paddingTop={2} color="error" variant="body1">
-          {actionData.error}
+    <Form method="POST" action="/verifyEmail">
+      <Box
+        height="100%"
+        width="100%"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        gap={1}
+      >
+        <Typography variant="h5">
+          {formCopy?.checkYourEmail || "Please check your email!"}
         </Typography>
-      )}
-      <Form method="POST" action="/verifyEmail">
+        <Typography variant="body2">
+          {formCopy?.verifyEmailInstructionPart1 ||
+            "We've emailed a 6-digit confirmation code to"}{" "}
+          {email || "your provided email"},{" "}
+          {formCopy?.verifyEmailInstructionPart2 ||
+            "please enter the code below to verify your account."}
+        </Typography>
+        {actionData?.error && (
+          <Typography paddingTop={2} color="error" variant="body1">
+            {actionData.error}
+          </Typography>
+        )}
         <input type="hidden" name="redirectTo" value={redirectTo} />
-        <CodeValidationInput />
-        <Button
+        <CodeValidationInput
+          autoFocus
+          containerProps={{ marginLeft: { xs: "3rem", lg: "unset" } }}
+        />
+        <ButtonLoader
+          loading={
+            navigation.state === "submitting" || navigation.state === "loading"
+          }
           type="submit"
           variant="buttonLarge"
           color="primary"
-          disabled={
-            navigation.state === "submitting" || navigation.state === "loading"
-          }
         >
-          {navigation.state === "submitting" ||
-          navigation.state === "loading" ? (
-            <Loading />
-          ) : (
-            formCopy?.verifyEmailButton || "VERIFY"
-          )}
-        </Button>
-      </Form>
-      <Box>
-        <Typography component="span" variant="body2">
-          {formCopy?.dontHaveCode || "Don't have a code?"}{" "}
-        </Typography>
-        <Typography
-          component={Link}
-          to="/verificationEmailResend"
-          color="secondary.main"
-          variant="body2"
+          {formCopy?.verifyEmailButton || "VERIFY"}
+        </ButtonLoader>
+        <Box>
+          <Typography component="span" variant="body2">
+            {formCopy?.dontHaveCode || "Don't have a code?"}{" "}
+          </Typography>
+          <Typography
+            component={Link}
+            to="/verificationEmailResend"
+            color="secondary.main"
+            variant="body2"
+          >
+            {formCopy?.resendCode || "Resend code"}
+          </Typography>
+        </Box>
+        <ButtonLink
+          variant="buttonMedium"
+          to="/logout"
+          sx={{
+            "&:hover": { backgroundColor: "#FFF" },
+            color: "primary.main",
+          }}
         >
-          {formCopy?.resendCode || "Resend code"}
+          <KeyboardArrowLeftIcon />
+          {formCopy?.returnToSignInCTA || "Return to Sign In"}
+        </ButtonLink>
+        <br />
+        <br />
+        <br />
+        <Typography>
+          TESTING: Email messaging is not connected yet.{" "}
+          <Typography component={Link} to="/fakeMail" color="secondary.main">
+            View verification emails here
+          </Typography>
         </Typography>
       </Box>
-      <ButtonLink
-        variant="buttonMedium"
-        to="/login"
-        sx={{
-          "&:hover": { backgroundColor: "#FFF" },
-          color: "primary.main",
-        }}
-      >
-        <KeyboardArrowLeftIcon />
-        {formCopy?.returnToSignInCTA || "Return to Sign In"}
-      </ButtonLink>
-      <br />
-      <br />
-      <br />
-      <Typography>
-        TESTING: Email messaging is not connected yet.{" "}
-        <Typography component={Link} to="/fakeMail" color="secondary.main">
-          View verification emails here
-        </Typography>
-      </Typography>
-    </Box>
+    </Form>
   );
 }

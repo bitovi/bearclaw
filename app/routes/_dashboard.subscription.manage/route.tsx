@@ -5,7 +5,9 @@ import type {
   InvoicePreview,
   Subscription,
 } from "~/models/subscriptionTypes";
-import { Box, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { useCallback, useMemo } from "react";
 import { json, redirect } from "@remix-run/node";
 import type { ActionArgs } from "@remix-run/node";
@@ -108,8 +110,8 @@ export default function Route() {
   const invoicePreviewDueDate = useMemo(() => {
     return invoicePreview?.dueDate
       ? `Your next payment on ${dayjs(
-          new Date(invoicePreview.dueDate * 1000)
-        ).format("MMMM DD, YYYY")}`
+        new Date(invoicePreview.dueDate * 1000)
+      ).format("MMMM DD, YYYY")}`
       : "";
   }, [invoicePreview]);
 

@@ -1,7 +1,10 @@
-import { Card as MUICard, Box, Typography, CardActions } from "@mui/material";
+import MUICard from "@mui/material/Card";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import CardActions from "@mui/material/CardActions";
 import type { ButtonProps, BoxProps } from "@mui/material";
-import { Button } from "~/components/button";
 import StarIcon from "@mui/icons-material/Star";
+import { Button } from "~/components/button";
 
 const Card = ({
   title,

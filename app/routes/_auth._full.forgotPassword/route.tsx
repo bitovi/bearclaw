@@ -7,13 +7,12 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import { getUserId } from "~/session.server";
 import { validateEmail } from "~/utils";
-import { Button } from "~/components/button/Button";
 import { forgotPassword } from "~/models/user.server";
 import { TextInput } from "~/components/input";
 import { useParentFormCopy } from "../_auth/copy";
 import { Stack, Typography } from "@mui/material";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
-import { Loading } from "~/components/loading/Loading";
+import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -122,23 +121,18 @@ export default function ForgotPage() {
             }}
           />
           <Box width="66%" alignSelf="center">
-            <Button
+            <ButtonLoader
               fullWidth
               type="submit"
               variant="buttonLarge"
               sx={{ marginY: 4 }}
-              disabled={
+              loading={
                 navigation.state === "loading" ||
                 navigation.state === "submitting"
               }
             >
-              {navigation.state === "loading" ||
-              navigation.state === "submitting" ? (
-                <Loading />
-              ) : (
-                formCopy?.sendPasswordReset || "Send password reset email"
-              )}
-            </Button>
+              {formCopy?.sendPasswordReset || "Send password reset email"}
+            </ButtonLoader>
             <ButtonLink
               variant="buttonMedium"
               type="button"

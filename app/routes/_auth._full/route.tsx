@@ -1,16 +1,10 @@
 import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { Logo } from "~/components/logo/Logo";
 import { Link } from "~/components/link";
-import { Typography } from "@mui/material";
-import { fetchAuthCopy, useParentFormCopy } from "../_auth/copy";
-import { json } from "@remix-run/server-runtime";
+import { useParentFormCopy } from "../_auth/copy";
 import { PortableText } from "@portabletext/react";
-
-export async function loader() {
-  const copy = await fetchAuthCopy();
-  return json(copy);
-}
 
 export default function Index() {
   const formCopy = useParentFormCopy();

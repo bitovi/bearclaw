@@ -11,9 +11,9 @@ export const meta: V2_MetaFunction = () => [
 
 export async function loader() {
   const copy = await fetchAuthCopy();
-  return json(copy)
+  return json(copy);
 }
 
 export default function Index() {
-  return <Outlet />
+  return <Outlet />;
 }

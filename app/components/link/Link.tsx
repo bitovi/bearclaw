@@ -7,26 +7,32 @@ import { Link as RemixLink } from "@remix-run/react";
  * returns either a Link component or anchor element,
  * dependent upon whether user passes a "to" or "href" prop, respectively.
  */
-export const Link = forwardRef<HTMLAnchorElement, AnchorHTMLAttributes<HTMLAnchorElement> | LinkProps>(
-  function Link({ children, className, ...props }, ref) {
-    const classes = `
+export const Link = forwardRef<
+  HTMLAnchorElement,
+  AnchorHTMLAttributes<HTMLAnchorElement> | LinkProps
+>(function Link({ children, className, ...props }, ref) {
+  const classes = `
       underline
       text-blue-800
       ${className || ""}
     `;
 
-    if ("to" in props) {
-      return (
-        <RemixLink ref={ref} {...props} className={classes} data-testid={"internal-link"}>
-          {children}
-        </RemixLink>
-      );
-    }
-
+  if ("to" in props) {
     return (
-      <a ref={ref} {...props} data-testid={"external-link"} className={classes}>
+      <RemixLink
+        ref={ref}
+        {...props}
+        className={classes}
+        data-testid={"internal-link"}
+      >
         {children}
-      </a>
+      </RemixLink>
     );
   }
-);
+
+  return (
+    <a ref={ref} {...props} data-testid={"external-link"} className={classes}>
+      {children}
+    </a>
+  );
+});

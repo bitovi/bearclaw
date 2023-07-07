@@ -14,7 +14,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import CheckIcon from "@mui/icons-material/Check";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import StarTwoToneIcon from "@mui/icons-material/StarTwoTone";
-import AddchartTwoToneIcon from '@mui/icons-material/AddchartTwoTone';
+import AddchartTwoToneIcon from "@mui/icons-material/AddchartTwoTone";
 
 export const icons = {
   dashboard: <DashboardIcon />,

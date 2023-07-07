@@ -9,12 +9,12 @@ import {
 } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
-
-import { getUser, createUserSession, logout } from "~/session.server";
-
+import Typography from "@mui/material/Typography";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { getUser, createUserSession } from "~/session.server";
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
-import { Button } from "~/components/button/Button";
 import {
   getPasswordStrength,
   PasswordStrengthMeter,
@@ -22,16 +22,15 @@ import {
 import { TextInput } from "~/components/input";
 import { useParentFormCopy } from "../_auth/copy";
 import { PortableText } from "@portabletext/react";
-import { Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
-import { Loading } from "~/components/loading/Loading";
+import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
 
   if (!user) return json({});
   if (user && !user.emailVerifiedAt) {
-    await logout(request);
+    redirect("/verifyEmail");
     return json({});
   }
   return redirect("/dashboard");
@@ -239,38 +238,17 @@ export default function Join() {
           <input type="hidden" name="redirectTo" value={redirectTo} />
         </Box>
         <Box width="66%" alignSelf="center">
-          <Button
+          <ButtonLoader
             fullWidth
             type="submit"
             variant="buttonLarge"
-            disabled={
+            loading={
               navigation.state === "submitting" ||
               navigation.state === "loading"
             }
           >
-            {navigation.state === "submitting" ||
-            navigation.state === "loading" ? (
-              <Loading />
-            ) : (
-              formCopy?.createAccountButton || "Sign Up"
-            )}
-          </Button>
-          <Typography paddingY={1} variant="body1" color="text.secondary">
-            or
-          </Typography>
-          <Button
-            fullWidth
-            variant="buttonLargeOutlined"
-            disabled={
-              navigation.state === "submitting" ||
-              navigation.state === "loading" ||
-              true
-            }
-          >
-            <Typography color="text.primary">
-              {formCopy?.signUpWithGithub || "Sign up with Github"}
-            </Typography>
-          </Button>
+            {formCopy?.createAccountButton || "Sign Up"}
+          </ButtonLoader>
         </Box>
       </Box>
 

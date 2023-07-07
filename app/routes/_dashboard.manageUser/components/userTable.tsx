@@ -16,7 +16,8 @@ import { TextInput } from "~/components/input";
 import { Button } from "~/components/button";
 
 import AddIcon from "@mui/icons-material/Add";
-import { Chip, Stack } from "@mui/material";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
 import type { OrganizationMember } from "~/models/organizationUsers.server";
 import { LinkPagination } from "~/components/table/LinkPagination";
 import { useFiltering } from "~/hooks/useFiltering";
@@ -265,7 +266,7 @@ export function UserTable({
                     hover
                     onClick={
                       row.owner
-                        ? () => {}
+                        ? () => { }
                         : (event) => handleClick(event, row.id)
                     }
                     role="checkbox"

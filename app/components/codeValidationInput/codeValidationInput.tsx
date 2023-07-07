@@ -1,114 +1,142 @@
 import Stack from "@mui/material/Stack";
 import { useRef } from "react";
-import CodeInputBox from "./components/codeInputBox";
+import Box from "@mui/material/Box";
+import type { BoxProps } from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 
-const onInputChange = ({
-  e,
-  previousRef,
-  nextRef,
+export const CodeValidationInput = ({
+  autoFocus = false,
+  containerProps,
 }: {
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
-  previousRef?: React.RefObject<HTMLInputElement>;
-  nextRef?: React.RefObject<HTMLInputElement>;
+  autoFocus?: boolean;
+  containerProps?: BoxProps;
 }) => {
-  if (e.target.value.length) {
-    nextRef?.current?.focus();
-  }
-  if (e.target.value.length === 0) {
-    previousRef?.current?.focus();
-  }
-};
-
-const onInputKeydown = ({
-  e,
-  previousRef,
-  nextRef,
-}: {
-  e: React.KeyboardEvent<HTMLInputElement>;
-  previousRef?: React.RefObject<HTMLInputElement>;
-  nextRef?: React.RefObject<HTMLInputElement>;
-}) => {
-  if (!e.currentTarget.value && e.code === "Backspace") {
-    // if the User backspaces in an empty input, focus state to the previous input
-    previousRef?.current?.focus();
-  }
-  if (e.currentTarget.value && e.code !== "Backspace" && e.code !== "Tab") {
-    // if the User attempts to enter more than a one digit, block and focus next input
-    e.preventDefault();
-    nextRef?.current?.focus();
-  }
-};
-
-export const CodeValidationInput = () => {
   const digit1Ref = useRef<HTMLInputElement>(null);
-  const digit2Ref = useRef<HTMLInputElement>(null);
-  const digit3Ref = useRef<HTMLInputElement>(null);
-  const digit4Ref = useRef<HTMLInputElement>(null);
-  const digit5Ref = useRef<HTMLInputElement>(null);
-  const digit6Ref = useRef<HTMLInputElement>(null);
+
   return (
     <Stack
-      paddingY={4}
       direction="row"
-      width="100%"
-      gap={2}
       justifyContent={"center"}
-      alignItems="center"
-      alignSelf="stretch"
+      alignContent="center"
+      paddingY={2}
+      width="100%"
+      position="relative"
+      onClick={() => digit1Ref.current?.focus()}
     >
-      <CodeInputBox
-        ref={digit1Ref}
-        onChange={(e) => onInputChange({ e, nextRef: digit2Ref })}
-        onKeyDown={(e) => onInputKeydown({ e, nextRef: digit2Ref })}
-        name={"digit1"}
-        autoFocus
-      />
-      <CodeInputBox
-        ref={digit2Ref}
-        onChange={(e) =>
-          onInputChange({ e, nextRef: digit3Ref, previousRef: digit1Ref })
-        }
-        onKeyDown={(e) =>
-          onInputKeydown({ e, previousRef: digit1Ref, nextRef: digit3Ref })
-        }
-        name={"digit2"}
-      />
-      <CodeInputBox
-        ref={digit3Ref}
-        onChange={(e) =>
-          onInputChange({ e, nextRef: digit4Ref, previousRef: digit2Ref })
-        }
-        onKeyDown={(e) =>
-          onInputKeydown({ e, previousRef: digit2Ref, nextRef: digit4Ref })
-        }
-        name={"digit3"}
-      />
-      <CodeInputBox
-        ref={digit4Ref}
-        onChange={(e) =>
-          onInputChange({ e, nextRef: digit5Ref, previousRef: digit3Ref })
-        }
-        onKeyDown={(e) =>
-          onInputKeydown({ e, previousRef: digit3Ref, nextRef: digit5Ref })
-        }
-        name={"digit4"}
-      />
-      <CodeInputBox
-        ref={digit5Ref}
-        onChange={(e) =>
-          onInputChange({ e, nextRef: digit6Ref, previousRef: digit4Ref })
-        }
-        onKeyDown={(e) =>
-          onInputKeydown({ e, previousRef: digit4Ref, nextRef: digit6Ref })
-        }
-        name={"digit5"}
-      />
-      <CodeInputBox
-        ref={digit6Ref}
-        onChange={(e) => onInputChange({ e, previousRef: digit5Ref })}
-        onKeyDown={(e) => onInputKeydown({ e, previousRef: digit5Ref })}
-        name={"digit6"}
-      />
+      <Box
+        width={{ xs: "20.5rem", lg: "28rem" }}
+        height="4rem"
+        position="relative"
+        {...containerProps}
+      >
+        <Box
+          position="absolute"
+          top="0.5rem"
+          // left={{ xs: "0.7rem", lg: "unset" }}
+          height={{ xs: "2.50rem", lg: "4rem" }}
+          width={{ xs: "2.50rem", lg: "4rem" }}
+          border="0.1rem solid #FFF"
+          borderRadius="8px"
+        />
+        <Box
+          position="absolute"
+          top="0.5rem"
+          left={{ xs: "3rem", lg: "5rem" }}
+          height={{ xs: "2.50rem", lg: "4rem" }}
+          width={{ xs: "2.50rem", lg: "4rem" }}
+          border="0.1rem solid #FFF"
+          borderRadius="8px"
+        />
+        <Box
+          position="absolute"
+          top="0.5rem"
+          left={{ xs: "6rem", lg: "10rem" }}
+          height={{ xs: "2.50rem", lg: "4rem" }}
+          width={{ xs: "2.50rem", lg: "4rem" }}
+          border="0.1rem solid #FFF"
+          borderRadius="8px"
+        />
+        <Box
+          position="absolute"
+          top="0.5rem"
+          left={{ xs: "9rem", lg: "15rem" }}
+          height={{ xs: "2.50rem", lg: "4rem" }}
+          width={{ xs: "2.50rem", lg: "4rem" }}
+          border="0.1rem solid #FFF"
+          borderRadius="8px"
+        />
+        <Box
+          position="absolute"
+          top="0.5rem"
+          left={{ xs: "12rem", lg: "20rem" }}
+          height={{ xs: "2.50rem", lg: "4rem" }}
+          width={{ xs: "2.50rem", lg: "4rem" }}
+          border="0.1rem solid #FFF"
+          borderRadius="8px"
+        />
+        <Box
+          position="absolute"
+          top="0.5rem"
+          left={{ xs: "15rem", lg: "25rem" }}
+          height={{ xs: "2.50rem", lg: "4rem" }}
+          width={{ xs: "2.50rem", lg: "4rem" }}
+          border="0.1rem solid #FFF"
+          borderRadius="8px"
+        />
+        <TextField
+          type="text"
+          variant="standard"
+          name="tokenCode"
+          placeholder={"------"}
+          autoFocus={autoFocus}
+          inputRef={digit1Ref}
+          InputProps={{
+            disableUnderline: true,
+            spellCheck: false,
+            autoComplete: "off",
+            sx: {
+              backgroundColor: "transparent",
+              color: "#FFF",
+              fontFamily: "Inter",
+              fontSize: "16px",
+              fontStyle: "normal",
+              fontWeight: 400,
+              lineHeight: { xs: "16px", lg: "24px" },
+              letterSpacing: { xs: "2.5rem", lg: "4.5rem" },
+              padding: "0",
+              width: "130%",
+              zIndex: "10",
+              overflow: "hidedn",
+            },
+          }}
+          inputProps={{
+            height: "100%",
+            maxLength: 6,
+            width: "100%",
+            sx: {
+              textIndent: { xs: "1.15rem", lg: "1.5rem" },
+              caretColor: "transparent",
+              padding: 0,
+              "&::selection": {
+                backgroundColor: "transparent",
+              },
+              "&::-moz-selection": {
+                backgroundColor: "transparent",
+              },
+            },
+          }}
+          sx={{
+            color: "#FFF",
+            width: "100%",
+            position: "absolute",
+            left: 0,
+            paddingTop: {
+              xs: "1rem",
+              lg: "1.65rem",
+            },
+          }}
+        />
+      </Box>
     </Stack>
   );
 };

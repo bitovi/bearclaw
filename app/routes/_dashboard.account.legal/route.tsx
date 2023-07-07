@@ -1,4 +1,6 @@
-import { Box, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { useSearchParams } from "@remix-run/react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { usePageCopy } from "../_dashboard/copy";
@@ -6,7 +8,8 @@ import { PortableText } from "@portabletext/react";
 
 export default function Route() {
   const [searchParams] = useSearchParams();
-  const pageType = searchParams.get("pageType") === "terms" ? "terms" : "privacy";
+  const pageType =
+    searchParams.get("pageType") === "terms" ? "terms" : "privacy";
   const copy = usePageCopy("account");
 
   return (
@@ -61,7 +64,10 @@ export default function Route() {
       </Stack>
       <Box>
         <PortableText
-          value={copy?.richContent?.[pageType === "terms" ? "terms" : "privacy"] || []}
+          value={
+            copy?.richContent?.[pageType === "terms" ? "terms" : "privacy"] ||
+            []
+          }
         />
       </Box>
     </Box>

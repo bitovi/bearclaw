@@ -1,4 +1,7 @@
-import { Skeleton, Box, Typography, Stack } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
