@@ -11,15 +11,13 @@ import Box from "@mui/material/Box";
 import { useParentFormCopy } from "../_auth/copy";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
-import { Button } from "~/components/button/Button";
-
 import { resetPasswordByToken } from "~/models/user.server";
 import { TextInput } from "~/components/input";
 import { Stack, Typography } from "@mui/material";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { CodeValidationInput } from "~/components/codeValidationInput";
 import { verifyPasswordCode } from "~/utils/verifyDigitCode.server";
-import { Loading } from "~/components/loading/Loading";
+import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -187,12 +185,7 @@ export default function ResetPage() {
   }
 
   return (
-    <Stack
-      alignItems="center"
-      textAlign="center"
-      gap="2rem"
-      width={{ xs: "300px", md: "500px", lg: "700px" }}
-    >
+    <Stack alignItems="center" textAlign="center" gap="2rem">
       <Stack gap={2}>
         <Typography variant="h5" color="#FFF">
           {formCopy?.passwordRequestSent || "Request sent successfully"}
@@ -251,7 +244,6 @@ export default function ResetPage() {
             id="email"
             required
             inputRef={emailRef}
-            autoFocus={true}
             name="email"
             type="email"
             autoComplete="email"
@@ -269,7 +261,10 @@ export default function ResetPage() {
               },
             }}
           />
-          <CodeValidationInput />
+          <CodeValidationInput
+            autoFocus
+            containerProps={{ marginLeft: { xs: "0.5rem", lg: "unset" } }}
+          />
           <TextInput
             variant="outlined"
             placeholder={formCopy?.password || "Password"}
@@ -302,23 +297,18 @@ export default function ResetPage() {
             }}
           />
           <Box width="66%" alignSelf="center">
-            <Button
+            <ButtonLoader
               fullWidth
               type="submit"
               variant="buttonLarge"
               sx={{ marginY: 4 }}
-              disabled={
+              loading={
                 navigation.state === "loading" ||
                 navigation.state === "submitting"
               }
             >
-              {navigation.state === "loading" ||
-              navigation.state === "submitting" ? (
-                <Loading />
-              ) : (
-                formCopy?.sendPasswordReset || "Send password reset email"
-              )}
-            </Button>
+              {formCopy?.sendPasswordReset || "Send password reset email"}
+            </ButtonLoader>
             <ButtonLink
               variant="buttonMedium"
               type="button"

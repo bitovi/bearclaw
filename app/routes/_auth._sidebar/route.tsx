@@ -2,10 +2,10 @@ import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { PortableText } from "@portabletext/react";
-import { useParentSidebarCopy } from "../_auth/copy";
+import { useParentImageCopy, useParentSidebarCopy } from "../_auth/copy";
 import { json } from "@remix-run/server-runtime";
 import { Carousel } from "~/components/carousel";
-import { SideBarImage } from "~/components/authSidebarImages";
+import { useMemo } from "react";
 
 export async function loader() {
   return json({});
@@ -13,6 +13,11 @@ export async function loader() {
 
 export default function Index() {
   const copy = useParentSidebarCopy();
+  const images = useParentImageCopy();
+
+  const authImages = useMemo(() => {
+    return images?.imageURLs.filter((img) => !img.hidden);
+  }, [images]);
 
   return (
     <Box
@@ -76,7 +81,7 @@ export default function Index() {
           https://usa-vbt.atlassian.net/browse/BA-166?atlOrigin=eyJpIjoiZTRkMTY5MzY1ODFkNGQ2ZmFiOTY2NDA5MjgzZDBmNjciLCJwIjoiaiJ9
           */}
           <Stack alignItems="center" width="320" height="210">
-            <Carousel images={[SideBarImage, SideBarImage, SideBarImage]} />
+            <Carousel images={authImages} />
           </Stack>
           <Box paddingTop={4}>
             <PortableText value={copy?.content} />

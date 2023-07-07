@@ -1,5 +1,6 @@
 import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail";
@@ -19,11 +20,11 @@ export async function getUserByEmail(email: User["email"]) {
 export function sendEmailVerificationEmail({
   user,
   redirectTo,
-  verificationToken,
+  token,
 }: {
   user: User;
   redirectTo?: string | null;
-  verificationToken: number;
+  token: string;
 }) {
   const redirectParam = redirectTo
     ? `&redirectTo=${encodeURIComponent(redirectTo)}`
@@ -37,7 +38,7 @@ export function sendEmailVerificationEmail({
       <p>Thanks for signing up for BearClaw! Please verify your email address by entering the provided 6-digit code at the link provided below. The code will expire in 24 hours.</p>
       <br />
       <br />
-      <p data-testid="verification-token"><strong>${verificationToken}</strong></p>
+      <p data-testid="verification-token"><strong>${token}</strong></p>
       <br />
       <br />
       <p><a href="/verifyEmail?${redirectParam}">Enter code here</a></p>
@@ -78,7 +79,7 @@ export async function createUser(
   await sendEmailVerificationEmail({
     user,
     redirectTo,
-    verificationToken: verificationToken.numericCode,
+    token: verificationToken.token,
   });
 
   return { user, orgId: organization?.id, error };
@@ -144,7 +145,7 @@ export async function verifyLogin(
   return userWithoutPassword;
 }
 
-function sendPasswordResetEmail(user: User, numericCode: number) {
+function sendPasswordResetEmail(user: User, token: string) {
   return sendMail({
     to: user.email,
     from: "noreply@example.com",
@@ -154,7 +155,7 @@ function sendPasswordResetEmail(user: User, numericCode: number) {
       <p>Someone requested a password reset for your BearClaw account. If this was you, please click the link below to reset your password. The link will expire in 24 hours.</p>
       <br />
       <br />
-      <p data-testid="verification-token"><strong>${numericCode}</strong></p>
+      <p data-testid="verification-token"><strong>${token}</strong></p>
       <br />
       <br />
       <p><a href="/resetPassword?email=${user.email}">Enter your code here</a></p>
@@ -170,30 +171,30 @@ export async function forgotPassword(email: User["email"]) {
   if (!user) {
     return null;
   }
-  const numericCode = Math.floor(100000 + Math.random() * 900000);
+  const token = crypto.randomInt(0, 999999).toString().padStart(6, "0");
 
   const reset = await prisma.resetPasswordToken.upsert({
     where: { userId: user.id },
     create: {
       userId: user.id,
-      numericCode,
+      token,
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     },
     update: {
-      numericCode,
+      token,
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     },
   });
 
-  reset.numericCode && (await sendPasswordResetEmail(user, reset.numericCode));
+  reset.token && (await sendPasswordResetEmail(user, reset.token));
 
   return user;
 }
 
-export async function isResetPasswordTokenValid(numericCode: number) {
+export async function isResetPasswordTokenValid(token: string) {
   const reset = await prisma.resetPasswordToken.findFirst({
     where: {
-      numericCode,
+      token,
       expiresAt: {
         gt: new Date(),
       },
@@ -202,13 +203,10 @@ export async function isResetPasswordTokenValid(numericCode: number) {
   return reset ? true : false;
 }
 
-export async function resetPasswordByToken(
-  numericCode: number,
-  newPassword: string
-) {
+export async function resetPasswordByToken(token: string, newPassword: string) {
   const reset = await prisma.resetPasswordToken.findFirst({
     where: {
-      numericCode,
+      token,
       expiresAt: {
         gt: new Date(),
       },

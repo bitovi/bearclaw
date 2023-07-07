@@ -1,20 +1,21 @@
 import { prisma } from "~/db.server";
 import type { User } from "@prisma/client";
 import { sendEmailVerificationEmail } from "./user.server";
+import crypto from "crypto";
 
 export async function createVerificationToken(userId: string) {
-  const numericCode = Math.floor(100000 + Math.random() * 900000);
+  const token = crypto.randomInt(0, 999999).toString().padStart(6, "0");
   return await prisma.verificationToken.upsert({
     where: {
       userId,
     },
     create: {
       userId,
-      numericCode,
+      token,
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     },
     update: {
-      numericCode,
+      token,
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     },
   });
@@ -36,19 +37,19 @@ export async function resetVerificationToken(
 
   await sendEmailVerificationEmail({
     user,
-    verificationToken: verificationToken.numericCode,
+    token: verificationToken.token,
     redirectTo,
   });
 }
 
 export async function retrieveVerificationToken(
   userId: string,
-  numericCode: number
+  tokenCode: string
 ) {
   const token = await prisma.verificationToken.findFirst({
     where: {
       userId,
-      numericCode,
+      token: tokenCode,
       expiresAt: {
         gt: new Date(),
       },

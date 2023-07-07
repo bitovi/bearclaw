@@ -48,3 +48,12 @@ export type AuthSidebarCopy = {
   _id: "authSidebar";
   content: any;
 };
+
+export type AuthImages = {
+  imageURLs: {
+    key: string;
+    hidden: boolean;
+    url: string;
+    altText: string;
+  }[];
+};

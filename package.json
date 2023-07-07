@@ -48,6 +48,7 @@
     "@emotion/styled": "^11.10.8",
     "@faker-js/faker": "^8.0.2",
     "@mui/icons-material": "^5.11.16",
+    "@mui/lab": "^5.0.0-alpha.135",
     "@mui/material": "^5.12.2",
     "@paralleldrive/cuid2": "^2.2.0",
     "@portabletext/react": "^3.0.2",

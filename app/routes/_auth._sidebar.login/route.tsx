@@ -9,10 +9,9 @@ import {
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { createUserSession, getUser, logout } from "~/session.server";
+import { createUserSession, getUser } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
-import { Button } from "~/components/button/Button";
 import {
   createOrganization,
   getOrganizationById,
@@ -24,13 +23,15 @@ import { MFA_TYPE } from "~/models/mfa";
 import { retrieveOrgUserOwner } from "~/models/organizationUsers.server";
 import { useParentFormCopy } from "../_auth/copy";
 import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
+import Stack from "@mui/material/Stack";
+import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
 
   if (!user) return json({});
   if (user && !user.emailVerifiedAt) {
-    await logout(request);
+    redirect("/verifyEmail");
     return json({});
   }
   return redirect("/dashboard");
@@ -171,9 +172,7 @@ export default function LoginPage() {
   }, [actionData]);
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
+    <Stack
       alignItems="center"
       textAlign="center"
       gap="2rem"
@@ -206,7 +205,7 @@ export default function LoginPage() {
           />
           <TextInput
             fullWidth
-            label={formCopy?.password || "Passowrd"}
+            label={formCopy?.password || "Password"}
             name="password"
             type="password"
             autoComplete="password"
@@ -230,57 +229,37 @@ export default function LoginPage() {
           </Typography>
 
           <Box width="66%" alignSelf="center">
-            <Button
+            <ButtonLoader
               fullWidth
               type="submit"
               variant="buttonLarge"
-              disabled={
+              loading={
                 navigation.state === "submitting" ||
                 navigation.state === "loading"
               }
             >
               {formCopy?.login || "Login"}
-            </Button>
-            <Typography variant="body1" color="text.secondary" paddingY={2}>
-              or
-            </Typography>
-            <Button
-              fullWidth
-              variant="buttonLargeOutlined"
-              disabled={
-                navigation.state === "submitting" ||
-                navigation.state === "loading" ||
-                true
-              }
-            >
-              <Typography color="text.primary">
-                {formCopy?.loginWithGithub || "Login with Github"}
-              </Typography>
-            </Button>
-            <Box paddingTop={2}>
-              <Typography
-                component="span"
-                variant="body2"
-                color="text.secondary"
-              >
-                {formCopy?.noAccountMessage || "New User?"}{" "}
-              </Typography>
-
-              <Typography
-                component={Link}
-                variant="body2"
-                color="primary.main"
-                to={{
-                  pathname: "/join",
-                  search: searchParams.toString(),
-                }}
-              >
-                {formCopy?.noAccountLoginLink || "Create an account"}
-              </Typography>
-            </Box>
+            </ButtonLoader>
           </Box>
         </Box>
       </Box>
-    </Box>
+      <Box paddingTop={2}>
+        <Typography component="span" variant="body2" color="text.secondary">
+          {formCopy?.noAccountMessage || "New User?"}{" "}
+        </Typography>
+
+        <Typography
+          component={Link}
+          variant="body2"
+          color="primary.main"
+          to={{
+            pathname: "/join",
+            search: searchParams.toString(),
+          }}
+        >
+          {formCopy?.noAccountLoginLink || "Create an account"}
+        </Typography>
+      </Box>
+    </Stack>
   );
 }

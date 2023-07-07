@@ -11,19 +11,13 @@ export const verifyValidationCode = async ({
   userId: string;
   formData: FormData;
 }) => {
-  const digit1 = formData.get("digit1");
-  const digit2 = formData.get("digit2");
-  const digit3 = formData.get("digit3");
-  const digit4 = formData.get("digit4");
-  const digit5 = formData.get("digit5");
-  const digit6 = formData.get("digit6");
+  const tokenCode = formData.get("tokenCode")?.toString();
 
-  if (digit1 && digit2 && digit3 && digit4 && digit5 && digit6) {
-    const num = parseInt(
-      `${digit1}${digit2}${digit3}${digit4}${digit5}${digit6}`
+  if (tokenCode) {
+    const verificationToken = await retrieveVerificationToken(
+      userId,
+      tokenCode
     );
-
-    const verificationToken = await retrieveVerificationToken(userId, num);
     if (verificationToken.token) {
       return {
         status: true,
