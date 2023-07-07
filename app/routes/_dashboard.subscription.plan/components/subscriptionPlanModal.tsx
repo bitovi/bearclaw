@@ -10,7 +10,7 @@ import { SubscriptionStatus } from "~/models/subscriptionTypes";
 import type {
   ExpandedPrice,
   InvoicePreview,
-  Subscription
+  Subscription,
 } from "~/models/subscriptionTypes";
 import { previewSubscriptionUpdate } from "~/services/subscriptions/previewSubscription";
 

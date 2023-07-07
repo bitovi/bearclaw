@@ -1,8 +1,8 @@
 import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { Logo } from "~/components/logo/Logo";
 import { Link } from "~/components/link";
-import { Typography } from "@mui/material";
 import { fetchAuthCopy } from "../_auth/copy";
 import { json } from "@remix-run/server-runtime";
 

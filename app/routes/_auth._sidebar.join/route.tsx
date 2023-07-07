@@ -3,9 +3,9 @@ import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
-
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import { getUserId, createUserSession } from "~/session.server";
-
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import { Button } from "~/components/button/Button";
@@ -16,7 +16,6 @@ import {
 import { TextInput } from "~/components/input";
 import { useParentFormCopy } from "../_auth/copy";
 import { PortableText } from "@portabletext/react";
-import { Checkbox, FormControlLabel } from "@mui/material";
 import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 
 export async function loader({ request }: LoaderArgs) {

@@ -1,4 +1,5 @@
-import { Checkbox as MuiCheckbox, FormControlLabel } from "@mui/material";
+import MuiCheckbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import type { CheckboxProps } from "@mui/material";
 
 type Props = CheckboxProps & {
