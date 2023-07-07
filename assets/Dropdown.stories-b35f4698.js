@@ -1,6 +1,0 @@
-import{D as s}from"./Dropdown-1d145630.js";import"./jsx-runtime-ad672792.js";import"./index-f1f749bf.js";import"./_commonjsHelpers-042e6b4d.js";import"./Select-e7c22034.js";import"./identifier-b4532d00.js";import"./emotion-use-insertion-effect-with-fallbacks.browser.esm-c604b0e9.js";import"./index-c004fcab.js";import"./useThemeProps-c83d714b.js";import"./TransitionGroupContext-1b7860e3.js";import"./createSvgIcon-c08680d8.js";import"./inheritsLoose-c82a83d4.js";import"./index-96c5f47c.js";import"./GlobalStyles-4bfa884f.js";import"./MenuItem-d23591e2.js";import"./ButtonBase-a2480dab.js";import"./assertThisInitialized-081f9914.js";const O={title:"Components/Dropdown",component:s,tags:["component","dropdown"],parameters:{layout:"centered"}},i=m=>{const t=[{value:0,label:"Placeholder value"}];let e="";for(let r=0;r<=m;r++)e+="*",t.push({value:r,label:e});return t},o={args:{options:i(20)}};var p,n,a;o.parameters={...o.parameters,docs:{...(p=o.parameters)==null?void 0:p.docs,source:{originalSource:`{
-  args: {
-    options: optGenerator(20)
-  }
-}`,...(a=(n=o.parameters)==null?void 0:n.docs)==null?void 0:a.source}}};const P=["_Dropdown"];export{o as _Dropdown,P as __namedExportsOrder,O as default};
-//# sourceMappingURL=Dropdown.stories-b35f4698.js.map
