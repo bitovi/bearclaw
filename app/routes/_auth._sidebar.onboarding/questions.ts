@@ -26,7 +26,7 @@ export const questions: Array<{
   {
     title: "Personal Info",
     description:
-      "This type of information helps us keep your account safe and also helps in case you need a speedy recovery.",
+      "This information helps us keep your account safe and also helps in case you need a speedy recovery.",
     questions: [
       {
         name: "firstName",
@@ -61,7 +61,7 @@ export const questions: Array<{
   {
     title: "Professional Experience",
     description:
-      "This info helps us to make BearClaw with you and your needs in mind.",
+      "This info helps us to make Troy with you and your needs in mind.",
     questions: [
       {
         name: "role",
