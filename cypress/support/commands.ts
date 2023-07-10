@@ -205,12 +205,12 @@ function createAndVerifyAccount(
 
   cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
   cy.findByLabelText(/password/i).type(loginForm.password);
-  cy.wait(3000)
+  cy.wait(4000)
     .findAllByRole("button", { name: /sign up/i })
     .eq(0)
     .should("be.visible")
     .click({ force: true });
-  cy.wait(3000)
+  cy.wait(4000)
     .findByRole("link", { name: /View verification emails here/i })
     .should("be.visible")
     .click({ force: true });
