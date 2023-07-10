@@ -9,7 +9,7 @@ export async function fetchAccountQuestions() {
   try {
     const onboardingQuestionsQuery = `*[_id == "accountQuestions"]{...}`;
     const onboardingQuestionsCopy = await getClient().fetch<
-      AccountQuestionsCopy[]
+      AccountQuestionsCopy[] | null
     >(onboardingQuestionsQuery);
 
     return onboardingQuestionsCopy?.find(isAccountQuestionsCopy);
