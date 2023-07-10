@@ -102,7 +102,7 @@ export const CodeValidationInput = ({
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: { xs: "16px", lg: "24px" },
-              letterSpacing: { xs: "2.5rem", lg: "4.5rem" },
+              letterSpacing: { xs: "2.5rem", lg: "4.35rem" },
               padding: "0",
               width: "130%",
               zIndex: "10",
@@ -114,7 +114,7 @@ export const CodeValidationInput = ({
             maxLength: 6,
             width: "100%",
             sx: {
-              textIndent: { xs: "1.15rem", lg: "1.5rem" },
+              textIndent: { xs: "1.15rem", lg: "1.7rem" },
               caretColor: "transparent",
               padding: 0,
               "&::selection": {
