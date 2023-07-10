@@ -8,7 +8,7 @@ describe("Upload", () => {
 
     cy.wait(1000);
 
-    cy.findByLabelText(/upload/i).selectFile({
+    cy.findByLabelText(/to upload/i).selectFile({
       contents: Cypress.Buffer.from("file contents"),
       fileName: "this_is_a_test.txt",
       lastModified: Date.now(),
