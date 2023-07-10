@@ -25,11 +25,10 @@ describe("join and authenticate tests", () => {
   });
 
   it("should allow you to onboard", () => {
-    cy.createAndVerifyAccount();
+    cy.createAndVerifyAccount(undefined, undefined, true);
 
     // Onboarding time
     const onboardingForm = createOnboardingData();
-    cy.visitAndCheck("/onboarding");
 
     cy.findByLabelText(/first name/i).type(onboardingForm.firstName);
     cy.findByLabelText(/last name/i).type(onboardingForm.lastName);
@@ -61,10 +60,12 @@ describe("join and authenticate tests", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.wait(1000).findByText((text) => {
-      return text.includes(
-        onboardingForm.firstName + " " + onboardingForm.lastName
-      );
-    });
+    cy.wait(1000)
+      .findAllByText((text) => {
+        return text.includes(
+          onboardingForm.firstName + " " + onboardingForm.lastName
+        );
+      })
+      .should("have.length.gte", 1);
   });
 });
