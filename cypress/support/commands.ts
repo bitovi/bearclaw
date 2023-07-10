@@ -204,8 +204,9 @@ function createAndVerifyAccount(
 
   cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
   cy.findByLabelText(/password/i).type(loginForm.password);
-  cy.wait(2000)
-    .findByRole("button", { name: /create account/i })
+  cy.wait(1000)
+    .findAllByRole("button", { name: /sign up/i })
+    .eq(0)
     .should("be.visible")
     .click({ force: true });
   cy.wait(2000)
@@ -213,14 +214,26 @@ function createAndVerifyAccount(
     .should("be.visible")
     .click({ force: true });
 
-  cy.findByTestId(loginForm.email)
-    .findByRole("link", { name: /verify your email/i })
+  cy.findByTestId(loginForm.email).within(() => {
+    cy.findByTestId("verification-token")
+      .invoke("text")
+      .then(($token) => {
+        cy.findByRole("link", { name: /enter code here/i })
+          .should("be.visible")
+          .click({ force: true });
+        cy.wait(1000);
+        cy.focused().type($token);
+      });
+  });
+  cy.findByRole("button", { name: /verify/i })
     .should("be.visible")
     .click({ force: true });
 
-  cy.findByText(/verified successfully/i);
-  cy.wait(1000);
-  cy.findByRole("link", { name: /Continue/i }).click();
+  cy.wait(2000)
+    .get("main")
+    .within(() => {
+      cy.findByText(/dashboard/i);
+    });
 }
 
 Cypress.Commands.add("login", login);

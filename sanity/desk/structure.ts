@@ -15,7 +15,28 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext) {
                 .child(S.editor().title('Forms').schemaType('authForm').documentId('authForm')),
               S.listItem()
                 .title('Sidebar')
-                .child(S.editor().title('Sidebar').schemaType('content').documentId('authSidebar')),
+                .child(
+                  S.list()
+                    .title('Content')
+                    .items([
+                      S.listItem()
+                        .title('Image Content')
+                        .child(
+                          S.editor()
+                            .title('Images')
+                            .schemaType('sidebarImages')
+                            .documentId('sidebarImages')
+                        ),
+                      S.listItem()
+                        .title('Rich Content')
+                        .child(
+                          S.editor()
+                            .title('Rich Content')
+                            .schemaType('content')
+                            .documentId('authSidebar')
+                        ),
+                    ])
+                ),
             ])
         ),
       S.listItem()

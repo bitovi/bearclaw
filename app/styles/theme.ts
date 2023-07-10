@@ -17,7 +17,7 @@ declare module "@mui/material/styles" {
   interface Palette {
     appbar?: Palette["primary"];
   }
-  
+
   interface PaletteOptions {
     appbar?: PaletteOptions["primary"];
     cve?: {
@@ -64,7 +64,7 @@ const theme = createTheme({
       },
     },
     secondary: {
-      main: "#19857b",
+      main: "rgba(0, 188, 212, 1)",
     },
     error: {
       main: "#D32F2F",
@@ -114,6 +114,7 @@ const theme = createTheme({
       letterSpacing: "0.25px",
     },
     h5: {
+      fontWeight: 400,
       fontStyle: "normal",
       fontSize: "1.5rem",
       lineHeight: "133.4%",
@@ -199,13 +200,17 @@ const theme = createTheme({
         {
           props: { variant: "buttonLarge" },
           style: {
-            fontStyle: "normal",
+            fontStyle: "Inter",
             fontWeight: 500,
             fontSize: "15px",
             lineHeight: "26px",
             letterSpacing: "0.46px",
             textTransform: "uppercase",
             backgroundColor: "#0037FF",
+            fontColor: "#FFF",
+            color: "#FFF",
+            borderRadius: "8px",
+            padding: "8px 22px",
             "&.Mui-disabled": {
               backgroundColor: "#cccccc",
             },
@@ -218,7 +223,7 @@ const theme = createTheme({
         {
           props: { variant: "buttonLargeOutlined" },
           style: {
-            fontStyle: "normal",
+            fontStyle: "Inter",
             fontWeight: 500,
             fontSize: "15px",
             lineHeight: "26px",
@@ -227,6 +232,8 @@ const theme = createTheme({
             backgroundColor: "transparent",
             color: "#0037FF",
             border: "1px solid #0037FF",
+            borderRadius: "8px",
+            padding: "8px 22px",
           },
         },
         {

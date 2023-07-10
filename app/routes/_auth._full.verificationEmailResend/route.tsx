@@ -3,19 +3,16 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 import { Link } from "~/components/link";
-import { resetEmailValidationToken } from "~/models/user.server";
+import { resetVerificationToken } from "~/models/verificationToken.server";
 import { getUser } from "~/session.server";
 import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   const url = new URL(request.url);
+  const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
   invariant(user, "User is required");
-  const redirectTo = safeRedirect(
-    url.searchParams.get("redirectTo"),
-    "/dashboard"
-  );
-  await resetEmailValidationToken(user, redirectTo);
+  await resetVerificationToken(user, redirectTo);
 
   return json({});
 }

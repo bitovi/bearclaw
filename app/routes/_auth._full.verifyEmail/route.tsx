@@ -1,45 +1,76 @@
 import Box from "@mui/material/Box";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import Typography from "@mui/material/Typography";
-import { useLoaderData } from "@remix-run/react";
-import type { LoaderArgs } from "@remix-run/server-runtime";
-import { json } from "@remix-run/server-runtime";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
+import type { LoaderArgs, ActionArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Link } from "~/components/link";
-import { validateUserEmailByToken } from "~/models/user.server";
+import { validateUser } from "~/models/user.server";
 import { safeRedirect } from "~/utils";
+import { ButtonLink } from "~/components/buttonLink/ButtonLink";
+import { getUser, getUserId } from "~/session.server";
+import { useParentFormCopy } from "../_auth/copy";
+import { CodeValidationInput } from "~/components/codeValidationInput";
+import { verifyValidationCode } from "~/utils/verifyDigitCode.server";
+import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
-  const token = url.searchParams.get("token");
-  const redirectTo = url.searchParams.get("redirectTo");
-  if (token) {
-    const result = await validateUserEmailByToken(token);
-    if (result.error) {
-      return json({
-        isVerified: false,
-        error: "Could not verify. Token is expired or invalid.",
-      });
-    }
-    if (redirectTo) {
-      return json({
-        isVerified: true,
-        error: null,
-        redirectTo: safeRedirect(redirectTo),
-      });
-    }
-    return json({ isVerified: true, error: null, redirectTo: "/dashboard" });
-  }
+  const user = await getUser(request);
+  const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
   return json({
-    isVerified: false,
-    error: null,
-    redirectTo: safeRedirect(redirectTo),
+    redirectTo,
+    email: user?.email,
+  });
+}
+export async function action({ request }: ActionArgs) {
+  const userId = await getUserId(request);
+  const formData = await request.formData();
+
+  if (!userId) {
+    return json({
+      error: "User not found",
+    });
+  }
+
+  const redirectTo = formData.get("redirectTo");
+
+  const { status, error } = await verifyValidationCode({
+    userId,
+    formData,
+  });
+
+  if (status) {
+    const validate = await validateUser(userId);
+    if (!validate.error) {
+      return redirectTo
+        ? redirect(redirectTo.toString())
+        : redirect("/dashboard");
+    } else {
+      return json({
+        error: validate.error,
+      });
+    }
+  }
+
+  return json({
+    error,
   });
 }
 
 export default function Route() {
-  const { isVerified, error, redirectTo } = useLoaderData();
+  const { redirectTo, email } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const formCopy = useParentFormCopy();
+  const navigation = useNavigation();
 
-  if (isVerified === true) {
-    return (
+  return (
+    <Form method="POST" action="/verifyEmail">
       <Box
         height="100%"
         width="100%"
@@ -49,43 +80,70 @@ export default function Route() {
         justifyContent="center"
         gap={1}
       >
-        <Typography>Email verified successfully!</Typography>
-        <Link to={redirectTo}>Continue to dashboard</Link>
-      </Box>
-    );
-  }
-
-  return (
-    <Box
-      height="100%"
-      width="100%"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      gap={1}
-    >
-      {error ? (
-        <Typography>{error}</Typography>
-      ) : (
-        <Typography>
-          Please verify your email address. Check your inbox for a verification
-          link.
+        <Typography variant="h5">
+          {formCopy?.checkYourEmail || "Please check your email!"}
         </Typography>
-      )}
-      <Link
-        to={
-          redirectTo
-            ? `/verificationEmailResend?redirectTo=${redirectTo}`
-            : "/verificationEmailResend"
-        }
-      >
-        Resend verification email
-      </Link>
-      <Typography>
-        TESTING: Email messaging is not connected yet.{" "}
-        <Link to="/fakeMail">View verification emails here</Link>
-      </Typography>
-    </Box>
+        <Typography variant="body2">
+          {formCopy?.verifyEmailInstructionPart1 ||
+            "We've emailed a 6-digit confirmation code to"}{" "}
+          {email || "your provided email"},{" "}
+          {formCopy?.verifyEmailInstructionPart2 ||
+            "please enter the code below to verify your account."}
+        </Typography>
+        {actionData?.error && (
+          <Typography paddingTop={2} color="error" variant="body1">
+            {actionData.error}
+          </Typography>
+        )}
+        <input type="hidden" name="redirectTo" value={redirectTo} />
+        <CodeValidationInput
+          autoFocus
+          containerProps={{ marginLeft: { xs: "3rem", lg: "unset" } }}
+        />
+        <ButtonLoader
+          loading={
+            navigation.state === "submitting" || navigation.state === "loading"
+          }
+          type="submit"
+          variant="buttonLarge"
+          color="primary"
+        >
+          {formCopy?.verifyEmailButton || "VERIFY"}
+        </ButtonLoader>
+        <Box>
+          <Typography component="span" variant="body2">
+            {formCopy?.dontHaveCode || "Don't have a code?"}{" "}
+          </Typography>
+          <Typography
+            component={Link}
+            to="/verificationEmailResend"
+            color="secondary.main"
+            variant="body2"
+          >
+            {formCopy?.resendCode || "Resend code"}
+          </Typography>
+        </Box>
+        <ButtonLink
+          variant="buttonMedium"
+          to="/logout"
+          sx={{
+            "&:hover": { backgroundColor: "#FFF" },
+            color: "primary.main",
+          }}
+        >
+          <KeyboardArrowLeftIcon />
+          {formCopy?.returnToSignInCTA || "Return to Sign In"}
+        </ButtonLink>
+        <br />
+        <br />
+        <br />
+        <Typography>
+          TESTING: Email messaging is not connected yet.{" "}
+          <Typography component={Link} to="/fakeMail" color="secondary.main">
+            View verification emails here
+          </Typography>
+        </Typography>
+      </Box>
+    </Form>
   );
 }

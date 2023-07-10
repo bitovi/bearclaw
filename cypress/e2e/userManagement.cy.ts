@@ -68,8 +68,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findAllByRole("link")
-      .contains(/create an account/i)
+    cy.findByText(/create an account/i)
       .should("be.visible")
       .click({ force: true });
 
@@ -83,7 +82,8 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .type(newUserAccount.password);
 
-    cy.findByRole("button", { name: /create account/i })
+    cy.findAllByRole("button", { name: /sign up/i })
+      .eq(0)
       .should("be.visible")
       .click({ force: true });
 
@@ -95,13 +95,22 @@ describe("User Management & Invitation", () => {
 
     cy.findAllByTestId(newUserAccount.email)
       .eq(0)
-      .findByRole("link", { name: /verify your email/i })
+      .within(() => {
+        cy.findByTestId("verification-token")
+          .invoke("text")
+          .then(($token) => {
+            cy.findByRole("link", { name: /enter code here/i })
+              .should("be.visible")
+              .click({ force: true });
+            cy.wait(1000);
+            cy.focused().type($token);
+          });
+      });
+
+    cy.findByRole("button", { name: /verify/i })
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /Continue/i })
-      .should("be.visible")
-      .click({ force: true });
     cy.findByText(
       /You have successfully joined ownerAccount-test's organization/i
     );
@@ -148,7 +157,7 @@ describe("User Management & Invitation", () => {
 
     cy.findByText(/invitation successfully sent/i);
 
-    cy.wait(200)
+    cy.wait(1000)
       .findByRole("link", { name: /logout/i })
       .should("be.visible")
       .click({ force: true });
@@ -231,22 +240,38 @@ describe("User Management & Invitation", () => {
       .findByRole("textbox", { name: /email/i })
       .type(differentOwnerAccount.email);
     cy.findByLabelText(/password/i).type(differentOwnerAccount.password);
-    cy.findByRole("button", { name: /log in/i })
+
+    cy.wait(1000)
+      .findAllByRole("button", { name: /log in/i })
+      .eq(0)
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /View verification emails here/i })
+    cy.wait(2000)
+      .findByRole("link", { name: /View verification emails here/i })
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByTestId(differentOwnerAccount.email)
-      .findByRole("link", { name: /verify your email/i })
+    cy.findByTestId(differentOwnerAccount.email).within(() => {
+      cy.findByTestId("verification-token")
+        .invoke("text")
+        .then(($token) => {
+          cy.findByRole("link", { name: /enter code here/i })
+            .should("be.visible")
+            .click({ force: true });
+          cy.wait(1000);
+          cy.focused().type($token);
+        });
+    });
+    cy.findByRole("button", { name: /verify/i })
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/verified successfully/i);
-    cy.wait(1000);
-    cy.findByRole("link", { name: /Continue/i }).click();
+    cy.wait(1000)
+      .get("main")
+      .within(() => {
+        cy.findByText(/dashboard/i);
+      });
 
     cy.wait(1000)
       .findByText(/user management/i)

@@ -4,6 +4,28 @@ export default {
   title: 'AuthenticationForms',
   fields: [
     {
+      name: 'needHelp',
+      title: 'Need Help?',
+      type: 'array',
+      of: [{type: 'block'}],
+    },
+    {
+      name: 'loginSubHeader',
+      title: 'Login Subheader',
+      type: 'string',
+    },
+    {
+      name: 'joinSubHeader',
+      title: 'Join Subheader',
+      type: 'string',
+    },
+    {
+      name: 'forgotPasswordSubHeader',
+      title: 'Forgot Password Subheader',
+      type: 'string',
+    },
+    {name: 'forgotYourPassword', tite: 'Forgot your password?', type: 'string'},
+    {
       name: 'email',
       title: 'Email label',
       type: 'string',
@@ -14,18 +36,28 @@ export default {
       type: 'string',
     },
     {
+      name: 'confirmPassword',
+      title: 'Confirm Password Label',
+      type: 'string',
+    },
+    {
       name: 'rememberMe',
       title: 'Remember me label',
       type: 'string',
     },
     {
-      name: 'createAccount',
+      name: 'createAccountButton',
       title: 'Create account button',
       type: 'string',
     },
     {
       name: 'login',
       title: 'Login button',
+      type: 'string',
+    },
+    {
+      name: 'signin',
+      title: 'Sign in button',
       type: 'string',
     },
     {
@@ -54,23 +86,19 @@ export default {
       type: 'string',
     },
     {
-      name: 'alreadyKnowPasswordMessage',
-      title: 'Already know password message',
-      type: 'string',
-    },
-    {
-      name: 'alreadyKnowPasswordLink',
-      title: 'Already know password login link',
-      type: 'string',
-    },
-    {
       name: 'sendPasswordReset',
       title: 'Send password reset button',
       type: 'string',
     },
+    {name: 'passwordRequestSent', title: 'Password Request Sent', type: 'string'},
     {
-      name: 'joinMessage',
-      title: 'Join form message',
+      name: 'passwordResetSuccessMessage',
+      title: 'Password Reset Success Message',
+      type: 'string',
+    },
+    {
+      name: 'passwordReset',
+      title: 'Password Reset',
       type: 'string',
     },
     {
@@ -78,6 +106,51 @@ export default {
       title: 'Join form accept terms label',
       type: 'array',
       of: [{type: 'block'}],
+    },
+    {
+      name: 'loginWithGithub',
+      title: 'Login with Github',
+      type: 'string',
+    },
+    {
+      name: 'signUpWithGithub',
+      title: 'Sign Up with Github',
+      type: 'string',
+    },
+    {
+      name: 'checkYourEmail',
+      title: 'Please Check your email',
+      type: 'string',
+    },
+    {
+      name: 'verifyEmailInstructionPart1',
+      title: "We've emailed ... to [email]",
+      type: 'string',
+    },
+    {
+      name: 'verifyEmailInstructionPart2',
+      title: 'please enter the code...',
+      type: 'string',
+    },
+    {
+      name: 'verifyEmailButton',
+      title: 'Verify Button CTA',
+      type: 'string',
+    },
+    {
+      name: 'dontHaveCode',
+      title: "Don't Have a code?",
+      type: 'string',
+    },
+    {
+      name: 'resendCode',
+      title: 'Resend Code Link',
+      type: 'string',
+    },
+    {
+      name: 'returnToSignInCTA',
+      title: 'Return to Sign In CTA',
+      type: 'string',
     },
   ],
 }
