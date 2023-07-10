@@ -1,10 +1,10 @@
 import { prisma } from "~/db.server";
 import type { User } from "@prisma/client";
 import { sendEmailVerificationEmail } from "./user.server";
-import crypto from "crypto";
+import { createSixCharacterCode } from "~/utils";
 
 export async function createVerificationToken(userId: string) {
-  const token = crypto.randomInt(0, 999999).toString().padStart(6, "0");
+  const token = createSixCharacterCode();
   return await prisma.verificationToken.upsert({
     where: {
       userId,

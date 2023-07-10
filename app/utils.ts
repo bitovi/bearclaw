@@ -4,6 +4,13 @@ import type Stripe from "stripe";
 
 import type { User } from "~/models/user.server";
 
+import crypto from "crypto";
+
+export const createSixCharacterCode = () =>
+  Buffer.from(crypto.randomInt(0, 999999).toString())
+    .toString("base64")
+    .substring(0, 6);
+
 const DEFAULT_REDIRECT = "/dashboard";
 
 /**
