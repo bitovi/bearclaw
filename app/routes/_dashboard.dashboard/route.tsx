@@ -1,6 +1,6 @@
-import { useLoaderData } from "@remix-run/react";
+import { Await, useLoaderData } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/server-runtime";
+import { defer } from "@remix-run/server-runtime";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -18,6 +18,8 @@ import background from "./components/background.png";
 import { getProcessingStatus } from "~/services/bigBear/getProcessingStatus";
 import { Chip } from "@mui/material";
 import { toTitleCase } from "~/utils/string/toTitleCase";
+import dayjs from "dayjs";
+import { Suspense } from "react";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -26,17 +28,20 @@ export async function loader({ request }: LoaderArgs) {
   const page = url.searchParams.get("page");
   const perPage = url.searchParams.get("perPage");
   const sort = url.searchParams.get("sort");
-  const [keyMetrics, uploads] = await Promise.all([
-    getKeyMetrics({ days: 7, userId, organizationId }),
-    getProcessingStatus({
-      organizationId,
-      page,
-      perPage,
-      sort,
-    }),
-  ]);
-  console.log(uploads)
-  return json({ user, keyMetrics, uploads, userId, organizationId });
+
+  const keyMetrics = await getKeyMetrics({
+    days: 7,
+    userId,
+    organizationId,
+  });
+  const uploads = getProcessingStatus({
+    organizationId,
+    page,
+    perPage,
+    sort,
+  });
+
+  return defer({ user, keyMetrics, uploads, userId, organizationId });
 }
 
 export async function action(args: ActionArgs) {
@@ -146,33 +151,50 @@ export default function Index() {
         </Box>
       </Box>
       <Box>
-        {uploads && uploads.data.length > 0 ? (
-          <Table
-            tableTitle="Recent Activity"
-            headers={[
-              { label: "File Name", value: "filename", sortable: false },
-              { label: "Type", value: "type", sortable: false },
-              { label: "Date", value: "analyzedAt", sortable: false },
-              { label: "Size", value: "size", sortable: false },
-              { label: "Status", value: "status", sortable: false },
-              { label: "Object ID", value: "_id", sortable: false },
-            ]}
-            linkKey="_id"
-            totalItems={uploads.metadata?.page.total}
-            tableData={uploads.data.map((upload) => ({
-              filename: upload.filename,
-              type: upload.type,
-              analyzedAt: upload.analyzedAt,
-              size: upload.size,
-              status: <Chip label={toTitleCase(upload.status)} />,
-              _id: upload._id,
-            }))}
-          />
-        ) : (
-          <Box component={Paper} variant="outlined" padding={2}>
-            <Typography fontStyle="italic">No activity yet</Typography>
-          </Box>
-        )}
+        <Suspense fallback={<div>Loading...</div>}>
+          <Await resolve={uploads}>
+            {(uploads) =>
+              uploads?.data && uploads.data.length > 0 ? (
+                <Table
+                  tableTitle="Recent Activity"
+                  headers={[
+                    { label: "File Name", value: "filename", sortable: true },
+                    { label: "Type", value: "type", sortable: true },
+                    { label: "Date", value: "analyzedAt", sortable: true },
+                    { label: "Status", value: "status", sortable: true },
+                    { label: "Object ID", value: "_id", sortable: false },
+                  ]}
+                  linkKey="_id"
+                  totalItems={uploads.metadata?.page.total}
+                  tableData={uploads.data.map((upload) => ({
+                    filename: upload.filename,
+                    type: upload.type,
+                    analyzedAt: (
+                      <Box display="flex" flexDirection="column">
+                        <Typography variant="body2">
+                          {dayjs(new Date(upload.analyzedAt)).format(
+                            "MM/DD/YY"
+                          )}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {dayjs(new Date(upload.analyzedAt)).format(
+                            "HH:mm:ss"
+                          )}
+                        </Typography>
+                      </Box>
+                    ),
+                    status: <Chip label={toTitleCase(upload.status)} />,
+                    _id: upload._id,
+                  }))}
+                />
+              ) : (
+                <Box component={Paper} variant="outlined" padding={2}>
+                  <Typography fontStyle="italic">No activity yet</Typography>
+                </Box>
+              )
+            }
+          </Await>
+        </Suspense>
       </Box>
     </Box>
   );
