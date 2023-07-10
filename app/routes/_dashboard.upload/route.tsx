@@ -19,7 +19,6 @@ import Typography from "@mui/material/Typography";
 import { unlink } from "fs/promises";
 import { Loading } from "~/components/loading/Loading";
 
-
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
 

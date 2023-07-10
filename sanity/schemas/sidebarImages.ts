@@ -30,7 +30,7 @@ export default {
                     title: 'Onboarding',
                     value: 'onboarding',
                   },
-                  {title: 'Auth', value: 'Auth'},
+                  {title: 'Auth', value: 'auth'},
                 ],
                 layout: 'radio',
               },
@@ -38,6 +38,7 @@ export default {
             {
               name: 'name',
               title: 'Name',
+              validation: (Rule: any) => Rule.required(),
               type: 'string',
             },
             {

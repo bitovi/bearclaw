@@ -38,7 +38,7 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  const redirectTo = formData.get("redirectTo");
+  const redirectTo = formData.get("redirectTo")?.toString();
 
   const { status, error } = await verifyValidationCode({
     userId,
@@ -49,8 +49,10 @@ export async function action({ request }: ActionArgs) {
     const validate = await validateUser(userId);
     if (!validate.error) {
       return redirectTo
-        ? redirect(redirectTo.toString())
-        : redirect("/dashboard");
+        ? redirect(
+            `/onboarding${redirectTo ? `?redirectTo=${redirectTo}` : ""}`
+          )
+        : redirect("/onboarding");
     } else {
       return json({
         error: validate.error,

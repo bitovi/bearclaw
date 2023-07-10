@@ -10,7 +10,7 @@ function createOnboardingData() {
   return {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
-    phone: faker.phone.number(),
+    phone: faker.phone.number("123-123-1234"),
     emailSecondary: faker.internet.email(),
     role: "Other",
     companyName: faker.company.name(),
@@ -35,11 +35,11 @@ describe("join and authenticate tests", () => {
     cy.findByLabelText(/last name/i).type(onboardingForm.lastName);
     cy.findByLabelText(/phone/i).type(onboardingForm.phone);
     cy.findByLabelText(/secondary email/i).type(onboardingForm.emailSecondary);
-    cy.findByRole("button", { name: /next/i }).click();
+    cy.findByRole("button", { name: /continue/i }).click();
     cy.findByLabelText(/your role/i);
     cy.findByRole("button", { name: /previous/i }).click();
     cy.findByLabelText(/first name/i);
-    cy.findByRole("button", { name: /next/i }).click();
+    cy.findByRole("button", { name: /continue/i }).click();
     cy.findByLabelText(/company name/i).type(onboardingForm.companyName);
     cy.findByLabelText(/your role/i).click();
     cy.findAllByText(onboardingForm.role).click();
@@ -47,8 +47,24 @@ describe("join and authenticate tests", () => {
     cy.findAllByText(onboardingForm.levelOfExperience).click();
     cy.findByLabelText(/size of team/i).click();
     cy.findAllByText(onboardingForm.teamSize).click();
-    cy.findByRole("button", { name: /submit/i }).click();
+    cy.wait(1000)
+      .findByRole("button", { name: /finish profile/i })
+      .click({ force: true });
 
-    cy.findByText(onboardingForm.firstName + " " + onboardingForm.lastName);
+    cy.wait(1000)
+      .get("main")
+      .within(() => {
+        cy.findByText(/dashboard/i);
+      });
+
+    cy.findByRole("link", { name: /account/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(1000).findByText((text) => {
+      return text.includes(
+        onboardingForm.firstName + " " + onboardingForm.lastName
+      );
+    });
   });
 });

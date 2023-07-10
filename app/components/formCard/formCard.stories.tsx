@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { FormCard } from "./formCard";
-import type { Question } from "~/routes/_auth._sidebar.onboarding/questions";
+import type { OnboardingQuestion } from "~/services/sanity/copy/accountQuestions/types";
 
-const question: Question = {
-  title: "Personal Info",
-  description:
+const question: OnboardingQuestion = {
+  header: "Personal Info",
+  information:
     "This type of information helps us keep your account safe and also helps in case you need a speedy recovery.",
-  disabled: true,
-  questions: [
+  excludeFromOnboarding: false,
+  questionFields: [
     {
       name: "firstName",
-      type: "text",
+      questionType: "text",
       label: "First name",
       placeholder: "First name",
       disabled: false,
@@ -18,7 +18,7 @@ const question: Question = {
     },
     {
       name: "lastName",
-      type: "text",
+      questionType: "text",
       label: "Last name",
       placeholder: "Last name",
       required: false,
@@ -26,7 +26,7 @@ const question: Question = {
     },
     {
       name: "phone",
-      type: "text",
+      questionType: "text",
       label: "Phone number",
       placeholder: "Phone number",
       required: false,
@@ -34,7 +34,7 @@ const question: Question = {
     },
     {
       name: "emailSecondary",
-      type: "text",
+      questionType: "text",
       label: "Secondary email",
       placeholder: "Secondary email",
       required: false,

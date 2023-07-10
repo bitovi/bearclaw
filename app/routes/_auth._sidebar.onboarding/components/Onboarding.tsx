@@ -1,7 +1,6 @@
 import { Form } from "@remix-run/react";
 import { Button } from "../../../components/button";
 import { TextInput, Dropdown } from "../../../components/input";
-import { questions } from "../questions";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -10,26 +9,26 @@ import { useState } from "react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import type { OnboardingQuestion } from "~/services/sanity/copy/accountQuestions/types";
+import { useParentFormCopy } from "~/routes/_auth/copy";
 
 type Props = {
-  response?: {
-    success: boolean;
-    data: Record<string, string>;
-  };
   redirectTo?: string;
+  questions: OnboardingQuestion[];
 };
 
-export function Onboarding({ response, redirectTo }: Props) {
+export function Onboarding({ redirectTo, questions }: Props) {
   const [activeStep, setActiveStep] = useState(0);
+  const copy = useParentFormCopy();
 
   return (
     <>
       <Stack alignItems="flex-start" gap={2} paddingBottom={2}>
         <Typography variant="body2" color="text.secondary">
-          This will take less than 5 minutes.
+          {copy?.onboardingSubHeader || "This will take less than 5 minutes."}
         </Typography>
         <Typography variant="h2" fontWeight="300" textAlign="center">
-          Profile Builder
+          {copy?.profileBuilder || "Profile Builder"}
         </Typography>
         <Stepper
           activeStep={activeStep + 1}
@@ -41,11 +40,13 @@ export function Onboarding({ response, redirectTo }: Props) {
           }}
         >
           <Step key="register">
-            <StepLabel>Register Account</StepLabel>
+            <StepLabel>
+              {copy?.profileBuilderStep1Label || "Register Account"}
+            </StepLabel>
           </Step>
           {questions.map((section) => (
-            <Step key={section.title}>
-              <StepLabel>{section.title}</StepLabel>
+            <Step key={section.header}>
+              <StepLabel>{section.header}</StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -64,7 +65,7 @@ export function Onboarding({ response, redirectTo }: Props) {
             >
               {questions.map((step, stepIndex) => (
                 <Box
-                  key={step.title}
+                  key={step.header}
                   width="100%"
                   minWidth="100%"
                   sx={{
@@ -79,7 +80,7 @@ export function Onboarding({ response, redirectTo }: Props) {
                     justifyContent="center"
                   >
                     <Typography variant="body1" color="text.primary">
-                      {step.description}
+                      {step.information}
                     </Typography>
                   </Stack>
 
@@ -89,32 +90,51 @@ export function Onboarding({ response, redirectTo }: Props) {
                     rowGap={2}
                     columnGap={1}
                   >
-                    {step.questions.map((question) => (
-                      <div key={question.name}>
-                        {question.type === "text" && (
-                          <TextInput
-                            tabIndex={activeStep === stepIndex ? undefined : -1}
-                            fullWidth
-                            label={question.label}
-                            name={question.name}
-                          />
-                        )}
-                        {question.type === "select" && (
-                          <Dropdown
-                            fullWidth
-                            label={question.label}
-                            name={question.name}
-                            options={question.options}
-                          />
-                        )}
-                      </div>
-                    ))}
+                    {step.questionFields.map((formQuestion, i) => {
+                      return (
+                        <Box key={formQuestion.name}>
+                          {(formQuestion.questionType === "text" ||
+                            formQuestion.questionType === "tel" ||
+                            formQuestion.questionType === "email") && (
+                            <TextInput
+                              fullWidth
+                              tabIndex={
+                                activeStep === stepIndex ? undefined : -1
+                              }
+                              placeholder={formQuestion.placeholder}
+                              type={formQuestion.questionType}
+                              label={formQuestion.label}
+                              name={formQuestion.name}
+                              required={formQuestion.required}
+                              inputProps={{
+                                pattern: formQuestion.pattern,
+                              }}
+                              disabled={formQuestion.disabled}
+                            />
+                          )}
+                          {formQuestion.questionType === "select" && (
+                            <Dropdown
+                              fullWidth
+                              variant="filled"
+                              labelPosition={10}
+                              label={formQuestion.label}
+                              name={formQuestion.name}
+                              required={formQuestion.required}
+                              options={formQuestion.optionList}
+                              disabled={formQuestion.disabled}
+                            />
+                          )}
+                        </Box>
+                      );
+                    })}
                   </Box>
                 </Box>
               ))}
             </Stack>
             <Box mt={2} display="flex" justifyContent="space-between">
-              <ButtonLink to="/dashboard">Skip</ButtonLink>
+              <ButtonLink to={redirectTo ? redirectTo : "/dashboard"}>
+                {copy?.profileBuilderSkipButton || "Skip"}
+              </ButtonLink>
               <Box display="flex" gap={2}>
                 {activeStep <= 0 ? null : (
                   <Button
@@ -122,12 +142,12 @@ export function Onboarding({ response, redirectTo }: Props) {
                     variant="buttonLargeOutlined"
                     onClick={() => setActiveStep((prev) => prev - 1)}
                   >
-                    Previous
+                    {copy?.profileBuilderPreviousButton || "Previous"}
                   </Button>
                 )}
                 {activeStep === questions.length - 1 ? (
                   <Button type="submit" key="submit" variant="buttonLarge">
-                    Finish Profile
+                    {copy?.profileBuilderSubmitButton || "Finish Profile"}
                   </Button>
                 ) : (
                   <Button
@@ -136,7 +156,7 @@ export function Onboarding({ response, redirectTo }: Props) {
                     variant="buttonLarge"
                     onClick={() => setActiveStep((prev) => prev + 1)}
                   >
-                    Continue
+                    {copy?.profileBuilderNextButton || "Continue"}
                   </Button>
                 )}
               </Box>

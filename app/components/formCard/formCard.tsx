@@ -5,8 +5,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useFetcher } from "@remix-run/react";
 import { Dropdown, TextInput } from "~/components/input";
-import type { Question } from "~/routes/_auth._sidebar.onboarding/questions";
 import type { action as onboardingAction } from "~/routes/_auth._sidebar.onboarding/route";
+import type { OnboardingQuestion } from "~/services/sanity/copy/accountQuestions/types";
 
 export function FormCard<
   FormData extends Record<string, string | number | undefined | null> | null
@@ -17,7 +17,7 @@ export function FormCard<
   redirectTo,
   formData,
 }: {
-  question: Question;
+  question: OnboardingQuestion;
   submitText: string;
   action?: string;
   redirectTo?: string;
@@ -33,49 +33,58 @@ export function FormCard<
         )}
         <Box paddingBottom={2}>
           <Typography variant="h6" color="text.secondary">
-            {question.title}
+            {question.header}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {question.description}
+            {question.information}
           </Typography>
         </Box>
 
         <Stack
-          display={question.questions.length > 1 ? "grid" : "block"}
+          display={question.questionFields.length > 1 ? "grid" : "block"}
           gridTemplateColumns={
-            question.questions.length > 1
+            question.questionFields.length > 1
               ? { xs: "1fr", md: "repeat(2, 1fr)" }
               : {}
           }
           gap={2}
         >
-          {question.questions.map((formQuestion) => (
-            <div key={formQuestion.name}>
-              {formQuestion.type === "text" && (
-                <TextInput
-                  defaultValue={formData?.[formQuestion.name]}
-                  fullWidth
-                  label={formQuestion.label}
-                  name={formQuestion.name}
-                  required={formQuestion.required}
-                  disabled={formQuestion.disabled || fetcher.state !== "idle"}
-                />
-              )}
-              {formQuestion.type === "select" && (
-                <Dropdown
-                  defaultValue={formData?.[formQuestion.name]}
-                  fullWidth
-                  variant="filled"
-                  labelPosition={10}
-                  label={formQuestion.label}
-                  name={formQuestion.name}
-                  required={formQuestion.required}
-                  options={formQuestion.options}
-                  disabled={formQuestion.disabled || fetcher.state !== "idle"}
-                />
-              )}
-            </div>
-          ))}
+          {question.questionFields.map((formQuestion) => {
+            return (
+              <Box key={formQuestion.name}>
+                {(formQuestion.questionType === "text" ||
+                  formQuestion.questionType === "tel" ||
+                  formQuestion.questionType === "email") && (
+                  <TextInput
+                    defaultValue={formData?.[formQuestion.name]}
+                    fullWidth
+                    placeholder={formQuestion.placeholder}
+                    type={formQuestion.questionType}
+                    label={formQuestion.label}
+                    name={formQuestion.name}
+                    required={formQuestion.required}
+                    inputProps={{
+                      pattern: formQuestion.pattern,
+                    }}
+                    disabled={formQuestion.disabled || fetcher.state !== "idle"}
+                  />
+                )}
+                {formQuestion.questionType === "select" && (
+                  <Dropdown
+                    defaultValue={formData?.[formQuestion.name]}
+                    fullWidth
+                    variant="filled"
+                    labelPosition={10}
+                    label={formQuestion.label}
+                    name={formQuestion.name}
+                    required={formQuestion.required}
+                    options={formQuestion.optionList}
+                    disabled={formQuestion.disabled || fetcher.state !== "idle"}
+                  />
+                )}
+              </Box>
+            );
+          })}
         </Stack>
 
         <Stack
@@ -88,7 +97,10 @@ export function FormCard<
             type="submit"
             key="submit"
             variant="text"
-            disabled={question.disabled || fetcher.state !== "idle"}
+            disabled={
+              !!question.questionFields.find((q) => q.disabled) ||
+              fetcher.state !== "idle"
+            }
           >
             {submitText}
           </Button>

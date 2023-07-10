@@ -37,6 +37,14 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext) {
                         ),
                     ])
                 ),
+              S.listItem()
+                .title('Account Questions')
+                .child(
+                  S.editor()
+                    .title('Account Questions')
+                    .schemaType('accountQuestions')
+                    .documentId('accountQuestions')
+                ),
             ])
         ),
       S.listItem()
