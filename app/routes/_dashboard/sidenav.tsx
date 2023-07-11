@@ -34,7 +34,6 @@ export function MainSideNav() {
           userPermissions={permissions}
           dividerAfter={copy?.dividerAfter}
           navMenu={copy?.links || []}
-          iconColor="#0037FF"
         />
       </Box>
     </Box>

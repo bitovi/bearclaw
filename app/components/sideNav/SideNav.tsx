@@ -3,7 +3,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import StarIcon from "@mui/icons-material/Star";
-
+import Typography from "@mui/material/Typography";
 import { Link } from "~/components/link";
 import { useLocation } from "@remix-run/react";
 import Divider from "@mui/material/Divider";
@@ -19,7 +19,6 @@ export type NavItem = {
 
 type Props = {
   navMenu: NavItem[];
-  iconColor?: string;
   dividerAfter?: number;
   userPermissions?: string[];
 };
@@ -49,8 +48,8 @@ export function SideNav({
           .filter((item) =>
             item.requiredPermissions
               ? item.requiredPermissions.every((permission) =>
-                  userPermissions.includes(permission)
-                )
+                userPermissions.includes(permission)
+              )
               : true
           )
           .map((item, index) => {
@@ -60,8 +59,9 @@ export function SideNav({
                   component={Link}
                   to={item.to}
                   selected={bestRouteMatch === item.to}
+                  sx={{ borderRadius: "4px" }}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ color: "primary.main", minWidth: "32px" }}>
                     {item.icon && typeof item.icon === "string" ? (
                       <IconFromString
                         icon={item.icon || ""}
@@ -71,7 +71,11 @@ export function SideNav({
                       item.icon
                     )}
                   </ListItemIcon>
-                  <ListItemText>{item.text}</ListItemText>
+                  <ListItemText>
+                    <Typography fontSize="0.875rem">
+                      {item.text}
+                    </Typography>
+                  </ListItemText>
                 </ListItemButton>
                 {dividerAfter && dividerAfter === index && (
                   <Divider component="li" sx={{ marginY: 2 }} />
