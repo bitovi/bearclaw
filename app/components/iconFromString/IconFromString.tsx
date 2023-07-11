@@ -1,13 +1,13 @@
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import DashboardTwoToneIcon from "@mui/icons-material/DashboardTwoTone";
+import WorkspacePremiumTwoToneIcon from "@mui/icons-material/WorkspacePremiumTwoTone";
 import HistoryIcon from "@mui/icons-material/History";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SchemaIcon from "@mui/icons-material/Schema";
 import BiotechIcon from "@mui/icons-material/Biotech";
 import LinkIcon from "@mui/icons-material/Link";
-import SupportIcon from "@mui/icons-material/Support";
-import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import SupportTwoToneIcon from "@mui/icons-material/SupportTwoTone";
+import PersonSearchTwoToneIcon from "@mui/icons-material/PersonSearchTwoTone";
 import PersonIcon from "@mui/icons-material/Person";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -17,17 +17,17 @@ import StarTwoToneIcon from "@mui/icons-material/StarTwoTone";
 import AddchartTwoToneIcon from "@mui/icons-material/AddchartTwoTone";
 
 export const icons = {
-  dashboard: <DashboardIcon />,
+  dashboard: <DashboardTwoToneIcon />,
   history: <HistoryIcon />,
   schema: <SchemaIcon />,
   biotech: <BiotechIcon />,
   link: <LinkIcon />,
-  workspace: <WorkspacePremiumIcon />,
+  workspace: <WorkspacePremiumTwoToneIcon />,
   accountBox: <AccountBoxIcon />,
-  support: <SupportIcon />,
+  support: <SupportTwoToneIcon />,
   logout: <LogoutIcon />,
   person: <PersonIcon />,
-  personSearch: <PersonSearchIcon />,
+  personSearch: <PersonSearchTwoToneIcon />,
   infoOutlined: <InfoOutlinedIcon />,
   warning: <WarningAmberIcon />,
   check: <CheckIcon />,
