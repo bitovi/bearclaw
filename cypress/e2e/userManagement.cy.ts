@@ -61,6 +61,7 @@ describe("User Management & Invitation", () => {
   });
 
   it("Accept invitation -- New User", () => {
+    cy.clearCookies({ log: true });
     cy.visit("/fakeMail");
 
     cy.findByTestId(`${newUserAccount.email}-link`)
@@ -198,6 +199,8 @@ describe("User Management & Invitation", () => {
   });
 
   it("Confirm new users on owner org table & user deletion", () => {
+    cy.clearCookies({ log: true });
+
     cy.visit("/login");
 
     cy.wait(500)

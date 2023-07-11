@@ -183,8 +183,7 @@ function createLoginData(): LoginData {
 
 function createAndVerifyAccount(
   credentials?: LoginData,
-  destination = "/home",
-  stopOnOnboarding = false
+  destination = "/home"
 ) {
   cy.clearCookies({ log: true });
 
@@ -232,9 +231,6 @@ function createAndVerifyAccount(
     .should("be.visible")
     .click({ force: true });
 
-  if (stopOnOnboarding) {
-    return;
-  }
   cy.wait(2000)
     .findByRole("link", { name: /skip/i })
     .should("be.visible")

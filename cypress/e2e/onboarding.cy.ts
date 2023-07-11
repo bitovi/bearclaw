@@ -25,7 +25,7 @@ describe("join and authenticate tests", () => {
   });
 
   it("should allow you to onboard", () => {
-    cy.createAndVerifyAccount(undefined, undefined, true);
+    cy.createAndVerifyAccount();
 
     // Onboarding time
     const onboardingForm = createOnboardingData();
