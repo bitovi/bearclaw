@@ -6,7 +6,8 @@ node_modules
 /public/build
 .env
 
-
+/cypress/screenshots
+/cypress/videos
 /cypress/downloads
 /prisma/data.db
 /prisma/data.db-journal
