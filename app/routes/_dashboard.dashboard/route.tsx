@@ -63,7 +63,7 @@ export default function Index() {
             Welcome {user?.firstName}
           </Typography>
         </Box>
-        <Box border="1px dashed #999" padding="1rem">
+        <Box border="4px solid rgba(0,0,0,0.12)" borderRadius="12px">
           <Upload userId={userId} organizationId={organizationId} />
         </Box>
       </Box>
