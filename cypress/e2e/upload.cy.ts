@@ -8,11 +8,14 @@ describe("Upload", () => {
 
     cy.wait(1000);
 
-    cy.findByLabelText(/to upload/i).selectFile({
-      contents: Cypress.Buffer.from("file contents"),
-      fileName: "this_is_a_test.txt",
-      lastModified: Date.now(),
-    });
+    cy.findByLabelText(/to upload/i).selectFile(
+      {
+        contents: Cypress.Buffer.from("file contents"),
+        fileName: "this_is_a_test.txt",
+        lastModified: Date.now(),
+      },
+      { action: "drag-drop" }
+    );
     cy.wait(1000)
       .findAllByText(/Upload/i)
       .should("be.visible")

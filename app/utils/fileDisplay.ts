@@ -18,4 +18,4 @@ export function truncateFileName(fileName: string, maxCharacters: number) {
   const extensionLength = extension ? extension.length + 1 : 0;
   const truncatedFileName = fileName.slice(0, maxCharacters - extensionLength);
   return truncatedFileName + "..." + extension;
-} 
+}
