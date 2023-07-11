@@ -297,7 +297,10 @@ describe("User Management & Invitation", () => {
         cy.get("tr")
           .eq(0)
           .within(() => {
-            cy.get("td").eq(1).as("firstTableEmail");
+            cy.get("td")
+              .eq(1)
+              .invoke("text")
+              .as("firstTableEmail", { type: "static" });
           });
       });
 
@@ -313,12 +316,11 @@ describe("User Management & Invitation", () => {
           .within(() => {
             cy.get("td")
               .eq(1)
-              .as("ascTableEmail")
-              .then(($data) => {
-                cy.wrap($data).should("not.equal", cy.get("@firstTableEmail"));
-              });
+              .invoke("text")
+              .as("ascTableEmail", { type: "static" });
           });
       });
+    cy.get("@ascTableEmail").should("not.equal", cy.get("@firstTableEmail"));
 
     cy.findByText(/email/i).click({ force: true });
 
