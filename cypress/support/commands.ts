@@ -186,6 +186,8 @@ function createAndVerifyAccount(
   destination = "/home",
   stopOnOnboarding = false
 ) {
+  cy.clearCookies({ log: true });
+
   let _loginForm = credentials;
   if (!credentials) {
     _loginForm = createLoginData();
