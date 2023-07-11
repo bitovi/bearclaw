@@ -48,8 +48,8 @@ export function SideNav({
           .filter((item) =>
             item.requiredPermissions
               ? item.requiredPermissions.every((permission) =>
-                userPermissions.includes(permission)
-              )
+                  userPermissions.includes(permission)
+                )
               : true
           )
           .map((item, index) => {
@@ -61,7 +61,9 @@ export function SideNav({
                   selected={bestRouteMatch === item.to}
                   sx={{ borderRadius: "4px" }}
                 >
-                  <ListItemIcon sx={{ color: "primary.main", minWidth: "32px" }}>
+                  <ListItemIcon
+                    sx={{ color: "primary.main", minWidth: "32px" }}
+                  >
                     {item.icon && typeof item.icon === "string" ? (
                       <IconFromString
                         icon={item.icon || ""}
@@ -72,9 +74,7 @@ export function SideNav({
                     )}
                   </ListItemIcon>
                   <ListItemText>
-                    <Typography fontSize="0.875rem">
-                      {item.text}
-                    </Typography>
+                    <Typography fontSize="0.875rem">{item.text}</Typography>
                   </ListItemText>
                 </ListItemButton>
                 {dividerAfter && dividerAfter === index && (
