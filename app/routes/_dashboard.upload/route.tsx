@@ -60,7 +60,7 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   // delay to allow the file to appear in the loader queries
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   return json({ success: true }, { status: 200 });
 };

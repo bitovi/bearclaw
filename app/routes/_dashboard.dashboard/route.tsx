@@ -1,27 +1,25 @@
-import { useLoaderData } from "@remix-run/react";
+import { Await, useLoaderData } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/server-runtime";
+import { defer } from "@remix-run/server-runtime";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
 import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
 import { getOrgandUserId, getUser } from "~/session.server";
-import { getAllParentJobs } from "~/services/getAllParentJobs";
-import type { ParentJob } from "~/services/getAllParentJobs";
 import Table from "~/components/table/Table";
 import { usePageCopy } from "../_dashboard/copy";
-import { getKeyMetrics } from "../../services/getKeyMetrics";
+import { getKeyMetrics } from "../../services/bigBear/getKeyMetrics";
 import { MetricCard } from "./components/MetricCard";
 import { IconFromString } from "~/components/iconFromString/IconFromString";
 import { Ellipse } from "./components/Ellipse.svg";
 import { Button } from "~/components/button";
 import background from "./components/background.png";
-
-interface ParentJobTable
-  extends Omit<ParentJob, "analyzedAt" | "size" | "_id"> {
-  objectId: string;
-}
+import { getProcessingStatus } from "~/services/bigBear/getProcessingStatus";
+import { Chip } from "@mui/material";
+import { toTitleCase } from "~/utils/string/toTitleCase";
+import dayjs from "dayjs";
+import { Suspense } from "react";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -30,17 +28,20 @@ export async function loader({ request }: LoaderArgs) {
   const page = url.searchParams.get("page");
   const perPage = url.searchParams.get("perPage");
   const sort = url.searchParams.get("sort");
-  const [keyMetrics, jobs] = await Promise.all([
-    getKeyMetrics({ days: 7, userId, organizationId }),
-    getAllParentJobs({
-      userId,
-      organizationId,
-      page,
-      perPage,
-      sort,
-    }),
-  ]);
-  return json({ user, keyMetrics, jobs, userId, organizationId });
+
+  const keyMetrics = await getKeyMetrics({
+    days: 7,
+    userId,
+    organizationId,
+  });
+  const uploads = getProcessingStatus({
+    organizationId,
+    page,
+    perPage,
+    sort,
+  });
+
+  return defer({ user, keyMetrics, uploads, userId, organizationId });
 }
 
 export async function action(args: ActionArgs) {
@@ -51,7 +52,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
   const copy = usePageCopy("dashboard");
-  const { userId, keyMetrics, organizationId, user, jobs } =
+  const { userId, keyMetrics, organizationId, user, uploads } =
     useLoaderData<typeof loader>();
 
   return (
@@ -150,30 +151,50 @@ export default function Index() {
         </Box>
       </Box>
       <Box>
-        {jobs && jobs.data.length > 0 ? (
-          <Table<ParentJobTable>
-            tableTitle="Recent Activity"
-            headers={[
-              { label: "File Name", value: "filename", sortable: true },
-              { label: "Type", value: "type", sortable: true },
-              { label: "Status", value: "status", sortable: true },
-              { label: "Object ID", value: "_id", sortable: true },
-            ]}
-            totalItems={jobs.metadata?.page.total}
-            tableData={jobs.data.map((job) => {
-              return {
-                filename: job.filename,
-                type: job.type,
-                status: job.status,
-                objectId: job._id,
-              };
-            })}
-          />
-        ) : (
-          <Box component={Paper} variant="outlined" padding={2}>
-            <Typography fontStyle="italic">No activity yet</Typography>
-          </Box>
-        )}
+        <Suspense fallback={<div>Loading...</div>}>
+          <Await resolve={uploads}>
+            {(uploads) =>
+              uploads?.data && uploads.data.length > 0 ? (
+                <Table
+                  tableTitle="Recent Activity"
+                  headers={[
+                    { label: "File Name", value: "filename", sortable: true },
+                    { label: "Type", value: "type", sortable: true },
+                    { label: "Date", value: "analyzedAt", sortable: true },
+                    { label: "Status", value: "status", sortable: true },
+                    { label: "Object ID", value: "_id", sortable: false },
+                  ]}
+                  linkKey="_id"
+                  totalItems={uploads.metadata?.page.total}
+                  tableData={uploads.data.map((upload) => ({
+                    filename: upload.filename,
+                    type: upload.type,
+                    analyzedAt: (
+                      <Box display="flex" flexDirection="column">
+                        <Typography variant="body2">
+                          {dayjs(new Date(upload.analyzedAt)).format(
+                            "MM/DD/YY"
+                          )}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {dayjs(new Date(upload.analyzedAt)).format(
+                            "HH:mm:ss"
+                          )}
+                        </Typography>
+                      </Box>
+                    ),
+                    status: <Chip label={toTitleCase(upload.status)} />,
+                    _id: upload._id,
+                  }))}
+                />
+              ) : (
+                <Box component={Paper} variant="outlined" padding={2}>
+                  <Typography fontStyle="italic">No activity yet</Typography>
+                </Box>
+              )
+            }
+          </Await>
+        </Suspense>
       </Box>
     </Box>
   );

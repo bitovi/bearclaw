@@ -35,7 +35,7 @@ const handlers = [
   rest.get(`${baseURL}/bear/get_rsboms_cyclonedx/*`, (req, res, ctx) => {
     return res(ctx.json(processParams(fixture_getRSBOMDetail, req.url)));
   }),
-  rest.get(`${baseURL}/claw/get_all_parent_jobs`, (req, res, ctx) => {
+  rest.get(`${baseURL}/claw/get_processing_status?`, (req, res, ctx) => {
     return res(ctx.json(processParams(fixture_getAllParentJobs, req.url)));
   }),
   rest.get(`${baseURL}/bear/get_metadata`, (req, res, ctx) => {
