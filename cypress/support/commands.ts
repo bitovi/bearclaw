@@ -151,8 +151,12 @@ function deleteOrganizationByEmail(email: string) {
 // Also added custom types to avoid getting detached
 // https://github.com/cypress-io/cypress/issues/7306#issuecomment-1152752612
 // ===========================================================
-function visitAndCheck(url: string, waitTime: number = 1000) {
-  cy.visit(url);
+function visitAndCheck(
+  url: string,
+  waitTime: number = 1000,
+  params?: Partial<Cypress.VisitOptions>
+) {
+  cy.visit(url, params);
   cy.location("pathname").should("contain", url).wait(waitTime);
 }
 
@@ -194,7 +198,7 @@ function createAndVerifyAccount(
   cy.then(() => ({ email: loginForm.email })).as("user");
 
   cy.viewport(1280, 800);
-  cy.visitAndCheck(destination);
+  cy.visitAndCheck(destination, undefined, { headers: { "Set-Cookie": "" } });
 
   cy.clearCookies();
   cy.clearAllLocalStorage();
