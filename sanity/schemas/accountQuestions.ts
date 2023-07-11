@@ -29,12 +29,6 @@ const commonFields = [
     type: 'boolean',
     initialValue: false,
   },
-  {
-    name: 'order',
-    title: 'Order',
-    type: 'number',
-    description: 'Specify the numerical order you want the particular question to appear',
-  },
 ]
 
 export default {

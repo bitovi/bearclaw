@@ -10,10 +10,10 @@ import { fetchAccountQuestions } from "~/services/sanity/copy/accountQuestions";
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   if (!user) {
-    return redirect("/login");
+    throw redirect("/login");
   }
   if (!user.emailVerifiedAt) {
-    return redirect("/verifyEmail");
+    throw redirect("/verifyEmail");
   }
   const copy = await fetchAccountQuestions();
 
@@ -54,9 +54,9 @@ export async function action({ request }: ActionArgs) {
   if (response) {
     const redirectTo = formData.get("redirectTo")?.toString();
     if (redirectTo) {
-      return redirect(redirectTo);
+      throw redirect(redirectTo);
     }
-    return redirect("/dashboard");
+    throw redirect("/dashboard");
   }
 }
 
