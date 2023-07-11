@@ -185,10 +185,6 @@ function createAndVerifyAccount(
   credentials?: LoginData,
   destination = "/home"
 ) {
-  cy.clearCookies({ log: true });
-  cy.clearAllLocalStorage();
-  cy.clearAllSessionStorage();
-
   let _loginForm = credentials;
   if (!credentials) {
     _loginForm = createLoginData();
@@ -199,6 +195,16 @@ function createAndVerifyAccount(
 
   cy.viewport(1280, 800);
   cy.visitAndCheck(destination);
+
+  cy.clearCookies();
+  cy.clearAllLocalStorage();
+  cy.clearAllSessionStorage();
+  cy.window().then((win) => {
+    const sessionStorage = win.sessionStorage;
+    sessionStorage.removeItem("_session");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("orgId");
+  });
 
   if (destination === "/home") {
     cy.findByRole("link", { name: /sign up/i })
