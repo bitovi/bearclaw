@@ -186,6 +186,8 @@ function createAndVerifyAccount(
   destination = "/home"
 ) {
   cy.clearCookies({ log: true });
+  cy.clearAllLocalStorage();
+  cy.clearAllSessionStorage();
 
   let _loginForm = credentials;
   if (!credentials) {
