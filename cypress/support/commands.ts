@@ -119,6 +119,15 @@ function cleanupAccount({ email }: { email?: string } = {}) {
     });
   }
   cy.clearCookie("__session");
+  cy.clearCookies();
+  cy.clearAllLocalStorage();
+  cy.clearAllSessionStorage();
+  cy.window().then((win) => {
+    const sessionStorage = win.sessionStorage;
+    sessionStorage.removeItem("_session");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("orgId");
+  });
 }
 
 function seedOrganization(ownerEmail: string, memberCount = 0) {
@@ -195,6 +204,16 @@ function createAndVerifyAccount(
 
   cy.viewport(1280, 800);
   cy.visitAndCheck(destination);
+
+  cy.clearCookies();
+  cy.clearAllLocalStorage();
+  cy.clearAllSessionStorage();
+  cy.window().then((win) => {
+    const sessionStorage = win.sessionStorage;
+    sessionStorage.removeItem("_session");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("orgId");
+  });
 
   if (destination === "/home") {
     cy.findByRole("link", { name: /sign up/i })

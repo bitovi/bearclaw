@@ -61,6 +61,7 @@ describe("User Management & Invitation", () => {
   });
 
   it("Accept invitation -- New User", () => {
+    cy.clearCookies({ log: true });
     cy.visit("/fakeMail");
 
     cy.findByTestId(`${newUserAccount.email}-link`)
@@ -198,6 +199,8 @@ describe("User Management & Invitation", () => {
   });
 
   it("Confirm new users on owner org table & user deletion", () => {
+    cy.clearCookies({ log: true });
+
     cy.visit("/login");
 
     cy.wait(500)
@@ -277,7 +280,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.wait(2000)
+    cy.wait(1000)
       .get("main")
       .within(() => {
         cy.findByText(/dashboard/i);
@@ -294,7 +297,10 @@ describe("User Management & Invitation", () => {
         cy.get("tr")
           .eq(0)
           .within(() => {
-            cy.get("td").eq(1).as("firstTableEmail");
+            cy.get("td")
+              .eq(1)
+              .invoke("text")
+              .as("firstTableEmail", { type: "static" });
           });
       });
 
@@ -310,12 +316,11 @@ describe("User Management & Invitation", () => {
           .within(() => {
             cy.get("td")
               .eq(1)
-              .as("ascTableEmail")
-              .then(($data) => {
-                cy.wrap($data).should("not.equal", cy.get("@firstTableEmail"));
-              });
+              .invoke("text")
+              .as("ascTableEmail", { type: "static" });
           });
       });
+    cy.get("@ascTableEmail").should("not.equal", cy.get("@firstTableEmail"));
 
     cy.findByText(/email/i).click({ force: true });
 

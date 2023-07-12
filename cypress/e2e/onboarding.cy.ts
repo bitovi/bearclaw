@@ -49,6 +49,22 @@ describe("join and authenticate tests", () => {
     cy.findAllByText(onboardingForm.teamSize).click();
     cy.findByRole("button", { name: /submit/i }).click();
 
-    cy.findByText(onboardingForm.firstName + " " + onboardingForm.lastName);
+    cy.wait(1000)
+      .get("main")
+      .within(() => {
+        cy.findByText(/dashboard/i);
+      });
+
+    cy.findByRole("link", { name: /account/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(1000)
+      .findAllByText((text) => {
+        return text.includes(
+          onboardingForm.firstName + " " + onboardingForm.lastName
+        );
+      })
+      .should("have.length.gte", 1);
   });
 });

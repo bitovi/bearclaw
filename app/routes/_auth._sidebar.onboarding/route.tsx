@@ -40,13 +40,8 @@ export async function action({ request }: ActionArgs) {
   const response = await onboardUser(user, onboardingData);
   if (response) {
     const redirectTo = formData.get("redirectTo")?.toString();
-    if (redirectTo) {
-      return redirect(redirectTo);
-    }
-    return json({
-      success: true,
-      data: response,
-    });
+
+    throw redirect(redirectTo ? redirectTo : "/dashboard");
   }
 }
 
