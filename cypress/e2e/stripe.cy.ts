@@ -28,7 +28,9 @@ describe("Stripe", () => {
       cy.wait(2000);
 
       cy.findByRole("link", { name: /Overview/i });
-      cy.findByRole("link", { name: /^Subscription$/i }).as("manage");
+      cy.findAllByRole("link", { name: /^Subscription$/i })
+        .last()
+        .as("manage");
 
       cy.findByText(/No active subscription/i);
 

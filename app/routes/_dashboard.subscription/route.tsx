@@ -78,36 +78,38 @@ export default function Route() {
     <Page>
       <PageHeader headline="Subscription" description="Manage your plan." />
       <Box display="flex">
-        <SideNav
-          navMenu={[
-            {
-              text: "Overview",
-              to: "/subscription/overview",
-              icon: <PersonIcon />,
-            },
-            {
-              text: "Subscription",
-              to: "/subscription/manage",
-              icon: <StarsRoundedIcon />,
-            },
-          ]}
-        />
-      </Box>
-      <Box overflow="hidden auto" paddingX={2} flex={1}>
-        <Outlet />
-        <Banner
-          container={{
-            open: errorVisible,
-            anchorOrigin: { vertical: "bottom", horizontal: "center" },
-          }}
-          alert={{
-            onClose: () => {
-              setErrorVisible(false);
-            },
-          }}
-          title="Error"
-          content="There was an error during billing for your most recent subscription. Please contact customer support to resolve the issue."
-        />
+        <Box>
+          <SideNav
+            navMenu={[
+              {
+                text: "Overview",
+                to: "/subscription/overview",
+                icon: <PersonIcon />,
+              },
+              {
+                text: "Subscription",
+                to: "/subscription/manage",
+                icon: <StarsRoundedIcon />,
+              },
+            ]}
+          />
+        </Box>
+        <Box overflow="hidden auto" paddingX={2} flex={1}>
+          <Outlet />
+          <Banner
+            container={{
+              open: errorVisible,
+              anchorOrigin: { vertical: "bottom", horizontal: "center" },
+            }}
+            alert={{
+              onClose: () => {
+                setErrorVisible(false);
+              },
+            }}
+            title="Error"
+            content="There was an error during billing for your most recent subscription. Please contact customer support to resolve the issue."
+          />
+        </Box>
       </Box>
     </Page>
   );
