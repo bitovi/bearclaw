@@ -8,7 +8,6 @@ import Paper from "@mui/material/Paper";
 import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
 import { getOrgandUserId, getUser } from "~/session.server";
 import Table from "~/components/table/Table";
-import { usePageCopy } from "../_dashboard/copy";
 import { getKeyMetrics } from "../../services/bigBear/getKeyMetrics";
 import { MetricCard } from "./components/MetricCard";
 import { IconFromString } from "~/components/iconFromString/IconFromString";
@@ -52,7 +51,6 @@ export async function action(args: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-  const copy = usePageCopy("dashboard");
   const { userId, keyMetrics, organizationId, user, uploads } =
     useLoaderData<typeof loader>();
 
