@@ -1,6 +1,6 @@
 import { json, redirect } from "@remix-run/node";
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
+import { useActionData, useSearchParams } from "@remix-run/react";
 import { getUser } from "~/session.server";
 import { onboardUser } from "./data.server";
 import type { OnboardingData } from "./types";
@@ -54,11 +54,13 @@ export const meta: V2_MetaFunction = () => [{ title: "Onboarding" }];
 
 export default function Route() {
   const actionData = useActionData<typeof action>();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo");
 
   return (
     <div>
       <Onboarding
-        redirectTo="/"
+        redirectTo={redirectTo || undefined}
         response={
           actionData
             ? {

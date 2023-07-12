@@ -95,7 +95,9 @@ export function Onboarding({ response, redirectTo }: Props) {
               ))}
             </Box>
             <Box mt={2} display="flex" justifyContent="space-between">
-              <ButtonLink to="/home">Skip</ButtonLink>
+              <ButtonLink to={redirectTo ? redirectTo : "/dashboard"}>
+                Skip
+              </ButtonLink>
               <Box display="flex" gap={2}>
                 <Button
                   type="button"
