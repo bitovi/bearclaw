@@ -69,6 +69,7 @@ export function CVECard({
               paddingLeft={1}
               paddingTop={orientation === "column" ? 0.5 : 0}
               direction={orientation}
+              data-testid="cve-card-oriented"
             >
               <Typography color="text.primary" variant="subtitle2">
                 {name}
