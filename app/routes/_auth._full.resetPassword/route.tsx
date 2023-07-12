@@ -20,6 +20,8 @@ import { verifyPasswordCode } from "~/utils/verifyDigitCode.server";
 import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
+  console.log("LOG LOG LOG LOG ------- _auth._full.resetPassword loader");
+
   const url = new URL(request.url);
   const email = url.searchParams.get("email") || "";
   return json({ email });

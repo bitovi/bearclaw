@@ -7,6 +7,8 @@ import type { OnboardingData } from "./types";
 import { Onboarding } from "./components/Onboarding";
 
 export async function loader({ request }: LoaderArgs) {
+  console.log("LOG LOG LOG LOG ------- _auth._sidebar.onboarding loader");
+
   return json({});
 }
 

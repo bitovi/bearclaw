@@ -5,6 +5,8 @@ import { getOrgandUserId } from "~/session.server";
 import { Upload, uploadAction } from "../_dashboard.upload/route";
 
 export async function loader({ request }: LoaderArgs) {
+  console.log("LOG LOG LOG LOG ------- _dashboard.index loader");
+
   const { userId, organizationId } = await getOrgandUserId(request);
 
   return json({ userId, organizationId });

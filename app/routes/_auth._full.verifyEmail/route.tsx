@@ -20,6 +20,8 @@ import { verifyValidationCode } from "~/utils/verifyDigitCode.server";
 import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
+  console.log("LOG LOG LOG LOG ------- _auth._full.verifyEmail loader");
+
   const url = new URL(request.url);
   const user = await getUser(request);
   const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));

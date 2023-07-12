@@ -4,6 +4,8 @@ import { json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 export async function loader({ params }: LoaderArgs) {
+  console.log("LOG LOG LOG LOG ------- _auth._full.verifyEmail.$error loader");
+
   invariant(params.error, "Error status is required");
 
   return json({ error: params.error });

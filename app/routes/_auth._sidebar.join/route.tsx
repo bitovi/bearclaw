@@ -26,6 +26,8 @@ import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
+  console.log("LOG LOG LOG LOG ------- _auth._sidebar.join loader");
+
   const user = await getUser(request);
 
   if (!user) return json({});

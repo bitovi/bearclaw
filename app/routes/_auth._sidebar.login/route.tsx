@@ -27,6 +27,8 @@ import Stack from "@mui/material/Stack";
 import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
+  console.log("LOG LOG LOG LOG ------- _auth._sidebar.login loader");
+
   const user = await getUser(request);
 
   if (!user) return json({});

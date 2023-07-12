@@ -10,6 +10,8 @@ export const meta: V2_MetaFunction = () => [
 ];
 
 export async function loader() {
+  console.log("LOG LOG LOG LOG ------- _auth loader");
+
   const copy = await fetchAuthCopy();
   return json(copy);
 }

@@ -5,6 +5,13 @@ import { Logo } from "~/components/logo/Logo";
 import { Link } from "~/components/link";
 import { useParentFormCopy } from "../_auth/copy";
 import { PortableText } from "@portabletext/react";
+import { json } from "@remix-run/node";
+
+export async function loader() {
+  console.log("LOG LOG LOG LOG ------- _auth._full loader");
+
+  return json({});
+}
 
 export default function Index() {
   const formCopy = useParentFormCopy();

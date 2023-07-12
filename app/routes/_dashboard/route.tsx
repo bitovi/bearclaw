@@ -18,6 +18,8 @@ import { safeRedirect } from "~/utils";
 import { fetchDashboardCopy } from "./copy";
 
 export async function loader({ request }: LoaderArgs) {
+  console.log("LOG LOG LOG LOG ------- _dashboard loader");
+
   const isLoggedIn = await getUser(request);
   const url = new URL(request.url);
   const email = url.searchParams.get("email");

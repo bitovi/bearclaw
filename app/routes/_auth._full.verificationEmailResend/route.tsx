@@ -8,6 +8,10 @@ import { getUser } from "~/session.server";
 import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
+  console.log(
+    "LOG LOG LOG LOG ------- _auth._full.verificationEmailResend loader"
+  );
+
   const user = await getUser(request);
   const url = new URL(request.url);
   const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
