@@ -204,12 +204,12 @@ function createAndVerifyAccount(
 
   cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
   cy.findByLabelText(/password/i).type(loginForm.password);
-  cy.wait(1000)
+  cy.wait(2000)
     .findAllByRole("button", { name: /sign up/i })
     .eq(0)
     .should("be.visible")
     .click({ force: true });
-  cy.wait(2000)
+  cy.wait(3000)
     .findByRole("link", { name: /View verification emails here/i })
     .should("be.visible")
     .click({ force: true });
@@ -226,6 +226,11 @@ function createAndVerifyAccount(
       });
   });
   cy.findByRole("button", { name: /verify/i })
+    .should("be.visible")
+    .click({ force: true });
+
+  cy.wait(2000)
+    .findByRole("link", { name: /skip/i })
     .should("be.visible")
     .click({ force: true });
 

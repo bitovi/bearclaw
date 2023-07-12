@@ -111,6 +111,11 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
+    cy.wait(500)
+      .findByRole("link", { name: /skip/i })
+      .should("be.visible")
+      .click({ force: true });
+
     cy.findByText(
       /You have successfully joined ownerAccount-test's organization/i
     );
@@ -267,7 +272,12 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.wait(1000)
+    cy.wait(500)
+      .findByRole("link", { name: /skip/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(2000)
       .get("main")
       .within(() => {
         cy.findByText(/dashboard/i);
