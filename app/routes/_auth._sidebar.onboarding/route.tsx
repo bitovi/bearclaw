@@ -75,7 +75,7 @@ export default function Route() {
     <div>
       <Onboarding
         questions={onboardingQuestions || []}
-        redirectTo={redirectTo || ""}
+        redirectTo={redirectTo || undefined}
       />
     </div>
   );

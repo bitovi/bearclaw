@@ -118,7 +118,19 @@ function cleanupAccount({ email }: { email?: string } = {}) {
       }
     });
   }
+  Cypress.session.clearAllSavedSessions();
   cy.clearCookie("__session");
+  Cypress.session.clearAllSavedSessions();
+  cy.clearCookie("__session");
+  cy.clearCookies();
+  cy.clearAllLocalStorage();
+  cy.clearAllSessionStorage();
+  cy.window().then((win) => {
+    const sessionStorage = win.sessionStorage;
+    sessionStorage.removeItem("_session");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("orgId");
+  });
 }
 
 function seedOrganization(ownerEmail: string, memberCount = 0) {
@@ -183,9 +195,9 @@ function createLoginData(): LoginData {
 
 function createAndVerifyAccount(
   credentials?: LoginData,
-  destination = "/home",
-  stopOnOnboarding = false
+  destination = "/home"
 ) {
+  Cypress.session.clearAllSavedSessions();
   let _loginForm = credentials;
   if (!credentials) {
     _loginForm = createLoginData();
@@ -197,6 +209,16 @@ function createAndVerifyAccount(
   cy.viewport(1280, 800);
   cy.visitAndCheck(destination);
 
+  cy.clearCookies();
+  cy.clearAllLocalStorage();
+  cy.clearAllSessionStorage();
+  cy.window().then((win) => {
+    const sessionStorage = win.sessionStorage;
+    sessionStorage.removeItem("_session");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("orgId");
+  });
+
   if (destination === "/home") {
     cy.findByRole("link", { name: /sign up/i })
       .should("be.visible")
@@ -205,12 +227,12 @@ function createAndVerifyAccount(
 
   cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
   cy.findByLabelText(/password/i).type(loginForm.password);
-  cy.wait(4000)
+  cy.wait(2000)
     .findAllByRole("button", { name: /sign up/i })
     .eq(0)
     .should("be.visible")
     .click({ force: true });
-  cy.wait(4000)
+  cy.wait(3000)
     .findByRole("link", { name: /View verification emails here/i })
     .should("be.visible")
     .click({ force: true });
@@ -230,9 +252,6 @@ function createAndVerifyAccount(
     .should("be.visible")
     .click({ force: true });
 
-  if (stopOnOnboarding) {
-    return;
-  }
   cy.wait(2000)
     .findByRole("link", { name: /skip/i })
     .should("be.visible")

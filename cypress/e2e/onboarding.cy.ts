@@ -19,13 +19,13 @@ function createOnboardingData() {
   };
 }
 
-describe("join and authenticate tests", () => {
+describe("join and authenticate tests", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });
 
   it("should allow you to onboard", () => {
-    cy.createAndVerifyAccount(undefined, undefined, true);
+    cy.createAndVerifyAccount(undefined, undefined);
 
     // Onboarding time
     const onboardingForm = createOnboardingData();

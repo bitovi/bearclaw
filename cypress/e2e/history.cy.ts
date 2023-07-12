@@ -1,4 +1,4 @@
-describe("History", () => {
+describe("History", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });
@@ -65,12 +65,13 @@ describe("History", () => {
     cy.window()
       .its("navigator.clipboard")
       .invoke("readText")
-      .then((data) => {
+      .then(async (data) => {
+        const result = await data;
         cy.get("@historyTable").within(() => {
-          cy.findByRole("textbox").clear().type(data);
+          cy.findByRole("textbox").clear().type(result);
         });
         const params = new URLSearchParams();
-        params.append("filter", `contains(dataObject,${data})`);
+        params.append("filter", `contains(dataObject,${result})`);
         // Confirm our filtering/searching is wiring up to the URL correctly
         cy.location("search").should("include", params.toString());
       });
@@ -133,7 +134,10 @@ describe("History", () => {
         cy.get("a")
           .eq(0)
           .within(() => {
-            cy.findAllByRole("cell").eq(1).as("firstTableFileName");
+            cy.findAllByRole("cell")
+              .eq(1)
+              .invoke("text")
+              .as("firstTableFileName", { type: "static" });
           });
       });
 
@@ -149,15 +153,15 @@ describe("History", () => {
           .within(() => {
             cy.findAllByRole("cell")
               .eq(1)
-              .as("ascTableFileName")
-              .then(($data) => {
-                cy.wrap($data).should(
-                  "not.equal",
-                  cy.get("@firstTableFileName")
-                );
-              });
+              .invoke("text")
+              .as("ascTableFileName", { type: "static" });
           });
       });
+
+    cy.get("@ascTableFileName").should(
+      "not.equal",
+      cy.get("@firstTableFileName")
+    );
 
     cy.findByText(/filename/i).click({ force: true });
 

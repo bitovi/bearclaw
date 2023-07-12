@@ -20,7 +20,7 @@ function createLoginData(): LoginData {
   };
 }
 
-describe("join and authenticate tests", () => {
+describe("join and authenticate tests", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });
@@ -244,7 +244,7 @@ describe("join and authenticate tests", () => {
   });
 });
 
-describe("Non-authenticated users", () => {
+describe("Non-authenticated users", { testIsolation: true }, () => {
   it("should fail creating short passwords (less than 8 characters)", () => {
     cy.viewport(1280, 800);
     cy.visitAndCheck("/join");

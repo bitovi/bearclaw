@@ -1,4 +1,4 @@
-describe("Global Search", () => {
+describe("Global Search", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });
@@ -24,6 +24,16 @@ describe("Global Search", () => {
     // Confirm our filtering/searching is wiring up to the URL correctly
     cy.location("search").should("include", params.toString());
 
+    // Empty string yields no results
+    cy.get("@globalSearch").clear();
+    cy.wait(1000).findByText(/sorry, no results found/i);
+
+    // Add results
+    cy.get("@globalSearch").type("a");
+    cy.wait(1000).findByText(/search by data object/i);
+
+    //
+
     cy.findByTestId(/search by data object-table/i).within(() => {
       cy.findAllByRole("rowgroup")
         .eq(1)
@@ -35,25 +45,10 @@ describe("Global Search", () => {
     cy.findByTestId(/search by filename-table/i).within(() => {
       cy.findAllByRole("rowgroup")
         .eq(1)
-        .as("filenameTableBody")
         .within(() => {
           cy.findAllByRole("row").should("have.length.gt", 0);
         });
     });
-
-    // Random & empty string yields no results
-    cy.get("@globalSearch").clear();
-    cy.wait(1000).findByText(/sorry, no results found/i);
-
-    // Add results before testing their disappearance
-    cy.get("@globalSearch").type("a");
-    cy.wait(1000).findByText(/search by data object/i);
-
-    cy.get("@globalSearch").clear().type("adfjaklsdjflaksjdfsadf");
-    cy.wait(1000).findByText(/sorry, no results found/i);
-    //
-
-    cy.get("@globalSearch").clear().type("a");
 
     cy.get("@dataObjectTableBody").within(() => {
       // realClick allows us to engage the copy to clipboard behavior in the cy environment
@@ -66,13 +61,19 @@ describe("Global Search", () => {
     cy.window()
       .its("navigator.clipboard")
       .invoke("readText")
-      .then((data) => {
-        cy.get("@globalSearch").clear().type(data);
-        const params = new URLSearchParams();
-        params.append("filter", `contains(search,${data})`);
-        // Confirm our filtering/searching is wiring up to the URL correctly
-        cy.location("search").should("include", params.toString());
+      .then(async (data) => {
+        const result = await data;
+        cy.wrap(result).as("copiedText", { type: "static" });
       });
+
+    cy.get("@copiedText").then(($text) => {
+      cy.get("@globalSearch").clear().type($text.toString());
+      const params = new URLSearchParams();
+      params.append("filter", `contains(search,${$text.toString()})`);
+
+      // Confirm our filtering/searching is wiring up to the URL correctly
+      cy.location("search").should("include", params.toString());
+    });
 
     cy.findByTestId(/search by data object-table/i).within(() => {
       cy.findAllByRole("rowgroup")
@@ -88,6 +89,10 @@ describe("Global Search", () => {
           cy.findAllByRole("row").should("have.length", 0);
         });
     });
+
+    // Random string yields no results
+    cy.get("@globalSearch").clear().type("adfjaklsdjflaksjdfsadf");
+    cy.wait(1000).findByText(/sorry, no results found/i);
   });
 
   it("Allows sorting and pagination of results", () => {
@@ -114,7 +119,10 @@ describe("Global Search", () => {
           cy.get("a")
             .eq(0)
             .within(() => {
-              cy.findAllByRole("cell").eq(1).as("firstTableDataObjectFileName");
+              cy.findAllByRole("cell")
+                .eq(1)
+                .invoke("text")
+                .as("firstTableDataObjectFileName", { type: "static" });
             });
         });
     });
@@ -136,16 +144,15 @@ describe("Global Search", () => {
               .within(() => {
                 cy.findAllByRole("cell")
                   .eq(1)
-                  .as("ascTableDataObjectFileName")
-                  .then(($data) => {
-                    cy.wrap($data).should(
-                      "not.equal",
-                      cy.get("@firstTableDataObjectFileName")
-                    );
-                  });
+                  .invoke("text")
+                  .as("ascTableDataObjectFileName", { type: "static" });
               });
           });
       });
+
+    cy.wait(1000)
+      .get("@ascTableDataObjectFileName")
+      .should("not.equal", cy.get("@firstTableDataObjectFileName"));
 
     cy.findAllByText(/filename/i)
       .eq(0)

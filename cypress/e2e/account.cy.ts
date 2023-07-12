@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-describe("Account", () => {
+describe("Account", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });
@@ -58,6 +58,7 @@ describe("Account", () => {
       .type(onboardingForm.emailSecondary);
 
     cy.findAllByText(/save/i).eq(1).click();
+
     cy.wait(1000).findByText(
       `Hello ${onboardingForm.firstName} ${onboardingForm.lastName},`
     );

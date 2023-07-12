@@ -1,4 +1,4 @@
-describe("Legal", () => {
+describe("Legal", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });

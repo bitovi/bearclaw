@@ -1,4 +1,4 @@
-describe("Dashboard", () => {
+describe("Dashboard", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });
@@ -13,7 +13,9 @@ describe("Dashboard", () => {
         cy.findAllByRole("row")
           .eq(0)
           .within(() => {
-            cy.findAllByRole("cell").eq(0).as("firstTableType");
+            cy.findAllByRole("cell")
+              .eq(0)
+              .as("firstTableType", { type: "static" });
           });
       });
 
