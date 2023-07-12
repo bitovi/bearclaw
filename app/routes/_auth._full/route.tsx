@@ -1,17 +1,14 @@
 import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { Logo } from "~/components/logo/Logo";
 import { Link } from "~/components/link";
-import { Typography } from "@mui/material";
-import { fetchAuthCopy } from "../_auth/copy";
-import { json } from "@remix-run/server-runtime";
-
-export async function loader() {
-  const copy = await fetchAuthCopy();
-  return json(copy)
-}
+import { useParentFormCopy } from "../_auth/copy";
+import { PortableText } from "@portabletext/react";
 
 export default function Index() {
+  const formCopy = useParentFormCopy();
+
   return (
     <Box
       component="main"
@@ -50,18 +47,42 @@ export default function Index() {
             transform: "rotate(18deg)",
           }}
         />
-        <Box width="100%" display="flex" justifyContent="space-between" alignItems="center" padding="2rem 3rem">
-          <Logo color="white" />
-          <Typography component={Link} to="/help" color="white" sx={{ textDecoration: "none" }}>
-            Need help?
-          </Typography>
-        </Box>
         <Box
-          flex="1"
-          position="relative"
-          margin="3rem"
-          sx={{ "& a": { color: "white" } }}
+          width="100%"
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          padding="2rem 3rem"
         >
+          <Logo imageColor="white" textColor="white" />
+          {formCopy?.needHelp ? (
+            <Typography
+              variant="body2"
+              component={"div"}
+              color="white"
+              sx={{
+                textDecoration: "none",
+                color: "white",
+                "& a": {
+                  color: "white",
+                  textDecoration: "none",
+                },
+              }}
+            >
+              <PortableText value={formCopy.needHelp} />
+            </Typography>
+          ) : (
+            <Typography
+              variant="body2"
+              component={Link}
+              to="/help"
+              color="white"
+            >
+              Need Help?
+            </Typography>
+          )}
+        </Box>
+        <Box flex="1" position="relative" margin="3rem">
           <Outlet />
         </Box>
       </Box>

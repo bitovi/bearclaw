@@ -2,12 +2,14 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import Box from "@mui/material/Box";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Link, useSearchParams } from "@remix-run/react";
 
 import { ButtonLink } from "../buttonLink/ButtonLink";
-import { Box, MenuItem, Select } from "@mui/material";
 import { buildNewSearchParams } from "~/utils/buildNewSearchParams";
 
 function usePagination({

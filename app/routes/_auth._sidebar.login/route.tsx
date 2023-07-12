@@ -1,29 +1,40 @@
 import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData, useSearchParams } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  useSearchParams,
+} from "@remix-run/react";
 import * as React from "react";
-import { Box } from "@mui/material";
-
-import { createUserSession, getUserId } from "~/session.server";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { createUserSession, getUser } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
-import { Button } from "~/components/button/Button";
 import {
   createOrganization,
   getOrganizationById,
 } from "~/models/organization.server";
 import { TextInput } from "~/components/input";
 import { Link } from "~/components/link/Link";
-import { Checkbox } from "~/components/input/checkbox/Checkbox";
 import { getUserMfaMethods, resetMfaToken } from "~/models/mfa.server";
 import { MFA_TYPE } from "~/models/mfa";
 import { retrieveOrgUserOwner } from "~/models/organizationUsers.server";
 import { useParentFormCopy } from "../_auth/copy";
+import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
+import Stack from "@mui/material/Stack";
+import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
-  const userId = await getUserId(request);
-  if (userId) return redirect("/dashboard");
-  return json({});
+  const user = await getUser(request);
+
+  if (!user) return json({});
+  if (user && !user.emailVerifiedAt) {
+    redirect("/verifyEmail");
+    return json({});
+  }
+  return redirect("/dashboard");
 }
 
 export async function action({ request }: ActionArgs) {
@@ -144,7 +155,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Login" }];
 export default function LoginPage() {
   const formCopy = useParentFormCopy();
   const [searchParams] = useSearchParams();
-
+  const navigation = useNavigation();
   const redirectTo = safeRedirect(searchParams.get("redirectTo"), "/dashboard");
   const guestEmail = searchParams.get("email");
 
@@ -161,15 +172,27 @@ export default function LoginPage() {
   }, [actionData]);
 
   return (
-    <Box>
-      <Form method="post">
-        <Box
-          display="flex"
-          gap="0.5rem"
-          flexDirection="column"
-          textAlign="center"
-        >
+    <Stack
+      alignItems="center"
+      textAlign="center"
+      gap="2rem"
+      width={{ xs: "300px", md: "500px", lg: "700px" }}
+    >
+      <AuthLogoHeader
+        message={formCopy?.loginSubHeader || "Sign into your account"}
+      />
+
+      <Box
+        component={Form}
+        method="post"
+        display="flex"
+        flexDirection="column"
+        gap="2rem"
+        width="100%"
+      >
+        <Box display="flex" flexDirection="column" gap={2}>
           <TextInput
+            fullWidth
             label={formCopy?.email || "Email address"}
             name="email"
             type="email"
@@ -181,7 +204,8 @@ export default function LoginPage() {
             inputProps={{ readOnly: !!guestEmail }}
           />
           <TextInput
-            label={formCopy?.password || "Passowrd"}
+            fullWidth
+            label={formCopy?.password || "Password"}
             name="password"
             type="password"
             autoComplete="password"
@@ -191,34 +215,51 @@ export default function LoginPage() {
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
 
-          <Button type="submit" variant="contained">
-            {formCopy?.login || "Login"}
-          </Button>
-          <Checkbox id="remember" name="remember" label="Remember me" />
-          <div>
-            {formCopy?.noAccountMessage || "Don't have an account?"}
-            {" "}
-            <Link
-              to={{
-                pathname: "/join",
-                search: searchParams.toString(),
-              }}
+          <Typography
+            alignSelf="flex-end"
+            variant="body2"
+            color="primary.main"
+            component={Link}
+            to={{
+              pathname: "/forgotPassword",
+              search: searchParams.toString(),
+            }}
+          >
+            {formCopy?.forgotPasswordLink || "Forgot password?"}
+          </Typography>
+
+          <Box width="66%" alignSelf="center">
+            <ButtonLoader
+              fullWidth
+              type="submit"
+              variant="buttonLarge"
+              loading={
+                navigation.state === "submitting" ||
+                navigation.state === "loading"
+              }
             >
-              {formCopy?.noAccountLoginLink || "Sign up"}
-            </Link>
-          </div>
-          <div>
-            <Link
-              to={{
-                pathname: "/forgotPassword",
-                search: searchParams.toString(),
-              }}
-            >
-              {formCopy?.forgotPasswordLink || "Forgot password?"}
-            </Link>
-          </div>
+              {formCopy?.login || "Login"}
+            </ButtonLoader>
+          </Box>
         </Box>
-      </Form>
-    </Box>
+      </Box>
+      <Box paddingTop={2}>
+        <Typography component="span" variant="body2" color="text.secondary">
+          {formCopy?.noAccountMessage || "New User?"}{" "}
+        </Typography>
+
+        <Typography
+          component={Link}
+          variant="body2"
+          color="primary.main"
+          to={{
+            pathname: "/join",
+            search: searchParams.toString(),
+          }}
+        >
+          {formCopy?.noAccountLoginLink || "Create an account"}
+        </Typography>
+      </Box>
+    </Stack>
   );
 }

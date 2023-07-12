@@ -1,13 +1,13 @@
 export default {
   name: 'content',
   type: 'document',
-	title: 'Content',
+  title: 'Content',
   fields: [
     {
-      title: 'Content', 
+      title: 'Content',
       name: 'content',
-      type: 'array', 
-      of: [{type: 'block'}]
-    }
-  ]
+      type: 'array',
+      of: [{type: 'block'}],
+    },
+  ],
 }

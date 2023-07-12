@@ -7,7 +7,7 @@ import { useSideNavCopy } from "./copy";
 export function MainSideNav() {
   const { permissions } = useLoaderData<typeof loader>();
   const copy = useSideNavCopy();
-  
+
   return (
     <Box
       position="relative"
@@ -30,11 +30,10 @@ export function MainSideNav() {
         }}
       />
       <Box padding="1.5rem 1rem" maxHeight="100%" sx={{ overflowY: "auto" }}>
-        <SideNav 
-          userPermissions={permissions} 
-          dividerAfter={copy?.dividerAfter} 
-          navMenu={copy?.links || []} 
-          iconColor="#0037FF" 
+        <SideNav
+          userPermissions={permissions}
+          dividerAfter={copy?.dividerAfter}
+          navMenu={copy?.links || []}
         />
       </Box>
     </Box>

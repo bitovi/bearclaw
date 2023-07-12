@@ -1,11 +1,10 @@
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 import { json } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData, useNavigation } from "@remix-run/react";
 import { NoResults } from "./components/noResults";
-import { SkeletonTable } from "~/components/table";
+import SearchTable, { SkeletonTable } from "~/components/table";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
-import SearchTable from "~/components/table";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { parseFilterParam } from "~/utils/parseFilterParam";
 import { getOrgandUserId } from "~/session.server";

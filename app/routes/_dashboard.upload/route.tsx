@@ -14,11 +14,16 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import { Box, Typography } from "@mui/material";
-import { unlink } from "fs/promises";
+import Box from "@mui/material/Box";
+import ListItem from "@mui/material/ListItem";
+import Typography from "@mui/material/Typography";
+import UploadFileTwoToneIcon from "@mui/icons-material/UploadFileTwoTone";
 import { Loading } from "~/components/loading/Loading";
-
-const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
+import { useDropzone } from "react-dropzone";
+import { bytesToDisplaySize, truncateFileName } from "~/utils/fileDisplay";
+import { useCallback, useEffect, useRef, useState } from "react";
+import invariant from "tiny-invariant";
+import { unlink } from "fs/promises";
 
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -41,6 +46,7 @@ export const action = async ({ request }: ActionArgs) => {
   formData.append("userId", userId);
   formData.append("groupId", organizationId);
 
+  const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
   const response = await fetch(CLAW_UPLOAD, {
     method: "POST",
     body: formData,
@@ -52,6 +58,10 @@ export const action = async ({ request }: ActionArgs) => {
   if (response.status >= 400) {
     return json({ success: false }, { status: 500 });
   }
+
+  // delay to allow the file to appear in the loader queries
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   return json({ success: true }, { status: 200 });
 };
 
@@ -60,37 +70,122 @@ type Props = {
   organizationId: string;
 };
 
-export const Upload: React.FC<Props> = ({ userId, organizationId }) => {
+export const Upload: React.FC<Props> = () => {
+  const [uploadMessage, setUploadMessage] = useState<string | null>();
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
+  const input = useRef<HTMLInputElement>(null);
+  const onDrop = useCallback(
+    (acceptedFiles: any[]) => {
+      invariant(input.current);
+
+      const dT = new DataTransfer();
+      for (const file of acceptedFiles) {
+        dT.items.add(file);
+      }
+
+      input.current.files = dT.files;
+      setUploadMessage(null);
+    },
+    [setUploadMessage]
+  );
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone({ onDrop });
+
+  useEffect(() => {
+    if (actionData?.success === true) {
+      setUploadMessage("File uploaded successfully");
+    } else if (actionData?.success === false) {
+      setUploadMessage("File uploaded failed");
+    }
+  }, [actionData, setUploadMessage]);
 
   if (navigation.state === "submitting") {
     return (
-      <Box padding={2} width="240px">
+      <Box
+        display="flex"
+        alignItems="center"
+        padding={2}
+        width="340px"
+        height="100px"
+      >
         <Loading />
       </Box>
     );
   }
 
+  const { onClick: onUploadClick, ...rootProps } = getRootProps();
+
   return (
-    <Form method="POST" encType="multipart/form-data">
-      <Box display="flex" flexDirection="column" gap="1rem" width="240px">
-        <input type="file" name="files" aria-label="Select file to upload" />
-        <Button type="submit" variant="outlined">
-          Upload
+    <Box
+      component={Form}
+      method="POST"
+      encType="multipart/form-data"
+      margin="0"
+      {...rootProps}
+    >
+      <Box
+        display="flex"
+        alignItems="center"
+        gap="1rem"
+        width="340px"
+        height="100px"
+        padding="0.5rem 1rem"
+      >
+        <Box flex="1">
+          <input
+            {...getInputProps()}
+            aria-label="Select file to upload"
+            ref={input}
+            name="files"
+            type="file"
+          />
+          {acceptedFiles.length > 0 ? (
+            acceptedFiles.map((file) => (
+              <ListItem key={file.name} disablePadding>
+                <Box display="flex">
+                  <Typography flex="1" textOverflow="ellipsis">
+                    {truncateFileName(file.name, 14)}
+                  </Typography>
+                  <Typography>-</Typography>
+                  <Typography>{bytesToDisplaySize(file.size)}</Typography>
+                </Box>
+              </ListItem>
+            ))
+          ) : isDragActive ? (
+            <Typography>Drop the files here ...</Typography>
+          ) : (
+            <Box>
+              <Typography
+                color="blue"
+                onClick={onUploadClick}
+                sx={{ cursor: "pointer" }}
+              >
+                Click to upload
+              </Typography>
+              <Typography>or drag 'n drop'</Typography>
+            </Box>
+          )}
+          {uploadMessage && (
+            <Typography
+              fontSize="0.75rem"
+              fontWeight="500"
+              color={actionData?.success === false ? "red.800" : "grey.800"}
+            >
+              {uploadMessage}
+            </Typography>
+          )}
+        </Box>
+        <Button
+          aria-label="Upload"
+          type="submit"
+          variant="text"
+          disabled={!acceptedFiles || acceptedFiles.length === 0}
+        >
+          <UploadFileTwoToneIcon sx={{ fontSize: "4rem" }} />
         </Button>
-        {actionData?.success === true && (
-          <Typography fontSize="0.75rem" fontWeight="500">
-            File uploaded successfully
-          </Typography>
-        )}
-        {actionData?.success === false && (
-          <Typography fontSize="0.75rem" fontWeight="500" color="red.800">
-            File uploaded failed
-          </Typography>
-        )}
       </Box>
-    </Form>
+    </Box>
   );
 };
 

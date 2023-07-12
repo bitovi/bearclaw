@@ -1,4 +1,7 @@
-import type { ApiRequestParams, ApiResponseWrapper } from "~/models/apiUtils.server";
+import type {
+  ApiRequestParams,
+  ApiResponseWrapper,
+} from "~/models/apiUtils.server";
 import { buildApiSearchParams } from "~/models/apiUtils.server";
 
 // Example response
@@ -16,16 +19,18 @@ import { buildApiSearchParams } from "~/models/apiUtils.server";
 //   "processingTime": 0.028655666974373162
 // }
 
-type ParentJobResponse = ApiResponseWrapper<Array<{
-  _id: string;
-  dateAnalyzed: string;
-  filename: string;
-  size: number;
-  status: string;
-  type: string;
-}>>;
+type UploadStatusResponse = ApiResponseWrapper<
+  Array<{
+    _id: string;
+    dateAnalyzed: string;
+    filename: string;
+    size: number;
+    status: string;
+    type: string;
+  }>
+>;
 
-export type ParentJob = {
+export type UploadStatus = {
   _id: string;
   analyzedAt: string;
   filename: string;
@@ -34,9 +39,9 @@ export type ParentJob = {
   type: string; // TODO: make this an enum
 };
 
-function transformApiParentJob(
-  job: ParentJobResponse["data"][number]
-): ParentJob {
+function transformApiUploadStatus(
+  job: UploadStatusResponse["data"][number]
+): UploadStatus {
   return {
     _id: job._id,
     analyzedAt: job.dateAnalyzed,
@@ -47,16 +52,19 @@ function transformApiParentJob(
   };
 }
 
-export const getAllParentJobs = async (params: ApiRequestParams) => {
+export const getProcessingStatus = async (params: ApiRequestParams) => {
   try {
     const response = await fetch(
-      `${process.env.BEARCLAW_URL}/claw/get_all_parent_jobs?${buildApiSearchParams(params)}`
+      `${
+        process.env.BEARCLAW_URL
+      }/claw/get_processing_status?${buildApiSearchParams(params)}`
     );
-    const json: ParentJobResponse = await response.json();
+    const json: UploadStatusResponse = await response.json();
+
     return {
       ...json,
-      data: json.data.map((job) => transformApiParentJob(job))
-    }
+      data: json.data.map((job) => transformApiUploadStatus(job)),
+    };
   } catch (error) {
     console.error(error);
     return null;

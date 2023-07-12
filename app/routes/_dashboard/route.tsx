@@ -8,7 +8,7 @@ import { Header } from "./header";
 import { MainSideNav } from "./sidenav";
 
 import { getOrgId, getUser, requireUser } from "~/session.server";
-import { validateUserEmailByToken } from "~/models/user.server";
+import { validateUser } from "~/models/user.server";
 import {
   getOrgUserPermissions,
   retrieveOrganizationUser,
@@ -22,6 +22,8 @@ export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const email = url.searchParams.get("email");
   const inviteToken = url.searchParams.get("inviteToken");
+  const redirectTo = url.searchParams.get("redirectTo");
+
   if (!isLoggedIn && inviteToken) {
     // encode the pathname rather than the full url to avoid failing the safeRedirect check
     // pass inviteToken into the encoded redirect but forward email in url params for login/join form
@@ -45,8 +47,16 @@ export async function loader({ request }: LoaderArgs) {
 
   const copy = await fetchDashboardCopy();
   const permissions = getOrgUserPermissions(orgUser);
+  const result = await validateUser(user.id);
+  if (result.error) {
+    return redirect(`/verify-email/${result.status}`);
+  }
 
-  if (user.emailVerifiedAt) {
+  if (redirectTo && redirectTo !== "/") {
+    // Only redirect if an explicit redirect path was passed (don't use default)
+    // for example to /invite/$token
+    redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
+  } else {
     return json({
       copy,
       isVerified: true,
@@ -54,31 +64,7 @@ export async function loader({ request }: LoaderArgs) {
     });
   }
 
-  const token = url.searchParams.get("token");
-  const redirectTo = url.searchParams.get("redirectTo");
-  let isVerified = false;
-
-  if (token) {
-    const result = await validateUserEmailByToken(token);
-    if (result.error) {
-      return redirect(`/verify-email/${result.status}`);
-    }
-
-    // Only redirect if an explicit redirect path was passed (don't use default)
-    // for example to /invite/$token
-    if (redirectTo !== "/") {
-      return redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
-    }
-
-    isVerified = true;
-  }
-
-  return json({
-    isVerified,
-    canViewUsers: orgUser ? orgUser.orgUsersView : false,
-    copy,
-    permissions,
-  });
+  return redirect("/verify-email");
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];

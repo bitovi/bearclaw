@@ -1,14 +1,14 @@
 export default {
   name: 'dashboardSideNav',
   type: 'document',
-	title: 'Dashboard Side Nav',
+  title: 'Dashboard Side Nav',
   fields: [
     {
       name: 'links',
       title: 'Nav Links',
       description: 'The links that display in the dashboard navigation',
       type: 'array',
-      of: [ {type: 'link'} ]
+      of: [{type: 'link'}],
     },
     {
       name: 'dividerAfter',
@@ -16,5 +16,5 @@ export default {
       description: 'Optionally insert a divider after this link',
       type: 'number',
     },
-  ]
+  ],
 }

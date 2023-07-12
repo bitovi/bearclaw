@@ -1,4 +1,8 @@
-import { Box, Button, Card, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { useFetcher } from "@remix-run/react";
 import { Dropdown, TextInput } from "~/components/input";
 import type { Question } from "~/routes/_auth._sidebar.onboarding/questions";

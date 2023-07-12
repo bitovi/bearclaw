@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { Outlet } from "@remix-run/react";
 import { SideNav } from "~/components/sideNav/SideNav";
 import { usePageCopy } from "../_dashboard/copy";

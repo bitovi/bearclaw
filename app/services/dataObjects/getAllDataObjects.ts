@@ -26,9 +26,13 @@ type DataObjectResponse = {
   data_objects: DataObject[];
 };
 
-export async function getAllDataObjects(params: ApiRequestParams): Promise<DataObject[]> {
+export async function getAllDataObjects(
+  params: ApiRequestParams
+): Promise<DataObject[]> {
   try {
-    const url = `${process.env.BEARCLAW_URL}/claw/get_data_objects?${buildApiSearchParams(params)}`;
+    const url = `${
+      process.env.BEARCLAW_URL
+    }/claw/get_data_objects?${buildApiSearchParams(params)}`;
     const response = await fetch(url);
     const data: DataObjectResponse = await response.json();
     return data.data_objects;
