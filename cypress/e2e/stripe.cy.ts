@@ -1,5 +1,5 @@
-describe("Stripe", () => {
-  describe("Add subscription", () => {
+describe("Stripe", { testIsolation: true }, () => {
+  describe("Add subscription", { testIsolation: true }, () => {
     afterEach(() => {
       cy.cleanupAccount();
     });

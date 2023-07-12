@@ -1,4 +1,4 @@
-describe("Upload", () => {
+describe("Upload", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });
@@ -14,9 +14,9 @@ describe("Upload", () => {
         fileName: "this_is_a_test.txt",
         lastModified: Date.now(),
       },
-      { 
-        action: "drag-drop", 
-        force: true 
+      {
+        action: "drag-drop",
+        force: true,
       }
     );
     cy.wait(1000)

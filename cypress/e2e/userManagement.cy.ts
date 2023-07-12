@@ -1,4 +1,4 @@
-describe("User Management & Invitation", () => {
+describe("User Management & Invitation", { testIsolation: true }, () => {
   const ownerAccount = {
     email: "ownerAccount-test@bigbear.ai",
     password: "testPassword",

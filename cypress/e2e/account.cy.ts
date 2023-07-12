@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-describe("Account", () => {
+describe("Account", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });

@@ -19,7 +19,7 @@ function createOnboardingData() {
   };
 }
 
-describe("join and authenticate tests", () => {
+describe("join and authenticate tests", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });

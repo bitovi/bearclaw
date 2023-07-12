@@ -1,4 +1,4 @@
-describe("History", () => {
+describe("History", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });

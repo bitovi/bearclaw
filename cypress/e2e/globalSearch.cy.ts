@@ -1,4 +1,4 @@
-describe("Global Search", () => {
+describe("Global Search", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });

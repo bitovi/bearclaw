@@ -1,4 +1,4 @@
-describe("Dashboard", () => {
+describe("Dashboard", { testIsolation: true }, () => {
   afterEach(() => {
     cy.cleanupAccount();
   });
