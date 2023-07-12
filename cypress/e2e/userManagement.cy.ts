@@ -283,7 +283,7 @@ describe("User Management & Invitation", { testIsolation: true }, () => {
     cy.wait(1000)
       .get("main")
       .within(() => {
-        cy.findByText(/dashboard/i);
+        cy.findAllByText(/welcome/i).should("have.length.gte", 1);
       });
 
     cy.wait(1000)
