@@ -118,6 +118,7 @@ function cleanupAccount({ email }: { email?: string } = {}) {
       }
     });
   }
+  Cypress.session.clearAllSavedSessions();
   cy.clearCookie("__session");
   cy.clearCookies();
   cy.clearAllLocalStorage();
@@ -194,6 +195,7 @@ function createAndVerifyAccount(
   credentials?: LoginData,
   destination = "/home"
 ) {
+  Cypress.session.clearAllSavedSessions();
   let _loginForm = credentials;
   if (!credentials) {
     _loginForm = createLoginData();
