@@ -12,6 +12,7 @@ import { TextInput } from "~/components/input";
 import { sendMail } from "~/services/mail/sendMail";
 import { getUser } from "~/session.server";
 import { usePageCopy } from "../_dashboard/copy";
+import { Page, PageHeader } from "../_dashboard/components/page";
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
@@ -109,7 +110,11 @@ export default function Route() {
   const copy = usePageCopy("support");
 
   return (
-    <Container>
+    <Page>
+      <PageHeader
+        headline="Support"
+        description="Need help? Our dedicated team are ready to answer your questions and solve any issues you're experiencing."
+      />
       {actionData?.success ? (
         <SuccessView />
       ) : (
@@ -172,6 +177,6 @@ export default function Route() {
           content={actionData.error}
         />
       )}
-    </Container>
+    </Page>
   );
 }

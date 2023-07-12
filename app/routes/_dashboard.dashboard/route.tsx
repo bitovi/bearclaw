@@ -20,6 +20,7 @@ import { Chip } from "@mui/material";
 import { toTitleCase } from "~/utils/string/toTitleCase";
 import dayjs from "dayjs";
 import { Suspense } from "react";
+import { Page, PageHeader } from "../_dashboard/components/page";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -56,18 +57,15 @@ export default function Index() {
     useLoaderData<typeof loader>();
 
   return (
-    <Box display="flex" flexDirection="column" gap="2rem">
-      <Box display="flex" alignItems="center">
-        <Box flex="1">
-          <Typography>{copy?.headline}</Typography>
-          <Typography fontSize="34px" fontWeight="400" lineHeight={2}>
-            Welcome {user?.firstName}
-          </Typography>
-        </Box>
+    <Page>
+      <PageHeader
+        headline={`Welcome ${user?.firstName || ""}`}
+        description={"Here is the latest data on your account."}
+      >
         <Box border="4px solid rgba(0,0,0,0.12)" borderRadius="12px">
           <Upload userId={userId} organizationId={organizationId} />
         </Box>
-      </Box>
+      </PageHeader>
       <Box
         display="grid"
         gap="1rem"
@@ -196,6 +194,6 @@ export default function Index() {
           </Await>
         </Suspense>
       </Box>
-    </Box>
+    </Page>
   );
 }

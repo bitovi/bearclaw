@@ -25,8 +25,8 @@ export type SideNavCopy = {
   links: Array<CopyLink>;
 };
 
-export function isSideNavCopy (copy: any): copy is SideNavCopy {
-  return copy && copy._id === "dashboardSideNav"
+export function isSideNavCopy(copy: any): copy is SideNavCopy {
+  return copy && copy._id === "dashboardSideNav";
 }
 
 export type PageCopy = {

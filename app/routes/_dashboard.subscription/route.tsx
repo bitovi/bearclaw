@@ -16,6 +16,7 @@ import { SideNav } from "~/components/sideNav/SideNav";
 
 import PersonIcon from "@mui/icons-material/Person";
 import StarsRoundedIcon from "@mui/icons-material/StarsRounded";
+import { Page, PageHeader } from "../_dashboard/components/page";
 
 export async function loader({ request }: { request: Request }) {
   try {
@@ -74,8 +75,9 @@ export default function Route() {
   );
 
   return (
-    <Box display="flex" height="100%">
-      <Box>
+    <Page>
+      <PageHeader headline="Subscription" description="Manage your plan." />
+      <Box display="flex">
         <SideNav
           navMenu={[
             {
@@ -107,6 +109,6 @@ export default function Route() {
           content="There was an error during billing for your most recent subscription. Please contact customer support to resolve the issue."
         />
       </Box>
-    </Box>
+    </Page>
   );
 }
