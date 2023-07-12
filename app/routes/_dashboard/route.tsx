@@ -49,7 +49,7 @@ export async function loader({ request }: LoaderArgs) {
   const permissions = getOrgUserPermissions(orgUser);
   const result = await validateUser(user.id);
   if (result.error) {
-    return redirect(`/verify-email/${result.status}`);
+    throw redirect(`/verify-email/${result.status}`);
   }
 
   if (redirectTo && redirectTo !== "/") {
