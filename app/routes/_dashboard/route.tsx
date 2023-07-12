@@ -55,7 +55,7 @@ export async function loader({ request }: LoaderArgs) {
   if (redirectTo && redirectTo !== "/") {
     // Only redirect if an explicit redirect path was passed (don't use default)
     // for example to /invite/$token
-    redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
+    throw redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
   } else {
     return json({
       copy,
@@ -63,8 +63,6 @@ export async function loader({ request }: LoaderArgs) {
       permissions,
     });
   }
-
-  return redirect("/verify-email");
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];

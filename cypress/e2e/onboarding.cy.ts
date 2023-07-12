@@ -53,7 +53,7 @@ describe("join and authenticate tests", () => {
     cy.wait(1000)
       .get("main")
       .within(() => {
-        cy.findByText(/dashboard/i);
+        cy.findAllByText(/welcome/i).should("have.length.gte", 1);
       });
 
     cy.findByRole("link", { name: /account/i })
