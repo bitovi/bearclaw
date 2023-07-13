@@ -11,7 +11,7 @@ describe("Support", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/how can we help\?/i);
+    cy.findByText(/fill out the form/i);
 
     cy.wait(2000);
 
@@ -32,6 +32,6 @@ describe("Support", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/how can we help\?/i);
+    cy.findByText(/fill out the form/i);
   });
 });
