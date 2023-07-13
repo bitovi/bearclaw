@@ -32,6 +32,7 @@ interface TableProps<T> {
   linkKey?: keyof T;
   searchFields?: DropdownOption[];
   totalItems?: number;
+  rowLimit?: number;
 }
 
 export function SkeletonTable({
@@ -231,8 +232,11 @@ export default function InvoiceTable<T>({
   linkKey,
   searchFields,
   totalItems,
+  rowLimit,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const { currentSort, sortQuery } = useSorting();
+  const limitedTableData = rowLimit ? tableData.slice(0, rowLimit) : tableData;
+
   return (
     <Paper sx={{ mb: 2 }} data-testid={`${tableTitle}-table`}>
       {tableTitle && (
@@ -295,7 +299,7 @@ export default function InvoiceTable<T>({
             </TableRow>
           </TableHead>
           <TableBody component={Box} role="rowgroup">
-            {tableData.map((entry, i) => {
+            {limitedTableData.map((entry, i) => {
               return linkKey ? (
                 <TableRowLink linkKey={linkKey} key={i} entry={entry} />
               ) : (

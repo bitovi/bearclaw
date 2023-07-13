@@ -186,6 +186,7 @@ export default function Index() {
                     status: <Chip label={toTitleCase(upload.status)} />,
                     _id: upload._id,
                   }))}
+                  rowLimit={3}
                 />
               ) : (
                 <Box component={Paper} variant="outlined" padding={2}>
