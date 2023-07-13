@@ -28,7 +28,9 @@ describe("Stripe", () => {
       cy.wait(2000);
 
       cy.findByRole("link", { name: /Overview/i });
-      cy.findByRole("link", { name: /^Subscription$/i }).as("manage");
+      cy.findAllByRole("link", { name: /^Subscription$/i })
+        .last()
+        .as("manage");
 
       cy.findByText(/No active subscription/i);
 
@@ -106,7 +108,9 @@ describe("Stripe", () => {
       cy.findByText(/standard plan/i);
       cy.contains(/manage payment settings/i).should("not.exist");
 
-      cy.findByRole("link", { name: /^Subscription$/i }).click({ force: true });
+      cy.findAllByRole("link", { name: /^Subscription$/i })
+        .last()
+        .click({ force: true });
 
       cy.findByText(/ premium plan/i).click({ force: true });
 

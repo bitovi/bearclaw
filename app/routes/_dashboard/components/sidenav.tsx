@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
 import { useLoaderData } from "@remix-run/react";
 import { SideNav } from "~/components/sideNav/SideNav";
-import type { loader } from "./route";
-import { useSideNavCopy } from "./copy";
+import type { loader } from "../route";
+import { useSideNavCopy } from "../copy";
 
 export function MainSideNav() {
   const { permissions } = useLoaderData<typeof loader>();

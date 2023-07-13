@@ -16,6 +16,7 @@ import { SideNav } from "~/components/sideNav/SideNav";
 
 import PersonIcon from "@mui/icons-material/Person";
 import StarsRoundedIcon from "@mui/icons-material/StarsRounded";
+import { Page, PageHeader } from "../_dashboard/components/page";
 
 export async function loader({ request }: { request: Request }) {
   try {
@@ -74,39 +75,42 @@ export default function Route() {
   );
 
   return (
-    <Box display="flex" height="100%">
-      <Box>
-        <SideNav
-          navMenu={[
-            {
-              text: "Overview",
-              to: "/subscription/overview",
-              icon: <PersonIcon />,
-            },
-            {
-              text: "Subscription",
-              to: "/subscription/manage",
-              icon: <StarsRoundedIcon />,
-            },
-          ]}
-        />
+    <Page>
+      <PageHeader headline="Subscription" description="Manage your plan." />
+      <Box display="flex">
+        <Box>
+          <SideNav
+            navMenu={[
+              {
+                text: "Overview",
+                to: "/subscription/overview",
+                icon: <PersonIcon />,
+              },
+              {
+                text: "Subscription",
+                to: "/subscription/manage",
+                icon: <StarsRoundedIcon />,
+              },
+            ]}
+          />
+        </Box>
+        <Box overflow="hidden auto" paddingX={2} flex={1}>
+          <Outlet />
+          <Banner
+            container={{
+              open: errorVisible,
+              anchorOrigin: { vertical: "bottom", horizontal: "center" },
+            }}
+            alert={{
+              onClose: () => {
+                setErrorVisible(false);
+              },
+            }}
+            title="Error"
+            content="There was an error during billing for your most recent subscription. Please contact customer support to resolve the issue."
+          />
+        </Box>
       </Box>
-      <Box overflow="hidden auto" paddingX={2} flex={1}>
-        <Outlet />
-        <Banner
-          container={{
-            open: errorVisible,
-            anchorOrigin: { vertical: "bottom", horizontal: "center" },
-          }}
-          alert={{
-            onClose: () => {
-              setErrorVisible(false);
-            },
-          }}
-          title="Error"
-          content="There was an error during billing for your most recent subscription. Please contact customer support to resolve the issue."
-        />
-      </Box>
-    </Box>
+    </Page>
   );
 }

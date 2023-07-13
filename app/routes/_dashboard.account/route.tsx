@@ -1,17 +1,20 @@
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { Outlet } from "@remix-run/react";
 import { SideNav } from "~/components/sideNav/SideNav";
 import { usePageCopy } from "../_dashboard/copy";
+import { Page, PageHeader } from "../_dashboard/components/page";
 
 export default function Account() {
   const copy = usePageCopy("account");
 
   return (
-    <Box>
-      <Box>
-        <Typography variant="h1">{copy?.headline}</Typography>
-      </Box>
+    <Page>
+      <PageHeader
+        headline={"User Account"}
+        description={
+          "Manage your personal details, subscription status, and overall account settings."
+        }
+      />
       <Box display="flex" flexDirection={{ xs: "column", md: "row" }}>
         <Box width={{ xs: "auto", md: "240px" }}>
           <SideNav navMenu={copy?.subNavLinks || []} />
@@ -20,6 +23,6 @@ export default function Account() {
           <Outlet />
         </Box>
       </Box>
-    </Box>
+    </Page>
   );
 }
