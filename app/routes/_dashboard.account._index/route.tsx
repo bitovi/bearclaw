@@ -1,5 +1,4 @@
 import { Box, Stack, Typography } from "@mui/material";
-import accountQuestions from "./components/accountQuestions";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { getUser } from "~/session.server";
 import { json } from "@remix-run/node";
@@ -9,14 +8,17 @@ import invariant from "tiny-invariant";
 import { useLoaderData } from "@remix-run/react";
 import { rangeToText } from "~/routes/_auth._sidebar.onboarding/data.server";
 import { FormCard } from "~/components/formCard";
+import { fetchQuestions } from "~/services/sanity/copy/questions";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
+
   if (!user) {
     return json(
       {
         success: false,
         accountInfo: null,
+        accountQuestions: null,
         error: "You must be logged in to view this page.",
       },
       {
@@ -31,6 +33,7 @@ export async function loader({ request }: LoaderArgs) {
       {
         success: false,
         accountInfo: null,
+        accountQuestions: null,
         error: "User's own organization not found",
       },
       {
@@ -44,10 +47,12 @@ export async function loader({ request }: LoaderArgs) {
     organizationId: organization.id,
   });
   invariant(organizationUser, "User must have an organization to update");
+  const { accountQuestionsCopy } = await fetchQuestions();
 
   return json(
     {
       success: true,
+      accountQuestions: accountQuestionsCopy,
       accountInfo: {
         firstName: user.firstName,
         lastName: user.lastName,
@@ -74,7 +79,8 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function Route() {
-  const { accountInfo, error } = useLoaderData<typeof loader>();
+  const { accountInfo, error, accountQuestions } =
+    useLoaderData<typeof loader>();
   if (error) {
     return <Box>{error}</Box>;
   }
@@ -92,8 +98,9 @@ export default function Route() {
           Update your personal details here
         </Typography>
       </Box>
+
       <Stack gap={2}>
-        {accountQuestions.map((q, i) => {
+        {accountQuestions?.questionList.map((q, i) => {
           return (
             <FormCard
               action="/onboarding"
@@ -101,6 +108,7 @@ export default function Route() {
               question={q}
               submitText={"Save"}
               formData={accountInfo}
+              redirectTo="/account"
             />
           );
         })}

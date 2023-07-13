@@ -21,6 +21,9 @@ export async function fetchAuthCopy() {
       _id,
      "imageURLs": imageContent[] {
         "key": _key,
+        location,
+        altText,
+        name,
         hidden,
         'url': asset->url
       }

@@ -9,9 +9,11 @@ export async function fetchDashboardCopy() {
     _type == "page"
   ]{...}`;
   try {
-    const copy = await getClient().fetch<[SideNavCopy | PageCopy]>(query);
-    const sideNavCopy = copy.find(isSideNavCopy);
-    const pageCopy = copy.filter(isPageCopy);
+    const copy = await getClient().fetch<[SideNavCopy | PageCopy] | null>(
+      query
+    );
+    const sideNavCopy = copy?.find(isSideNavCopy);
+    const pageCopy = copy?.filter(isPageCopy);
 
     return { sideNavCopy, pageCopy };
   } catch (err) {
