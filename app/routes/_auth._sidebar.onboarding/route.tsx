@@ -56,7 +56,10 @@ export async function action({ request }: ActionArgs) {
     if (redirectTo) {
       throw redirect(redirectTo);
     }
-    throw redirect("/dashboard");
+    return json({
+      success: true,
+      data: response,
+    });
   }
 }
 
