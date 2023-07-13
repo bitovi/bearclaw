@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { PortableText } from "@portabletext/react";
 import { useParentImageCopy, useParentSidebarCopy } from "../_auth/copy";
-import { json } from "@remix-run/server-runtime";
 import { Carousel } from "~/components/carousel";
 import { useMemo } from "react";
 import { Logo } from "~/components/logo/Logo";

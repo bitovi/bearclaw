@@ -1,4 +1,4 @@
-import { Form } from "@remix-run/react";
+import { Form, useNavigation } from "@remix-run/react";
 import { Button } from "../../../components/button";
 import { TextInput, Dropdown } from "../../../components/input";
 import Box from "@mui/material/Box";
@@ -11,6 +11,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { Question } from "~/services/sanity/copy/questions/types";
 import { useParentFormCopy } from "~/routes/_auth/copy";
+import { ButtonLoader } from "~/components/buttonLoader";
 
 type Props = {
   redirectTo?: string;
@@ -20,6 +21,7 @@ type Props = {
 export function Onboarding({ redirectTo, questions }: Props) {
   const [activeStep, setActiveStep] = useState(0);
   const copy = useParentFormCopy();
+  const navigation = useNavigation();
 
   return (
     <>
@@ -146,9 +148,16 @@ export function Onboarding({ redirectTo, questions }: Props) {
                   </Button>
                 )}
                 {activeStep === questions.length - 1 ? (
-                  <Button type="submit" key="submit" variant="buttonLarge">
+                  <ButtonLoader
+                    type="submit"
+                    variant="buttonLarge"
+                    loading={
+                      navigation.state === "submitting" ||
+                      navigation.state === "loading"
+                    }
+                  >
                     {copy?.profileBuilderSubmitButton || "Finish Profile"}
-                  </Button>
+                  </ButtonLoader>
                 ) : (
                   <Button
                     type="button"

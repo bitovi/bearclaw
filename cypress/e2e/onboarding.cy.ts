@@ -26,10 +26,10 @@ describe("join and authenticate tests", () => {
 
   it("should allow you to onboard", () => {
     cy.createAndVerifyAccount();
+    cy.visitAndCheck("/onboarding");
 
     // Onboarding time
     const onboardingForm = createOnboardingData();
-    cy.visitAndCheck("/onboarding");
 
     cy.findByLabelText(/first name/i).type(onboardingForm.firstName);
     cy.findByLabelText(/last name/i).type(onboardingForm.lastName);
