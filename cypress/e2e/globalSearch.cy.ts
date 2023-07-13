@@ -7,7 +7,7 @@ describe("Global Search", () => {
     cy.createAndVerifyAccount();
 
     // On the Dashboard
-    cy.findByText(/welcome/i);
+    cy.findAllByText(/welcome/i).should("have.length.gte", 1);
     cy.findByText(/recent activity/i);
 
     // Global search textbox
@@ -94,7 +94,7 @@ describe("Global Search", () => {
     cy.createAndVerifyAccount();
 
     // On the Dashboard
-    cy.findByText(/welcome/i);
+    cy.findAllByText(/welcome/i).should("have.length.gte", 1);
     cy.findByText(/recent activity/i);
 
     // Global search textbox

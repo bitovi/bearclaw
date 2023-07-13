@@ -9,6 +9,13 @@ export type AuthFormCopy = {
   }>;
   loginSubHeader: string;
   joinSubHeader: string;
+  onboardingSubHeader: string;
+  profileBuilder: string;
+  profileBuilderStep1Label: string;
+  profileBuilderSkipButton: string;
+  profileBuilderPreviousButton: string;
+  profileBuilderSubmitButton: string;
+  profileBuilderNextButton: string;
   email: string;
   password: string;
   rememberMe: string;
@@ -50,10 +57,13 @@ export type AuthSidebarCopy = {
 };
 
 export type AuthImages = {
+  _id: "sidebarImages";
   imageURLs: {
     key: string;
     hidden: boolean;
     url: string;
     altText: string;
+    name: string;
+    location: "onboarding" | "auth";
   }[];
 };

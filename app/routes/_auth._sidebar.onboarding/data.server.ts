@@ -29,10 +29,10 @@ export async function onboardUser(user: User, data: Partial<OnboardingData>) {
   invariant(organizationUser, "User must have an organization to update");
 
   const userData = {
-    firstName: data.firstName || undefined,
-    lastName: data.lastName || undefined,
-    phone: data.phone || undefined,
-    emailSecondary: data.emailSecondary || undefined,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    phone: data.phone,
+    emailSecondary: data.emailSecondary,
   };
 
   const organizationData = {
