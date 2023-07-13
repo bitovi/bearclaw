@@ -109,7 +109,7 @@ export async function action({ request }: ActionArgs) {
       { status: 400 }
     );
   }
-
+  console.log("LOG LOG LOG --- NEW USER EMAIL:", email);
   const { user, orgId, error } = await createUser(email, password, redirectTo);
 
   if (error || !orgId) {
