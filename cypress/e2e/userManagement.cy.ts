@@ -114,6 +114,11 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
+    cy.wait(2000)
+      .findByRole("link", { name: /skip/i })
+      .should("be.visible")
+      .click({ force: true });
+
     cy.findByText(
       /You have successfully joined ownerAccount-test's organization/i
     );
@@ -285,6 +290,11 @@ describe("User Management & Invitation", () => {
         });
     });
     cy.findByRole("button", { name: /verify/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(2000)
+      .findByRole("link", { name: /skip/i })
       .should("be.visible")
       .click({ force: true });
 
