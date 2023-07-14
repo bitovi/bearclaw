@@ -2,6 +2,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 
 import { prisma } from "~/db.server";
+import { getHealthcheck } from "~/services/bigBear/getHealthcheck";
 
 export async function loader({ request }: LoaderArgs) {
   const host =
@@ -13,6 +14,12 @@ export async function loader({ request }: LoaderArgs) {
     // and make a HEAD request to ourselves, then we're good.
     await Promise.all([
       prisma.user.count(),
+      new Promise<void>((resolve, reject) => {
+        if (process.env.NODE_ENV !== "development") return resolve();
+        getHealthcheck().then((r) => {
+          if (r.status !== "ok") return reject(r);
+        });
+      }),
       fetch(url.toString(), { method: "HEAD" }).then((r) => {
         if (!r.ok) return Promise.reject(r);
       }),
@@ -22,4 +29,10 @@ export async function loader({ request }: LoaderArgs) {
     console.log("healthcheck ❌", { error });
     return new Response("ERROR", { status: 500 });
   }
+}
+
+export default function Healthcheck() {
+  return (
+    <h1>Healthcheck</h1>
+  );
 }
