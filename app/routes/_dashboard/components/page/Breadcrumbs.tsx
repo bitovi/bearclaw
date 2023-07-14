@@ -23,9 +23,9 @@ export function Breadcrumbs() {
         const to = `/${pathnames.slice(0, index + 1).join("/")}`;
 
         return last ? (
-          <Box display="flex" gap="0.5rem" color="primary.main">
+          <Box display="flex" gap="0.5rem" color="primary.main" key={to}>
             <IconFromString icon={match?.icon || ""} />
-            <Typography color="text.primary" key={to}>
+            <Typography color="text.primary">
               {match?.text || toTitleCase(path)}
             </Typography>
           </Box>

@@ -26,7 +26,7 @@ const variants = {
 
 type Props = {
   variant: keyof typeof variants;
-  count: number;
+  count?: number;
   message: string;
   to: string;
 };
@@ -54,7 +54,7 @@ export const MetricCard = ({ variant, count, message, to }: Props) => {
           {variants[variant].icon}
         </Box>
         <Typography flex="1" variant="h2" color="white">
-          {count.toLocaleString()}
+          {count?.toLocaleString()}
         </Typography>
       </Box>
       <Typography variant="subtitle2" color="white">
