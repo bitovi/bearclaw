@@ -1,6 +1,7 @@
 import Button from "@mui/material/Button";
 import type { ButtonProps } from "@mui/material/Button";
-import { Link, LinkProps } from "@remix-run/react";
+import type { LinkProps } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 
 type Props = ButtonProps & LinkProps;
 

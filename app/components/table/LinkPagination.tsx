@@ -127,28 +127,28 @@ export function LinkPagination({
       >
         <ButtonLink
           aria-label="first page"
-          to={firstPageLink}
+          to={firstPageLink || ""}
           sx={{ minWidth: "32px" }}
         >
           <KeyboardDoubleArrowLeftIcon />
         </ButtonLink>
         <ButtonLink
           aria-label="previous page"
-          to={prevPageLink}
+          to={prevPageLink || ""}
           sx={{ minWidth: "32px" }}
         >
           <KeyboardArrowLeftIcon />
         </ButtonLink>
         <ButtonLink
           aria-label="next page"
-          to={nextPageLink}
+          to={nextPageLink || ""}
           sx={{ minWidth: "32px" }}
         >
           <KeyboardArrowRightIcon />
         </ButtonLink>
         <ButtonLink
           aria-label="last page"
-          to={lastPageLink}
+          to={lastPageLink || ""}
           disabled={!!lastPageLink}
         >
           <KeyboardDoubleArrowRightIcon />
