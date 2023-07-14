@@ -11,7 +11,7 @@ import { Dropdown, TextInput } from "~/components/input";
 import { sendMail } from "~/services/mail/sendMail";
 import { getUser } from "~/session.server";
 import { usePageCopy } from "../_dashboard/copy";
-import { Page, PageHeader } from "../_dashboard/components/page";
+import { Page } from "../_dashboard/components/page";
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
@@ -28,8 +28,6 @@ export async function action({ request }: ActionArgs) {
   const subject = formData.get("selectCategory");
   const details = formData.get("additionalDetails");
 
-  console.log("subject", subject);
-  console.log("details", details);
   if (
     !subject ||
     typeof subject !== "string" ||

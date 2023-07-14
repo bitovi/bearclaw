@@ -1,5 +1,5 @@
 import type { PortableTextBlock } from "@portabletext/types";
-import { QuestionType } from "~/services/sanity/copy/questions/types";
+import type { QuestionType } from "~/services/sanity/copy/questions/types";
 
 export type CopyLink = {
   _type: "link";

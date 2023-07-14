@@ -6,7 +6,6 @@ const question: Question = {
   header: "Personal Info",
   information:
     "This type of information helps us keep your account safe and also helps in case you need a speedy recovery.",
-  excludeFromOnboarding: false,
   questionFields: [
     {
       name: "firstName",
