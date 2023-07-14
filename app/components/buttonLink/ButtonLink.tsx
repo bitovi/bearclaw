@@ -1,12 +1,17 @@
 import Button from "@mui/material/Button";
 import type { ButtonProps } from "@mui/material/Button";
-import { Link } from "@remix-run/react";
+import { Link, LinkProps } from "@remix-run/react";
 
-type Props = ButtonProps & {
-  to?: string;
-};
+type Props = ButtonProps & LinkProps;
 
-export function ButtonLink({ to, children, variant, sx, ...props }: Props) {
+export function ButtonLink({
+  to,
+  children,
+  variant,
+  sx,
+  prefetch,
+  ...props
+}: Props) {
   return (
     <Button
       disableRipple
@@ -14,7 +19,7 @@ export function ButtonLink({ to, children, variant, sx, ...props }: Props) {
       component={to ? Link : "div"}
       aria-disabled={!to}
       to={to}
-      prefetch="intent"
+      prefetch={prefetch ?? "intent"}
       variant={variant}
       sx={{
         ...sx,
