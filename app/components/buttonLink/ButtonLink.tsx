@@ -3,7 +3,10 @@ import type { ButtonProps } from "@mui/material/Button";
 import type { LinkProps } from "@remix-run/react";
 import { Link } from "@remix-run/react";
 
-type Props = ButtonProps & LinkProps;
+type Props = ButtonProps &
+  Omit<LinkProps, "to"> & {
+    to?: string;
+  };
 
 export function ButtonLink({
   to,
