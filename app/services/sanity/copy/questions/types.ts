@@ -1,7 +1,7 @@
 export type QuestionType =
   | {
       name: string;
-      questionType: "text" | "tel" | "email";
+      questionType: "text" | "tel" | "email" | "textarea";
       label: string;
       placeholder: string;
       pattern?: string;
@@ -21,7 +21,6 @@ export type QuestionType =
 export type Question = {
   header: string;
   information: string;
-  excludeFromOnboarding: boolean;
   questionFields: QuestionType[];
 };
 

@@ -7,7 +7,7 @@ import { json } from "@remix-run/node";
 import type { ActionArgs } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { Banner } from "~/components/banner";
-import { TextInput } from "~/components/input";
+import { Dropdown, TextInput } from "~/components/input";
 import { sendMail } from "~/services/mail/sendMail";
 import { getUser } from "~/session.server";
 import { usePageCopy } from "../_dashboard/copy";
@@ -25,8 +25,11 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  const subject = formData.get("subject");
-  const details = formData.get("Additional details");
+  const subject = formData.get("selectCategory");
+  const details = formData.get("additionalDetails");
+
+  console.log("subject", subject);
+  console.log("details", details);
   if (
     !subject ||
     typeof subject !== "string" ||
@@ -65,12 +68,12 @@ const SuccessView = () => {
 
   return (
     <Form method="get">
-      <Stack alignItems="center" gap={2}>
+      <Stack alignItems="center" gap={4}>
         <Skeleton
           animation={false}
           variant="rectangular"
-          width="100px"
-          height="100px"
+          width="128px"
+          height="128px"
           sx={{ display: "flex" }}
           component={Box}
           justifyContent={"center"}
@@ -81,11 +84,14 @@ const SuccessView = () => {
             Graphic
           </Typography>
         </Skeleton>
-
-        <Typography variant="h4">{copy?.content?.successHeading}</Typography>
-        <Typography variant="body1" color="text.primary">
-          {copy?.content?.successMessage}
-        </Typography>
+        <Box textAlign={"center"}>
+          <Typography variant="h4" paddingBottom={1}>
+            {copy?.content?.successHeading}
+          </Typography>
+          <Typography variant="body1" color="text.primary">
+            {copy?.content?.successMessage}
+          </Typography>
+        </Box>
 
         <Button
           variant="buttonLarge"
@@ -110,53 +116,52 @@ export default function Route() {
 
   return (
     <Page>
-      <PageHeader
-        headline="Support"
-        description="Need help? Our dedicated team are ready to answer your questions and solve any issues you're experiencing."
-      />
       {actionData?.success ? (
         <SuccessView />
       ) : (
         <>
           <Box>
-            <Typography variant="h5" color="text.primary">
+            <Typography variant="h5" color="text.primary" paddingBottom={1}>
               {copy?.headline}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {copy?.content?.subHeading}
             </Typography>
           </Box>
-          <Stack paddingTop={2}>
+          <Stack paddingTop={2} width={{ xs: "auto", lg: "552px" }}>
             <Form method="post">
               <Stack gap={2}>
+                {copy?.inputs?.selectCategory?.questionType === "select" && (
+                  <Dropdown
+                    fullWidth
+                    name={copy?.inputs?.selectCategory?.name}
+                    label={copy?.inputs?.selectCategory?.label}
+                    required={copy?.inputs?.selectCategory?.required}
+                    options={copy?.inputs?.selectCategory.optionList}
+                    disabled={copy?.inputs?.selectCategory?.disabled}
+                    defaultValue={
+                      copy?.inputs?.selectCategory?.optionList?.[0].value
+                    }
+                  />
+                )}
+
                 <TextInput
-                  name="subject"
-                  label={copy?.content?.subjectLabel}
-                  required
-                  autoFocus={true}
-                  fullWidth
-                  InputLabelProps={{ required: true }}
-                  placeholder={copy?.content?.subjectPlaceholderText}
-                />
-                <TextInput
-                  name="Additional details"
-                  label={copy?.content?.detailsLabel}
-                  required
+                  name={copy?.inputs?.additionalDetails?.name}
+                  placeholder={copy?.inputs?.additionalDetails?.placeholder}
+                  label={copy?.inputs?.additionalDetails?.label}
+                  required={copy?.inputs?.additionalDetails?.required}
                   fullWidth
                   InputLabelProps={{ required: true }}
                   minRows={4}
-                  multiline
+                  multiline={
+                    copy?.inputs?.additionalDetails?.questionType === "textarea"
+                  }
                 />
-                <Button
-                  variant="buttonMedium"
-                  name="submit"
-                  type="submit"
-                  sx={{
-                    alignSelf: "flex-end",
-                  }}
-                >
-                  {copy?.content?.submitButton}
-                </Button>
+                <Box alignSelf={"flex-end"}>
+                  <Button variant="buttonMedium" name="submit" type="submit">
+                    {copy?.content?.submitButton}
+                  </Button>
+                </Box>
               </Stack>
             </Form>
           </Stack>
