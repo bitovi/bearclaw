@@ -29,12 +29,12 @@ Table OrganizationUsers {
   orgUsersEdit Boolean [not null]
   orgUsersCreate Boolean [not null]
   owner Boolean [not null, default: true]
-  accountStatus String
+  accountStatus String [not null]
   organization Organization [not null]
   organizationId String [not null]
   user User [not null]
   userId String [not null]
-  role String
+  role String [not null]
   experienceMin Int
   experienceMax Int
   teamSizeMin Int

@@ -3,18 +3,25 @@ import Typography from "@mui/material/Typography";
 import { json, redirect } from "@remix-run/node";
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { UserTable } from "./components/userTable";
-import { getOrgId, getUserId } from "~/session.server";
+import { getOrgId, getUserId, logout } from "~/session.server";
 import {
   deleteOrganizationUsersById,
   retrieveOrganizationUser,
   retrieveUsersOfOrganization,
 } from "~/models/organizationUsers.server";
-import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { useCallback, useEffect, useState } from "react";
 import { AddUserModal } from "./components/addUserModal";
 import { inviteUser } from "~/models/invitationToken.server";
 import { Banner } from "~/components/banner";
 import { Page, PageHeader } from "../_dashboard/components/page";
+import Stack from "@mui/material/Stack";
+import { TextInput } from "~/components/input";
+import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SearchIcon from "@mui/icons-material/Search";
+import { Button } from "~/components/button";
+import { useFiltering } from "~/hooks/useFiltering";
 
 export async function loader({ request }: LoaderArgs) {
   try {
@@ -22,7 +29,7 @@ export async function loader({ request }: LoaderArgs) {
     const organizationId = await getOrgId(request);
 
     if (!userId || !organizationId) {
-      return redirect("/");
+      throw logout(request);
     }
 
     const orgUser = await retrieveOrganizationUser({
@@ -31,11 +38,11 @@ export async function loader({ request }: LoaderArgs) {
     });
 
     if (!orgUser) {
-      return redirect("/");
+      throw redirect("/dashboard");
     }
     if (!orgUser.orgUsersView) {
       // if user does not have appropriate view privileges, redirect
-      return redirect("/");
+      throw redirect("/dashboard");
     }
     const urlParams = new URL(request.url).searchParams;
 
@@ -45,24 +52,12 @@ export async function loader({ request }: LoaderArgs) {
     );
 
     return json({
-      permissions: {
-        viewUsers: orgUser.orgUsersView,
-        editUsers: orgUser.orgUsersEdit,
-        deleteUsers: orgUser.orgUsersCreate,
-        createUsers: orgUser.orgUsersCreate,
-      },
       users: orgUsers,
       totalUsers: totalOrgUsers,
       error: null,
     });
   } catch (e) {
     return json({
-      permissions: {
-        viewUsers: null,
-        editUsers: null,
-        deleteUsers: null,
-        createUsers: null,
-      },
       users: [],
       totalUsers: null,
       error: (e as Error).message,
@@ -159,23 +154,13 @@ export default function Route() {
   const [modalOpen, setModalOpen] = useState(false);
   const [bannerOpen, setBannerOpen] = useState(false);
   const {
-    permissions,
     error: loaderError,
     users,
     totalUsers,
   } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-  const submit = useSubmit();
-
-  const deleteUser = useCallback(
-    (userIds: readonly string[]) => {
-      const formData = new FormData();
-      formData.append("userIds", JSON.stringify(userIds));
-
-      return submit(formData, { method: "delete" });
-    },
-    [submit]
-  );
+  const [selected, setSelected] = useState<string[]>([]);
+  const { searchString, debounceFilterQuery } = useFiltering();
 
   const toggleAddUserModal = useCallback(() => {
     setModalOpen((modalOpen) => !modalOpen);
@@ -198,7 +183,61 @@ export default function Route() {
         headline="User Accounts"
         description="Efficiently manage team access by adding or removing users as needed."
       >
-        {/* TODO: Move [Add user] button and search here */}
+        <Form method="delete">
+          <Stack alignItems={{ xs: "center", lg: "unset" }} gap={2}>
+            <Stack
+              direction="row"
+              gap={2}
+              justifyContent={{ xs: "unset", lg: "flex-end" }}
+            >
+              <input
+                hidden
+                name="userIds"
+                readOnly
+                value={JSON.stringify(selected)}
+              />
+              <Button
+                type="submit"
+                variant="mediumOutlined"
+                sx={{ width: "115px", height: "36px", fontSize: "14px" }}
+              >
+                <Stack direction="row" gap={1} justifyContent="space-between">
+                  <DeleteTwoToneIcon /> Remove
+                </Stack>
+              </Button>
+              <Button
+                type="button"
+                onClick={toggleAddUserModal}
+                variant="buttonLarge"
+                sx={{ height: "36px", fontSize: "14px" }}
+              >
+                <Stack direction="row" gap={1} justifyContent="space-between">
+                  <PersonAddIcon /> Add User
+                </Stack>
+              </Button>
+            </Stack>
+            <TextInput
+              sx={{
+                color: "rgba(0, 0, 0, 0.23)",
+              }}
+              InputProps={{
+                startAdornment: (
+                  <SearchIcon sx={{ marginRight: 1, color: "#000000" }} />
+                ),
+                sx: { height: "40px", width: "300px", borderRadius: "8px" },
+              }}
+              label="Search"
+              placeholder="Search users"
+              onChange={({ target }) =>
+                debounceFilterQuery({
+                  searchString: target.value,
+                  searchField: "",
+                })
+              }
+              defaultValue={searchString}
+            />
+          </Stack>
+        </Form>
       </PageHeader>
       {actionData?.error && (
         <Box textAlign={"center"}>
@@ -207,11 +246,12 @@ export default function Route() {
           </Typography>
         </Box>
       )}
+
       <UserTable
         users={users}
         totalUsers={totalUsers}
-        handleAddUser={toggleAddUserModal}
-        handleRemoveUser={permissions.deleteUsers ? deleteUser : undefined}
+        selected={selected}
+        setSelected={setSelected}
       />
       <AddUserModal open={modalOpen} onClose={toggleAddUserModal} />
 

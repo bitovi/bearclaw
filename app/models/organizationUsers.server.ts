@@ -21,7 +21,8 @@ type Permissions = Record<keyof PermissionFields, boolean>;
 export type OrganizationMember = {
   name: string;
   email: string;
-  accountStatus: string | null;
+  accountStatus: string;
+  role: string;
   id: string;
   owner: boolean;
 };
@@ -37,7 +38,7 @@ export async function createOrganizationUser({
   organizationId: string;
   permissions: Permissions;
   owner: boolean;
-  accountStatus?: string;
+  accountStatus: string;
 }) {
   return await prisma.organizationUsers.create({
     data: {
@@ -45,7 +46,8 @@ export async function createOrganizationUser({
       organizationId,
       ...permissions,
       owner,
-      accountStatus: owner ? undefined : accountStatus,
+      accountStatus,
+      role: owner ? "Owner" : "Member",
     },
   });
 }
@@ -136,8 +138,9 @@ export async function retrieveUsersOfOrganization(
           user.user.lastName || user.user.email.split("@")[1]
         }`,
         email: user.user.email,
-        accountStatus: user.owner ? "Owner" : user.accountStatus,
+        accountStatus: user.accountStatus,
         id: user.id,
+        role: user.role,
         owner: user.owner,
       };
     }),
