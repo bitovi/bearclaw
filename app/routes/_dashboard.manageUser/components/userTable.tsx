@@ -146,15 +146,14 @@ export function UserTable({
 }: {
   users: OrganizationMember[];
   totalUsers: number | null;
-  selected: Array<{ id: string; email: string }>;
-  setSelected: (users: Array<{ id: string; email: string }>) => void;
+  selected: string[];
+  setSelected: (users: string[]) => void;
 }) {
   const nonOwnerUsers = useMemo(() => users.filter((n) => !n.owner), [users]);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected: Array<{ id: string; email: string }> =
-        nonOwnerUsers.map((n) => ({ id: n.id, email: n.email }));
+      const newSelected: string[] = nonOwnerUsers.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -163,14 +162,13 @@ export function UserTable({
 
   const handleClick = (
     _event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    id: string,
-    email: string
+    id: string
   ) => {
-    const selectedIndex = selected.findIndex((val) => val.id === id);
-    let newSelected: Array<{ id: string; email: string }> = [];
+    const selectedIndex = selected.indexOf(id);
+    let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, { id, email });
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -185,8 +183,7 @@ export function UserTable({
     setSelected(newSelected);
   };
 
-  const isSelected = (id: string) =>
-    selected.findIndex((val) => val.id === id) !== -1;
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -218,7 +215,7 @@ export function UserTable({
                               HTMLTableRowElement,
                               MouseEvent
                             >
-                          ) => handleClick(event, row.id, row.email)
+                          ) => handleClick(event, row.id)
                     }
                     role="checkbox"
                     aria-checked={isItemSelected}

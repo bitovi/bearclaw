@@ -161,9 +161,7 @@ export default function Route() {
     totalUsers,
   } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-  const [selected, setSelected] = useState<
-    Array<{ id: string; email: string }>
-  >([]);
+  const [selected, setSelected] = useState<string[]>([]);
   const { searchString, debounceFilterQuery } = useFiltering();
 
   useEffect(() => {

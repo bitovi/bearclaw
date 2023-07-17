@@ -16,7 +16,7 @@ export const ManageUserModal = ({
 }: {
   formMethod: "post" | "delete" | undefined;
   onClose: () => void;
-  selectedUsers: Array<{ id: string; email: string }>;
+  selectedUsers: string[];
 }) => {
   const copy = usePageCopy("userManagement");
 
@@ -27,10 +27,6 @@ export const ManageUserModal = ({
     setInputValue("");
     _onClose();
   };
-
-  const userEmailString = selectedUsers.reduce((acc, curr, i) => {
-    return acc + `${i === 0 ? "" : ", "}${curr.email}`;
-  }, "");
 
   const submitButtonDisabled =
     formMethod === "post"
@@ -59,7 +55,7 @@ export const ManageUserModal = ({
             hidden
             name="userIds"
             readOnly
-            value={JSON.stringify(selectedUsers.map((user) => user.id))}
+            value={JSON.stringify(selectedUsers)}
           />
           <Stack
             boxShadow={2}
@@ -83,12 +79,8 @@ export const ManageUserModal = ({
                 {formMethod === "post"
                   ? copy?.content?.confirmAddUser ||
                     "Please provide the email address of the user you would like to invite to your organization."
-                  : `${
-                      copy?.content?.confirmRemoveUsers1 || "Confirm removal of"
-                    }${" "}${userEmailString || "your selection"} ${
-                      copy?.content?.confirmRemoveUsers2 ||
-                      `by typing "REMOVE". This can't be undone and re-adding requires a new invite.`
-                    }`}
+                  : copy?.content?.confirmRemoveUser ||
+                    "Confirm removal of selected user(s) by typing 'REMOVE'. This can't be undone, and re-adding requires a new invite."}
               </Typography>
             </Stack>
 
