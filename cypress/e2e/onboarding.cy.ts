@@ -57,7 +57,7 @@ describe("join and authenticate tests", () => {
         cy.findAllByText(/welcome/i).should("have.length.gte", 1);
       });
 
-    cy.findByRole("link", { name: /account/i })
+    cy.findByRole("link", { name: /^account/i })
       .should("be.visible")
       .click({ force: true });
 
