@@ -1,5 +1,5 @@
-import { buildApiSearchParams } from "~/models/apiUtils.server";
-import { bearFetch } from "./bearFetch";
+import { buildApiSearchParams } from "~/services/bigBear/utils.server";
+import { bearFetch } from "./bearFetch.server";
 
 type ApiKeyMetrics = {
   metadata: {

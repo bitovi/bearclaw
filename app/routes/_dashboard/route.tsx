@@ -16,7 +16,7 @@ import {
 import type { OrganizationUsers } from "~/models/organizationUsers.server";
 import { safeRedirect } from "~/utils";
 import { fetchDashboardCopy } from "./copy";
-import { getHealthcheck } from "~/services/bigBear/getHealthcheck";
+import { getHealthcheck } from "~/services/bigBear/getHealthcheck.server";
 
 export async function loader({ request }: LoaderArgs) {
   const isLoggedIn = await getUser(request);

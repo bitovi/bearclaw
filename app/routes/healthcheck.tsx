@@ -2,7 +2,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 
 import { prisma } from "~/db.server";
-import { getHealthcheck } from "~/services/bigBear/getHealthcheck";
+import { getHealthcheck } from "~/services/bigBear/getHealthcheck.server";
 
 export async function loader({ request }: LoaderArgs) {
   const host =

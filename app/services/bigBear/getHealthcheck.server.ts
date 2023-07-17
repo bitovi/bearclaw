@@ -1,4 +1,4 @@
-import { bearFetch } from "./bearFetch";
+import { bearFetch } from "./bearFetch.server";
 
 export const getHealthcheck = async () => {
   const response = await bearFetch("/healthcheck");

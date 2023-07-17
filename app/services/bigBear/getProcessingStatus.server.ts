@@ -1,9 +1,9 @@
 import type {
   ApiRequestParams,
   ApiResponseWrapper,
-} from "~/models/apiUtils.server";
-import { buildApiSearchParams } from "~/models/apiUtils.server";
-import { bearFetch } from "./bearFetch";
+} from "~/services/bigBear/utils.server";
+import { buildApiSearchParams } from "~/services/bigBear/utils.server";
+import { bearFetch } from "./bearFetch.server";
 
 // Example response
 // {
@@ -59,7 +59,7 @@ export const getProcessingStatus = async (params: ApiRequestParams) => {
       `/claw/get_processing_status?${buildApiSearchParams(params)}`
     );
     const json: UploadStatusResponse = await response.json();
-
+    
     return {
       ...json,
       data: json.data.map((job) => transformApiUploadStatus(job)),
