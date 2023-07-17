@@ -17,7 +17,7 @@ export async function loader({ request }: LoaderArgs) {
       new Promise<void>((resolve, reject) => {
         if (process.env.NODE_ENV !== "development") return resolve();
         getHealthcheck().then((r) => {
-          if (r.status !== "ok") return reject(r);
+          return r.status === "ok" ? resolve() : reject(r);
         });
       }),
       fetch(url.toString(), { method: "HEAD" }).then((r) => {
@@ -29,10 +29,4 @@ export async function loader({ request }: LoaderArgs) {
     console.log("healthcheck ❌", { error });
     return new Response("ERROR", { status: 500 });
   }
-}
-
-export default function Healthcheck() {
-  return (
-    <h1>Healthcheck</h1>
-  );
 }
