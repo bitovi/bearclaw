@@ -54,6 +54,12 @@ export function usePageCopy(key: string): PageCopyKeyed | null {
           }),
           {}
         ),
+        inputs: copyMatch.inputs?.reduce((acc, input) => {
+          return {
+            ...acc,
+            [input.name]: input,
+          };
+        }, {}),
         richContent: copyMatch.richContent?.reduce(
           (acc, content) => ({
             ...acc,

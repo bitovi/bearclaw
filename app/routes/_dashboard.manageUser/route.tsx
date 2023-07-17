@@ -9,9 +9,9 @@ import {
   retrieveOrganizationUser,
   retrieveUsersOfOrganization,
 } from "~/models/organizationUsers.server";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { useCallback, useEffect, useState } from "react";
-import { AddUserModal } from "./components/addUserModal";
+import { useActionData, useLoaderData } from "@remix-run/react";
+import { useEffect, useState } from "react";
+import { ManageUserModal } from "./components/manageUserModal";
 import { inviteUser } from "~/models/invitationToken.server";
 import { Banner } from "~/components/banner";
 import { Page, PageHeader } from "../_dashboard/components/page";
@@ -22,6 +22,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "~/components/button";
 import { useFiltering } from "~/hooks/useFiltering";
+import { usePageCopy } from "../_dashboard/copy";
 
 export async function loader({ request }: LoaderArgs) {
   try {
@@ -151,25 +152,24 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function Route() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const copy = usePageCopy("userManagement");
   const [bannerOpen, setBannerOpen] = useState(false);
+  const [formMethod, setFormMethod] = useState<"post" | "delete" | undefined>();
   const {
     error: loaderError,
     users,
     totalUsers,
   } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<
+    Array<{ id: string; email: string }>
+  >([]);
   const { searchString, debounceFilterQuery } = useFiltering();
-
-  const toggleAddUserModal = useCallback(() => {
-    setModalOpen((modalOpen) => !modalOpen);
-  }, []);
 
   useEffect(() => {
     if (actionData?.key) {
       setBannerOpen(true);
-      setModalOpen(false);
+      setFormMethod(undefined);
     }
   }, [actionData]);
 
@@ -180,64 +180,66 @@ export default function Route() {
   return (
     <Page>
       <PageHeader
-        headline="User Accounts"
-        description="Efficiently manage team access by adding or removing users as needed."
+        headline={copy?.title || "User Accounts"}
+        description={
+          copy?.headline ||
+          "Efficiently manage team access by adding or removing users as needed."
+        }
       >
-        <Form method="delete">
-          <Stack alignItems={{ xs: "center", lg: "unset" }} gap={2}>
-            <Stack
-              direction="row"
-              gap={2}
-              justifyContent={{ xs: "unset", lg: "flex-end" }}
-            >
-              <input
-                hidden
-                name="userIds"
-                readOnly
-                value={JSON.stringify(selected)}
-              />
-              <Button
-                type="submit"
-                variant="mediumOutlined"
-                sx={{ width: "115px", height: "36px", fontSize: "14px" }}
-              >
-                <Stack direction="row" gap={1} justifyContent="space-between">
-                  <DeleteTwoToneIcon /> Remove
-                </Stack>
-              </Button>
-              <Button
-                type="button"
-                onClick={toggleAddUserModal}
-                variant="buttonLarge"
-                sx={{ height: "36px", fontSize: "14px" }}
-              >
-                <Stack direction="row" gap={1} justifyContent="space-between">
-                  <PersonAddIcon /> Add User
-                </Stack>
-              </Button>
-            </Stack>
-            <TextInput
+        <Stack alignItems={{ xs: "center", lg: "unset" }} gap={2}>
+          <Stack
+            direction="row"
+            gap={2}
+            justifyContent={{ xs: "unset", lg: "flex-end" }}
+          >
+            <Button
+              variant="mediumOutlined"
+              onClick={() => setFormMethod("delete")}
               sx={{
-                color: "rgba(0, 0, 0, 0.23)",
+                width: "115px",
+                height: "36px",
+                fontSize: "14px",
+                border: !selected.length ? "transparent" : "1px solid #0037FF",
               }}
-              InputProps={{
-                startAdornment: (
-                  <SearchIcon sx={{ marginRight: 1, color: "#000000" }} />
-                ),
-                sx: { height: "40px", width: "300px", borderRadius: "8px" },
-              }}
-              label="Search"
-              placeholder="Search users"
-              onChange={({ target }) =>
-                debounceFilterQuery({
-                  searchString: target.value,
-                  searchField: "",
-                })
-              }
-              defaultValue={searchString}
-            />
+              disabled={!selected.length}
+            >
+              <Stack direction="row" gap={1} justifyContent="space-between">
+                <DeleteTwoToneIcon /> {copy?.content?.removeCTA || "Remove"}
+              </Stack>
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setFormMethod("post")}
+              variant="buttonLarge"
+              sx={{ height: "36px", fontSize: "14px" }}
+            >
+              <Stack direction="row" gap={1} justifyContent="space-between">
+                <PersonAddIcon /> {copy?.content?.addUserCTA || "Add User"}
+              </Stack>
+            </Button>
           </Stack>
-        </Form>
+          <TextInput
+            sx={{
+              color: "rgba(0, 0, 0, 0.23)",
+            }}
+            InputProps={{
+              startAdornment: (
+                <SearchIcon sx={{ marginRight: 1, color: "#000000" }} />
+              ),
+              sx: { height: "40px", width: "300px", borderRadius: "8px" },
+            }}
+            label={copy?.inputs?.search.label || "Search"}
+            placeholder={copy?.inputs?.search.label || "Search users"}
+            name={copy?.inputs?.search.label || "search"}
+            onChange={({ target }) =>
+              debounceFilterQuery({
+                searchString: target.value,
+                searchField: "",
+              })
+            }
+            defaultValue={searchString}
+          />
+        </Stack>
       </PageHeader>
       {actionData?.error && (
         <Box textAlign={"center"}>
@@ -253,7 +255,11 @@ export default function Route() {
         selected={selected}
         setSelected={setSelected}
       />
-      <AddUserModal open={modalOpen} onClose={toggleAddUserModal} />
+      <ManageUserModal
+        formMethod={formMethod}
+        onClose={() => setFormMethod(undefined)}
+        selectedUsers={selected}
+      />
 
       {/* TODO: Consider global context notification management */}
       <Banner

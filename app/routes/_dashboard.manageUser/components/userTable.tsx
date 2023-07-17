@@ -15,6 +15,9 @@ import Chip from "@mui/material/Chip";
 import type { OrganizationMember } from "~/models/organizationUsers.server";
 import { LinkPagination } from "~/components/table/LinkPagination";
 import { useSorting } from "~/hooks/useSorting";
+import { usePageCopy } from "~/routes/_dashboard/copy";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
 
 interface HeadCell {
   disablePadding: boolean;
@@ -73,6 +76,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
+  const copy = usePageCopy("userManagement");
   const { onSelectAllClick, numSelected, rowCount } = props;
   const { sortQuery, currentSort } = useSorting();
 
@@ -104,7 +108,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                   direction={currentSort?.[headCell.id] || "asc"}
                   onClick={() => sortQuery(headCell.id)}
                 >
-                  {headCell.label}
+                  {copy?.content?.[`${"tableheader_" + headCell.id}`] ||
+                    headCell.label}
                   {active ? (
                     <Box component="span" sx={visuallyHidden}>
                       {currentSort[headCell.id] === "desc"
@@ -114,7 +119,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                   ) : null}
                 </TableSortLabel>
               ) : (
-                <>{headCell.label}</>
+                <>
+                  {copy?.content?.[`${"tableheader_" + headCell.id}`] ||
+                    headCell.label}
+                </>
               )}
             </TableCell>
           );
@@ -124,6 +132,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
+const stringAvatar = (str: string) =>
+  str
+    .split(" ")
+    .map((str) => str.charAt(0).toUpperCase())
+    .join("");
+
 export function UserTable({
   users,
   totalUsers,
@@ -132,26 +146,31 @@ export function UserTable({
 }: {
   users: OrganizationMember[];
   totalUsers: number | null;
-  selected: string[];
-  setSelected: (userIds: string[]) => void;
+  selected: Array<{ id: string; email: string }>;
+  setSelected: (users: Array<{ id: string; email: string }>) => void;
 }) {
   const nonOwnerUsers = useMemo(() => users.filter((n) => !n.owner), [users]);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected: string[] = nonOwnerUsers.map((n) => n.id);
+      const newSelected: Array<{ id: string; email: string }> =
+        nonOwnerUsers.map((n) => ({ id: n.id, email: n.email }));
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (_event: React.MouseEvent<unknown>, id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
+  const handleClick = (
+    _event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    id: string,
+    email: string
+  ) => {
+    const selectedIndex = selected.findIndex((val) => val.id === id);
+    let newSelected: Array<{ id: string; email: string }> = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
+      newSelected = newSelected.concat(selected, { id, email });
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -166,7 +185,8 @@ export function UserTable({
     setSelected(newSelected);
   };
 
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+  const isSelected = (id: string) =>
+    selected.findIndex((val) => val.id === id) !== -1;
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -193,7 +213,12 @@ export function UserTable({
                     onClick={
                       row.owner
                         ? () => {}
-                        : (event) => handleClick(event, row.id)
+                        : (
+                            event: React.MouseEvent<
+                              HTMLTableRowElement,
+                              MouseEvent
+                            >
+                          ) => handleClick(event, row.id, row.email)
                     }
                     role="checkbox"
                     aria-checked={isItemSelected}
@@ -227,7 +252,18 @@ export function UserTable({
                             scope="row"
                             padding="none"
                           >
-                            {value}
+                            <Stack direction="row" alignItems="center" gap={1}>
+                              <Avatar
+                                sx={{
+                                  backgroundColor: "rgba(72, 90, 255, 1)",
+                                  color: "#FFF",
+                                }}
+                                component="span"
+                              >
+                                {stringAvatar(value.toString())}
+                              </Avatar>
+                              {value}
+                            </Stack>
                           </TableCell>
                         );
                       }

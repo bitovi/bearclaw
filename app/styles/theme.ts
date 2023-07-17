@@ -137,7 +137,7 @@ const theme = createTheme({
       fontStyle: "normal",
       fontWeight: 400,
       fontSize: "16px",
-      lineHeight: "150%",
+      lineHeight: "24px",
       letterSpacing: "0.15px",
     },
     body2: {
