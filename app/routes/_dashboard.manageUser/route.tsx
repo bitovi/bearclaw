@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AddUserModal } from "./components/addUserModal";
 import { inviteUser } from "~/models/invitationToken.server";
 import { Banner } from "~/components/banner";
+import { Page, PageHeader } from "../_dashboard/components/page";
 
 export async function loader({ request }: LoaderArgs) {
   try {
@@ -192,7 +193,13 @@ export default function Route() {
   }
 
   return (
-    <Box>
+    <Page>
+      <PageHeader
+        headline="User Accounts"
+        description="Efficiently manage team access by adding or removing users as needed."
+      >
+        {/* TODO: Move [Add user] button and search here */}
+      </PageHeader>
       {actionData?.error && (
         <Box textAlign={"center"}>
           <Typography variant="h6" color="error">
@@ -220,6 +227,6 @@ export default function Route() {
         alert={{ severity: "success" }}
         content={actionData?.result || ""}
       />
-    </Box>
+    </Page>
   );
 }

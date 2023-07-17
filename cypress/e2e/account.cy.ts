@@ -17,7 +17,7 @@ describe("Account", () => {
     return {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      phone: faker.phone.number(),
+      phone: faker.phone.number("123-123-1234"),
       emailSecondary: faker.internet.email(),
       role: "Other",
       companyName: faker.company.name(),
@@ -59,6 +59,10 @@ describe("Account", () => {
 
     cy.findAllByText(/save/i).eq(1).click();
 
+    cy.wait(1000).findByText(
+      `Hello ${onboardingForm.firstName} ${onboardingForm.lastName},`
+    );
+
     cy.wait(1000)
       .findByLabelText(/company name/i)
       .should("have.value", initialCompanyName)
@@ -78,11 +82,6 @@ describe("Account", () => {
     cy.findAllByText(onboardingForm.teamSize).click();
 
     cy.findAllByText(/save/i).eq(2).click();
-
-    cy.wait(1000);
-    cy.findByText(
-      `Hello ${onboardingForm.firstName} ${onboardingForm.lastName},`
-    );
 
     cy.reload();
 

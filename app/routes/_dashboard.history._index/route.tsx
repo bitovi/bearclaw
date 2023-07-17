@@ -9,6 +9,7 @@ import type { TableEnhancedRSBOMListEntry } from "~/models/rsbomTypes";
 import { getOrgandUserId } from "~/session.server";
 import type { ApiResponseWrapper } from "~/models/apiUtils.server";
 import { transformDate } from "./utils/transformDate.server";
+import { Page, PageHeader } from "../_dashboard/components/page";
 
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -47,68 +48,76 @@ export async function loader({ request }: LoaderArgs) {
 export default function Route() {
   const { rsbomList, error } = useLoaderData<typeof loader>();
   return (
-    <Suspense
-      fallback={
-        <SkeletonTable
-          search
-          searchFields={[]}
-          tableTitle="History"
-          headers={[
-            "Id",
-            "Filename",
-            "Timestamp",
-            "Data Object",
-            "Type",
-            "Status",
-          ]}
-        />
-      }
-    >
-      <Await resolve={rsbomList}>
-        {(rsbomList) => {
-          if (error) {
-            return <Box>{error}</Box>;
-          }
-          return (
-            <Box>
-              <HistoryTable<TableEnhancedRSBOMListEntry>
-                tableTitle={"Lists"}
-                tableData={rsbomList?.data || undefined}
-                totalItems={rsbomList?.metadata?.page.total}
-                linkKey="dataObject"
-                headers={[
-                  { label: "Id", value: "id", sortable: true },
-                  { label: "Filename", value: "filename", sortable: true },
-                  { label: "Date", value: "@timestamp", sortable: true },
-                  {
-                    label: "Data Object",
-                    value: "dataObject",
-                    sortable: true,
-                  },
-                  { label: "Type", value: "mime-type", sortable: true },
-                  {
-                    label: "Status",
-                    value: "completedStatus",
-                    sortable: true,
-                  },
-                ]}
-                tableContainerStyles={{ maxHeight: "600px" }}
-                search
-                searchFields={[
-                  {
-                    value: "dataObject",
-                    label: "Data Object",
-                  },
-                  {
-                    value: "filename",
-                    label: "Filename",
-                  },
-                ]}
-              />
-            </Box>
-          );
-        }}
-      </Await>
-    </Suspense>
+    <Page>
+      <PageHeader
+        headline="History"
+        description="Review the files you have analyzed in the past."
+      >
+        {/* TODO: Search & Filter Controls */}
+      </PageHeader>
+      <Suspense
+        fallback={
+          <SkeletonTable
+            search
+            searchFields={[]}
+            tableTitle="History"
+            headers={[
+              "Id",
+              "Filename",
+              "Timestamp",
+              "Data Object",
+              "Type",
+              "Status",
+            ]}
+          />
+        }
+      >
+        <Await resolve={rsbomList}>
+          {(rsbomList) => {
+            if (error) {
+              return <Box>{error}</Box>;
+            }
+            return (
+              <Box>
+                <HistoryTable<TableEnhancedRSBOMListEntry>
+                  tableTitle={"Lists"}
+                  tableData={rsbomList?.data || undefined}
+                  totalItems={rsbomList?.metadata?.page.total}
+                  linkKey="dataObject"
+                  headers={[
+                    { label: "Id", value: "id", sortable: true },
+                    { label: "Filename", value: "filename", sortable: true },
+                    { label: "Date", value: "@timestamp", sortable: true },
+                    {
+                      label: "Data Object",
+                      value: "dataObject",
+                      sortable: true,
+                    },
+                    { label: "Type", value: "mime-type", sortable: true },
+                    {
+                      label: "Status",
+                      value: "completedStatus",
+                      sortable: true,
+                    },
+                  ]}
+                  tableContainerStyles={{ maxHeight: "600px" }}
+                  search
+                  searchFields={[
+                    {
+                      value: "dataObject",
+                      label: "Data Object",
+                    },
+                    {
+                      value: "filename",
+                      label: "Filename",
+                    },
+                  ]}
+                />
+              </Box>
+            );
+          }}
+        </Await>
+      </Suspense>
+    </Page>
   );
 }

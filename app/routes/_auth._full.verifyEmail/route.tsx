@@ -48,7 +48,7 @@ export async function action({ request }: ActionArgs) {
   if (status) {
     const validate = await validateUser(userId);
     if (!validate.error) {
-      return redirectTo
+      throw redirectTo
         ? redirect(redirectTo.toString())
         : redirect("/dashboard");
     } else {
@@ -124,6 +124,7 @@ export default function Route() {
           </Typography>
         </Box>
         <ButtonLink
+          prefetch="none"
           variant="buttonMedium"
           to="/logout"
           sx={{

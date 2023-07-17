@@ -4,6 +4,21 @@ import type Stripe from "stripe";
 
 import type { User } from "~/models/user.server";
 
+import crypto from "crypto";
+
+export function createSixCharacterCode(length = 6) {
+  const characters =
+    "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+
+  for (let i = 0; i < length; i += 1) {
+    result += characters.charAt(
+      Math.floor(crypto.randomInt(characters.length - 1))
+    );
+  }
+  return result;
+}
+
 const DEFAULT_REDIRECT = "/dashboard";
 
 /**

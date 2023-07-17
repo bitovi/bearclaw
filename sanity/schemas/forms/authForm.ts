@@ -20,6 +20,41 @@ export default {
       type: 'string',
     },
     {
+      name: 'onboardingSubHeader',
+      title: 'Onboarding SubHeader',
+      type: 'string',
+    },
+    {
+      name: 'profileBuilder',
+      title: 'Profile Builder',
+      type: 'string',
+    },
+    {
+      name: 'profileBuilderStep1Label',
+      title: 'Profile Builder Step 1 Label',
+      type: 'string',
+    },
+    {
+      name: 'profileBuilderSkipButton',
+      title: 'Profile Builder Skip Button',
+      type: 'string',
+    },
+    {
+      name: 'profileBuilderPreviousButton',
+      title: 'Profile Builder Previous Button',
+      type: 'string',
+    },
+    {
+      name: 'profileBuilderSubmitButton',
+      title: 'Profile Builder Submit Button',
+      type: 'string',
+    },
+    {
+      name: 'profileBuilderNextButton',
+      title: 'Profile Builder Next Button',
+      type: 'string',
+    },
+    {
       name: 'forgotPasswordSubHeader',
       title: 'Forgot Password Subheader',
       type: 'string',

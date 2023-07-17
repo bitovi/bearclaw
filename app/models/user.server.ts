@@ -1,11 +1,11 @@
 import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 
 import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail";
 import { createOrganization } from "./organization.server";
 import { createVerificationToken } from "./verificationToken.server";
+import { createSixCharacterCode } from "~/utils";
 
 export type { User } from "@prisma/client";
 
@@ -171,7 +171,7 @@ export async function forgotPassword(email: User["email"]) {
   if (!user) {
     return null;
   }
-  const token = crypto.randomInt(0, 999999).toString().padStart(6, "0");
+  const token = createSixCharacterCode();
 
   const reset = await prisma.resetPasswordToken.upsert({
     where: { userId: user.id },

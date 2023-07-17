@@ -37,6 +37,30 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext) {
                         ),
                     ])
                 ),
+              S.listItem()
+                .title('Questions')
+                .child(
+                  S.list()
+                    .title('Sections')
+                    .items([
+                      S.listItem()
+                        .title('Account')
+                        .child(
+                          S.editor()
+                            .title('Account Questions')
+                            .schemaType('questions')
+                            .documentId('accountQuestions')
+                        ),
+                      S.listItem()
+                        .title('Onboarding')
+                        .child(
+                          S.editor()
+                            .title('Onboarding Questions')
+                            .schemaType('questions')
+                            .documentId('onboardingQuestions')
+                        ),
+                    ])
+                ),
             ])
         ),
       S.listItem()

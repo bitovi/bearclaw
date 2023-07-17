@@ -40,12 +40,14 @@ export function SkeletonTable({
   tableTitle,
   tableContainerStyles,
   headers,
+  rows = 5,
 }: {
   search?: boolean;
   searchFields?: DropdownOption[];
   tableTitle?: string;
   tableContainerStyles?: SxProps<Theme>;
   headers: string[];
+  rows?: number;
 }) {
   return (
     <Paper sx={{ mb: 2 }}>
@@ -84,27 +86,14 @@ export function SkeletonTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {headers.map((row) => {
+            {Array(rows).fill("").map((_, row) => {
               return (
                 <TableRow key={row}>
-                  <TableCell component="th" scope="row">
-                    <Skeleton animation="wave" variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton animation="wave" variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton animation="wave" variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton animation="wave" variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton animation="wave" variant="text" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton animation="wave" variant="text" />
-                  </TableCell>
+                  {Array(headers.length).fill("").map((_, column) => (
+                    <TableCell key={column}>
+                      <Skeleton animation="wave" variant="text" />
+                    </TableCell>
+                  ))}
                 </TableRow>
               );
             })}
@@ -227,7 +216,7 @@ export default function InvoiceTable<T>({
   headers = [],
   tableContainerStyles = {},
   search,
-  onRowClick = () => {},
+  onRowClick,
   linkKey,
   searchFields,
   totalItems,
@@ -304,7 +293,7 @@ export default function InvoiceTable<T>({
                   role="row"
                   key={i}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  onClick={() => onRowClick(entry)}
+                  onClick={() => onRowClick?.(entry)}
                 >
                   {Object.entries(entry).map(([field, fieldValue], i) => {
                     if (i === 0) {
