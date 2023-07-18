@@ -38,14 +38,17 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/organization users/i);
+    cy.findByText(/user accounts/i);
 
     // length of 1 as the Owner will be the only listing displayed
     cy.get("tbody > tr").should("have.length", 1);
 
-    cy.findAllByRole("button", { name: /remove/i }).should("have.length", 0);
+    cy.findAllByRole("button", { name: /remove/i })
+      .should("have.length", 1)
+      .eq(0)
+      .should("be.disabled");
     cy.wait(500)
-      .findByRole("button", { name: /new/i })
+      .findByRole("button", { name: /add user/i })
       .should("be.visible")
       .click({ force: true });
 
@@ -142,7 +145,7 @@ describe("User Management & Invitation", () => {
       .click({ force: true });
 
     cy.wait(500)
-      .findByRole("button", { name: /new/i })
+      .findByRole("button", { name: /add user/i })
       .should("be.visible")
       .click({ force: true });
 
@@ -212,7 +215,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/organization users/i);
+    cy.findByText(/user accounts/i);
 
     cy.get("tbody").within(() => {
       // Two new users plus the owner
@@ -225,7 +228,25 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/User deleted/i);
+    cy.wait(500).findByText(/remove user/i);
+    cy.findByText(/confirm removal/i);
+
+    cy.findAllByRole("presentation")
+      .eq(0)
+      .within(() => {
+        cy.findByRole("button", { name: /remove/i })
+          .as("modalRemove")
+          .should("be.disabled");
+      });
+
+    cy.focused().type("REMOVE");
+
+    cy.wait(500)
+      .get("@modalRemove")
+      .should("be.enabled")
+      .click({ force: true });
+
+    cy.wait(500).findByText(/User deleted/i);
 
     cy.get("tbody").within(() => {
       cy.get("tr").should("have.length", 2);

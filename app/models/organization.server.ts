@@ -96,6 +96,7 @@ export async function createOrganization({
         orgUsersEdit: true,
         orgUsersView: true,
       },
+      accountStatus: "Active",
       owner: true,
     });
     return { organization, error: undefined };

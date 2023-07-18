@@ -6,7 +6,7 @@ type Props = {
 
 export function Page({ children }: Props) {
   return (
-    <Box display="flex" flexDirection="column" gap="2rem">
+    <Box display="flex" flexDirection="column" gap="2rem" position="relative">
       {children}
     </Box>
   );
