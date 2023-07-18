@@ -48,10 +48,9 @@ describe("join and authenticate tests", () => {
     cy.findByRole("button", { name: /log in/i })
       .should("be.visible")
       .click({ force: true });
-    cy.findAllByRole("link", { name: /logout/i });
 
     // Setup email MFA
-    cy.findAllByRole("link", { name: /Account/i })
+    cy.findAllByRole("link", { name: /^Account/i })
       .first()
       .should("be.visible")
       .click({ force: true });
@@ -117,7 +116,7 @@ describe("join and authenticate tests", () => {
       });
 
     // Disable MFA
-    cy.findAllByRole("link", { name: /Account/i })
+    cy.findAllByRole("link", { name: /^Account/i })
       .first()
       .should("be.visible")
       .click({ force: true });

@@ -1,13 +1,12 @@
-import type { ApiRequestParams, ApiResponseWrapper } from "./apiUtils.server";
-import { buildApiSearchParams } from "./apiUtils.server";
+import { bearFetch } from "~/services/bigBear/bearFetch.server";
+import { buildApiSearchParams } from "~/services/bigBear/utils.server";
+import type { ApiRequestParams, ApiResponseWrapper } from "~/services/bigBear/utils.server";
 import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
-
-const baseURL = process.env.BEARCLAW_URL;
 
 export async function retrieveRSBOMList(params: ApiRequestParams = {}) {
   const searchParams = buildApiSearchParams(params);
-  const response = await fetch(
-    `${baseURL}/bear/get_rsboms_cyclonedx?${searchParams}`
+  const response = await bearFetch(
+    `/bear/get_rsboms_cyclonedx?${searchParams}`
   );
   const json: ApiResponseWrapper<RSBOMListEntry[]> = await response.json();
   return json;
@@ -27,9 +26,10 @@ export async function retrieveRSBOMDetails({
     organizationId,
   });
 
-  const response = await fetch(
-    `${baseURL}/bear/get_rsboms_cyclonedx/${dataObjectId}?${searchParams}`
+  const response = await bearFetch(
+    `/bear/get_rsboms_cyclonedx/${dataObjectId}?${searchParams}`
   );
+
   const { data } = await response.json();
   return data[0];
 }

@@ -124,6 +124,7 @@ export default function Route() {
           </Typography>
         </Box>
         <ButtonLink
+          prefetch="none"
           variant="buttonMedium"
           to="/logout"
           sx={{

@@ -60,12 +60,6 @@ export async function getOrgId(
   return orgId;
 }
 
-export async function setOrgId(request: Request, orgId: string): Promise<void> {
-  const session = await getSession(request);
-  session.set(ORGANIZATION_KEY, orgId);
-  return;
-}
-
 export async function getUser(request: Request) {
   const userId = await getUserId(request);
   if (userId === undefined) return null;

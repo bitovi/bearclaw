@@ -7,7 +7,7 @@ import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { Await, useLoaderData } from "@remix-run/react";
 import type { TableEnhancedRSBOMListEntry } from "~/models/rsbomTypes";
 import { getOrgandUserId } from "~/session.server";
-import type { ApiResponseWrapper } from "~/models/apiUtils.server";
+import type { ApiResponseWrapper } from "~/services/bigBear/utils.server";
 import { transformDate } from "./utils/transformDate.server";
 import { Page, PageHeader } from "../_dashboard/components/page";
 
