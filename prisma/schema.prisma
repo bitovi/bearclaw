@@ -32,6 +32,13 @@ model User {
   firstName       String?
   lastName        String?
   phone           String?
+
+  role          String?
+  experienceMin Int?
+  experienceMax Int?
+  teamSizeMin   Int?
+  teamSizeMax   Int?
+  companyName   String?
 }
 
 model OrganizationUsers {
@@ -47,6 +54,7 @@ model OrganizationUsers {
   owner              Boolean  @default(true)
 
   accountStatus      String
+  role               String
 
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId String
@@ -54,11 +62,7 @@ model OrganizationUsers {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
-  role          String
-  experienceMin Int?
-  experienceMax Int?
-  teamSizeMin   Int?
-  teamSizeMax   Int?
+
 
   @@index([userId, organizationId])
   @@unique([userId, organizationId])
