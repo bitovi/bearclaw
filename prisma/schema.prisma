@@ -54,7 +54,7 @@ model OrganizationUsers {
   owner              Boolean  @default(true)
 
   accountStatus      String
-  role               String @default("member")
+  role               String @default("Member")
 
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   organizationId String
