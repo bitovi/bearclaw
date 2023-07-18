@@ -28,8 +28,13 @@ export type OrganizationMember = {
 };
 
 export enum OrganizationRole {
-  "OWNER" = "owner",
-  "MEMBER" = "member",
+  "OWNER" = "Owner",
+  "MEMBER" = "Member",
+}
+
+export enum AccountStatus {
+  "ACTIVE" = "Active",
+  "DELETED" = "Deleted",
 }
 
 export async function createOrganizationUser({
@@ -37,7 +42,7 @@ export async function createOrganizationUser({
   organizationId,
   permissions,
   owner,
-  accountStatus = "active",
+  accountStatus = AccountStatus.ACTIVE,
 }: {
   userId: string;
   organizationId: string;
@@ -233,7 +238,7 @@ export async function addOrganizationUser(
 ) {
   const orgUser = await createOrganizationUser({
     userId,
-    accountStatus: "active",
+    accountStatus: AccountStatus.ACTIVE,
     organizationId,
     permissions: {
       subscriptionView: true,
@@ -272,7 +277,7 @@ export async function reactivateOrgUserAccount(orgUserId: string) {
       id: orgUserId,
     },
     data: {
-      accountStatus: "active",
+      accountStatus: AccountStatus.ACTIVE,
     },
   });
 }

@@ -17,13 +17,11 @@ import { Suspense } from "react";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { KeyMetrics } from "./components/KeyMetrics";
 
-dayjs.extend(utc)
+dayjs.extend(utc);
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
-  console.log("userId", userId);
-  console.log("groupId", organizationId);
 
   const keyMetrics = getKeyMetrics({
     days: 7,
@@ -102,14 +100,16 @@ export default function Index() {
                     analyzedAt: (
                       <Box display="flex" flexDirection="column">
                         <Typography variant="body2">
-                          {dayjs.utc(new Date(upload.analyzedAt)).local().format(
-                            "MM/DD/YY"
-                          )}
+                          {dayjs
+                            .utc(new Date(upload.analyzedAt))
+                            .local()
+                            .format("MM/DD/YY")}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {dayjs.utc(new Date(upload.analyzedAt)).local().format(
-                            "HH:mm:ss"
-                          )}
+                          {dayjs
+                            .utc(new Date(upload.analyzedAt))
+                            .local()
+                            .format("HH:mm:ss")}
                         </Typography>
                       </Box>
                     ),

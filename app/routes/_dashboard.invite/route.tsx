@@ -9,6 +9,7 @@ import {
 } from "~/models/invitationToken.server";
 import { getOrganizationById } from "~/models/organization.server";
 import {
+  AccountStatus,
   createOrganizationUser,
   reactivateOrgUserAccount,
   retrieveOrganizationUser,
@@ -62,20 +63,26 @@ export async function loader({ request }: LoaderArgs) {
       userId: user.id,
     });
 
-    if (existingOrgUser && existingOrgUser.accountStatus !== "deleted") {
+    if (
+      existingOrgUser &&
+      existingOrgUser.accountStatus !== AccountStatus.DELETED
+    ) {
       await destroyInviteToken(invitationToken.id);
       throw redirect("/dashboard");
     }
 
     // if orgUser record previously existed, reactivate it; otherwise, make a new entry
-    if (existingOrgUser && existingOrgUser.accountStatus === "deleted") {
+    if (
+      existingOrgUser &&
+      existingOrgUser.accountStatus === AccountStatus.DELETED
+    ) {
       await reactivateOrgUserAccount(existingOrgUser.id);
     } else {
       await createOrganizationUser({
         userId: user.id,
         organizationId: invitationToken.organizationId,
         owner: false,
-        accountStatus: "active",
+        accountStatus: AccountStatus.ACTIVE,
         permissions: {
           subscriptionCreate: false,
           subscriptionEdit: false,
