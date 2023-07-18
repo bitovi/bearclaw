@@ -134,7 +134,7 @@ export async function retrieveUsersOfOrganization(
       },
       NOT: {
         accountStatus: {
-          contains: "deleted",
+          contains: AccountStatus.DELETED,
         },
       },
     },
@@ -146,7 +146,7 @@ export async function retrieveUsersOfOrganization(
       organizationId,
       NOT: {
         accountStatus: {
-          contains: "deleted",
+          contains: AccountStatus.DELETED,
         },
       },
     },
@@ -176,7 +176,7 @@ export async function retrieveOrgUserOwner({ userId }: { userId: string }) {
       userId,
       NOT: {
         accountStatus: {
-          contains: "deleted",
+          contains: AccountStatus.DELETED,
         },
       },
     },
@@ -195,7 +195,7 @@ export async function retrieveOrganizationUser({
       where: {
         userId,
         organizationId,
-        NOT: { accountStatus: { contains: "deleted" } },
+        NOT: { accountStatus: { contains: AccountStatus.DELETED } },
       },
     });
 
@@ -211,7 +211,7 @@ export async function countOrganizationUserInstances(userId: string) {
       userId,
       NOT: {
         accountStatus: {
-          contains: "deleted",
+          contains: AccountStatus.DELETED,
         },
       },
     },
@@ -225,7 +225,7 @@ export async function deleteOrganizationUsersById(orgUserId: string[]) {
       prisma.organizationUsers.update({
         where: { id: orgUser },
         data: {
-          accountStatus: "deleted",
+          accountStatus: AccountStatus.DELETED,
         },
       })
     ),
