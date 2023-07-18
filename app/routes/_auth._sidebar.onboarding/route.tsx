@@ -70,14 +70,10 @@ export default function Route() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
 
-  const onboardingQuestions = copy?.questionList.filter(
-    (q) => !q.excludeFromOnboarding
-  );
-
   return (
     <div>
       <Onboarding
-        questions={onboardingQuestions || []}
+        questions={copy?.questionList || []}
         redirectTo={redirectTo || "/dashboard"}
       />
     </div>

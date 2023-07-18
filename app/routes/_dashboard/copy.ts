@@ -43,7 +43,6 @@ export function usePageCopy(key: string): PageCopyKeyed | null {
   const copyMatch = pages.find(
     (page: any) => isPageCopy(page) && page.key === key
   );
-
   return isPageCopy(copyMatch)
     ? {
         ...copyMatch,
