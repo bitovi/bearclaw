@@ -1,5 +1,5 @@
-import type { ApiRequestParams } from "~/models/apiUtils.server";
-import { buildApiSearchParams } from "~/models/apiUtils.server";
+import type { ApiRequestParams } from "~/services/bigBear/utils.server";
+import { buildApiSearchParams } from "~/services/bigBear/utils.server";
 
 export type DataObject = {
   createdByUserId: string;

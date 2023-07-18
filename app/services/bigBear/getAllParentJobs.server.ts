@@ -1,8 +1,9 @@
 import type {
   ApiRequestParams,
   ApiResponseWrapper,
-} from "~/models/apiUtils.server";
-import { buildApiSearchParams } from "~/models/apiUtils.server";
+} from "~/services/bigBear/utils.server";
+import { buildApiSearchParams } from "~/services/bigBear/utils.server";
+import { bearFetch } from "./bearFetch.server";
 
 // Example response
 // {
@@ -54,10 +55,8 @@ function transformApiParentJob(
 
 export const getAllParentJobs = async (params: ApiRequestParams) => {
   try {
-    const response = await fetch(
-      `${
-        process.env.BEARCLAW_URL
-      }/claw/get_all_parent_jobs?${buildApiSearchParams(params)}`
+    const response = await bearFetch(
+      `/claw/get_all_parent_jobs?${buildApiSearchParams(params)}`
     );
     const json: ParentJobResponse = await response.json();
     return {

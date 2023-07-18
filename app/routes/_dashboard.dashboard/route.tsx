@@ -7,14 +7,17 @@ import Paper from "@mui/material/Paper";
 import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
 import { getOrgandUserId, getUser } from "~/session.server";
 import Table, { SkeletonTable } from "~/components/table/Table";
-import { getKeyMetrics } from "../../services/bigBear/getKeyMetrics";
-import { getProcessingStatus } from "~/services/bigBear/getProcessingStatus";
+import { getKeyMetrics } from "../../services/bigBear/getKeyMetrics.server";
+import { getProcessingStatus } from "~/services/bigBear/getProcessingStatus.server";
 import { Chip } from "@mui/material";
 import { toTitleCase } from "~/utils/string/toTitleCase";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { Suspense } from "react";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { KeyMetrics } from "./components/KeyMetrics";
+
+dayjs.extend(utc)
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -93,12 +96,12 @@ export default function Index() {
                     analyzedAt: (
                       <Box display="flex" flexDirection="column">
                         <Typography variant="body2">
-                          {dayjs(new Date(upload.analyzedAt)).format(
+                          {dayjs.utc(new Date(upload.analyzedAt)).local().format(
                             "MM/DD/YY"
                           )}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {dayjs(new Date(upload.analyzedAt)).format(
+                          {dayjs.utc(new Date(upload.analyzedAt)).local().format(
                             "HH:mm:ss"
                           )}
                         </Typography>

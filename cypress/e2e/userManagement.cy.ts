@@ -34,7 +34,7 @@ describe("User Management & Invitation", () => {
   it("Invite user", () => {
     cy.createAndVerifyAccount(ownerAccount);
 
-    cy.findByRole("link", { name: /user management/i })
+    cy.findByRole("link", { name: /user accounts/i })
       .should("be.visible")
       .click({ force: true });
 
@@ -137,7 +137,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /user management/i })
+    cy.findByRole("link", { name: /user accounts/i })
       .should("be.visible")
       .click({ force: true });
 
@@ -208,7 +208,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /user management/i })
+    cy.findByRole("link", { name: /user accounts/i })
       .should("be.visible")
       .click({ force: true });
 
@@ -274,7 +274,7 @@ describe("User Management & Invitation", () => {
       });
 
     cy.wait(1000)
-      .findByText(/user management/i)
+      .findByText(/user accounts/i)
       .click({ force: true });
 
     // Sorting
