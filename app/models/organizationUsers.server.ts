@@ -27,6 +27,11 @@ export type OrganizationMember = {
   owner: boolean;
 };
 
+export enum OrganizationRole {
+  "OWNER" = "owner",
+  "MEMBER" = "member",
+}
+
 export async function createOrganizationUser({
   userId,
   organizationId,
@@ -47,7 +52,7 @@ export async function createOrganizationUser({
       ...permissions,
       owner,
       accountStatus,
-      role: owner ? "Owner" : "Member",
+      role: owner ? OrganizationRole.OWNER : OrganizationRole.MEMBER,
     },
   });
 }
