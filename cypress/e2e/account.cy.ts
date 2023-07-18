@@ -34,7 +34,7 @@ describe("Account", () => {
     cy.createAndVerifyAccount(loginDetails);
 
     cy.wait(1000)
-      .findByRole("link", { name: /account/i })
+      .findByRole("link", { name: /^account/i })
       .should("be.visible")
       .click({ force: true });
 

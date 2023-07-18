@@ -24,6 +24,7 @@ import { bytesToDisplaySize, truncateFileName } from "~/utils/fileDisplay";
 import { useCallback, useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { unlink } from "fs/promises";
+import { bearFetch } from "~/services/bigBear/bearFetch.server";
 
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -46,12 +47,12 @@ export const action = async ({ request }: ActionArgs) => {
   formData.append("userId", userId);
   formData.append("groupId", organizationId);
 
-  const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
-  const response = await fetch(CLAW_UPLOAD, {
+  const CLAW_UPLOAD = `/claw/upload`;
+  const response = await bearFetch(CLAW_UPLOAD, {
     method: "POST",
     body: formData,
   });
-
+  console.log(response.status, response.statusText)
   const filepath = (formData.get("files") as any)?.filepath as string;
   await unlink(filepath); // delete the temp file
 
