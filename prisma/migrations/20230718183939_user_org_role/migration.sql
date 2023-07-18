@@ -15,6 +15,7 @@ DROP COLUMN "experienceMin",
 DROP COLUMN "teamSizeMax",
 DROP COLUMN "teamSizeMin",
 ALTER COLUMN "role" SET NOT NULL,
+ALTER COLUMN "role" SET DEFAULT 'member',
 ALTER COLUMN "accountStatus" SET NOT NULL;
 
 -- AlterTable

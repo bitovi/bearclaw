@@ -36,7 +36,7 @@ Table OrganizationUsers {
   orgUsersCreate Boolean [not null]
   owner Boolean [not null, default: true]
   accountStatus String [not null]
-  role String [not null]
+  role String [not null, default: 'member']
   organization Organization [not null]
   organizationId String [not null]
   user User [not null]
