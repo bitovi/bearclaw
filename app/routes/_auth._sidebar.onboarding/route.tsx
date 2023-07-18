@@ -53,7 +53,6 @@ export async function action({ request }: ActionArgs) {
   const response = await onboardUser(user, onboardingData);
   if (response) {
     const redirectTo = formData.get("redirectTo")?.toString();
-    console.log("REDIRECT TO VALUE !!", redirectTo);
     if (redirectTo) {
       throw redirect(redirectTo);
     }
@@ -71,14 +70,10 @@ export default function Route() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo");
 
-  const onboardingQuestions = copy?.questionList.filter(
-    (q) => !q.excludeFromOnboarding
-  );
-
   return (
     <div>
       <Onboarding
-        questions={onboardingQuestions || []}
+        questions={copy?.questionList || []}
         redirectTo={redirectTo || "/dashboard"}
       />
     </div>

@@ -43,6 +43,7 @@ declare module "@mui/material/Button" {
     buttonMedium: true;
     buttonLargeOutlined: true;
     whiteOutlined: true;
+    mediumOutlined: true;
   }
 }
 
@@ -136,7 +137,7 @@ const theme = createTheme({
       fontStyle: "normal",
       fontWeight: 400,
       fontSize: "16px",
-      lineHeight: "150%",
+      lineHeight: "24px",
       letterSpacing: "0.15px",
     },
     body2: {
@@ -248,6 +249,20 @@ const theme = createTheme({
             "&:hover": {
               backgroundColor: "rgba(255, 255, 255, 0.1",
             },
+          },
+        },
+        {
+          props: { variant: "mediumOutlined" },
+          style: {
+            color: "#0037FF",
+            backgroundColor: "transparent",
+            border: "1px solid #0037FF",
+            borderRadius: "8px",
+            padding: "6px, 16px, 6px, 16px",
+            font: "Inter",
+            weight: "500",
+            fontSize: "14px",
+            lineHeight: "24px",
           },
         },
         {

@@ -43,7 +43,6 @@ export function usePageCopy(key: string): PageCopyKeyed | null {
   const copyMatch = pages.find(
     (page: any) => isPageCopy(page) && page.key === key
   );
-
   return isPageCopy(copyMatch)
     ? {
         ...copyMatch,
@@ -54,6 +53,12 @@ export function usePageCopy(key: string): PageCopyKeyed | null {
           }),
           {}
         ),
+        inputs: copyMatch.inputs?.reduce((acc, input) => {
+          return {
+            ...acc,
+            [input.name]: input,
+          };
+        }, {}),
         richContent: copyMatch.richContent?.reduce(
           (acc, content) => ({
             ...acc,

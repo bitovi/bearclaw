@@ -35,6 +35,14 @@ export default {
       of: [{type: 'link'}],
     },
     {
+      name: 'inputs',
+      type: 'array',
+      title: 'Inputs',
+      description:
+        'Any input fields that might appear on the page, such as a textbox or a dropdown select',
+      of: [{type: 'inputField'}],
+    },
+    {
       name: 'content',
       title: 'Basic Content',
       description: 'Key/value pairs for page content like button text and headers',
