@@ -15,7 +15,7 @@ describe("Support", () => {
 
     cy.wait(2000);
 
-    cy.findByRole("textbox", { name: /subject/i }).type("I have a problem.");
+    cy.findByRole("textbox", { name: /category/i }).type("I have a problem.");
 
     cy.findByRole("textbox", { name: /additional details/i }).type(
       "As I said before, I have a problem."
