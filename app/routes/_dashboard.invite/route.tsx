@@ -10,6 +10,7 @@ import {
 import { getOrganizationById } from "~/models/organization.server";
 import {
   createOrganizationUser,
+  reactivateOrgUserAccount,
   retrieveOrganizationUser,
 } from "~/models/organizationUsers.server";
 import { getUser } from "~/session.server";
@@ -61,25 +62,30 @@ export async function loader({ request }: LoaderArgs) {
       userId: user.id,
     });
 
-    if (existingOrgUser) {
+    if (existingOrgUser && existingOrgUser.accountStatus !== "deleted") {
       await destroyInviteToken(invitationToken.id);
-      return redirect("/");
+      throw redirect("/dashboard");
     }
 
-    await createOrganizationUser({
-      userId: user.id,
-      organizationId: invitationToken.organizationId,
-      owner: false,
-      accountStatus: "Active",
-      permissions: {
-        subscriptionCreate: false,
-        subscriptionEdit: false,
-        subscriptionView: false,
-        orgUsersCreate: false,
-        orgUsersEdit: false,
-        orgUsersView: true,
-      },
-    });
+    // if orgUser record previously existed, reactivate it; otherwise, make a new entry
+    if (existingOrgUser && existingOrgUser.accountStatus === "deleted") {
+      await reactivateOrgUserAccount(existingOrgUser.id);
+    } else {
+      await createOrganizationUser({
+        userId: user.id,
+        organizationId: invitationToken.organizationId,
+        owner: false,
+        accountStatus: "active",
+        permissions: {
+          subscriptionCreate: false,
+          subscriptionEdit: false,
+          subscriptionView: false,
+          orgUsersCreate: false,
+          orgUsersEdit: false,
+          orgUsersView: true,
+        },
+      });
+    }
 
     await destroyInviteToken(invitationToken.id);
 

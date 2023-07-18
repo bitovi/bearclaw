@@ -31,7 +31,7 @@ export async function createOrganizationUser({
   organizationId,
   permissions,
   owner,
-  accountStatus,
+  accountStatus = "active",
 }: {
   userId: string;
   organizationId: string;
@@ -45,7 +45,7 @@ export async function createOrganizationUser({
       organizationId,
       ...permissions,
       owner,
-      accountStatus: owner ? undefined : accountStatus,
+      accountStatus: accountStatus,
     },
   });
 }
@@ -120,12 +120,23 @@ export async function retrieveUsersOfOrganization(
           },
         ],
       },
+      NOT: {
+        accountStatus: {
+          contains: "deleted",
+        },
+      },
     },
   });
 
+  // return count of all active orgusers in an organization
   const totalOrgUsers = await prisma.organizationUsers.count({
     where: {
       organizationId,
+      NOT: {
+        accountStatus: {
+          contains: "deleted",
+        },
+      },
     },
   });
 
@@ -145,23 +156,16 @@ export async function retrieveUsersOfOrganization(
   };
 }
 
-export async function retrieveOrganizationUsersByUserId({
-  userId,
-}: {
-  userId: string;
-}) {
-  return await prisma.organizationUsers.findMany({
-    where: {
-      userId,
-    },
-  });
-}
-
 export async function retrieveOrgUserOwner({ userId }: { userId: string }) {
   return await prisma.organizationUsers.findFirst({
     where: {
       owner: true,
       userId,
+      NOT: {
+        accountStatus: {
+          contains: "deleted",
+        },
+      },
     },
   });
 }
@@ -175,7 +179,11 @@ export async function retrieveOrganizationUser({
 }) {
   try {
     const orgUser = await prisma.organizationUsers.findFirst({
-      where: { userId, organizationId },
+      where: {
+        userId,
+        organizationId,
+        NOT: { accountStatus: { contains: "deleted" } },
+      },
     });
 
     return orgUser;
@@ -188,6 +196,11 @@ export async function countOrganizationUserInstances(userId: string) {
   const count = await prisma.organizationUsers.count({
     where: {
       userId,
+      NOT: {
+        accountStatus: {
+          contains: "deleted",
+        },
+      },
     },
   });
   return count || 0;
@@ -196,7 +209,12 @@ export async function countOrganizationUserInstances(userId: string) {
 export async function deleteOrganizationUsersById(orgUserId: string[]) {
   return await prisma.$transaction([
     ...orgUserId.map((orgUser) =>
-      prisma.organizationUsers.delete({ where: { id: orgUser } })
+      prisma.organizationUsers.update({
+        where: { id: orgUser },
+        data: {
+          accountStatus: "deleted",
+        },
+      })
     ),
   ]);
 }
@@ -207,7 +225,7 @@ export async function addOrganizationUser(
 ) {
   const orgUser = await createOrganizationUser({
     userId,
-    accountStatus: "Active",
+    accountStatus: "active",
     organizationId,
     permissions: {
       subscriptionView: true,
@@ -238,4 +256,15 @@ export function getOrgUserPermissions(
   if (orgUser.orgUsersCreate) permissions.push("orgUsersCreate");
 
   return permissions;
+}
+
+export async function reactivateOrgUserAccount(orgUserId: string) {
+  return await prisma.organizationUsers.update({
+    where: {
+      id: orgUserId,
+    },
+    data: {
+      accountStatus: "active",
+    },
+  });
 }

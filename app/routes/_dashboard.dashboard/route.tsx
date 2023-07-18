@@ -19,6 +19,8 @@ import { KeyMetrics } from "./components/KeyMetrics";
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
+  console.log("userId", userId);
+  console.log("groupId", organizationId);
 
   const keyMetrics = getKeyMetrics({
     days: 7,
@@ -56,23 +58,27 @@ export default function Index() {
       </PageHeader>
       <Suspense fallback={<KeyMetrics />}>
         <Await resolve={keyMetrics}>
-          {(metrics) =>
+          {(metrics) => (
             <KeyMetrics
               totalFilesAnalyzed={metrics?.totalFilesAnalyzed || 0}
-              totalVulnerabilitiesCaptured={metrics?.totalVulnerabilitiesCaptured || 0}
+              totalVulnerabilitiesCaptured={
+                metrics?.totalVulnerabilitiesCaptured || 0
+              }
               numberofCriticalWarnings={metrics?.numberofCriticalWarnings || 0}
             />
-          }
+          )}
         </Await>
       </Suspense>
       <Box>
-        <Suspense fallback={(
-          <SkeletonTable
-            tableTitle="Recent Activity"
-            headers={["File Name", "Type", "Date", "Status", "Object ID"]}
-            rows={3}
-          />
-        )}>
+        <Suspense
+          fallback={
+            <SkeletonTable
+              tableTitle="Recent Activity"
+              headers={["File Name", "Type", "Date", "Status", "Object ID"]}
+              rows={3}
+            />
+          }
+        >
           <Await resolve={uploads}>
             {(uploads) =>
               uploads?.data && uploads.data.length > 0 ? (
@@ -117,6 +123,6 @@ export default function Index() {
           </Await>
         </Suspense>
       </Box>
-    </Page >
+    </Page>
   );
 }
