@@ -12,6 +12,8 @@ import {
 import { withSentry } from "@sentry/remix";
 import { withEmotionCache } from "@emotion/react";
 import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
+import rdtStylesheet from "remix-development-tools/stylesheet.css";
+import { RemixDevTools } from "remix-development-tools";
 
 import stylesheetUrl from "./styles/style.css";
 import { getUser } from "./session.server";
@@ -32,6 +34,7 @@ export const links: LinksFunction = () => {
       href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap",
       rel: "stylesheet",
     },
+    ...(rdtStylesheet ? [{ rel: "stylesheet", href: rdtStylesheet }] : []),
   ];
 };
 
@@ -96,6 +99,7 @@ const App = withEmotionCache((_, emotionCache) => {
         />
         <Scripts />
         <LiveReload />
+        <RemixDevTools />
       </body>
     </html>
   );
