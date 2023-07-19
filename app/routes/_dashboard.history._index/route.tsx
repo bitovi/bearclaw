@@ -25,8 +25,8 @@ export async function loader({ request }: LoaderArgs) {
 
   try {
     const url = new URL(request.url);
-    const page = url.searchParams.get("page");
-    const perPage = url.searchParams.get("perPage");
+    const page = url.searchParams.get("page") || "1";
+    const perPage = url.searchParams.get("perPage") || "10";
     const filter = url.searchParams.get("filter");
     const sort = url.searchParams.get("sort");
     const processingResults = getProcessingStatus({
