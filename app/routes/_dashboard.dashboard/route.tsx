@@ -17,7 +17,7 @@ import { Suspense } from "react";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { KeyMetrics } from "./components/KeyMetrics";
 
-dayjs.extend(utc)
+dayjs.extend(utc);
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -59,23 +59,27 @@ export default function Index() {
       </PageHeader>
       <Suspense fallback={<KeyMetrics />}>
         <Await resolve={keyMetrics}>
-          {(metrics) =>
+          {(metrics) => (
             <KeyMetrics
               totalFilesAnalyzed={metrics?.totalFilesAnalyzed || 0}
-              totalVulnerabilitiesCaptured={metrics?.totalVulnerabilitiesCaptured || 0}
+              totalVulnerabilitiesCaptured={
+                metrics?.totalVulnerabilitiesCaptured || 0
+              }
               numberofCriticalWarnings={metrics?.numberofCriticalWarnings || 0}
             />
-          }
+          )}
         </Await>
       </Suspense>
       <Box>
-        <Suspense fallback={(
-          <SkeletonTable
-            tableTitle="Recent Activity"
-            headers={["File Name", "Type", "Date", "Status", "Object ID"]}
-            rows={3}
-          />
-        )}>
+        <Suspense
+          fallback={
+            <SkeletonTable
+              tableTitle="Recent Activity"
+              headers={["File Name", "Type", "Date", "Status", "Object ID"]}
+              rows={3}
+            />
+          }
+        >
           <Await resolve={uploads}>
             {(uploads) =>
               uploads?.data && uploads.data.length > 0 ? (
@@ -96,14 +100,16 @@ export default function Index() {
                     analyzedAt: (
                       <Box display="flex" flexDirection="column">
                         <Typography variant="body2">
-                          {dayjs.utc(new Date(upload.analyzedAt)).local().format(
-                            "MM/DD/YY"
-                          )}
+                          {dayjs
+                            .utc(new Date(upload.analyzedAt))
+                            .local()
+                            .format("MM/DD/YY")}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {dayjs.utc(new Date(upload.analyzedAt)).local().format(
-                            "HH:mm:ss"
-                          )}
+                          {dayjs
+                            .utc(new Date(upload.analyzedAt))
+                            .local()
+                            .format("HH:mm:ss")}
                         </Typography>
                       </Box>
                     ),
@@ -120,6 +126,6 @@ export default function Index() {
           </Await>
         </Suspense>
       </Box>
-    </Page >
+    </Page>
   );
 }

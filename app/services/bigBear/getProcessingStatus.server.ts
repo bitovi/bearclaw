@@ -59,7 +59,7 @@ export const getProcessingStatus = async (params: ApiRequestParams) => {
       `/claw/get_processing_status?${buildApiSearchParams(params)}`
     );
     const json: UploadStatusResponse = await response.json();
-    
+
     return {
       ...json,
       data: json.data.map((job) => transformApiUploadStatus(job)),

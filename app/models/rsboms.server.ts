@@ -1,6 +1,9 @@
 import { bearFetch } from "~/services/bigBear/bearFetch.server";
 import { buildApiSearchParams } from "~/services/bigBear/utils.server";
-import type { ApiRequestParams, ApiResponseWrapper } from "~/services/bigBear/utils.server";
+import type {
+  ApiRequestParams,
+  ApiResponseWrapper,
+} from "~/services/bigBear/utils.server";
 import type { ExpandedRSBOMEntry, RSBOMListEntry } from "./rsbomTypes";
 
 export async function retrieveRSBOMList(params: ApiRequestParams = {}) {
