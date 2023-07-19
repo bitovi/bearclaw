@@ -9,14 +9,12 @@ type Props = {
 export function InnerPage({ children, navigation }: Props) {
   return (
     <Box
-      display="flex"
-      flexDirection={{ xs: "column", lg: "row" }}
+      display="grid"
+      gridTemplateColumns={{ xs: "1fr", lg: "2fr 10fr" }}
       gap="1.5rem"
     >
-      {navigation ? <Box flex="2">{navigation}</Box> : null}
-      <Box flex="10" overflow="hidden auto">
-        {children}
-      </Box>
+      {navigation ? <Box>{navigation}</Box> : null}
+      <Box overflow="hidden auto">{children}</Box>
     </Box>
   );
 }
