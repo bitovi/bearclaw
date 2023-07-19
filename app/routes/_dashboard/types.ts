@@ -35,6 +35,7 @@ export type PageCopy = {
   _id: string;
   key: string;
   breadcrumb: string;
+  breadcrumbIcon: string;
   title: string;
   headline: string;
   subNavLinks?: Array<CopyLink>;

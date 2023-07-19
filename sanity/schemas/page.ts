@@ -1,3 +1,5 @@
+import {icons} from '../../app/components/iconFromString/IconFromString'
+
 export default {
   name: 'page',
   type: 'document',
@@ -14,6 +16,15 @@ export default {
       type: 'string',
       title: 'Breadcrumb text',
       description: 'How the page will appear in the breadcrumb trail',
+    },
+    {
+      name: 'breadcrumbIcon',
+      type: 'string',
+      title: 'Breadcrumb Icon',
+      description: 'Optional: If present, MUI icon will appear to the left of the breadcrumb text',
+      options: {
+        list: Object.keys(icons).map((key) => ({title: key, value: key})),
+      },
     },
     {
       name: 'title',
