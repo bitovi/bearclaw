@@ -1,5 +1,3 @@
-import { useCallback, useState } from "react";
-import { useNavigate, useSearchParams } from "@remix-run/react";
 import { url } from "gravatar";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
@@ -7,41 +5,8 @@ import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useOptionalUser } from "~/utils";
-import { TextInput } from "~/components/input";
-import { useDebounceApiCall } from "~/hooks/useDebounceApiCall";
-import { parseFilterParam } from "~/utils/parseFilterParam";
 import { Logo } from "./logo";
-
-const GlobalSearch = () => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-
-  const { _searchString } = parseFilterParam(searchParams.get("filter"));
-  const [searchString, setSearchString] = useState(_searchString || "");
-
-  const apiCall = useCallback(() => {
-    const queryParams = new URLSearchParams();
-    queryParams.append("filter", `contains(search,${searchString})`);
-    navigate(`/search?${queryParams}`);
-  }, [searchString, navigate]);
-
-  useDebounceApiCall({
-    apiCall,
-  });
-
-  return (
-    <TextInput
-      name={"global-search"}
-      value={searchString}
-      onChange={({ target }) => setSearchString(target.value)}
-      inputProps={{
-        sx: { maxHeight: "5px" },
-      }}
-      label={"Search"}
-      sx={{ minWidth: "200px" }}
-    />
-  );
-};
+import { GlobalSearch } from "./GlobalSearch";
 
 export const Header = () => {
   const user = useOptionalUser();
@@ -63,12 +28,14 @@ export const Header = () => {
           <Logo />
         </Box>
         <Stack
+          flex="1"
           direction="row"
           gap={2}
-          justifyContent="flex-end"
           alignItems="center"
         >
-          <GlobalSearch />
+          <Box flex="1">
+            <GlobalSearch />
+          </Box>
           {user?.email && (
             <Box
               component="img"
