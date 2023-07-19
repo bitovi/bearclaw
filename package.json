@@ -12,6 +12,7 @@
     "database": "docker-compose -f docker-compose-db.yml up --build",
     "docker": "docker-compose -f docker-compose-dev.yml up --build",
     "format": "prettier --write .",
+    "format:check": "prettier .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "db:reset": "prisma migrate reset && prisma db seed",
