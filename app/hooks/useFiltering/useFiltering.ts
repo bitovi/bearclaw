@@ -1,5 +1,5 @@
 import { useSearchParams, useNavigate } from "@remix-run/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { buildNewSearchParams } from "~/utils/buildNewSearchParams";
 import { parseFilterParam } from "~/utils/parseFilterParam";
 
@@ -9,6 +9,9 @@ export function useFiltering(pathname?: string) {
   const { _searchField, _searchString } = parseFilterParam(
     searchParams.get("filter")
   );
+
+  const [searchField, setSearchField] = useState(_searchField);
+  const [searchString, setSearchString] = useState(_searchString);
   const refTimer = useRef<NodeJS.Timeout | null>(null);
 
   const path = pathname ? `${pathname}?` : `?`;
@@ -28,6 +31,13 @@ export function useFiltering(pathname?: string) {
     const toSearchField =
       searchField === "" || !!searchField ? searchField : _searchField || "";
 
+    setSearchField(toSearchField);
+    setSearchString(toSearchString);
+
+    if (!toSearchField) return;
+
+    if (!toSearchString && !_searchString && toSearchField) return;
+
     const updatedSearchParams = buildNewSearchParams(searchParams, {
       filter: `contains(${toSearchField},${toSearchString})`,
     });
@@ -40,8 +50,8 @@ export function useFiltering(pathname?: string) {
   };
 
   return {
-    searchField: _searchField,
-    searchString: _searchString,
+    searchField,
+    searchString,
     debounceFilterQuery,
   };
 }

@@ -1,15 +1,24 @@
 import { Suspense } from "react";
 import Box from "@mui/material/Box";
 import HistoryTable, { SkeletonTable } from "../../components/table";
-import { json } from "@remix-run/node";
+import { defer } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
-import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { Await, useLoaderData } from "@remix-run/react";
-import type { TableEnhancedRSBOMListEntry } from "~/models/rsbomTypes";
+
 import { getOrgandUserId } from "~/session.server";
-import type { ApiResponseWrapper } from "~/services/bigBear/utils.server";
-import { transformDate } from "./utils/transformDate.server";
+
 import { Page, PageHeader } from "../_dashboard/components/page";
+import { getProcessingStatus } from "~/services/bigBear/getProcessingStatus.server";
+import Typography from "@mui/material/Typography";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+import Chip from "@mui/material/Chip";
+import { toTitleCase } from "~/utils/string/toTitleCase";
+import Stack from "@mui/material/Stack";
+import { NavigationFilter } from "./components/NavigationFilter";
+
+dayjs.extend(utc);
 
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -20,7 +29,7 @@ export async function loader({ request }: LoaderArgs) {
     const perPage = url.searchParams.get("perPage");
     const filter = url.searchParams.get("filter");
     const sort = url.searchParams.get("sort");
-    const _rsbomList = await retrieveRSBOMList({
+    const processingResults = getProcessingStatus({
       userId,
       organizationId,
       page,
@@ -29,89 +38,93 @@ export async function loader({ request }: LoaderArgs) {
       sort,
     });
 
-    const rsbomList: ApiResponseWrapper<TableEnhancedRSBOMListEntry[]> = {
-      ..._rsbomList,
-      data: _rsbomList.data.map((d) => ({
-        ...d,
-        "@timestamp": transformDate(d["@timestamp"]),
-      })),
-    };
-
-    return json({ rsbomList, error: "" });
+    return defer({ processingResults, error: "" });
   } catch (e) {
     const error = (e as Error).message;
     console.error(error);
-    return json({ error, rsbomList: null });
+    return defer({ error, processingResults: null });
   }
 }
 
 export default function Route() {
-  const { rsbomList, error } = useLoaderData<typeof loader>();
+  const { processingResults, error } = useLoaderData<typeof loader>();
+
   return (
     <Page>
       <PageHeader
         headline="History"
         description="Review the files you have analyzed in the past."
       >
-        {/* TODO: Search & Filter Controls */}
+        <Stack
+          alignItems={{ xs: "center", lg: "flex-end" }}
+          direction="row"
+          width="100%"
+          height="100%"
+          gap={2}
+          justifyContent={{ xs: "center", lg: "unset" }}
+        >
+          <Suspense fallback={null}>
+            <Await resolve={processingResults}>
+              {() => (
+                <NavigationFilter
+                  dropdownLabel="Type"
+                  dropdownOptions={[
+                    { value: "_id", label: "Data Object" },
+                    { value: "filename", label: "File Name" },
+                  ]}
+                  searchLabel={"Search"}
+                />
+              )}
+            </Await>
+          </Suspense>
+        </Stack>
       </PageHeader>
       <Suspense
         fallback={
           <SkeletonTable
-            search
-            searchFields={[]}
-            tableTitle="History"
-            headers={[
-              "Id",
-              "Filename",
-              "Timestamp",
-              "Data Object",
-              "Type",
-              "Status",
-            ]}
+            headers={["File Name", "Type", "Date", "Status", "Object ID"]}
           />
         }
       >
-        <Await resolve={rsbomList}>
-          {(rsbomList) => {
+        <Await resolve={processingResults}>
+          {(uploads) => {
             if (error) {
               return <Box>{error}</Box>;
             }
             return (
               <Box>
-                <HistoryTable<TableEnhancedRSBOMListEntry>
-                  tableTitle={"Lists"}
-                  tableData={rsbomList?.data || undefined}
-                  totalItems={rsbomList?.metadata?.page.total}
-                  linkKey="dataObject"
+                <HistoryTable
                   headers={[
-                    { label: "Id", value: "id", sortable: true },
-                    { label: "Filename", value: "filename", sortable: true },
-                    { label: "Date", value: "@timestamp", sortable: true },
-                    {
-                      label: "Data Object",
-                      value: "dataObject",
-                      sortable: true,
-                    },
-                    { label: "Type", value: "mime-type", sortable: true },
-                    {
-                      label: "Status",
-                      value: "completedStatus",
-                      sortable: true,
-                    },
+                    { label: "File Name", value: "filename", sortable: true },
+                    { label: "Type", value: "type", sortable: true },
+                    { label: "Date", value: "analyzedAt", sortable: true },
+                    { label: "Status", value: "status", sortable: true },
+                    { label: "Object ID", value: "_id", sortable: false },
                   ]}
-                  tableContainerStyles={{ maxHeight: "600px" }}
-                  search
-                  searchFields={[
-                    {
-                      value: "dataObject",
-                      label: "Data Object",
-                    },
-                    {
-                      value: "filename",
-                      label: "Filename",
-                    },
-                  ]}
+                  linkKey="_id"
+                  totalItems={uploads?.metadata?.page.total}
+                  tableData={uploads?.data.map((upload) => ({
+                    filename: upload.filename,
+                    type: upload.type,
+                    analyzedAt: (
+                      <Box display="flex" flexDirection="column">
+                        <Typography variant="body2">
+                          {dayjs
+                            .utc(new Date(upload.analyzedAt))
+                            .local()
+                            .format("MM/DD/YY")}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {dayjs
+                            .utc(new Date(upload.analyzedAt))
+                            .local()
+                            .format("HH:mm:ss")}
+                        </Typography>
+                      </Box>
+                    ),
+                    status: <Chip label={toTitleCase(upload.status)} />,
+                    _id: upload._id,
+                  }))}
                 />
               </Box>
             );
