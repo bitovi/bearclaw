@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { buildNewSearchParams } from "~/utils/buildNewSearchParams";
 import { parseFilterParam } from "~/utils/parseFilterParam";
 
-export function useFiltering(pathname?: string) {
+export function useFiltering(pathname?: string, includeSearchField?: boolean) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { _searchField, _searchString } = parseFilterParam(
@@ -27,16 +27,18 @@ export function useFiltering(pathname?: string) {
       searchString === "" || !!searchString
         ? searchString
         : _searchString || "";
+    let toSearchField;
 
-    const toSearchField =
-      searchField === "" || !!searchField ? searchField : _searchField || "";
-
-    setSearchField(toSearchField);
     setSearchString(toSearchString);
 
-    if (!toSearchField) return;
+    if (includeSearchField) {
+      toSearchField =
+        searchField === "" || !!searchField ? searchField : _searchField || "";
+      setSearchField(toSearchField);
 
-    if (!toSearchString && !_searchString && toSearchField) return;
+      if (!toSearchField) return;
+      if (!toSearchString && !_searchString && toSearchField) return;
+    }
 
     const updatedSearchParams = buildNewSearchParams(searchParams, {
       filter: `contains(${toSearchField},${toSearchString})`,

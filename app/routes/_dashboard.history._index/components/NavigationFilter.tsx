@@ -16,7 +16,10 @@ export function NavigationFilter({
   dropdownLabel: string;
   searchLabel: string;
 }) {
-  const { searchField, searchString, debounceFilterQuery } = useFiltering();
+  const { searchField, searchString, debounceFilterQuery } = useFiltering(
+    undefined,
+    true
+  );
 
   const dropdownOptions = [{ value: "", label: "Select a Field" }].concat(
     _dropdownOptions
