@@ -17,40 +17,29 @@ export async function loader({ request }: LoaderArgs) {
   const page = url.searchParams.get("page") || "1";
   const perPage = url.searchParams.get("perPage") || "10";
   const sort = url.searchParams.get("sort");
-  const query = url.searchParams.get("query");
+  const search = url.searchParams.get("query");
   // if user vists /search with no query, return no results
-  if (!query) {
+  if (!search) {
     return json({
-      query: "",
+      search: "",
       error: "",
-      dataObjectList: null,
-      filenameList: null,
+      rsboms: null,
     });
   }
-  console.log("query: ", query)
 
   try {
-    const dataObjectList = await retrieveRSBOMList({
+    const rsboms = await retrieveRSBOMList({
       userId,
       organizationId,
       page,
       perPage,
-      filter: `contains=(dataObject,${query})`,
-      sort,
-    });
-    const filenameList = await retrieveRSBOMList({
-      userId,
-      organizationId,
-      page,
-      perPage,
-      filter: `contains=(filename,${query})`,
+      search,
       sort,
     });
 
     return json({
-      query,
-      dataObjectList,
-      filenameList,
+      search,
+      rsboms,
       error: ""
     });
   } catch (e) {
@@ -58,9 +47,8 @@ export async function loader({ request }: LoaderArgs) {
     console.error("ERROR: ", error);
     return json({
       error,
-      query,
-      dataObjectList: null,
-      filenameList: null,
+      search,
+      rsboms: null,
     });
   }
 }
@@ -80,8 +68,7 @@ const tableHeaders = [
 
 export function Results() {
   const {
-    dataObjectList,
-    filenameList,
+    rsboms,
     error,
   } = useLoaderData<typeof loader>();
 
@@ -90,11 +77,7 @@ export function Results() {
   if (error) {
     return <Box>{error}</Box>;
   }
-  console.log("filenameList: ", filenameList)
-  if (
-    (!dataObjectList && !filenameList) ||
-    (!dataObjectList.data.length && !filenameList.data.length)
-  ) {
+  if (!rsboms || rsboms.data.length === 0) {
     return <NoResults />;
   }
 
@@ -114,39 +97,26 @@ export function Results() {
   }
 
   return (
-    <>
-      <SearchTable<RSBOMListEntry>
-        tableData={dataObjectList.data || undefined}
-        // TODO Disabled until Search API is determined
-        // totalItems={dataObjectList.metadata?.page.total}
-        tableTitle="Search By Data Object"
-        linkKey="dataObject"
-        headers={tableHeaders}
-        tableContainerStyles={{ maxHeight: "600px" }}
-      />
-      <SearchTable<RSBOMListEntry>
-        tableData={filenameList.data || undefined}
-        // TODO Disabled until Search API is determined
-        // totalItems={filenameList.metadata?.page.total}
-        tableTitle="Search By Filename"
-        linkKey="dataObject"
-        headers={tableHeaders}
-        tableContainerStyles={{ maxHeight: "600px" }}
-      />
-    </>
+    <SearchTable<RSBOMListEntry>
+      tableData={rsboms.data || undefined}
+      totalItems={rsboms.metadata?.page.total}
+      linkKey="dataObject"
+      tableTitle=""
+      headers={tableHeaders}
+      tableContainerStyles={{ maxHeight: "600px" }}
+    />
   );
 }
 
 export default function Route() {
   const {
-    query,
+    search,
     error,
-    dataObjectList,
-    filenameList,
+    rsboms,
   } = useLoaderData<typeof loader>();
   const copy = usePageCopy("search")
 
-  const hasResults = !error && (dataObjectList?.data.length || filenameList?.data.length);
+  const hasResults = !error && rsboms?.data.length;
   return (
     <Page>
       <PageHeader
@@ -154,7 +124,7 @@ export default function Route() {
           <span>
             {copy?.headline || "Search"}:{" "}
             <Typography fontSize="inherit" fontWeight="inherit" component="span" color="primary.main">
-              {query || ""}
+              {search || ""}
             </Typography>
           </span>
         )}
