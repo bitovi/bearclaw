@@ -6,7 +6,6 @@ import { NoResults } from "./components/noResults";
 import SearchTable, { SkeletonTable } from "~/components/table";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
-import { parseFilterParam } from "~/utils/parseFilterParam";
 import { getOrgandUserId } from "~/session.server";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { Typography } from "@mui/material";
@@ -15,65 +14,51 @@ import { usePageCopy } from "../_dashboard/copy";
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
   const url = new URL(request.url);
-  const page = url.searchParams.get("page");
-  const perPage = url.searchParams.get("perPage");
-  const filter = url.searchParams.get("filter");
+  const page = url.searchParams.get("page") || "1";
+  const perPage = url.searchParams.get("perPage") || "10";
   const sort = url.searchParams.get("sort");
-
+  const query = url.searchParams.get("query");
   // if user vists /search with no query, return no results
-  if (!filter)
+  if (!query) {
     return json({
-      searchString: "",
-      error: "",
-      dataObjectList: null,
-      filenameList: null,
-    });
-
-  // TODO Resolve this
-  // On our end manage making separate queries to Data Object and Filename until Search logic/API can be settled
-  const { _searchString } = parseFilterParam(filter);
-
-  if (!_searchString) {
-    return json({
-      searchString: "",
+      query: "",
       error: "",
       dataObjectList: null,
       filenameList: null,
     });
   }
+  console.log("query: ", query)
 
   try {
-    const [dataObjectList, filenameList] = await Promise.all([
-      retrieveRSBOMList({
-        userId,
-        organizationId,
-        page,
-        perPage,
-        filter: `contains=(dataObject,${_searchString})`,
-        sort,
-      }),
-      retrieveRSBOMList({
-        userId,
-        organizationId,
-        page,
-        perPage,
-        filter: `contains=(filename,${_searchString})`,
-        sort,
-      })
-    ]);
+    const dataObjectList = await retrieveRSBOMList({
+      userId,
+      organizationId,
+      page,
+      perPage,
+      filter: `contains=(dataObject,${query})`,
+      sort,
+    });
+    const filenameList = await retrieveRSBOMList({
+      userId,
+      organizationId,
+      page,
+      perPage,
+      filter: `contains=(filename,${query})`,
+      sort,
+    });
 
     return json({
-      searchString: _searchString,
+      query,
       dataObjectList,
       filenameList,
       error: ""
     });
   } catch (e) {
     const error = (e as Error).message;
-    console.error(error);
+    console.error("ERROR: ", error);
     return json({
       error,
-      searchString: _searchString,
+      query,
       dataObjectList: null,
       filenameList: null,
     });
@@ -105,7 +90,7 @@ export function Results() {
   if (error) {
     return <Box>{error}</Box>;
   }
-
+  console.log("filenameList: ", filenameList)
   if (
     (!dataObjectList && !filenameList) ||
     (!dataObjectList.data.length && !filenameList.data.length)
@@ -154,7 +139,7 @@ export function Results() {
 
 export default function Route() {
   const {
-    searchString,
+    query,
     error,
     dataObjectList,
     filenameList,
@@ -169,7 +154,7 @@ export default function Route() {
           <span>
             {copy?.headline || "Search"}:{" "}
             <Typography fontSize="inherit" fontWeight="inherit" component="span" color="primary.main">
-              {searchString}
+              {query || ""}
             </Typography>
           </span>
         )}

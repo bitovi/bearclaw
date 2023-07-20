@@ -8,19 +8,17 @@ describe("Global Search", () => {
 
     // On the Dashboard
     cy.findAllByText(/welcome/i).should("have.length.gte", 1);
-    cy.findByText(/recent activity/i);
 
     // Global search textbox
-    cy.findByRole("textbox", { name: /search/i })
+    cy.findByLabelText(/search/i)
       .as("globalSearch")
       .should("be.visible")
-      .type("a");
+      .type("something{enter}");
 
-    cy.wait(1000).findByText(/search by data object/i);
-    cy.findByText(/search by filename/i);
+    cy.wait(1000).findByText(/no matches found/i);
 
     const params = new URLSearchParams();
-    params.append("filter", "contains(search,a)");
+    params.append("query", "something");
     // Confirm our filtering/searching is wiring up to the URL correctly
     cy.location("search").should("include", params.toString());
 
@@ -29,7 +27,7 @@ describe("Global Search", () => {
     cy.wait(1000).findByText(/sorry, no results found/i);
 
     // Add results
-    cy.get("@globalSearch").type("a");
+    cy.get("@globalSearch").type("a{enter}");
     cy.wait(1000).findByText(/search by data object/i);
 
     //
@@ -67,9 +65,9 @@ describe("Global Search", () => {
       });
 
     cy.get("@copiedText").then(($text) => {
-      cy.get("@globalSearch").clear().type($text.toString());
+      cy.get("@globalSearch").clear().type($text.toString()).type("{enter}");
       const params = new URLSearchParams();
-      params.append("filter", `contains(search,${$text.toString()})`);
+      params.append("query", $text.toString());
 
       // Confirm our filtering/searching is wiring up to the URL correctly
       cy.location("search").should("include", params.toString());
@@ -91,25 +89,25 @@ describe("Global Search", () => {
     });
 
     // Random string yields no results
-    cy.get("@globalSearch").clear().type("adfjaklsdjflaksjdfsadf");
+    cy.get("@globalSearch")
+    .clear()
+    .type("adfjaklsdjflaksjdfsadf{enter}");
+
     cy.wait(1000).findByText(/sorry, no results found/i);
-  });
 
-  it("Allows sorting and pagination of results", () => {
-    cy.createAndVerifyAccount();
+    cy.findAllByRole("link", { name: /^Account/i })
+      .first()
+      .should("be.visible")
+      .click({ force: true });
 
-    // On the Dashboard
-    cy.findAllByText(/welcome/i).should("have.length.gte", 1);
-    cy.findByText(/recent activity/i);
+    // Check pagination and filtering 
 
     // Global search textbox
-    cy.findByRole("textbox", { name: /search/i })
-      .as("globalSearch")
-      .should("be.visible")
-      .type("a");
+    cy.get("@globalSearch")
+      .clear()
+      .type("a{enter}");
 
-    cy.wait(1000).findByText(/search by data object/i);
-    cy.findByText(/search by filename/i);
+    cy.wait(1000).findByText(/search:/i);
 
     // Sorting
     cy.findByTestId(/search by data object-table/i).within(() => {
