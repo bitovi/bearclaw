@@ -27,5 +27,6 @@ const optGenerator = (number: number): { label: string; value: number }[] => {
 export const _Dropdown: Story = {
   args: {
     options: optGenerator(20),
+    fullWidth: true,
   },
 };

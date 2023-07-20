@@ -31,7 +31,7 @@ export function Dropdown({
   disabled,
   error,
   labelPosition,
-  fullWidth = true,
+  fullWidth,
   ...props
 }: Props) {
   const domId = useId();

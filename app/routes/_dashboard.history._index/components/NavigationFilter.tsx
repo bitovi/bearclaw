@@ -29,10 +29,9 @@ export function NavigationFilter({
     <Form action="" method="get">
       <Stack direction="row" gap={2} justifyContent="space-between">
         <TextInput
-          fullWidth
           name={searchLabel}
           inputProps={{
-            sx: { maxHeight: "20px", width: "300px" },
+            sx: { maxHeight: "20px", size: "medium" },
           }}
           onChange={({ target }) =>
             debounceFilterQuery({ searchString: target.value, searchField })
@@ -47,7 +46,7 @@ export function NavigationFilter({
           defaultValue={searchString || ""}
           sx={{
             color: "rgba(0, 0, 0, 0.23)",
-            width: "300px",
+            size: "medium",
           }}
         />
         {dropdownOptions.length && (
@@ -66,7 +65,7 @@ export function NavigationFilter({
             }
             displayEmpty
             label={dropdownLabel} // To ensure MUI notched outline styling, we still need to pass a value to the label prop
-            sx={{ height: "40px", borderRadius: "8px", width: "180px" }}
+            sx={{ height: "40px", borderRadius: "8px", size: "small" }}
             options={dropdownOptions}
           />
         )}
