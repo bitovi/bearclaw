@@ -110,8 +110,8 @@ export default function Route() {
   const invoicePreviewDueDate = useMemo(() => {
     return invoicePreview?.dueDate
       ? `Your next payment on ${dayjs(
-        new Date(invoicePreview.dueDate * 1000)
-      ).format("MMMM DD, YYYY")}`
+          new Date(invoicePreview.dueDate * 1000)
+        ).format("MMMM DD, YYYY")}`
       : "";
   }, [invoicePreview]);
 

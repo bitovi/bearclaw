@@ -37,8 +37,8 @@ export default function Route() {
       "Current subscription plan",
       organizationSubscription?.cancellationDate
         ? `Cancelation on: ${dayjs(
-          new Date(organizationSubscription?.cancellationDate * 1000)
-        ).format("MMMM DD, YYYY")}`
+            new Date(organizationSubscription?.cancellationDate * 1000)
+          ).format("MMMM DD, YYYY")}`
         : "",
     ];
   }, [organizationSubscription]);
@@ -47,8 +47,8 @@ export default function Route() {
     return [
       invoicePreview?.dueDate
         ? `Your next payment on ${dayjs(
-          new Date(invoicePreview.dueDate * 1000)
-        ).format("MMMM DD, YYYY")}`
+            new Date(invoicePreview.dueDate * 1000)
+          ).format("MMMM DD, YYYY")}`
         : "Cannot preview next payment date",
     ];
   }, [invoicePreview]);

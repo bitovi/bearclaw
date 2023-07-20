@@ -86,17 +86,21 @@ export function SkeletonTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array(rows).fill("").map((_, row) => {
-              return (
-                <TableRow key={row}>
-                  {Array(headers.length).fill("").map((_, column) => (
-                    <TableCell key={column}>
-                      <Skeleton animation="wave" variant="text" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              );
-            })}
+            {Array(rows)
+              .fill("")
+              .map((_, row) => {
+                return (
+                  <TableRow key={row}>
+                    {Array(headers.length)
+                      .fill("")
+                      .map((_, column) => (
+                        <TableCell key={column}>
+                          <Skeleton animation="wave" variant="text" />
+                        </TableCell>
+                      ))}
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </TableContainer>

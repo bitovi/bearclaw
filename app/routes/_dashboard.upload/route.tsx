@@ -52,7 +52,7 @@ export const action = async ({ request }: ActionArgs) => {
     method: "POST",
     body: formData,
   });
-  console.log(response.status, response.statusText)
+  console.log(response.status, response.statusText);
   const filepath = (formData.get("files") as any)?.filepath as string;
   await unlink(filepath); // delete the temp file
 
