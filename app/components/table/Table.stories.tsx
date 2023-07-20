@@ -34,10 +34,5 @@ export const _Table: Story = {
       { label: "Date", value: "date", sortable: false },
       { label: "Invoice Amount", value: "invoiceAmount", sortable: false },
     ],
-    search: true,
-    searchFields: [
-      { value: "dataObject", label: "Data Object" },
-      { value: "filename", label: "Filename" },
-    ],
   },
 };

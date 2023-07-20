@@ -312,7 +312,9 @@ describe("User Management & Invitation", () => {
           });
       });
 
-    cy.findByText(/email/i).click({ force: true });
+    cy.findByRole("table").within(() => {
+      cy.findByText(/email/i).click({ force: true });
+    });
 
     cy.wait(1000).location("search").should("include", "sort=email");
 
@@ -330,7 +332,9 @@ describe("User Management & Invitation", () => {
       });
     cy.get("@ascTableEmail").should("not.equal", cy.get("@firstTableEmail"));
 
-    cy.findByText(/email/i).click({ force: true });
+    cy.findByRole("table").within(() => {
+      cy.findByText(/email/i).click({ force: true });
+    });
 
     cy.wait(1000).location("search").should("include", "sort=-email");
 
@@ -342,6 +346,7 @@ describe("User Management & Invitation", () => {
           .within(() => {
             cy.get("td")
               .eq(1)
+              .invoke("text")
               .then(($data) => {
                 cy.wrap($data)
                   .should("not.equal", cy.get("@firstTableEmail"))

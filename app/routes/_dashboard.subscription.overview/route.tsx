@@ -93,7 +93,6 @@ export default function Route() {
         tableData={invoiceHistory || undefined}
         headers={InvoiceTableHeaders}
         tableContainerStyles={{ maxHeight: "400px" }}
-        search
       />
     </>
   );

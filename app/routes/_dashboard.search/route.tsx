@@ -102,7 +102,6 @@ export default function Route() {
   if (navigation.state === "loading") {
     return (
       <SkeletonTable
-        searchFields={[]}
         headers={[
           "Id",
           "Filename",

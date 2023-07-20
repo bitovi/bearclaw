@@ -12,38 +12,60 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import Typography from "@mui/material/Typography";
 import type { SxProps, Theme } from "@mui/material";
 import { Link } from "../link";
-import { NavigationFilter } from "./NavigationFilter";
 import { LinkPagination } from "./LinkPagination";
 import { useSorting } from "~/hooks/useSorting";
 import { useTextCopy } from "~/hooks/useTextCopy";
+import { useLocation, useNavigation } from "@remix-run/react";
 
-export type DropdownOption = {
-  value: string;
-  label: string;
-};
 interface TableProps<T> {
   tableData: Array<T> | undefined;
-  tableTitle: string;
+  tableTitle?: string;
   headers: { label: string; value: string; sortable: boolean }[];
   tableContainerStyles?: SxProps<Theme>;
-  search?: boolean;
   sortableFields?: Array<keyof T>;
   onRowClick?: (entry: T) => void;
   linkKey?: keyof T;
-  searchFields?: DropdownOption[];
   totalItems?: number;
 }
 
+function SkeletonBody({ rows, columns }: { rows: number; columns: number }) {
+  return (
+    <TableBody component={Box} role="rowgroup">
+      {Array(rows)
+        .fill("")
+        .map((_, row) => {
+          return (
+            <TableRow
+              key={row}
+              component={Box}
+              role="row"
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              {Array(columns)
+                .fill("")
+                .map((_, column) => (
+                  <TableCell
+                    key={column}
+                    component={Box}
+                    sx={{ width: "200px", height: "73px" }}
+                    role="cell"
+                  >
+                    <Skeleton animation="wave" variant="text" />
+                  </TableCell>
+                ))}
+            </TableRow>
+          );
+        })}
+    </TableBody>
+  );
+}
+
 export function SkeletonTable({
-  search,
-  searchFields,
   tableTitle,
   tableContainerStyles,
   headers,
   rows = 5,
 }: {
-  search?: boolean;
-  searchFields?: DropdownOption[];
   tableTitle?: string;
   tableContainerStyles?: SxProps<Theme>;
   headers: string[];
@@ -51,31 +73,34 @@ export function SkeletonTable({
 }) {
   return (
     <Paper sx={{ mb: 2 }}>
-      <Box padding={2}>
-        <Typography variant="h6" color="text.primary" data-testid="table-title">
-          {tableTitle}
-        </Typography>
-      </Box>
-      {search && searchFields && (
-        <NavigationFilter
-          dropdownLabel="Type"
-          dropdownOptions={searchFields}
-          searchLabel="Search"
-        />
+      {tableTitle && (
+        <Box padding={2}>
+          <Typography
+            variant="h6"
+            color="text.primary"
+            data-testid="table-title"
+          >
+            {tableTitle}
+          </Typography>
+        </Box>
       )}
       <TableContainer sx={tableContainerStyles}>
-        <Table sx={{ minWidth: 650 }} stickyHeader>
-          <TableHead>
+        <Table sx={{ minWidth: 650 }} stickyHeader component={Box} role="table">
+          <TableHead component={Box} role="rowgroup">
             <TableRow
               sx={{
                 "& th": {
                   color: "text.secondary",
                 },
               }}
+              role="row"
+              component={Box}
             >
               {headers.map((str, i) => {
                 return (
                   <TableCell
+                    role="columnheader"
+                    component={Box}
                     sx={{ fontColor: "text.secondary" }}
                     key={`str-${i}`}
                   >
@@ -85,23 +110,7 @@ export function SkeletonTable({
               })}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {Array(rows)
-              .fill("")
-              .map((_, row) => {
-                return (
-                  <TableRow key={row}>
-                    {Array(headers.length)
-                      .fill("")
-                      .map((_, column) => (
-                        <TableCell key={column}>
-                          <Skeleton animation="wave" variant="text" />
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
+          <SkeletonBody rows={rows} columns={headers.length} />
         </Table>
       </TableContainer>
     </Paper>
@@ -151,15 +160,29 @@ function TableRowLink<T>({
               component={Box}
               scope="row"
               role="cell"
+              sx={{
+                width: "200px",
+                minHeight: "73px",
+                wordBreak: "break-word",
+              }}
             >
               {result}
             </TableCell>
           );
         }
         return (
-          <TableCell key={`${fieldValue}-${i}`} component={Box} role="cell">
+          <TableCell
+            key={`${fieldValue}-${i}`}
+            component={Box}
+            role="cell"
+            sx={{ width: "200px", minHeight: "73px" }}
+          >
             {field === linkKey ? (
-              <Stack direction="row" alignItems="center">
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent={"space-between"}
+              >
                 <Box
                   aria-label={fieldValue}
                   title={fieldValue}
@@ -219,13 +242,13 @@ export default function InvoiceTable<T>({
   tableTitle,
   headers = [],
   tableContainerStyles = {},
-  search,
   onRowClick,
   linkKey,
-  searchFields,
   totalItems,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const { currentSort, sortQuery } = useSorting();
+  const { pathname } = useLocation();
+  const { location, state } = useNavigation();
   return (
     <Paper sx={{ mb: 2 }} data-testid={`${tableTitle}-table`}>
       {tableTitle && (
@@ -238,13 +261,6 @@ export default function InvoiceTable<T>({
             {tableTitle}
           </Typography>
         </Box>
-      )}
-      {search && searchFields && (
-        <NavigationFilter
-          dropdownLabel="Type"
-          dropdownOptions={searchFields}
-          searchLabel="Search"
-        />
       )}
       <TableContainer sx={tableContainerStyles}>
         <Table sx={{ minWidth: 650 }} stickyHeader component={Box} role="table">
@@ -287,45 +303,56 @@ export default function InvoiceTable<T>({
               })}
             </TableRow>
           </TableHead>
-          <TableBody component={Box} role="rowgroup">
-            {tableData.map((entry, i) => {
-              return linkKey ? (
-                <TableRowLink linkKey={linkKey} key={i} entry={entry} />
-              ) : (
-                <TableRow
-                  component={Box}
-                  role="row"
-                  key={i}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  onClick={() => onRowClick?.(entry)}
-                >
-                  {Object.entries(entry).map(([field, fieldValue], i) => {
-                    if (i === 0) {
+          {/* If we're updating our search parameters, trigger a loading state in the table body */}
+          {state === "loading" && location?.pathname === pathname ? (
+            <SkeletonBody rows={5} columns={headers.length} />
+          ) : (
+            <TableBody component={Box} role="rowgroup">
+              {tableData.map((entry, i) => {
+                return linkKey ? (
+                  <TableRowLink linkKey={linkKey} key={i} entry={entry} />
+                ) : (
+                  <TableRow
+                    component={Box}
+                    role="row"
+                    key={i}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    onClick={() => onRowClick?.(entry)}
+                  >
+                    {Object.entries(entry).map(([field, fieldValue], i) => {
+                      if (i === 0) {
+                        return (
+                          <TableCell
+                            component={Box}
+                            key={`${field}-${i}`}
+                            role="cell"
+                            sx={{
+                              width: "200px",
+                              minHeight: "73px",
+                              wordBreak: "break-word",
+                            }}
+                            scope="row"
+                          >
+                            {fieldValue}
+                          </TableCell>
+                        );
+                      }
                       return (
                         <TableCell
+                          key={`${fieldValue}-${i}`}
                           component={Box}
-                          key={`${field}-${i}`}
                           role="cell"
-                          scope="row"
+                          sx={{ width: "200px", minHeight: "73px" }}
                         >
                           {fieldValue}
                         </TableCell>
                       );
-                    }
-                    return (
-                      <TableCell
-                        key={`${fieldValue}-${i}`}
-                        component={Box}
-                        role="cell"
-                      >
-                        {fieldValue}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
+                    })}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          )}
         </Table>
       </TableContainer>
       {!!totalItems && <LinkPagination totalItems={totalItems} />}

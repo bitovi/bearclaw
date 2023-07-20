@@ -15,11 +15,14 @@ describe("Dashboard", () => {
           .within(() => {
             cy.findAllByRole("cell")
               .eq(0)
+              .invoke("text")
               .as("firstTableType", { type: "static" });
           });
       });
 
-    cy.findByText(/type/i).click({ force: true });
+    cy.findByRole("table").within(() => {
+      cy.findByText(/type/i).click({ force: true });
+    });
 
     cy.wait(1000).location("search").should("include", "sort=type");
 
@@ -32,14 +35,18 @@ describe("Dashboard", () => {
           .within(() => {
             cy.findAllByRole("cell")
               .eq(0)
-              .as("ascTableType")
-              .then(($data) => {
-                cy.wrap($data).should("not.equal", cy.get("@firstTableType"));
-              });
+              .invoke("text")
+              .as("ascTableType", { type: "static" });
           });
       });
 
-    cy.findByText(/type/i).click({ force: true });
+    cy.get("@ascTableType").then(($data) => {
+      cy.wrap($data).should("not.equal", cy.get("@firstTableType"));
+    });
+
+    cy.findByRole("table").within(() => {
+      cy.findByText(/type/i).click({ force: true });
+    });
 
     cy.wait(1000).location("search").should("include", "sort=-type");
 
@@ -52,6 +59,7 @@ describe("Dashboard", () => {
           .within(() => {
             cy.findAllByRole("cell")
               .eq(0)
+              .invoke("text")
               .then(($data) => {
                 cy.wrap($data)
                   .should("not.equal", cy.get("@firstTableType"))
