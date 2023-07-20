@@ -72,12 +72,7 @@ export function KeyMetrics({
           sx={{ objectFit: "cover", opacity: 0.5, mixBlendMode: "overlay" }}
         />
         <Box display="flex" flexDirection="column" gap={1}>
-          <Box
-            display="flex"
-            fontSize="2rem"
-            alignItems="center"
-            gap="0.5rem"
-          >
+          <Box display="flex" fontSize="2rem" alignItems="center" gap="0.5rem">
             <IconFromString icon="addChartTwoTone" />
             <Typography variant="h5">Workflows</Typography>
           </Box>

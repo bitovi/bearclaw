@@ -27,7 +27,7 @@ export function useFiltering(pathname?: string, includeSearchField?: boolean) {
       searchString === "" || !!searchString
         ? searchString
         : _searchString || "";
-    let toSearchField;
+    let toSearchField = "";
 
     setSearchString(toSearchString);
 
