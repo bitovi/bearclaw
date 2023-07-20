@@ -17,6 +17,7 @@ import Chip from "@mui/material/Chip";
 import { toTitleCase } from "~/utils/string/toTitleCase";
 import Stack from "@mui/material/Stack";
 import { NavigationFilter } from "./components/NavigationFilter";
+import { usePageCopy } from "../_dashboard/copy";
 
 dayjs.extend(utc);
 
@@ -48,12 +49,14 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function Route() {
   const { processingResults, error } = useLoaderData<typeof loader>();
-
+  const copy = usePageCopy("history");
   return (
     <Page>
       <PageHeader
-        headline="History"
-        description="Review the files you have analyzed in the past."
+        headline={copy?.title || "History"}
+        description={
+          copy?.headline || "Review the files you have analyzed in the past."
+        }
       >
         <Stack
           alignItems={{ xs: "center", lg: "flex-end" }}
@@ -67,12 +70,21 @@ export default function Route() {
             <Await resolve={processingResults}>
               {() => (
                 <NavigationFilter
-                  dropdownLabel="Type"
-                  dropdownOptions={[
-                    { value: "_id", label: "Data Object" },
-                    { value: "filename", label: "File Name" },
-                  ]}
-                  searchLabel={"Search"}
+                  textInputProps={{
+                    name: copy?.inputs?.search.name || "search",
+                    label: copy?.inputs?.search.label || "Search",
+                    placeholder:
+                      copy?.inputs?.search.placeholder || "Search files",
+                  }}
+                  dropdownOptions={
+                    copy?.inputs?.type.questionType === "select"
+                      ? copy?.inputs?.type.optionList
+                      : []
+                  }
+                  dropdownProps={{
+                    name: copy?.inputs?.type.name || "type",
+                    label: copy?.inputs?.type.label || "Type",
+                  }}
                 />
               )}
             </Await>

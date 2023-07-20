@@ -11,7 +11,7 @@ export type DropdownOption = {
   label: string;
 };
 
-type Props = Omit<SelectProps, "error"> & {
+export type DropdownProps = Omit<SelectProps, "error"> & {
   label?: string;
   labelPosition?: number;
   error?: boolean | string | null;
@@ -33,7 +33,7 @@ export function Dropdown({
   labelPosition,
   fullWidth,
   ...props
-}: Props) {
+}: DropdownProps) {
   const domId = useId();
 
   return (

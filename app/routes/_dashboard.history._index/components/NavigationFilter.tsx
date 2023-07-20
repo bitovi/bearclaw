@@ -5,16 +5,20 @@ import { Form } from "@remix-run/react";
 
 import { useFiltering } from "~/hooks/useFiltering";
 import { Dropdown, TextInput } from "~/components/input";
-import type { DropdownOption } from "~/components/input";
+import type {
+  InputProps,
+  DropdownProps,
+  DropdownOption,
+} from "~/components/input";
 
 export function NavigationFilter({
   dropdownOptions: _dropdownOptions,
-  dropdownLabel,
-  searchLabel,
+  textInputProps,
+  dropdownProps,
 }: {
   dropdownOptions: DropdownOption[];
-  dropdownLabel: string;
-  searchLabel: string;
+  textInputProps?: InputProps;
+  dropdownProps?: Omit<DropdownProps, "options">;
 }) {
   const { searchField, searchString, debounceFilterQuery } = useFiltering(
     undefined,
@@ -29,14 +33,12 @@ export function NavigationFilter({
     <Form action="" method="get">
       <Stack direction="row" gap={2} justifyContent="space-between">
         <TextInput
-          name={searchLabel}
           inputProps={{
             sx: { maxHeight: "20px", size: "medium" },
           }}
           onChange={({ target }) =>
             debounceFilterQuery({ searchString: target.value, searchField })
           }
-          label={searchLabel}
           InputProps={{
             startAdornment: (
               <SearchIcon sx={{ marginRight: 1, color: "#000000" }} />
@@ -48,6 +50,7 @@ export function NavigationFilter({
             color: "rgba(0, 0, 0, 0.23)",
             size: "medium",
           }}
+          {...textInputProps}
         />
         {dropdownOptions.length && (
           <Dropdown
@@ -58,15 +61,17 @@ export function NavigationFilter({
                 searchString,
               })
             }
-            labelId={`filter-${dropdownLabel}-select-label`}
-            id={`filter-${dropdownLabel}-select`}
+            name={dropdownProps?.name}
+            labelId={`filter-${dropdownProps?.name || ""}-select-label`}
+            id={`filter-${dropdownProps?.name || ""}-select`}
             value={
               dropdownOptions.find((r) => r.value === searchField)?.value || ""
             }
             displayEmpty
-            label={dropdownLabel} // To ensure MUI notched outline styling, we still need to pass a value to the label prop
+            label={dropdownProps?.label} // To ensure MUI notched outline styling, we still need to pass a value to the label prop
             sx={{ height: "40px", borderRadius: "8px", size: "small" }}
             options={dropdownOptions}
+            {...dropdownProps}
           />
         )}
       </Stack>
