@@ -52,7 +52,7 @@ export const action = async ({ request }: ActionArgs) => {
     method: "POST",
     body: formData,
   });
-  console.log(response.status, response.statusText);
+
   const filepath = (formData.get("files") as any)?.filepath as string;
   await unlink(filepath); // delete the temp file
 
@@ -61,7 +61,7 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   // delay to allow the file to appear in the loader queries
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  await new Promise((resolve) => setTimeout(resolve, 10000));
 
   return json({ success: true }, { status: 200 });
 };
