@@ -34,30 +34,35 @@ export function Breadcrumbs() {
   return (
     <MuiBreadcrumbs aria-label="breadcrumb">
       {pathnames.map((path, index) => {
-        let match =
-          findTopNavMatch(sideNavCopy, path) || findSubNavMatch(pageCopy, path);
+        const page = index === 0 ? pageCopy : null;
+        const navLink =
+          page && page?.breadcrumb && page.breadcrumbIcon
+            ? null
+            : findTopNavMatch(sideNavCopy, path) ||
+              findSubNavMatch(pageCopy, path);
         const last = index === pathnames.length - 1;
         const to = `/${pathnames.slice(0, index + 1).join("/")}`;
 
-        return last ? (
-          <Box display="flex" gap="0.5rem" color="primary.main" key={to}>
-            <IconFromString icon={match?.icon || ""} />
-            <Typography color="text.primary">
-              {match?.text || toTitleCase(path)}
-            </Typography>
-          </Box>
-        ) : (
+        const linkProps = last
+          ? ({ component: "div", underline: "none" } as const)
+          : ({ component: RouterLink, to, underline: "hover" } as const);
+
+        return (
           <Link
-            component={RouterLink}
-            underline="hover"
-            color="inherit"
-            to={to}
+            {...linkProps}
             key={to}
+            display="flex"
+            gap="0.5rem"
+            color="grey.800"
           >
-            <Box display="flex" gap="0.5rem" color="primary.main">
-              <IconFromString icon={match?.icon || ""} />
-              {match?.text || toTitleCase(path)}
+            <Box color={last ? "primary.main" : undefined}>
+              <IconFromString
+                icon={page?.breadcrumbIcon || navLink?.icon || ""}
+              />
             </Box>
+            <Typography color="text.primary">
+              {page?.breadcrumb || navLink?.text || toTitleCase(path)}
+            </Typography>
           </Link>
         );
       })}

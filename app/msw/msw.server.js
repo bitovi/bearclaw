@@ -13,12 +13,14 @@ const fixture_getCVEData = require("./fixtures/getCVEData.js");
 const paginateResults = require("./util/paginateResults.js");
 const sortResults = require("./util/sortResults.js");
 const filterResults = require("./util/filterResults.js");
+const searchResults = require("./util/searchResults.js");
 
 const baseURL = process.env.BEARCLAW_URL;
 
 function processParams(data, url) {
   const filteredResults = filterResults(data, url);
-  const sortedResults = sortResults(filteredResults, url);
+  const searchedResults = searchResults(filteredResults, url);
+  const sortedResults = sortResults(searchedResults, url);
   const paginatedResults = paginateResults(sortedResults, url);
   return paginatedResults;
 }

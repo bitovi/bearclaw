@@ -3,8 +3,8 @@ import { PageHeaderText } from "./PageHeaderText";
 import Stack from "@mui/material/Stack";
 
 type Props = {
-  headline: string;
-  description: string;
+  headline: React.ReactNode;
+  description: React.ReactNode;
   children?: React.ReactNode;
 };
 
