@@ -3,6 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 import { SideNav } from "~/components/sideNav/SideNav";
 import type { loader } from "../route";
 import { useSideNavCopy } from "../copy";
+import { Logo } from "~/components/logo/Logo";
 
 export function MainSideNav() {
   const { permissions } = useLoaderData<typeof loader>();
@@ -19,17 +20,26 @@ export function MainSideNav() {
     >
       <Box
         position="absolute"
-        borderRadius="12px"
+        borderRadius="48px"
         width="200px"
-        height="240px"
-        left="-150px"
-        bottom="-40px"
+        height="400px"
+        left="-110px"
+        bottom="-100px"
+        border="20px solid rgba(117, 117, 117, 0.1)"
         sx={{
-          background: "rgba(117, 117, 117, 0.1)",
           transform: "rotate(-18deg)",
         }}
       />
-      <Box padding="1.5rem 1rem" maxHeight="100%" sx={{ overflowY: "auto" }}>
+      <Box
+        padding="1.5rem 1rem"
+        maxHeight="100%"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        gap="1rem"
+        sx={{ overflowY: "auto" }}
+      >
+        <Logo variant="stacked" width="124px" />
         <SideNav
           userPermissions={permissions}
           dividerAfter={copy?.dividerAfter}
