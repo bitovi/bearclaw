@@ -34,11 +34,11 @@ describe("User Management & Invitation", () => {
   it("Invite user", () => {
     cy.createAndVerifyAccount(ownerAccount);
 
-    cy.findByRole("link", { name: /user accounts/i })
+    cy.findByRole("link", { name: /users/i })
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/user accounts/i);
+    cy.findByText(/users/i);
 
     // length of 1 as the Owner will be the only listing displayed
     cy.get("tbody > tr").should("have.length", 1);
@@ -140,7 +140,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /user accounts/i })
+    cy.findByRole("link", { name: /users/i })
       .should("be.visible")
       .click({ force: true });
 
@@ -211,11 +211,11 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /user accounts/i })
+    cy.findByRole("link", { name: /users/i })
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/user accounts/i);
+    cy.findByText(/users/i);
 
     cy.get("tbody").within(() => {
       // Two new users plus the owner
@@ -294,9 +294,7 @@ describe("User Management & Invitation", () => {
         cy.findAllByText(/welcome/i).should("have.length.gte", 1);
       });
 
-    cy.wait(1000)
-      .findByText(/user accounts/i)
-      .click({ force: true });
+    cy.wait(1000).findByText(/users/i).click({ force: true });
 
     // Sorting
     cy.wait(1000)

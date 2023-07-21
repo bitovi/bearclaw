@@ -5,7 +5,6 @@ import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useOptionalUser } from "~/utils";
-import { Logo } from "./logo";
 import { GlobalSearch } from "./GlobalSearch";
 
 export const Header = () => {
@@ -24,15 +23,7 @@ export const Header = () => {
           },
         }}
       >
-        <Box>
-          <Logo />
-        </Box>
-        <Stack
-          flex="1"
-          direction="row"
-          gap={2}
-          alignItems="center"
-        >
+        <Stack flex="1" direction="row" gap={2} alignItems="center">
           <Box flex="1">
             <GlobalSearch />
           </Box>
