@@ -79,8 +79,6 @@ export const getProcessingStatusById = async ({
   userId: string;
   organizationId: string;
 }) => {
-  //TODO a Big Bear API that looks up processing status by id
-  // presumably will be
   const response = await bearFetch(
     `/claw/get_processing_status/${dataObject}?${buildApiSearchParams({
       userId,

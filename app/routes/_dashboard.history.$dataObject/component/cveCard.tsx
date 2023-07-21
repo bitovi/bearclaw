@@ -38,7 +38,7 @@ export function CVECard({
       elevation={1}
       sx={{
         "&:hover": {
-          backgroundColor: "primary.states.focusVisible",
+          backgroundColor: "#E0E0E0",
         },
       }}
       onClick={(e) => {
@@ -69,7 +69,7 @@ export function CVECard({
             <Stack
               alignItems={orientation === "row" ? "center" : ""}
               gap={1}
-              paddingLeft={1}
+              paddingLeft={0.5}
               paddingTop={orientation === "column" ? 0.5 : 0}
               direction={orientation}
             >
@@ -78,7 +78,7 @@ export function CVECard({
               </Typography>
               {score && (
                 <Typography color="text.secondary" variant="subtitle2">
-                  {score.toUpperCase()}
+                  {score}
                 </Typography>
               )}
             </Stack>

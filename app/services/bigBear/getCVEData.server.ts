@@ -1,7 +1,8 @@
 import type { ApiRequestParams } from "~/services/bigBear/utils.server";
-import { buildApiSearchParams } from "~/services/bigBear/utils.server";
-import { bearFetch } from "./bearFetch.server";
-import type { CveData, EnhancedVulnerability } from "~/models/rsbomTypes";
+// import { buildApiSearchParams } from "~/services/bigBear/utils.server";
+// import { bearFetch } from "./bearFetch.server";
+import type { CveData /*EnhancedVulnerability*/ } from "~/models/rsbomTypes";
+import fixture_getCVEData from "~/msw/fixtures/getCVEData";
 import dayjs from "dayjs";
 
 /**
@@ -91,7 +92,7 @@ function transformCVEData(vul: any): CveData {
 }
 
 type CVEResponse = {
-  cves?: EnhancedVulnerability[];
+  cves?: any[];
   metadata?: {
     totalVulnerabilitiesCaptured: number;
     numberofCriticalWarnings: number;
@@ -102,17 +103,21 @@ type CVEResponse = {
 };
 
 export async function getCVEData({
-  params,
-  dataObject,
+  params: _params,
+  dataObject: _dataObject,
 }: {
   params: Pick<ApiRequestParams, "organizationId" | "userId">;
   dataObject: string;
 }) {
-  const response = await bearFetch(
-    `/bear/get_cve_data/${dataObject}?${buildApiSearchParams(params)}`
-  );
+  // const response = await bearFetch(
+  //   `/bear/get_cve_data/${dataObject}?${buildApiSearchParams(params)}`
+  // );
 
-  const json: CVEResponse = await response.json();
+  // const json: CVEResponse = await response.json();
+
+  const json: CVEResponse = await new Promise((resolve) =>
+    resolve(fixture_getCVEData)
+  );
 
   return {
     ...json,
