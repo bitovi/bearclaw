@@ -88,5 +88,6 @@ export const getProcessingStatusById = async ({
 
   const json: UploadStatusResponse = await response.json();
 
+  if (!json.data[0]) return null;
   return transformApiUploadStatus(json.data[0]);
 };

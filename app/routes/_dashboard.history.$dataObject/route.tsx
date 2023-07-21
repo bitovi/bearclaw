@@ -32,6 +32,9 @@ export async function loader({ request, params }: LoaderArgs) {
       userId,
       organizationId,
     });
+    if (!processingStatus) {
+      return redirect("/history");
+    }
 
     const { data: vulnerabilities, metadata } = await getCVEData({
       params: { userId, organizationId },
