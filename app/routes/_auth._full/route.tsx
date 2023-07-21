@@ -31,21 +31,27 @@ export default function Index() {
         overflow="hidden"
         sx={{
           color: "white",
-          background:
-            "linear-gradient(167.62deg, #192869 19.38%, #0B1433 101.5%)",
+          background: "linear-gradient(180deg, #000 0%, #00057A 100%)",
         }}
       >
         <Box
           position="absolute"
-          borderRadius="12px"
-          width="200px"
-          height="240px"
-          right="-148px"
-          bottom="-44px"
+          component="img"
+          src="/images/cornerEdge.png"
+          bottom="0"
+          left="0"
+          height="100%"
           sx={{
-            backgroundColor: "#420BD8",
-            transform: "rotate(18deg)",
+            transform: "scaleX(-1)",
           }}
+        />
+        <Box
+          position="absolute"
+          component="img"
+          src="/images/cornerEdge.png"
+          bottom="0"
+          right="0"
+          height="100%"
         />
         <Box
           width="100%"
