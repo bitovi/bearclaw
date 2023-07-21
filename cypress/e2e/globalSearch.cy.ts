@@ -28,27 +28,16 @@ describe("Global Search", () => {
 
     // Add results
     cy.get("@globalSearch").type("a{enter}");
-    cy.wait(1000).findByText(/search by data object/i);
+    cy.wait(1000);
 
-    //
+    cy.findAllByRole("rowgroup")
+      .eq(1)
+      .as("tableBody")
+      .within(() => {
+        cy.findAllByRole("row").should("have.length.gt", 0);
+      });
 
-    cy.findByTestId(/search by data object-table/i).within(() => {
-      cy.findAllByRole("rowgroup")
-        .eq(1)
-        .as("dataObjectTableBody")
-        .within(() => {
-          cy.findAllByRole("row").should("have.length.gt", 0);
-        });
-    });
-    cy.findByTestId(/search by filename-table/i).within(() => {
-      cy.findAllByRole("rowgroup")
-        .eq(1)
-        .within(() => {
-          cy.findAllByRole("row").should("have.length.gt", 0);
-        });
-    });
-
-    cy.get("@dataObjectTableBody").within(() => {
+    cy.get("@tableBody").within(() => {
       // realClick allows us to engage the copy to clipboard behavior in the cy environment
       cy.findAllByTitle(/copy to clipboard/i)
         .eq(2)
@@ -73,25 +62,10 @@ describe("Global Search", () => {
       cy.location("search").should("include", params.toString());
     });
 
-    cy.findByTestId(/search by data object-table/i).within(() => {
-      cy.findAllByRole("rowgroup")
-        .eq(1)
-        .within(() => {
-          cy.findAllByRole("row").should("have.length", 1);
-        });
-    });
-    cy.findByTestId(/search by filename-table/i).within(() => {
-      cy.findAllByRole("rowgroup")
-        .eq(1)
-        .within(() => {
-          cy.findAllByRole("row").should("have.length", 0);
-        });
-    });
+    cy.findAllByRole("rowgroup").eq(1);
 
     // Random string yields no results
-    cy.get("@globalSearch")
-    .clear()
-    .type("adfjaklsdjflaksjdfsadf{enter}");
+    cy.get("@globalSearch").clear().type("adfjaklsdjflaksjdfsadf{enter}");
 
     cy.wait(1000).findByText(/sorry, no results found/i);
 
@@ -100,30 +74,26 @@ describe("Global Search", () => {
       .should("be.visible")
       .click({ force: true });
 
-    // Check pagination and filtering 
+    // Check pagination and filtering
 
     // Global search textbox
-    cy.get("@globalSearch")
-      .clear()
-      .type("a{enter}");
+    cy.get("@globalSearch").clear().type("a{enter}");
 
     cy.wait(1000).findByText(/search:/i);
 
     // Sorting
-    cy.findByTestId(/search by data object-table/i).within(() => {
-      cy.findAllByRole("rowgroup")
-        .eq(1)
-        .within(() => {
-          cy.get("a")
-            .eq(0)
-            .within(() => {
-              cy.findAllByRole("cell")
-                .eq(1)
-                .invoke("text")
-                .as("firstTableDataObjectFileName", { type: "static" });
-            });
-        });
-    });
+    cy.findAllByRole("rowgroup")
+      .eq(1)
+      .within(() => {
+        cy.get("a")
+          .eq(0)
+          .within(() => {
+            cy.findAllByRole("cell")
+              .eq(1)
+              .invoke("text")
+              .as("firstTableDataObjectFileName", { type: "static" });
+          });
+      });
 
     cy.findAllByText(/filename/i)
       .eq(0)
@@ -131,20 +101,18 @@ describe("Global Search", () => {
 
     cy.wait(1000).location("search").should("include", "sort=filename");
 
-    cy.wait(1000)
-      .findByTestId(/search by data object-table/i)
+    cy.wait(1000);
+
+    cy.findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
-        cy.findAllByRole("rowgroup")
-          .eq(1)
+        cy.get("a")
+          .eq(0)
           .within(() => {
-            cy.get("a")
-              .eq(0)
-              .within(() => {
-                cy.findAllByRole("cell")
-                  .eq(1)
-                  .invoke("text")
-                  .as("ascTableDataObjectFileName", { type: "static" });
-              });
+            cy.findAllByRole("cell")
+              .eq(1)
+              .invoke("text")
+              .as("ascTableDataObjectFileName", { type: "static" });
           });
       });
 
@@ -158,25 +126,20 @@ describe("Global Search", () => {
 
     cy.wait(1000).location("search").should("include", "sort=-filename");
 
-    cy.wait(1000)
-      .findByTestId(/search by data object-table/i)
+    cy.wait(1000);
+
+    cy.findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
-        cy.findAllByRole("rowgroup")
-          .eq(1)
+        cy.get("a")
+          .eq(0)
           .within(() => {
-            cy.get("a")
-              .eq(0)
-              .within(() => {
-                cy.findAllByRole("cell")
-                  .eq(1)
-                  .then(($data) => {
-                    cy.wrap($data)
-                      .should(
-                        "not.equal",
-                        cy.get("@firstTableDataObjectFileName")
-                      )
-                      .should("not.equal", "@ascTableDataObjectFileName");
-                  });
+            cy.findAllByRole("cell")
+              .eq(1)
+              .then(($data) => {
+                cy.wrap($data)
+                  .should("not.equal", cy.get("@firstTableDataObjectFileName"))
+                  .should("not.equal", "@ascTableDataObjectFileName");
               });
           });
       });

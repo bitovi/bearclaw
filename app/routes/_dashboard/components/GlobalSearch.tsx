@@ -4,9 +4,6 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 
-// TODO: Replace with real results from API
-const fakeResults = ["file number 1", "scaryBadFile", "not_a_w0rm.exe"];
-
 export function GlobalSearch() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
@@ -29,7 +26,7 @@ export function GlobalSearch() {
     >
       <Autocomplete
         freeSolo
-        options={fakeResults}
+        options={[]}
         value={searchString}
         onChange={(_, value) => setSearchString(value)}
         renderInput={(params) => (
