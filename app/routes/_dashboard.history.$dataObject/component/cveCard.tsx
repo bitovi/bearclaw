@@ -3,13 +3,14 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
 import { useRef } from "react";
-import { rateSeverity } from "../utils/rateSeverity";
 import { SeverityTab } from "./severityTab";
 import { usePageCopy } from "~/routes/_dashboard/copy";
+import type { CveData } from "~/models/rsbomTypes";
 
 interface CVECardProps {
   name: string;
-  rating?: string;
+  rating?: CveData["rating"];
+  score?: CveData["score"];
   subcomponentCount?: number;
   date?: string;
   description?: string;
@@ -21,6 +22,7 @@ interface CVECardProps {
 export function CVECard({
   name,
   rating,
+  score,
   subcomponentCount,
   date,
   description,
@@ -53,9 +55,10 @@ export function CVECard({
           justifyContent="space-between"
         >
           <Stack direction="row">
-            {rating && (
+            {rating && score && (
               <SeverityTab
                 rating={rating}
+                score={score}
                 padding="0px 8px 0px 16px"
                 height="46px"
                 width="45px"
@@ -73,9 +76,9 @@ export function CVECard({
               <Typography color="text.primary" variant="subtitle2">
                 {name}
               </Typography>
-              {rating && (
+              {score && (
                 <Typography color="text.secondary" variant="subtitle2">
-                  {rating} {copy?.content?.[rateSeverity(rating)]}
+                  {score.toUpperCase()}
                 </Typography>
               )}
             </Stack>
@@ -115,7 +118,7 @@ export function CVECard({
                 textOverflow: "ellipsis",
                 display: "-webkit-box",
                 WebkitLineClamp: "2",
-                "-webkit-box-orient": "vertical",
+                WebkitBoxOrient: "vertical",
               }}
             >
               {description}

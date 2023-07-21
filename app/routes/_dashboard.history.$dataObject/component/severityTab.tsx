@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { WarningColors } from "../types";
-import { rateSeverity } from "../utils/rateSeverity";
+import type { CveData } from "~/models/rsbomTypes";
 
 const textVariantValues = [
   "h1",
@@ -16,7 +16,8 @@ const textVariantValues = [
 ] as const;
 
 interface SeverityTabProps {
-  rating: string;
+  rating: Exclude<CveData["rating"], undefined>;
+  score: Exclude<CveData["score"], undefined>;
   height: string;
   width: string;
   padding: string;
@@ -27,6 +28,7 @@ interface SeverityTabProps {
 
 export function SeverityTab({
   rating,
+  score,
   height,
   width,
   padding,
@@ -44,7 +46,7 @@ export function SeverityTab({
       padding={padding}
       color="#FFF"
       sx={{
-        backgroundColor: WarningColors[rateSeverity(rating)],
+        backgroundColor: WarningColors[score],
       }}
     >
       <Typography variant={textVariant}>{rating}</Typography>
