@@ -1,5 +1,6 @@
 export enum WarningColors {
-  "lowSeverityCVE" = "cve.low",
-  "mediumSeverityCVE" = "cve.medium",
-  "highSeverityCVE" = "cve.high",
+  "Low" = "cve.low",
+  "Medium" = "cve.medium",
+  "High" = "cve.high",
+  "Critical" = "cve.critical",
 }

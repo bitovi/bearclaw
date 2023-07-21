@@ -5,8 +5,10 @@ const { rest } = require("msw");
 
 const fixture_getRSBOMSCyclonedx = require("./fixtures/getRSBOMSCyclonedx.js");
 const fixture_getAllParentJobs = require("./fixtures/getAllParentJobs.js");
+const fixture_getProcessingStatusById = require("./fixtures/getProcessingStatusById.js");
 const fixture_getRSBOMDetail = require("./fixtures/getRSBOMDetail.js");
 const fixture_getMetadata = require("./fixtures/getMetadata.js");
+const fixture_getCVEData = require("./fixtures/getCVEData.js");
 
 const paginateResults = require("./util/paginateResults.js");
 const sortResults = require("./util/sortResults.js");
@@ -35,11 +37,17 @@ const handlers = [
   rest.get(`${baseURL}/bear/get_rsboms_cyclonedx/*`, (req, res, ctx) => {
     return res(ctx.json(processParams(fixture_getRSBOMDetail, req.url)));
   }),
-  rest.get(`${baseURL}/claw/get_processing_status?`, (req, res, ctx) => {
+  rest.get(`${baseURL}/claw/get_processing_status`, (req, res, ctx) => {
     return res(ctx.json(processParams(fixture_getAllParentJobs, req.url)));
+  }),
+  rest.get(`${baseURL}/claw/get_processing_status/*`, (req, res, ctx) => {
+    return res(ctx.json(fixture_getProcessingStatusById));
   }),
   rest.get(`${baseURL}/bear/get_metadata`, (req, res, ctx) => {
     return res(ctx.json(fixture_getMetadata));
+  }),
+  rest.get(`${baseURL}/bear/get_cve_data/*`, (req, res, ctx) => {
+    return res(ctx.json(fixture_getCVEData));
   }),
   rest.post(`${baseURL}/claw/upload`, (req, res, ctx) => {
     return res(ctx.json({ status: 200 }));

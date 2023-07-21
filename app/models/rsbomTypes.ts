@@ -43,7 +43,7 @@ export interface EnhancedProperties extends Normalized.Property {
   exploitabilityScore3?: number;
   exploitabilityScore?: number;
 }
-interface EnhancedVulnerability extends Normalized.Vulnerability {
+export interface EnhancedVulnerability extends Normalized.Vulnerability {
   properties: EnhancedProperties[];
   subcomponents: any[];
 }
@@ -59,8 +59,10 @@ export interface ExpandedRSBOMEntry
 
 export interface CveData {
   date?: string;
+  publishedDate?: string;
   name?: string | undefined;
   rating?: string;
+  score?: "Low" | "Medium" | "High" | "Critical";
   description?: string | undefined;
   subcomponents?: any[];
   source?: {

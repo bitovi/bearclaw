@@ -14,9 +14,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import OutboundIcon from "@mui/icons-material/Outbound";
 import ShareIcon from "@mui/icons-material/Share";
 import { SeverityTab } from "./severityTab";
-import { rateSeverity } from "../utils/rateSeverity";
 import type { CveData } from "~/models/rsbomTypes";
 import { usePageCopy } from "~/routes/_dashboard/copy";
+import { toTitleCase } from "~/utils/string/toTitleCase";
 
 interface CVEDrawerProps {
   open: boolean;
@@ -61,9 +61,10 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
           alignSelf="stretch"
           padding={!selectedCVE?.rating ? "40px 0px 0px 48px" : "unset"}
         >
-          {selectedCVE?.rating && (
+          {selectedCVE?.rating && selectedCVE?.score && (
             <SeverityTab
               rating={selectedCVE.rating}
+              score={selectedCVE.score}
               height={"112px"}
               width="84px"
               padding="0px 24px 16px 24px"
@@ -115,20 +116,22 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                 </Typography>
               </Box>
             )}
-            {selectedCVE?.rating && (
+            {selectedCVE?.rating && selectedCVE?.score && (
               <Box>
                 <AlertTitle> {copy?.content?.sidebar_baseScore}</AlertTitle>
                 <Typography>
-                  {copy?.content?.[rateSeverity(selectedCVE.rating)]}
+                  {toTitleCase(selectedCVE.score)} Severity
                 </Typography>
                 <Typography variant="body2">{selectedCVE.rating}</Typography>
                 <Typography></Typography>
               </Box>
             )}
-            {selectedCVE?.date && (
+            {selectedCVE?.publishedDate && (
               <Box>
                 <AlertTitle> {copy?.content?.sidebar_publishedDate}</AlertTitle>
-                <Typography variant="body2">{selectedCVE.date}</Typography>
+                <Typography variant="body2">
+                  {selectedCVE.publishedDate}
+                </Typography>
               </Box>
             )}
             {selectedCVE?.lastModified && (
