@@ -6,7 +6,14 @@ type Props = {
 
 export function Page({ children }: Props) {
   return (
-    <Box display="flex" flexDirection="column" gap="2rem" position="relative">
+    <Box
+      position="relative"
+      display="flex"
+      flexDirection="column"
+      gap="2rem"
+      justifyContent="stretch"
+      height="100%"
+    >
       {children}
     </Box>
   );

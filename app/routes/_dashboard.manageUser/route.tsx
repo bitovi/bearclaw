@@ -232,7 +232,6 @@ export default function Route() {
             onChange={({ target }) =>
               debounceFilterQuery({
                 searchString: target.value,
-                searchField: "",
               })
             }
             defaultValue={searchString}

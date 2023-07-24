@@ -71,31 +71,35 @@ export default function Index() {
   return (
     <Box
       display="flex"
-      flexDirection="column"
       width="100%"
       height="100%"
       sx={{
         backgroundColor: "#F5F5F5",
+        overflow: "hidden",
       }}
     >
-      <Header />
+      <Box width="13.75rem">
+        <MainSideNav />
+      </Box>
       <Box
         display="flex"
+        flexDirection="column"
         height="100%"
         width="100%"
         overflow="hidden"
         bgcolor={"#F5F5F5"}
       >
-        <Box width="250px">
-          <MainSideNav />
-        </Box>
+        <Header />
         <Box
           component={Paper}
           height="100%"
           overflow="hidden auto"
           flex="1"
           padding={6}
-          sx={{ backgroundColor: "white", borderTopLeftRadius: "16px" }}
+          sx={{
+            backgroundColor: "white",
+            borderTopLeftRadius: { xs: "unset", md: "16px" },
+          }}
         >
           <main>
             <Outlet />

@@ -18,7 +18,7 @@ export function AuthLogoHeader({ message }: Props) {
       textAlign="center"
     >
       <Box maxWidth="90%" width={{ xs: "280px", md: "340px" }}>
-        <Logo variant="inline" width="100%" imageColor="#002DF3" />
+        <Logo variant="inline" width="100%" />
       </Box>
       <Typography variant="h5" color="text.secondary">
         {message}

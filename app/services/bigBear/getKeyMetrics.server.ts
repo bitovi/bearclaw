@@ -22,9 +22,7 @@ type Params = {
 export const getKeyMetrics = async (params: Params) => {
   try {
     const response = await bearFetch(
-      `/bear/get_metadata?${buildApiSearchParams(
-        params
-      )}`
+      `/bear/get_metadata?${buildApiSearchParams(params)}`
     );
     const json: ApiKeyMetrics = await response.json();
     return json.metadata;

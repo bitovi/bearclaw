@@ -8,9 +8,6 @@ import SourceIcon from "@mui/icons-material/Source";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CircleTwoToneIcon from "@mui/icons-material/CircleTwoTone";
 import { useTextCopy } from "~/hooks/useTextCopy";
-import type { CveData } from "~/models/rsbomTypes";
-import { rateSeverity } from "../utils/rateSeverity";
-import { useMemo } from "react";
 import { usePageCopy } from "~/routes/_dashboard/copy";
 
 const BreakdownEntry = ({
@@ -60,56 +57,23 @@ const BreakdownEntry = ({
   );
 };
 
-const severityFilter = (vulnerabilties: CveData[], filterText: string) => {
-  const totalVulnerabilityCount = vulnerabilties.filter((vul) => {
-    if (!vul.rating) return false;
-    return rateSeverity(vul.rating) === filterText;
-  }).length;
-
-  const totalSubComponentCount = vulnerabilties.reduce((acc, curr) => {
-    if (!curr.rating) {
-      return acc;
-    }
-    if (rateSeverity(curr.rating) === filterText) {
-      console.log("value", curr);
-      return acc + (curr?.subcomponents?.length || 0);
-    }
-    return acc;
-  }, 0);
-
-  return {
-    totalVulnerabilityCount,
-    totalSubComponentCount,
-  };
+type CVEMetaData = {
+  totalVulnerabilitiesCaptured: number;
+  numberofCriticalWarnings: number;
+  numberofHighWarnings: number;
+  numberofMedWarnings: number;
+  numberofLowWarnings: number;
 };
 
 interface CVEBreakdownProps {
   id: string | undefined;
   type: string | undefined;
   date: string | undefined;
-  vulnerabilties: CveData[];
+  metadata: CVEMetaData;
 }
 
-export function CVEBreakdown({
-  id,
-  type,
-  date,
-  vulnerabilties,
-}: CVEBreakdownProps) {
+export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
   const copy = usePageCopy("detail");
-
-  const highSeverity = useMemo(
-    () => severityFilter(vulnerabilties, "highSeverityCVE"),
-    [vulnerabilties]
-  );
-  const mediumSeverity = useMemo(
-    () => severityFilter(vulnerabilties, "mediumSeverityCVE"),
-    [vulnerabilties]
-  );
-  const lowSeverity = useMemo(
-    () => severityFilter(vulnerabilties, "lowSeverityCVE"),
-    [vulnerabilties]
-  );
 
   return (
     <Stack
@@ -129,15 +93,22 @@ export function CVEBreakdown({
         </Box>
         <Stack gap={2} sx={{ width: "33%" }} flex={1}>
           <BreakdownEntry
-            title={`${highSeverity.totalVulnerabilityCount} ${copy?.content?.highSeverityCVE} ${copy?.content?.cve}`}
-            details={`${highSeverity.totalSubComponentCount} ${copy?.content?.vulnerableSubComponents}`}
+            title={`${metadata.numberofCriticalWarnings} ${copy?.content?.criticalSeverityCVE} ${copy?.content?.cve}`}
+            details={`0 ${copy?.content?.vulnerableSubComponents}`}
+            Icon={
+              <CircleTwoToneIcon sx={{ color: "red.800" }} fontSize="small" />
+            }
+          />
+          <BreakdownEntry
+            title={`${metadata.numberofHighWarnings} ${copy?.content?.highSeverityCVE} ${copy?.content?.cve}`}
+            details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon sx={{ color: "red.600" }} fontSize="small" />
             }
           />
           <BreakdownEntry
-            title={`${mediumSeverity.totalVulnerabilityCount} ${copy?.content?.mediumSeverityCVE} ${copy?.content?.cve}`}
-            details={`${mediumSeverity.totalSubComponentCount} ${copy?.content?.vulnerableSubComponents}`}
+            title={`${metadata.numberofMedWarnings} ${copy?.content?.mediumSeverityCVE} ${copy?.content?.cve}`}
+            details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon
                 sx={{ color: "orange.800" }}
@@ -146,8 +117,8 @@ export function CVEBreakdown({
             }
           />
           <BreakdownEntry
-            title={`${lowSeverity.totalVulnerabilityCount} ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
-            details={`${lowSeverity.totalSubComponentCount} ${copy?.content?.vulnerableSubComponents}`}
+            title={`${metadata.numberofLowWarnings} ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
+            details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon
                 sx={{ color: "purple.600" }}

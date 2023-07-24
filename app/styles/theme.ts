@@ -24,9 +24,11 @@ declare module "@mui/material/styles" {
       low: string;
       medium: string;
       high: string;
+      critical: string;
     };
     red?: {
       600: string;
+      800: string;
     };
     orange?: {
       800?: string;
@@ -74,9 +76,11 @@ const theme = createTheme({
       low: "#5E35B1",
       medium: "#EF6C00",
       high: "#E53935",
+      critical: "#b71c1c",
     },
     red: {
       600: "#E53935",
+      800: "#b71c1c",
     },
     orange: {
       800: "#EF6C00",
@@ -157,6 +161,8 @@ const theme = createTheme({
           },
           style: {
             backgroundColor: "#F5F5F5",
+            boxShadow: "none",
+            padding: "4px 32px",
           },
         },
       ],

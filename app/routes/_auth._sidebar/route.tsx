@@ -50,37 +50,35 @@ export default function Index() {
         overflow="hidden"
         sx={{
           color: "white",
-          background:
-            "linear-gradient(167.62deg, #192869 19.38%, #0B1433 101.5%)",
+          background: "linear-gradient(180deg, #000 0%, #00057A 100%)",
         }}
       >
         <Box
           position="absolute"
-          borderRadius="12px"
-          width="200px"
-          height="240px"
-          left="-150px"
-          top="-46px"
+          component="img"
+          src="/images/cornerEdge.png"
+          top="-4rem"
+          height="calc(50% + 15rem)"
+          left="0"
           sx={{
-            backgroundColor: "#3507EE",
-            transform: "rotate(18deg)",
+            transform: "rotate(180deg)",
           }}
         />
         <Box
           position="absolute"
-          borderRadius="12px"
-          width="200px"
-          height="240px"
-          right="-148px"
-          bottom="-44px"
+          component="img"
+          src="/images/cornerEdge.png"
+          bottom="-2rem"
+          height="calc(50% + 9rem)"
+          left="0"
           sx={{
-            backgroundColor: "#420BD8",
-            transform: "rotate(18deg)",
+            transform: "scaleX(-1)",
           }}
         />
         {location.pathname.includes("onboarding") ? (
           onboardingImages?.length ? (
             <Stack
+              position="relative"
               height="100%"
               width="100%"
               alignItems="center"
@@ -88,15 +86,21 @@ export default function Index() {
               justifyContent="center"
               paddingX={{ sm: 0, lg: 7 }}
             >
-              <Box paddingBottom={3}>
-                <Logo variant="imageOnly" />
+              <Box paddingBottom={4} marginTop={{ xs: 4, lg: 0 }}>
+                <Logo
+                  variant="imageOnly"
+                  width="9.75rem"
+                  imageColor="#ffffff"
+                />
               </Box>
-              <img
-                height="480"
-                width="480"
-                src={onboardingImages[0].url}
-                alt={onboardingImages[0].altText}
-              />
+              <Box maxWidth="480px">
+                <img
+                  height="auto"
+                  width="100%"
+                  src={onboardingImages[0].url}
+                  alt={onboardingImages[0].altText}
+                />
+              </Box>
             </Stack>
           ) : null
         ) : (

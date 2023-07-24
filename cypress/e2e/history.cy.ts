@@ -17,8 +17,8 @@ describe("History", () => {
       .findByRole("table")
       .within(() => {
         cy.findAllByRole("columnheader").contains(/date/i);
-        cy.findAllByRole("columnheader").contains(/Data Object/i);
-        cy.findAllByRole("columnheader").contains(/filename/i);
+        cy.findAllByRole("columnheader").contains(/Object Id/i);
+        cy.findAllByRole("columnheader").contains(/file name/i);
         cy.findAllByRole("columnheader").contains(/id/i);
         cy.findAllByRole("columnheader").contains(/type/i);
         cy.findAllByRole("columnheader").contains(/status/i);
@@ -26,7 +26,6 @@ describe("History", () => {
         // Default fetching will have data rows
         cy.findAllByRole("rowgroup")
           .eq(1)
-          .as("tableBody")
           .within(() => {
             cy.findAllByRole("row").should("have.length.gt", 0);
           });
@@ -38,28 +37,26 @@ describe("History", () => {
           .click({ force: true });
       });
 
-    cy.findByLabelText(/type/i).click();
+    cy.findByText(/select a field/i).click();
 
-    cy.findByRole("option", { name: /data object/i }).click();
-
-    cy.findByTestId(/lists-table/i).as("historyTable");
+    cy.findByRole("option", { name: /data object/i }).click({ force: true });
 
     // search for a string that will yield no results
-    cy.wait(2000)
-      .get("@historyTable")
-      .within(() => {
-        cy.findByRole("textbox").type("zdfasfdafdsfad");
-      });
+    cy.get("main").within(() => {
+      cy.findByRole("textbox").as("searchBox").type("zdfasfdafdsfad");
+    });
 
     const params = new URLSearchParams();
-    params.append("filter", "contains(dataObject,zdfasfdafdsfad)");
+    params.append("filter", "contains(_id,zdfasfdafdsfad)");
     // Confirm our filtering/searching is wiring up to the URL correctly
     cy.location("search").should("include", params.toString());
 
-    cy.get("@tableBody").within(() => {
-      // no table row data to display
-      cy.findAllByRole("row").should("have.length", 0);
-    });
+    cy.findAllByRole("rowgroup")
+      .eq(1)
+      .within(() => {
+        // no table row data to display
+        cy.findAllByRole("row").should("have.length", 0);
+      });
 
     // read from clipboard into search bar of table
     cy.window()
@@ -67,19 +64,20 @@ describe("History", () => {
       .invoke("readText")
       .then(async (data) => {
         const result = await data;
-        cy.get("@historyTable").within(() => {
-          cy.findByRole("textbox").clear().type(result);
-        });
+        cy.get("@searchBox").clear().type(result);
         const params = new URLSearchParams();
-        params.append("filter", `contains(dataObject,${result})`);
+        params.append("filter", `contains(_id,${result})`);
         // Confirm our filtering/searching is wiring up to the URL correctly
         cy.location("search").should("include", params.toString());
       });
 
-    cy.get("@tableBody").within(() => {
-      // one result to display
-      cy.findAllByRole("row").should("have.length", 1).click({ force: true });
-    });
+    cy.wait(1000)
+      .findAllByRole("rowgroup")
+      .eq(1)
+      .within(() => {
+        // one result to display
+        cy.findAllByRole("row").should("have.length", 1).click({ force: true });
+      });
 
     // we are on the RSBOM Details page
     cy.findByText(/CVE List/i);
@@ -129,7 +127,6 @@ describe("History", () => {
     cy.wait(1000)
       .findAllByRole("rowgroup")
       .eq(1)
-      .as("tableBody")
       .within(() => {
         cy.get("a")
           .eq(0)
@@ -141,12 +138,15 @@ describe("History", () => {
           });
       });
 
-    cy.findByText(/filename/i).click({ force: true });
+    cy.findByRole("table").within(() => {
+      cy.findByText(/File name/i).click({ force: true });
+    });
 
     cy.wait(1000).location("search").should("include", "sort=filename");
 
     cy.wait(1000)
-      .get("@tableBody")
+      .findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
         cy.get("a")
           .eq(0)
@@ -163,12 +163,13 @@ describe("History", () => {
       cy.get("@firstTableFileName")
     );
 
-    cy.findByText(/filename/i).click({ force: true });
+    cy.findByText(/File name/i).click({ force: true });
 
     cy.wait(1000).location("search").should("include", "sort=-filename");
 
     cy.wait(1000)
-      .get("@tableBody")
+      .findAllByRole("rowgroup")
+      .eq(1)
       .within(() => {
         cy.get("a")
           .eq(0)

@@ -127,8 +127,8 @@ function FormComponent() {
           typeof e === "string"
             ? e
             : typeof (e as Error).message === "string"
-              ? (e as Error).message
-              : "An error occured processing the Subscription payment";
+            ? (e as Error).message
+            : "An error occured processing the Subscription payment";
         setSubmissionError(error);
       } finally {
         setLoading(false);

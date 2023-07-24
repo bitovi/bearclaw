@@ -59,7 +59,7 @@ export const getProcessingStatus = async (params: ApiRequestParams) => {
       `/claw/get_processing_status?${buildApiSearchParams(params)}`
     );
     const json: UploadStatusResponse = await response.json();
-    
+
     return {
       ...json,
       data: json.data.map((job) => transformApiUploadStatus(job)),
@@ -68,4 +68,26 @@ export const getProcessingStatus = async (params: ApiRequestParams) => {
     console.error(error);
     return null;
   }
+};
+
+export const getProcessingStatusById = async ({
+  dataObject,
+  userId,
+  organizationId,
+}: {
+  dataObject: string;
+  userId: string;
+  organizationId: string;
+}) => {
+  const response = await bearFetch(
+    `/claw/get_processing_status/${dataObject}?${buildApiSearchParams({
+      userId,
+      organizationId,
+    })}`
+  );
+
+  const json: UploadStatusResponse = await response.json();
+
+  if (!json.data[0]) return null;
+  return transformApiUploadStatus(json.data[0]);
 };

@@ -14,9 +14,9 @@ describe("Upload", () => {
         fileName: "this_is_a_test.txt",
         lastModified: Date.now(),
       },
-      { 
-        action: "drag-drop", 
-        force: true 
+      {
+        action: "drag-drop",
+        force: true,
       }
     );
     cy.wait(1000)
@@ -24,7 +24,7 @@ describe("Upload", () => {
       .first()
       .click({ force: true });
 
-    cy.wait(5000);
+    cy.wait(10000);
 
     cy.findAllByText(/file uploaded fail/i).should("have.length", 0);
 
