@@ -54,6 +54,10 @@ export default {
       of: [{type: 'inputField'}],
     },
     {
+      type: 'images',
+      name: 'images',
+    },
+    {
       name: 'content',
       title: 'Basic Content',
       description: 'Key/value pairs for page content like button text and headers',

@@ -7,7 +7,16 @@ export async function fetchDashboardCopy() {
   const query = `*[
     _id == "dashboardSideNav" ||
     _type == "page"
-  ]{...}`;
+  ]{
+    ...,
+    "images": images[] {
+      altText,
+      name,
+      hidden,
+      'url': asset->url
+    }
+
+  }`;
   try {
     const copy = await getClient().fetch<[SideNavCopy | PageCopy] | null>(
       query
@@ -58,6 +67,12 @@ export function useAllPageCopy(): Record<string, PageCopyKeyed> {
           return {
             ...acc,
             [input.name]: input,
+          };
+        }, {}),
+        images: page.images?.reduce((acc, image) => {
+          return {
+            ...acc,
+            [image.name]: image,
           };
         }, {}),
         richContent: page.richContent?.reduce(

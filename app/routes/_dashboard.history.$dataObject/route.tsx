@@ -17,6 +17,7 @@ import { getProcessingStatusById } from "~/services/bigBear/getProcessingStatus.
 import { getCVEData } from "~/services/bigBear/getCVEData.server";
 import dayjs from "dayjs";
 import { retrieveRSBOMDetails } from "~/models/rsboms.server";
+import { ProcessingStatus } from "./types";
 
 export async function loader({ request, params }: LoaderArgs) {
   const { dataObject } = params;
@@ -86,26 +87,26 @@ export default function Route() {
   }
   return (
     <Stack>
-      {processingStatus && (
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          alignContent="center"
-        >
-          <Stack gap={1}>
-            <Typography variant="h3" color="text.primary">
-              {copy?.content?.pageHeader}{" "}
-              {processingStatus.filename || "file upload"}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {processingStatus.status === "completed"
-                ? copy?.headline
-                : copy?.content?.analysisInProcess}
-            </Typography>
-          </Stack>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        alignContent="center"
+      >
+        <Stack gap={1}>
+          <Typography variant="h3" color="text.primary">
+            {copy?.content?.pageHeader}{" "}
+            {processingStatus?.filename || "file upload"}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {processingStatus?.status === ProcessingStatus.COMPLETE
+              ? copy?.headline
+              : copy?.content?.analysisInProcess}
+          </Typography>
+        </Stack>
 
-          {processingStatus.status === "complete" && expandedRSBOM && (
+        {processingStatus?.status === ProcessingStatus.COMPLETE &&
+          expandedRSBOM && (
             <Box alignSelf={"flex-end"}>
               <Button
                 LinkComponent={Link}
@@ -134,10 +135,8 @@ export default function Route() {
               </Button>
             </Box>
           )}
-        </Stack>
-      )}
-
-      {metadata && (
+      </Stack>
+      {processingStatus?.status === ProcessingStatus.COMPLETE && metadata && (
         <Box paddingY={4}>
           <CVEBreakdown
             id={processingStatus?._id}
@@ -147,17 +146,30 @@ export default function Route() {
           />
         </Box>
       )}
-      {!!vulnerabilities.length && (
-        <CVETable
-          orientation="row"
-          cveData={vulnerabilities}
-          handleRowClick={(id: string) => {
-            setSelectedCVE(vulnerabilities.find((cve) => cve.name === id));
-            setVisible(true);
-          }}
-        />
-      )}
-
+      {processingStatus?.status === ProcessingStatus.COMPLETE &&
+        !!vulnerabilities.length && (
+          <CVETable
+            orientation="row"
+            cveData={vulnerabilities}
+            handleRowClick={(id: string) => {
+              setSelectedCVE(vulnerabilities.find((cve) => cve.name === id));
+              setVisible(true);
+            }}
+          />
+        )}
+      {(processingStatus?.status === ProcessingStatus.RUNNING ||
+        processingStatus?.status === ProcessingStatus.NOT_STARTED) &&
+        copy?.images?.processingResults && (
+          <Stack alignItems="center" paddingTop={4}>
+            <img
+              src={copy.images.processingResults.url}
+              alt={copy.images.processingResults.altText}
+              draggable={false}
+            />
+          </Stack>
+        )}
+      {processingStatus?.status === ProcessingStatus.COMPLETE &&
+        !vulnerabilities.length && <div>Hi</div>}
       <CVEDrawer
         open={visible}
         selectedCVE={selectedCVE}
