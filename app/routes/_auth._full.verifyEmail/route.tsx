@@ -48,9 +48,11 @@ export async function action({ request }: ActionArgs) {
   if (status) {
     const validate = await validateUser(userId);
     if (!validate.error) {
-      throw redirectTo
-        ? redirect(redirectTo.toString())
-        : redirect("/dashboard");
+      throw redirect(
+        redirectTo
+          ? `/onboarding?redirectTo=${redirectTo.toString()}`
+          : "/onboarding"
+      );
     } else {
       return json({
         error: validate.error,

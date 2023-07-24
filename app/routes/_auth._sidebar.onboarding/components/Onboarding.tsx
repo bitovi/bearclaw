@@ -134,7 +134,7 @@ export function Onboarding({ redirectTo, questions }: Props) {
               ))}
             </Stack>
             <Box mt={2} display="flex" justifyContent="space-between">
-              <ButtonLink to={"/dashboard"}>
+              <ButtonLink to={redirectTo ? redirectTo : "/dashboard"}>
                 {copy?.profileBuilderSkipButton || "Skip"}
               </ButtonLink>
               <Box display="flex" gap={2}>
