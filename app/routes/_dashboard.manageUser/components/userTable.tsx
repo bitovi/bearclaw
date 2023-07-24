@@ -12,7 +12,11 @@ import { visuallyHidden } from "@mui/utils";
 import { useMemo } from "react";
 
 import Chip from "@mui/material/Chip";
-import type { OrganizationMember } from "~/models/organizationUsers.server";
+import type { ChipProps } from "@mui/material/Chip";
+import type {
+  AccountStatus,
+  OrganizationMember,
+} from "~/models/organizationUsers.server";
 import { LinkPagination } from "~/components/table/LinkPagination";
 import { useSorting } from "~/hooks/useSorting";
 import { usePageCopy } from "~/routes/_dashboard/copy";
@@ -58,10 +62,10 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-enum ChipColorStatus {
-  "Active" = "primary",
-  "Pending" = "info",
-}
+const ChipColorStatus: Record<AccountStatus, Partial<ChipProps["color"]>> = {
+  Active: "primary",
+  Deleted: "error",
+};
 
 function isChipColorStatus(
   string: any

@@ -314,6 +314,7 @@ describe("User Management & Invitation", () => {
       cy.findByText(/email/i).click({ force: true });
     });
 
+
     cy.wait(1000).location("search").should("include", "sort=email");
 
     cy.wait(1000)
