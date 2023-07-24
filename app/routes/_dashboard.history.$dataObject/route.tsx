@@ -86,12 +86,10 @@ export default function Route() {
     return <Box>{error}</Box>;
   }
   return (
-    <Stack>
+    <Stack height="100%" alignItems={{ xs: "center", md: "unset" }}>
       <Stack
-        direction="row"
+        direction={{ xs: "column", lg: "row" }}
         justifyContent="space-between"
-        alignItems="center"
-        alignContent="center"
       >
         <Stack gap={1}>
           <Typography variant="h3" color="text.primary">
@@ -107,9 +105,13 @@ export default function Route() {
 
         {processingStatus?.status === ProcessingStatus.COMPLETE &&
           expandedRSBOM && (
-            <Box alignSelf={"flex-end"}>
+            <Box
+              paddingTop={{ xs: 3, lg: 1 }}
+              alignSelf={{ xs: "flex-start", lg: "center" }}
+            >
               <Button
                 LinkComponent={Link}
+                sx={{ textAlign: "start" }}
                 variant="text"
                 href={
                   "data:text/json;charset=utf-8," +
@@ -123,11 +125,10 @@ export default function Route() {
               >
                 <Typography
                   component={Stack}
+                  noWrap
                   variant="body2"
                   direction="row"
-                  minHeight="64px"
-                  justifyContent={"space-between"}
-                  alignItems="center"
+                  alignItems="flex-start"
                 >
                   <FileDownloadIcon />
                   {copy?.content?.downloadRSBOM}
@@ -137,7 +138,7 @@ export default function Route() {
           )}
       </Stack>
       {processingStatus?.status === ProcessingStatus.COMPLETE && metadata && (
-        <Box paddingY={4}>
+        <Box paddingTop={4}>
           <CVEBreakdown
             id={processingStatus?._id}
             type={processingStatus?.type}
@@ -160,8 +161,16 @@ export default function Route() {
       {(processingStatus?.status === ProcessingStatus.RUNNING ||
         processingStatus?.status === ProcessingStatus.NOT_STARTED) &&
         copy?.images?.processingResults && (
-          <Stack alignItems="center" paddingTop={4}>
-            <img
+          <Stack
+            justifyContent="center"
+            alignItems={"center"}
+            flex={1}
+            flexGrow={1}
+          >
+            <Box
+              width="100%"
+              maxWidth={"1220px"}
+              component="img"
               src={copy.images.processingResults.url}
               alt={copy.images.processingResults.altText}
               draggable={false}
@@ -169,7 +178,26 @@ export default function Route() {
           </Stack>
         )}
       {processingStatus?.status === ProcessingStatus.COMPLETE &&
-        !vulnerabilities.length && <div>Hi</div>}
+        !vulnerabilities.length &&
+        copy?.images?.noVulnerabilities && (
+          <Stack
+            flexGrow={1}
+            flex={1}
+            alignItems={{ xs: "center", md: "flex-end" }}
+            justifyContent={{ xs: "flex-end" }}
+          >
+            <Box
+              height={{ xs: "unset", lg: "75%", xl: "100%" }}
+              width={{ xs: "75%", lg: "unset" }}
+              paddingTop={{ xs: 2, md: "unset" }}
+              minWidth="478px"
+              component="img"
+              src={copy.images.noVulnerabilities.url}
+              alt={copy.images.noVulnerabilities.altText}
+              draggable={false}
+            />
+          </Stack>
+        )}
       <CVEDrawer
         open={visible}
         selectedCVE={selectedCVE}
