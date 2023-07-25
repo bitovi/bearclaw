@@ -200,6 +200,33 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
 
+      # hardcoding the role and aws region for now. going with the easy route.
+      - name: Configure AWS credentials from role.
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: 'arn:aws:iam::175069116911:role/bitovi-vbt-oidc-github'
+          aws-region: 'us-east-1'
+          role-duration-seconds: 3600
+          role-session-name: 'bitovi-vbt-oidc-github'
+          mask-aws-account-id: 'no'
+
+      - name: Login to Amazon ECR.
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: 🐳 Docker build
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            175069116911.dkr.ecr.us-east-1.amazonaws.com/web:${{ github.ref_name }}-${{ github.sha }}
+            175069116911.dkr.ecr.us-east-1.amazonaws.com/web:dev
+          build-args: |
+            COMMIT_SHA=${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+
       # This ugly bit is necessary if you don't want your cache to grow forever
       # till it hits GitHub's limit of 5GB.
       # Temp fix
