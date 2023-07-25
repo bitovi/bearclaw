@@ -58,6 +58,9 @@ export function SideNav({
                 <ListItemButton
                   component={Link}
                   to={item.to}
+                  prefix={
+                    item.to && !item.to.match(/logout/i) ? "intent" : undefined
+                  }
                   selected={bestRouteMatch === item.to}
                   sx={{ borderRadius: "4px" }}
                 >

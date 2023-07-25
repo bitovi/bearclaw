@@ -230,6 +230,11 @@ function createAndVerifyAccount(
     .click({ force: true });
 
   cy.wait(2000)
+    .findByRole("link", { name: /skip/i })
+    .should("be.visible")
+    .click({ force: true });
+
+  cy.wait(2000)
     .get("main")
     .within(() => {
       cy.findAllByText(/welcome/i).should("have.length.gte", 1);
