@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Link } from "~/components/link";
-import { ExpandedRSBOMEntry } from "~/models/rsbomTypes";
+import type { ExpandedRSBOMEntry } from "~/models/rsbomTypes";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 export const DownloadButton = ({

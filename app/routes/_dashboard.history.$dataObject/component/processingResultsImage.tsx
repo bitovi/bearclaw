@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { PageCopyKeyed } from "~/routes/_dashboard/types";
+import type { PageCopyKeyed } from "~/routes/_dashboard/types";
 
 export function ProcessingResultsImage({
   image,
