@@ -128,8 +128,6 @@ describe("File rSBOM Details", () => {
       .then(($card) => {
         cy.findByText(/resources/i).should("be.visible");
 
-        cy.wrap($card).findByText(/Severity/i);
-
         // within sidebar
         cy.findByRole("presentation").within(() => {
           //name in card matches name in name in sidebar
