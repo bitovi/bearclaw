@@ -91,42 +91,58 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
         <Box>
           <DataCircle />
         </Box>
-        <Stack gap={2} sx={{ width: "33%" }} flex={1}>
-          <BreakdownEntry
-            title={`${metadata.numberofCriticalWarnings} ${copy?.content?.criticalSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents}`}
-            Icon={
-              <CircleTwoToneIcon sx={{ color: "red.800" }} fontSize="small" />
-            }
-          />
-          <BreakdownEntry
-            title={`${metadata.numberofHighWarnings} ${copy?.content?.highSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents}`}
-            Icon={
-              <CircleTwoToneIcon sx={{ color: "red.600" }} fontSize="small" />
-            }
-          />
-          <BreakdownEntry
-            title={`${metadata.numberofMedWarnings} ${copy?.content?.mediumSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents}`}
-            Icon={
-              <CircleTwoToneIcon
-                sx={{ color: "orange.800" }}
-                fontSize="small"
+        {!!metadata.totalVulnerabilitiesCaptured && (
+          <Stack gap={2} sx={{ width: "33%" }} flex={1}>
+            {!!metadata.numberofCriticalWarnings && (
+              <BreakdownEntry
+                title={`${metadata.numberofCriticalWarnings} ${copy?.content?.criticalSeverityCVE} ${copy?.content?.cve}`}
+                details={`0 ${copy?.content?.vulnerableSubComponents}`}
+                Icon={
+                  <CircleTwoToneIcon
+                    sx={{ color: "red.800" }}
+                    fontSize="small"
+                  />
+                }
               />
-            }
-          />
-          <BreakdownEntry
-            title={`${metadata.numberofLowWarnings} ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents}`}
-            Icon={
-              <CircleTwoToneIcon
-                sx={{ color: "purple.600" }}
-                fontSize="small"
+            )}
+            {!!metadata.numberofHighWarnings && (
+              <BreakdownEntry
+                title={`${metadata.numberofHighWarnings} ${copy?.content?.highSeverityCVE} ${copy?.content?.cve}`}
+                details={`0 ${copy?.content?.vulnerableSubComponents}`}
+                Icon={
+                  <CircleTwoToneIcon
+                    sx={{ color: "red.600" }}
+                    fontSize="small"
+                  />
+                }
               />
-            }
-          />
-        </Stack>
+            )}
+            {!!metadata.numberofMedWarnings && (
+              <BreakdownEntry
+                title={`${metadata.numberofMedWarnings} ${copy?.content?.mediumSeverityCVE} ${copy?.content?.cve}`}
+                details={`0 ${copy?.content?.vulnerableSubComponents}`}
+                Icon={
+                  <CircleTwoToneIcon
+                    sx={{ color: "orange.800" }}
+                    fontSize="small"
+                  />
+                }
+              />
+            )}
+            {!!metadata.numberofLowWarnings && (
+              <BreakdownEntry
+                title={`${metadata.numberofLowWarnings} ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
+                details={`0 ${copy?.content?.vulnerableSubComponents}`}
+                Icon={
+                  <CircleTwoToneIcon
+                    sx={{ color: "purple.600" }}
+                    fontSize="small"
+                  />
+                }
+              />
+            )}
+          </Stack>
+        )}
       </Stack>
       <Stack gap={2} sx={{ width: "33%" }}>
         {id && (

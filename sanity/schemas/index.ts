@@ -6,6 +6,7 @@ import page from './page'
 import sidebarImages from './sidebarImages'
 import questions from './questions'
 import inputField from './forms/inputField'
+import images from './images'
 
 export const schemaTypes = [
   authForm,
@@ -16,4 +17,5 @@ export const schemaTypes = [
   sidebarImages,
   questions,
   inputField,
+  images,
 ]

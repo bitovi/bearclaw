@@ -44,6 +44,12 @@ export type PageCopy = {
     key: string;
     value: string;
   }>;
+  images: Array<{
+    name: string;
+    hidden: boolean;
+    altText: string;
+    url: string;
+  }>;
   inputs?: Array<QuestionType>;
   richContent?: Array<{
     _type: "content";
@@ -59,6 +65,7 @@ export type PageCopyKeyed = Omit<
   content?: Record<string, string>;
   richContent?: Record<string, PortableTextBlock[]>;
   inputs?: Record<string, QuestionType>;
+  images?: Record<string, PageCopy["images"][number]>;
 };
 
 export function isPageCopy(copy: any): copy is PageCopy {
