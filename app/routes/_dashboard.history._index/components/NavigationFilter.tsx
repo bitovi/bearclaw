@@ -12,7 +12,7 @@ import type {
 } from "~/components/input";
 
 export function NavigationFilter({
-  dropdownOptions: _dropdownOptions,
+  dropdownOptions,
   textInputProps,
   dropdownProps,
 }: {
@@ -25,9 +25,7 @@ export function NavigationFilter({
     true
   );
 
-  const dropdownOptions = [{ value: "", label: "Select a Field" }].concat(
-    _dropdownOptions
-  );
+  const placeholder = "Select a Field";
 
   return (
     <Form action="" method="get">
@@ -36,6 +34,7 @@ export function NavigationFilter({
           inputProps={{
             sx: { maxHeight: "20px", size: "medium" },
           }}
+          placeholder="Search files"
           onChange={({ target }) =>
             debounceFilterQuery({ searchString: target.value, searchField })
           }
@@ -43,7 +42,10 @@ export function NavigationFilter({
             startAdornment: (
               <SearchIcon sx={{ marginRight: 1, color: "#000000" }} />
             ),
-            sx: { height: "40px", borderRadius: "8px" },
+            sx: {
+              height: "40px",
+              borderRadius: "8px",
+            },
           }}
           defaultValue={searchString || ""}
           sx={{
@@ -69,9 +71,15 @@ export function NavigationFilter({
             }
             displayEmpty
             label={dropdownProps?.label} // To ensure MUI notched outline styling, we still need to pass a value to the label prop
-            sx={{ height: "40px", borderRadius: "8px", size: "small" }}
+            sx={{
+              height: "40px",
+              borderRadius: "8px",
+              size: "small",
+              minWidth: "180px",
+            }}
             options={dropdownOptions}
             {...dropdownProps}
+            placeholder={placeholder}
           />
         )}
       </Stack>
