@@ -71,8 +71,8 @@ export default function Route() {
         organizationSubscription?.subscriptionLevel
         ? organizationSubscription?.cancellationDate
           ? `Canceling on ${dayjs(
-            new Date(organizationSubscription?.cancellationDate * 1000)
-          ).format("MMMM DD, YYYY")}`
+              new Date(organizationSubscription?.cancellationDate * 1000)
+            ).format("MMMM DD, YYYY")}`
           : "cancel plan"
         : "update plan"
       : "subscribe to plan";
@@ -135,7 +135,7 @@ export default function Route() {
             onClick={() => setModalOpen(true)}
             disabled={
               subscriptionOption?.product.name ===
-                organizationSubscription?.subscriptionLevel
+              organizationSubscription?.subscriptionLevel
                 ? !!organizationSubscription?.cancellationDate || false
                 : false
             }

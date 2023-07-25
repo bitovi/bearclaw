@@ -29,12 +29,10 @@ describe("Account", () => {
   it("Allows User to update account information", () => {
     const loginDetails = createLoginData();
     const onboardingForm = createOnboardingData();
-    const initialCompanyName =
-      loginDetails.email.split("@")[0] + "'s Organization";
     cy.createAndVerifyAccount(loginDetails);
 
     cy.wait(1000)
-      .findByRole("link", { name: /account/i })
+      .findByRole("link", { name: /^account/i })
       .should("be.visible")
       .click({ force: true });
 
@@ -65,8 +63,7 @@ describe("Account", () => {
 
     cy.wait(1000)
       .findByLabelText(/company name/i)
-      .should("have.value", initialCompanyName)
-      .clear()
+      .should("have.value", "")
       .type(onboardingForm.companyName);
 
     cy.get("input[name='role']").should("have.value", "");

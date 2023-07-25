@@ -33,34 +33,49 @@ export function useSideNavCopy(): SideNavCopy | null {
 }
 
 /**
- * Hook to access the page copy from the parent route
+ * Hook to access all the page copy from the parent route
+ */
+export function useAllPageCopy(): Record<string, PageCopyKeyed> {
+  const matches = useMatches();
+  const pages = matches.find((match) => {
+    return match.data?.copy?.pageCopy;
+  })?.data.copy.pageCopy;
+
+  return pages.reduce((acc: Record<string, PageCopyKeyed>, page: any) => {
+    if (!isPageCopy(page)) return acc;
+    return {
+      ...acc,
+      [page.key]: {
+        ...page,
+        content: page.content?.reduce(
+          (acc, content) => ({
+            ...acc,
+            [content.key]: content.value,
+          }),
+          {}
+        ),
+        inputs: page.inputs?.reduce((acc, input) => {
+          return {
+            ...acc,
+            [input.name]: input,
+          };
+        }, {}),
+        richContent: page.richContent?.reduce(
+          (acc, content) => ({
+            ...acc,
+            [content.key]: content.value,
+          }),
+          {}
+        ),
+      },
+    };
+  }, {});
+}
+
+/**
+ * Hook to access the specific page copy from the parent route
  */
 export function usePageCopy(key: string): PageCopyKeyed | null {
-  const matches = useMatches();
-  const pages = matches.find((match) => match.data?.copy?.pageCopy)?.data.copy
-    .pageCopy;
-  if (!pages) return null;
-  const copyMatch = pages.find(
-    (page: any) => isPageCopy(page) && page.key === key
-  );
-
-  return isPageCopy(copyMatch)
-    ? {
-        ...copyMatch,
-        content: copyMatch.content?.reduce(
-          (acc, content) => ({
-            ...acc,
-            [content.key]: content.value,
-          }),
-          {}
-        ),
-        richContent: copyMatch.richContent?.reduce(
-          (acc, content) => ({
-            ...acc,
-            [content.key]: content.value,
-          }),
-          {}
-        ),
-      }
-    : null;
+  const pages = useAllPageCopy();
+  return pages[key];
 }

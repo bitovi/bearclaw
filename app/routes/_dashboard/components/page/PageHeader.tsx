@@ -1,19 +1,20 @@
 import Box from "@mui/material/Box";
 import { PageHeaderText } from "./PageHeaderText";
+import Stack from "@mui/material/Stack";
 
 type Props = {
-  headline: string;
-  description: string;
+  headline: React.ReactNode;
+  description: React.ReactNode;
   children?: React.ReactNode;
 };
 
 export function PageHeader({ headline, description, children }: Props) {
   return (
-    <Box display="flex">
+    <Stack direction={{ xs: "column", lg: "row" }} gap={{ xs: 2, lg: 0 }}>
       <Box flex="1">
         <PageHeaderText headline={headline} description={description} />
       </Box>
       <Box>{children}</Box>
-    </Box>
+    </Stack>
   );
 }

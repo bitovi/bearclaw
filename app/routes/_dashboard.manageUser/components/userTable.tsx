@@ -6,22 +6,22 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import { visuallyHidden } from "@mui/utils";
-import { useCallback, useMemo, useState } from "react";
-import { TextInput } from "~/components/input";
-import { Button } from "~/components/button";
+import { useMemo } from "react";
 
-import AddIcon from "@mui/icons-material/Add";
 import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
-import type { OrganizationMember } from "~/models/organizationUsers.server";
+import type { ChipProps } from "@mui/material/Chip";
+import type {
+  AccountStatus,
+  OrganizationMember,
+} from "~/models/organizationUsers.server";
 import { LinkPagination } from "~/components/table/LinkPagination";
-import { useFiltering } from "~/hooks/useFiltering";
 import { useSorting } from "~/hooks/useSorting";
+import { usePageCopy } from "~/routes/_dashboard/copy";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
 
 interface HeadCell {
   disablePadding: boolean;
@@ -36,7 +36,7 @@ const headCells: readonly HeadCell[] = [
     id: "name",
     numeric: false,
     disablePadding: true,
-    label: "User",
+    label: "User Name",
     supportSort: true,
   },
   {
@@ -53,7 +53,25 @@ const headCells: readonly HeadCell[] = [
     label: "Account Status",
     supportSort: true,
   },
+  {
+    id: "role",
+    numeric: false,
+    disablePadding: false,
+    label: "Role",
+    supportSort: false,
+  },
 ];
+
+const ChipColorStatus: Record<AccountStatus, Partial<ChipProps["color"]>> = {
+  Active: "primary",
+  Deleted: "error",
+};
+
+function isChipColorStatus(
+  string: any
+): string is keyof typeof ChipColorStatus {
+  return typeof string === "string" && string in ChipColorStatus;
+}
 
 interface EnhancedTableProps {
   numSelected: number;
@@ -62,12 +80,13 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
+  const copy = usePageCopy("userManagement");
   const { onSelectAllClick, numSelected, rowCount } = props;
   const { sortQuery, currentSort } = useSorting();
 
   return (
     <TableHead>
-      <TableRow>
+      <TableRow sx={{ borderBottom: "1px solid rgba(224, 224, 224, 1)" }}>
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"
@@ -93,7 +112,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                   direction={currentSort?.[headCell.id] || "asc"}
                   onClick={() => sortQuery(headCell.id)}
                 >
-                  {headCell.label}
+                  {copy?.content?.[`${"tableheader_" + headCell.id}`] ||
+                    headCell.label}
                   {active ? (
                     <Box component="span" sx={visuallyHidden}>
                       {currentSort[headCell.id] === "desc"
@@ -103,7 +123,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                   ) : null}
                 </TableSortLabel>
               ) : (
-                <>{headCell.label}</>
+                <>
+                  {copy?.content?.[`${"tableheader_" + headCell.id}`] ||
+                    headCell.label}
+                </>
               )}
             </TableCell>
           );
@@ -113,94 +136,23 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-function EnhancedTableToolbar({
-  onHandleAddUser,
-  onHandleRemoveUser,
-}: {
-  onHandleRemoveUser?: () => void;
-  onHandleAddUser?: () => void;
-}) {
-  const { searchString, debounceFilterQuery } = useFiltering();
-
-  return (
-    <Toolbar
-      sx={{
-        pt: 2,
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        flexDirection: {
-          xs: "column",
-          lg: "row",
-        },
-      }}
-    >
-      <Typography
-        sx={{ flex: "1 1 100%" }}
-        variant="h6"
-        id="tableTitle"
-        component="div"
-      >
-        Organization Users
-      </Typography>
-      <Stack py={2} pr={2} gap={2} direction="row" alignItems="center">
-        <TextInput
-          name="search"
-          label="Search"
-          inputProps={{
-            sx: { minWidth: "300px" },
-          }}
-          onChange={({ target }) =>
-            debounceFilterQuery({ searchString: target.value, searchField: "" })
-          }
-          defaultValue={searchString}
-          sx={{ minWidth: "200px" }}
-        />
-        {onHandleRemoveUser && (
-          <Button
-            variant={"buttonMedium"}
-            sx={{
-              border: "1px solid rgba(0, 0, 0, 0.87)",
-              height: "100%",
-              maxHeight: "36px",
-            }}
-            onClick={onHandleRemoveUser}
-            name="remove"
-          >
-            <Typography>Remove</Typography>
-          </Button>
-        )}
-        {onHandleAddUser && (
-          <Button
-            variant={"contained"}
-            sx={{
-              height: "100%",
-              maxHeight: "36px",
-            }}
-            onClick={onHandleAddUser}
-            name="add"
-          >
-            <AddIcon />
-            <Typography>New</Typography>
-          </Button>
-        )}
-      </Stack>
-    </Toolbar>
-  );
-}
+const stringAvatar = (str: string) =>
+  str
+    .split(" ")
+    .map((str) => str.charAt(0).toUpperCase())
+    .join("");
 
 export function UserTable({
   users,
   totalUsers,
-  handleAddUser,
-  handleRemoveUser,
+  selected,
+  setSelected,
 }: {
   users: OrganizationMember[];
   totalUsers: number | null;
-  handleRemoveUser?: (userIds: readonly string[]) => void;
-  handleAddUser?: () => void;
+  selected: string[];
+  setSelected: (users: string[]) => void;
 }) {
-  const [selected, setSelected] = useState<readonly string[]>([]);
-
   const nonOwnerUsers = useMemo(() => users.filter((n) => !n.owner), [users]);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,9 +164,12 @@ export function UserTable({
     setSelected([]);
   };
 
-  const handleClick = (_event: React.MouseEvent<unknown>, id: string) => {
+  const handleClick = (
+    _event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    id: string
+  ) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly string[] = [];
+    let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -234,17 +189,9 @@ export function UserTable({
 
   const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
-  const onHandleRemoveUser = useCallback(() => {
-    handleRemoveUser && handleRemoveUser(selected);
-  }, [handleRemoveUser, selected]);
-
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar
-          onHandleAddUser={handleAddUser}
-          onHandleRemoveUser={selected.length ? onHandleRemoveUser : undefined}
-        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -266,15 +213,22 @@ export function UserTable({
                     hover
                     onClick={
                       row.owner
-                        ? () => { }
-                        : (event) => handleClick(event, row.id)
+                        ? () => {}
+                        : (
+                            event: React.MouseEvent<
+                              HTMLTableRowElement,
+                              MouseEvent
+                            >
+                          ) => handleClick(event, row.id)
                     }
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
                     key={row.name}
                     selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
+                    sx={{
+                      cursor: "pointer",
+                    }}
                   >
                     <TableCell padding="checkbox">
                       {!row.owner && (
@@ -288,18 +242,45 @@ export function UserTable({
                         />
                       )}
                     </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="left">{row.email}</TableCell>
-                    <TableCell align="left">
-                      <Chip label={row.accountStatus} />
-                    </TableCell>
+                    {Object.entries(row).map(([key, value], i) => {
+                      if (key === "id" || key === "owner") return null;
+                      if (i === 0) {
+                        return (
+                          <TableCell
+                            key={key}
+                            component="th"
+                            id={labelId}
+                            scope="row"
+                            padding="none"
+                          >
+                            <Stack direction="row" alignItems="center" gap={1}>
+                              <Avatar
+                                sx={{
+                                  backgroundColor: "rgba(72, 90, 255, 1)",
+                                  color: "#FFF",
+                                }}
+                                component="span"
+                              >
+                                {stringAvatar(value.toString())}
+                              </Avatar>
+                              {value}
+                            </Stack>
+                          </TableCell>
+                        );
+                      }
+                      if (key === "accountStatus" && isChipColorStatus(value)) {
+                        return (
+                          <TableCell align="left" key={key}>
+                            <Chip
+                              variant="outlined"
+                              color={ChipColorStatus[value]}
+                              label={value}
+                            />
+                          </TableCell>
+                        );
+                      }
+                      return <TableCell key={key}>{value}</TableCell>;
+                    })}
                   </TableRow>
                 );
               })}

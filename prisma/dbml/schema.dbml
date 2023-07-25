@@ -18,6 +18,12 @@ Table User {
   firstName String
   lastName String
   phone String
+  role String
+  experienceMin Int
+  experienceMax Int
+  teamSizeMin Int
+  teamSizeMax Int
+  companyName String
 }
 
 Table OrganizationUsers {
@@ -29,16 +35,12 @@ Table OrganizationUsers {
   orgUsersEdit Boolean [not null]
   orgUsersCreate Boolean [not null]
   owner Boolean [not null, default: true]
-  accountStatus String
+  accountStatus String [not null]
+  role String [not null, default: 'Member']
   organization Organization [not null]
   organizationId String [not null]
   user User [not null]
   userId String [not null]
-  role String
-  experienceMin Int
-  experienceMax Int
-  teamSizeMin Int
-  teamSizeMax Int
 
   indexes {
     (userId, organizationId) [unique]

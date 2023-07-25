@@ -1,4 +1,5 @@
 import type { PortableTextBlock } from "@portabletext/types";
+import type { QuestionType } from "~/services/sanity/copy/questions/types";
 
 export type CopyLink = {
   _type: "link";
@@ -34,6 +35,7 @@ export type PageCopy = {
   _id: string;
   key: string;
   breadcrumb: string;
+  breadcrumbIcon: string;
   title: string;
   headline: string;
   subNavLinks?: Array<CopyLink>;
@@ -42,6 +44,7 @@ export type PageCopy = {
     key: string;
     value: string;
   }>;
+  inputs?: Array<QuestionType>;
   richContent?: Array<{
     _type: "content";
     key: string;
@@ -49,9 +52,13 @@ export type PageCopy = {
   }>;
 };
 
-export type PageCopyKeyed = Omit<PageCopy, "content" | "richContent"> & {
+export type PageCopyKeyed = Omit<
+  PageCopy,
+  "content" | "richContent" | "inputs"
+> & {
   content?: Record<string, string>;
   richContent?: Record<string, PortableTextBlock[]>;
+  inputs?: Record<string, QuestionType>;
 };
 
 export function isPageCopy(copy: any): copy is PageCopy {

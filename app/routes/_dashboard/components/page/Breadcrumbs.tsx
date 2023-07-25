@@ -4,43 +4,65 @@ import MuiBreadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { IconFromString } from "~/components/iconFromString/IconFromString";
-import { useSideNavCopy } from "~/routes/_dashboard/copy";
+import { usePageCopy, useSideNavCopy } from "~/routes/_dashboard/copy";
 import { toTitleCase } from "~/utils/string/toTitleCase";
 
+function findTopNavMatch(
+  sideNavCopy: ReturnType<typeof useSideNavCopy>,
+  path: string
+) {
+  return sideNavCopy?.links.find(
+    (link) => link.to.match(/\w+/)?.[0]?.toLowerCase() === path.toLowerCase()
+  );
+}
+
+function findSubNavMatch(
+  pageCopy: ReturnType<typeof usePageCopy>,
+  path: string
+) {
+  return pageCopy?.subNavLinks?.find(
+    (link) => link.to.split("/").pop()?.toLowerCase() === path.toLowerCase()
+  );
+}
+
 export function Breadcrumbs() {
-  const copy = useSideNavCopy();
+  const sideNavCopy = useSideNavCopy();
   const location = useLocation();
   const pathnames = location.pathname.split("/").filter((x) => x);
+  const pageCopy = usePageCopy(pathnames[0]);
 
   return (
     <MuiBreadcrumbs aria-label="breadcrumb">
       {pathnames.map((path, index) => {
-        const match = copy?.links.find(
-          (link) =>
-            link.to.replace("/", "").toLowerCase() === path.toLowerCase()
-        );
+        const page = index === 0 ? pageCopy : null;
+        const navLink =
+          page && page?.breadcrumb && page.breadcrumbIcon
+            ? null
+            : findTopNavMatch(sideNavCopy, path) ||
+              findSubNavMatch(pageCopy, path);
         const last = index === pathnames.length - 1;
         const to = `/${pathnames.slice(0, index + 1).join("/")}`;
 
-        return last ? (
-          <Box display="flex" gap="0.5rem" color="primary.main" key={to}>
-            <IconFromString icon={match?.icon || ""} />
-            <Typography color="text.primary">
-              {match?.text || toTitleCase(path)}
-            </Typography>
-          </Box>
-        ) : (
+        const linkProps = last
+          ? ({ component: "div", underline: "none" } as const)
+          : ({ component: RouterLink, to, underline: "hover" } as const);
+
+        return (
           <Link
-            component={RouterLink}
-            underline="hover"
-            color="inherit"
-            to={to}
+            {...linkProps}
             key={to}
+            display="flex"
+            gap="0.5rem"
+            color="grey.800"
           >
-            <Box display="flex" gap="0.5rem" color="primary.main">
-              <IconFromString icon={match?.icon || ""} />
-              {match?.text || toTitleCase(path)}
+            <Box color={last ? "primary.main" : undefined}>
+              <IconFromString
+                icon={page?.breadcrumbIcon || navLink?.icon || ""}
+              />
             </Box>
+            <Typography color="text.primary">
+              {page?.breadcrumb || navLink?.text || toTitleCase(path)}
+            </Typography>
           </Link>
         );
       })}

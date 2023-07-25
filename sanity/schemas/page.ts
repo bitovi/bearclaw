@@ -1,3 +1,5 @@
+import {icons} from '../../app/components/iconFromString/IconFromString'
+
 export default {
   name: 'page',
   type: 'document',
@@ -14,6 +16,15 @@ export default {
       type: 'string',
       title: 'Breadcrumb text',
       description: 'How the page will appear in the breadcrumb trail',
+    },
+    {
+      name: 'breadcrumbIcon',
+      type: 'string',
+      title: 'Breadcrumb Icon',
+      description: 'Optional: If present, MUI icon will appear to the left of the breadcrumb text',
+      options: {
+        list: Object.keys(icons).map((key) => ({title: key, value: key})),
+      },
     },
     {
       name: 'title',
@@ -33,6 +44,14 @@ export default {
         'Optional links that display in the sub-navigation on some pages. Changing the order here will change the order in the UI.',
       type: 'array',
       of: [{type: 'link'}],
+    },
+    {
+      name: 'inputs',
+      type: 'array',
+      title: 'Inputs',
+      description:
+        'Any input fields that might appear on the page, such as a textbox or a dropdown select',
+      of: [{type: 'inputField'}],
     },
     {
       name: 'content',

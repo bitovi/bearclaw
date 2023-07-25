@@ -7,7 +7,7 @@ describe("Legal", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to Legal page
-    cy.findByRole("link", { name: /account/i })
+    cy.findByRole("link", { name: /^account/i })
       .should("be.visible")
       .click({ force: true });
 

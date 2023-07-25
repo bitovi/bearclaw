@@ -6,65 +6,49 @@ import { NoResults } from "./components/noResults";
 import SearchTable, { SkeletonTable } from "~/components/table";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
-import { parseFilterParam } from "~/utils/parseFilterParam";
 import { getOrgandUserId } from "~/session.server";
+import { Page, PageHeader } from "../_dashboard/components/page";
+import { Typography } from "@mui/material";
+import { usePageCopy } from "../_dashboard/copy";
 
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page") || "1";
+  const perPage = url.searchParams.get("perPage") || "10";
+  const sort = url.searchParams.get("sort");
+  const search = url.searchParams.get("query");
+  // if user vists /search with no query, return no results
+  if (!search) {
+    return json({
+      search: "",
+      error: "",
+      rsboms: null,
+    });
+  }
+
   try {
-    const url = new URL(request.url);
-    const page = url.searchParams.get("page");
-    const perPage = url.searchParams.get("perPage");
-    const filter = url.searchParams.get("filter");
-    const sort = url.searchParams.get("sort");
-
-    // if user vists /search with no query, return no results
-    if (!filter)
-      return json({
-        error: "",
-        dataObjectList: null,
-        filenameList: null,
-      });
-
-    // TODO Resolve this
-    // On our end manage making separate queries to Data Object and Filename until Search logic/API can be settled
-    const { _searchString } = parseFilterParam(filter);
-
-    if (!_searchString) {
-      return json({
-        error: "",
-        dataObjectList: null,
-        filenameList: null,
-      });
-    }
-
-    const dataObjectList = await retrieveRSBOMList({
+    const rsboms = await retrieveRSBOMList({
       userId,
       organizationId,
       page,
       perPage,
-      filter: `contains=(dataObject,${_searchString})`,
-      sort,
-    });
-    const filenameList = await retrieveRSBOMList({
-      userId,
-      organizationId,
-      page,
-      perPage,
-      filter: `contains=(filename,${_searchString})`,
+      search,
       sort,
     });
 
-    // //
-
-    return json({ dataObjectList, filenameList, error: "" });
+    return json({
+      search,
+      rsboms,
+      error: ""
+    });
   } catch (e) {
     const error = (e as Error).message;
-    console.error(error);
+    console.error("ERROR: ", error);
     return json({
       error,
-      dataObjectList: null,
-      filenameList: null,
+      search,
+      rsboms: null,
     });
   }
 }
@@ -82,27 +66,24 @@ const tableHeaders = [
   { label: "Status", value: "completedStatus", sortable: true },
 ];
 
-export default function Route() {
-  const { dataObjectList, filenameList, error } =
-    useLoaderData<typeof loader>();
+export function Results() {
+  const {
+    rsboms,
+    error,
+  } = useLoaderData<typeof loader>();
 
   const navigation = useNavigation();
 
   if (error) {
     return <Box>{error}</Box>;
   }
-
-  if (
-    (!dataObjectList && !filenameList) ||
-    (!dataObjectList.data.length && !filenameList.data.length)
-  ) {
+  if (!rsboms || rsboms.data.length === 0) {
     return <NoResults />;
   }
 
   if (navigation.state === "loading") {
     return (
       <SkeletonTable
-        searchFields={[]}
         headers={[
           "Id",
           "Filename",
@@ -116,25 +97,43 @@ export default function Route() {
   }
 
   return (
-    <Box paddingY={2}>
-      <SearchTable<RSBOMListEntry>
-        tableData={dataObjectList.data || undefined}
-        // TODO Disabled until Search API is determined
-        // totalItems={dataObjectList.metadata?.page.total}
-        tableTitle="Search By Data Object"
-        linkKey="dataObject"
-        headers={tableHeaders}
-        tableContainerStyles={{ maxHeight: "600px" }}
+    <SearchTable<RSBOMListEntry>
+      tableData={rsboms.data || undefined}
+      totalItems={rsboms.metadata?.page.total}
+      linkKey="dataObject"
+      tableTitle=""
+      headers={tableHeaders}
+      tableContainerStyles={{ maxHeight: "600px" }}
+    />
+  );
+}
+
+export default function Route() {
+  const {
+    search,
+    error,
+    rsboms,
+  } = useLoaderData<typeof loader>();
+  const copy = usePageCopy("search")
+
+  const hasResults = !error && rsboms?.data.length;
+  return (
+    <Page>
+      <PageHeader
+        headline={(
+          <span>
+            {copy?.headline || "Search"}:{" "}
+            <Typography fontSize="inherit" fontWeight="inherit" component="span" color="primary.main">
+              {search || ""}
+            </Typography>
+          </span>
+        )}
+        description={hasResults
+          ? copy?.content?.hasResults || "Here are the files we found based on your search."
+          : copy?.content?.noResults || "No matches found at this time. Please adjust your search query for better results."
+        }
       />
-      <SearchTable<RSBOMListEntry>
-        tableData={filenameList.data || undefined}
-        // TODO Disabled until Search API is determined
-        // totalItems={filenameList.metadata?.page.total}
-        tableTitle="Search By Filename"
-        linkKey="dataObject"
-        headers={tableHeaders}
-        tableContainerStyles={{ maxHeight: "600px" }}
-      />
-    </Box>
+      <Results />
+    </Page>
   );
 }

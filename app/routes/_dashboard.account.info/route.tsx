@@ -2,9 +2,6 @@ import { Box, Stack, Typography } from "@mui/material";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { getUser } from "~/session.server";
 import { json } from "@remix-run/node";
-import { getOwnerOrganization } from "~/models/organization.server";
-import { retrieveOrganizationUser } from "~/models/organizationUsers.server";
-import invariant from "tiny-invariant";
 import { useLoaderData } from "@remix-run/react";
 import { rangeToText } from "~/routes/_auth._sidebar.onboarding/data.server";
 import { FormCard } from "~/components/formCard";
@@ -26,27 +23,6 @@ export async function loader({ request }: LoaderArgs) {
       }
     );
   }
-  const organization = await getOwnerOrganization({ userId: user.id });
-
-  if (!organization) {
-    return json(
-      {
-        success: false,
-        accountInfo: null,
-        accountQuestions: null,
-        error: "User's own organization not found",
-      },
-      {
-        status: 401,
-      }
-    );
-  }
-
-  const organizationUser = await retrieveOrganizationUser({
-    userId: user.id,
-    organizationId: organization.id,
-  });
-  invariant(organizationUser, "User must have an organization to update");
   const { accountQuestionsCopy } = await fetchQuestions();
 
   return json(
@@ -59,16 +35,10 @@ export async function loader({ request }: LoaderArgs) {
         email: user.email,
         emailSecondary: user.emailSecondary,
         phone: user.phone,
-        companyName: organization.name,
-        levelOfExperience: rangeToText(
-          organizationUser.experienceMin,
-          organizationUser.experienceMax
-        ),
-        teamSize: rangeToText(
-          organizationUser.teamSizeMin,
-          organizationUser.teamSizeMax
-        ),
-        role: organizationUser.role,
+        companyName: user.companyName,
+        levelOfExperience: rangeToText(user.experienceMin, user.experienceMax),
+        teamSize: rangeToText(user.teamSizeMin, user.teamSizeMax),
+        role: user.role,
       },
       error: "",
     },

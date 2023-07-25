@@ -6,11 +6,17 @@ import Select from "@mui/material/Select";
 import type { SelectProps } from "@mui/material/Select";
 import { useId } from "react";
 
-type Props = Omit<SelectProps, "error"> & {
+export type DropdownOption = {
+  value: string;
+  label: string;
+};
+
+export type DropdownProps = Omit<SelectProps, "error"> & {
   label?: string;
   labelPosition?: number;
   error?: boolean | string | null;
   disabled?: boolean;
+  fullWidth?: boolean;
   options: Array<{
     label?: string;
     value: string | number;
@@ -25,12 +31,13 @@ export function Dropdown({
   disabled,
   error,
   labelPosition,
+  fullWidth,
   ...props
-}: Props) {
+}: DropdownProps) {
   const domId = useId();
 
   return (
-    <FormControl fullWidth disabled={disabled} error={!!error}>
+    <FormControl fullWidth={fullWidth} disabled={disabled} error={!!error}>
       <InputLabel id={domId} sx={{ top: labelPosition || 0 }}>
         {label}
       </InputLabel>

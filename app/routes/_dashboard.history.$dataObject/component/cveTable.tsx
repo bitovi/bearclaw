@@ -55,10 +55,18 @@ export function CVETable({
             onChange={handleToggle}
             exclusive
           >
-            <ToggleButton value="row" aria-label="View CVE List">
+            <ToggleButton
+              value="row"
+              aria-label="View CVE List"
+              disabled={orientation === "row"}
+            >
               <ViewListIcon />
             </ToggleButton>
-            <ToggleButton value="column" aria-label="View CVE Grid">
+            <ToggleButton
+              value="column"
+              aria-label="View CVE Grid"
+              disabled={orientation === "column"}
+            >
               <GridViewIcon />
             </ToggleButton>
           </ToggleButtonGroup>
@@ -80,6 +88,7 @@ export function CVETable({
                 "CVE Name Not Found"
               }
               rating={cve.rating}
+              score={cve.score}
               subcomponentCount={cve.subcomponents?.length}
               date={cve.date}
               description={cve.description}

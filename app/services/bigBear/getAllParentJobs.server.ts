@@ -1,8 +1,9 @@
 import type {
   ApiRequestParams,
   ApiResponseWrapper,
-} from "~/models/apiUtils.server";
-import { buildApiSearchParams } from "~/models/apiUtils.server";
+} from "~/services/bigBear/utils.server";
+import { buildApiSearchParams } from "~/services/bigBear/utils.server";
+import { bearFetch } from "./bearFetch.server";
 
 // Example response
 // {
@@ -19,7 +20,7 @@ import { buildApiSearchParams } from "~/models/apiUtils.server";
 //   "processingTime": 0.028655666974373162
 // }
 
-type UploadStatusResponse = ApiResponseWrapper<
+type ParentJobResponse = ApiResponseWrapper<
   Array<{
     _id: string;
     dateAnalyzed: string;
@@ -30,7 +31,7 @@ type UploadStatusResponse = ApiResponseWrapper<
   }>
 >;
 
-export type UploadStatus = {
+export type ParentJob = {
   _id: string;
   analyzedAt: string;
   filename: string;
@@ -39,9 +40,9 @@ export type UploadStatus = {
   type: string; // TODO: make this an enum
 };
 
-function transformApiUploadStatus(
-  job: UploadStatusResponse["data"][number]
-): UploadStatus {
+function transformApiParentJob(
+  job: ParentJobResponse["data"][number]
+): ParentJob {
   return {
     _id: job._id,
     analyzedAt: job.dateAnalyzed,
@@ -52,18 +53,15 @@ function transformApiUploadStatus(
   };
 }
 
-export const getProcessingStatus = async (params: ApiRequestParams) => {
+export const getAllParentJobs = async (params: ApiRequestParams) => {
   try {
-    const response = await fetch(
-      `${
-        process.env.BEARCLAW_URL
-      }/claw/get_processing_status?${buildApiSearchParams(params)}`
+    const response = await bearFetch(
+      `/claw/get_all_parent_jobs?${buildApiSearchParams(params)}`
     );
-    const json: UploadStatusResponse = await response.json();
-
+    const json: ParentJobResponse = await response.json();
     return {
       ...json,
-      data: json.data.map((job) => transformApiUploadStatus(job)),
+      data: json.data.map((job) => transformApiParentJob(job)),
     };
   } catch (error) {
     console.error(error);

@@ -1,4 +1,5 @@
-import { buildApiSearchParams } from "~/models/apiUtils.server";
+import { buildApiSearchParams } from "~/services/bigBear/utils.server";
+import { bearFetch } from "./bearFetch.server";
 
 type ApiKeyMetrics = {
   metadata: {
@@ -20,10 +21,8 @@ type Params = {
 
 export const getKeyMetrics = async (params: Params) => {
   try {
-    const response = await fetch(
-      `${process.env.BEARCLAW_URL}/bear/get_metadata?${buildApiSearchParams(
-        params
-      )}`
+    const response = await bearFetch(
+      `/bear/get_metadata?${buildApiSearchParams(params)}`
     );
     const json: ApiKeyMetrics = await response.json();
     return json.metadata;

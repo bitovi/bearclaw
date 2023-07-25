@@ -103,6 +103,7 @@ jobs:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
       BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
+      BEARCLAW_AUTH: ${{ secrets.BEARCLAW_AUTH }}
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -139,6 +140,7 @@ jobs:
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
           BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
+          BEARCLAW_AUTH: ${{ secrets.BEARCLAW_AUTH }}
 
   build:
     name: 🐳 Build
@@ -152,6 +154,7 @@ jobs:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
       BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
+      BEARCLAW_AUTH: ${{ secrets.BEARCLAW_AUTH }}
 
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -220,6 +223,7 @@ jobs:
       SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
       BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
+      BEARCLAW_AUTH: ${{ secrets.BEARCLAW_AUTH }}
 
     steps:
       - name: 🛑 Cancel Previous Runs

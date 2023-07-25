@@ -24,9 +24,11 @@ declare module "@mui/material/styles" {
       low: string;
       medium: string;
       high: string;
+      critical: string;
     };
     red?: {
       600: string;
+      800: string;
     };
     orange?: {
       800?: string;
@@ -43,6 +45,7 @@ declare module "@mui/material/Button" {
     buttonMedium: true;
     buttonLargeOutlined: true;
     whiteOutlined: true;
+    mediumOutlined: true;
   }
 }
 
@@ -73,9 +76,11 @@ const theme = createTheme({
       low: "#5E35B1",
       medium: "#EF6C00",
       high: "#E53935",
+      critical: "#b71c1c",
     },
     red: {
       600: "#E53935",
+      800: "#b71c1c",
     },
     orange: {
       800: "#EF6C00",
@@ -136,7 +141,7 @@ const theme = createTheme({
       fontStyle: "normal",
       fontWeight: 400,
       fontSize: "16px",
-      lineHeight: "150%",
+      lineHeight: "24px",
       letterSpacing: "0.15px",
     },
     body2: {
@@ -156,6 +161,8 @@ const theme = createTheme({
           },
           style: {
             backgroundColor: "#F5F5F5",
+            boxShadow: "none",
+            padding: "4px 32px",
           },
         },
       ],
@@ -248,6 +255,20 @@ const theme = createTheme({
             "&:hover": {
               backgroundColor: "rgba(255, 255, 255, 0.1",
             },
+          },
+        },
+        {
+          props: { variant: "mediumOutlined" },
+          style: {
+            color: "#0037FF",
+            backgroundColor: "transparent",
+            border: "1px solid #0037FF",
+            borderRadius: "8px",
+            padding: "6px, 16px, 6px, 16px",
+            font: "Inter",
+            weight: "500",
+            fontSize: "14px",
+            lineHeight: "24px",
           },
         },
         {

@@ -23,7 +23,7 @@ export function ButtonLink({
       component={to ? Link : "div"}
       aria-disabled={!to}
       to={to}
-      prefetch={prefetch ?? "intent"}
+      prefetch={prefetch}
       variant={variant}
       sx={{
         ...sx,

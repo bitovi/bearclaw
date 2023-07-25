@@ -9,18 +9,15 @@ import background from "./background.png";
 const variants = {
   files: {
     icon: <FolderIcon />,
-    background:
-      `linear-gradient(189deg, rgba(0, 25, 48, 0.80) 17.19%, rgba(0, 180, 104, 0.72) 100%)`,
+    background: `linear-gradient(189deg, rgba(0, 25, 48, 0.80) 17.19%, rgba(0, 180, 104, 0.72) 100%)`,
   },
   vulnerabilities: {
     icon: <ShieldIcon />,
-    background:
-      `linear-gradient(189deg, rgba(0, 12, 122, 0.90) 0%, rgba(136, 0, 82, 0.72) 100%)`,
+    background: `linear-gradient(189deg, rgba(0, 12, 122, 0.90) 0%, rgba(136, 0, 82, 0.72) 100%)`,
   },
   cves: {
     icon: <WarningIcon />,
-    background:
-      `linear-gradient(189deg, rgba(177, 0, 0, 0.80) 0%, rgba(228, 178, 0, 0.64) 100%)`,
+    background: `linear-gradient(189deg, rgba(177, 0, 0, 0.80) 0%, rgba(228, 178, 0, 0.64) 100%)`,
   },
 };
 
@@ -48,7 +45,16 @@ export const MetricCard = ({ variant, count, message, to }: Props) => {
       }}
       position="relative"
     >
-      <Box component="img" src={background} position="absolute" top="0" left="0" height="100%" width="100%" sx={{ objectFit: "cover", opacity: 0.7, mixBlendMode: "color-burn" }} />
+      <Box
+        component="img"
+        src={background}
+        position="absolute"
+        top="0"
+        left="0"
+        height="100%"
+        width="100%"
+        sx={{ objectFit: "cover", opacity: 0.7, mixBlendMode: "color-burn" }}
+      />
       <Box display="flex" width="100%">
         <Box display="flex" width="4.5rem">
           {variants[variant].icon}

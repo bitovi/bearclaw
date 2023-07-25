@@ -20,6 +20,7 @@ export type ApiRequestParams = {
   page?: string | null;
   perPage?: string | null;
   filter?: string | null;
+  search?: string | null;
   sort?: string | null;
 };
 
@@ -35,6 +36,9 @@ export function buildApiSearchParams(params: ApiRequestParams): string {
     const offset = (page - 1) * perPage;
     searchParams.push(`page[offset]=${offset}`);
     searchParams.push(`page[limit]=${perPage}`);
+  }
+  if (params.search) {
+    searchParams.push(`search=${params.search}`);
   }
   if (params.sort) {
     searchParams.push(`sort=${params.sort}`);

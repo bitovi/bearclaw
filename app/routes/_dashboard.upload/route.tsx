@@ -24,6 +24,7 @@ import { bytesToDisplaySize, truncateFileName } from "~/utils/fileDisplay";
 import { useCallback, useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { unlink } from "fs/promises";
+import { bearFetch } from "~/services/bigBear/bearFetch.server";
 
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -46,8 +47,8 @@ export const action = async ({ request }: ActionArgs) => {
   formData.append("userId", userId);
   formData.append("groupId", organizationId);
 
-  const CLAW_UPLOAD = `${process.env.BEARCLAW_URL}/claw/upload`;
-  const response = await fetch(CLAW_UPLOAD, {
+  const CLAW_UPLOAD = `/claw/upload`;
+  const response = await bearFetch(CLAW_UPLOAD, {
     method: "POST",
     body: formData,
   });
@@ -60,7 +61,7 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   // delay to allow the file to appear in the loader queries
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  await new Promise((resolve) => setTimeout(resolve, 10000));
 
   return json({ success: true }, { status: 200 });
 };

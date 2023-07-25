@@ -11,11 +11,17 @@ describe("Support", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/fill out the form/i);
+    cy.findByText(/support form/i);
 
     cy.wait(2000);
 
-    cy.findByRole("textbox", { name: /subject/i }).type("I have a problem.");
+    cy.get("input[name='selectCategory']")
+      .as("selectField")
+      .should("have.value", "general");
+    cy.findByLabelText(/select category/i).click();
+    cy.findAllByText("File Upload").click();
+
+    cy.wait(500).get("@selectField").should("have.value", "file_upload");
 
     cy.findByRole("textbox", { name: /additional details/i }).type(
       "As I said before, I have a problem."
@@ -32,6 +38,6 @@ describe("Support", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/fill out the form/i);
+    cy.findByText(/support form/i);
   });
 });

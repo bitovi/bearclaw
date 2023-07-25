@@ -3,8 +3,8 @@ import Typography from "@mui/material/Typography";
 import { Breadcrumbs } from "./Breadcrumbs";
 
 type Props = {
-  headline: string;
-  description: string;
+  headline: React.ReactNode;
+  description: React.ReactNode;
 };
 
 export function PageHeaderText({ headline, description }: Props) {
