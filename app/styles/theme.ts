@@ -1,3 +1,4 @@
+import type { PaletteColorOptions } from "@mui/material/styles";
 import { createTheme } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {
@@ -16,6 +17,16 @@ declare module "@mui/material/styles" {
   }
   interface Palette {
     appbar?: Palette["primary"];
+    red: {
+      600: string;
+      800: string;
+    };
+    orange: {
+      800: string;
+    };
+    purple: {
+      600: string;
+    };
   }
 
   interface PaletteOptions {
@@ -26,16 +37,9 @@ declare module "@mui/material/styles" {
       high: string;
       critical: string;
     };
-    red?: {
-      600: string;
-      800: string;
-    };
-    orange?: {
-      800?: string;
-    };
-    purple?: {
-      600?: string;
-    };
+    red: PaletteColorOptions;
+    orange: PaletteColorOptions;
+    purple: PaletteColorOptions;
   }
 }
 
