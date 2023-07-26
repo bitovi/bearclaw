@@ -6,7 +6,7 @@ import Stripe from "stripe";
 import { getOrgId, getUser } from "./session.server";
 import type { Organization } from "./models/organization.server";
 import { isNumber } from "./utils";
-import { retrieveOrganizationUser } from "./models/organizationUsers.server";
+import { retrieveActiveOrganizationUser } from "./models/organizationUsers.server";
 import {
   getOrganizationById,
   updateOrganizationPaymentAccount,
@@ -119,7 +119,7 @@ export async function validateCredentials(request: Request) {
     }
 
     // Look up the organizationUser associated w/ user & org
-    const orgUser = await retrieveOrganizationUser({
+    const orgUser = await retrieveActiveOrganizationUser({
       userId: user.id,
       organizationId,
     });

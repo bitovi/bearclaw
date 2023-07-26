@@ -220,8 +220,9 @@ describe("User Management & Invitation", () => {
     cy.get("tbody").within(() => {
       // Two new users plus the owner
       cy.get("tr").should("have.length", 3);
-
-      cy.get("input").eq(0).click({ force: true });
+      cy.findByText(existingUserAccount.email)
+        .should("be.visible")
+        .click({ force: true });
     });
 
     cy.findByRole("button", { name: /remove/i })
@@ -250,6 +251,103 @@ describe("User Management & Invitation", () => {
 
     cy.get("tbody").within(() => {
       cy.get("tr").should("have.length", 2);
+      cy.findAllByText(existingUserAccount.email).should("have.length", 0);
+    });
+  });
+
+  it("Allows a removed OrgUser to be reinstated", () => {
+    cy.visit("/login");
+
+    cy.wait(500)
+      .findByRole("textbox", { name: /email/i })
+      .should("be.visible")
+      .type(ownerAccount.email);
+
+    cy.findByLabelText(/password/i)
+      .should("be.visible")
+      .type(ownerAccount.password);
+
+    cy.findByRole("button", { name: /log in/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByRole("link", { name: /users/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByText(/users/i);
+
+    cy.wait(500)
+      .findByRole("button", { name: /add user/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByText(/add user/i);
+
+    cy.focused().type(existingUserAccount.email);
+
+    cy.wait(200)
+      .findByRole("button", { name: /send invite/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(200).findByText(/invitation successfully sent/i);
+
+    cy.wait(1000)
+      .findByRole("link", { name: /logout/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.visit("/fakeMail");
+
+    cy.findAllByTestId(`${existingUserAccount.email}-link`)
+      .eq(0)
+      .contains(/join here/i)
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(1000)
+      .findByLabelText(/password/i)
+      .should("be.visible")
+      .type(existingUserAccount.password);
+
+    cy.findByRole("button", { name: /log in/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(1000).findByText(
+      /You have successfully joined ownerAccount-test's organization/i
+    );
+
+    cy.findByRole("link", { name: /logout/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(1000).visit("/login");
+
+    cy.wait(500)
+      .findByRole("textbox", { name: /email/i })
+      .should("be.visible")
+      .type(ownerAccount.email);
+
+    cy.findByLabelText(/password/i)
+      .should("be.visible")
+      .type(ownerAccount.password);
+
+    cy.findByRole("button", { name: /log in/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByRole("link", { name: /users/i })
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.findByText(/users/i);
+
+    cy.get("tbody").within(() => {
+      // Two new users plus the owner
+      cy.get("tr").should("have.length", 3);
+      cy.findByText(existingUserAccount.email).should("be.visible");
     });
   });
 
@@ -313,7 +411,6 @@ describe("User Management & Invitation", () => {
     cy.findByRole("table").within(() => {
       cy.findByText(/email/i).click({ force: true });
     });
-
 
     cy.wait(1000).location("search").should("include", "sort=email");
 
