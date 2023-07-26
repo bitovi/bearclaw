@@ -293,6 +293,16 @@ const theme = createTheme({
         notched: true,
       },
     },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: "#0037FF",
+        },
+        arrow: {
+          color: "#0037FF",
+        },
+      },
+    },
   },
 });
 

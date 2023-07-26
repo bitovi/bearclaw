@@ -17,6 +17,7 @@ export type DropdownProps = Omit<SelectProps, "error"> & {
   error?: boolean | string | null;
   disabled?: boolean;
   fullWidth?: boolean;
+  placeholder?: string;
   options: Array<{
     label?: string;
     value: string | number;
@@ -28,6 +29,7 @@ export function Dropdown({
   label,
   value,
   options,
+  placeholder,
   disabled,
   error,
   labelPosition,
@@ -49,6 +51,11 @@ export function Dropdown({
         value={value}
         {...props}
       >
+        {placeholder && (
+          <MenuItem disabled key="placeholder" value="">
+            {placeholder}
+          </MenuItem>
+        )}
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label || option.value}

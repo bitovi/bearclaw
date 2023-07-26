@@ -10,6 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import type { SxProps, Theme } from "@mui/material";
 import { Link } from "../link";
 import { LinkPagination } from "./LinkPagination";
@@ -183,18 +184,25 @@ function TableRowLink<T>({
                 alignItems="center"
                 justifyContent={"space-between"}
               >
-                <Box
-                  aria-label={fieldValue}
+                <Tooltip
                   title={fieldValue}
-                  sx={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    maxWidth: "100px",
-                  }}
+                  key={`tooltip-${fieldValue}-${i}`}
+                  placement="top"
+                  arrow
                 >
-                  {result}
-                </Box>
+                  <Box
+                    aria-label={fieldValue}
+                    title={fieldValue}
+                    sx={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: "100px",
+                    }}
+                  >
+                    {result}
+                  </Box>
+                </Tooltip>
                 {CopyIcon}
               </Stack>
             ) : (
