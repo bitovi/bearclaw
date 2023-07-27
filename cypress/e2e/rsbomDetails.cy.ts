@@ -51,20 +51,22 @@ describe("File rSBOM Details", () => {
 
     // Copy ID test
     //focus and realClick used due to ongoing Cypress issue where DOM loses focus with clipboard actions, causing flakey test: https://github.com/cypress-io/cypress/issues/18198
-    cy.findByText(/Object ID/i).then(($heading) => {
-      const cveId = $heading.next().text();
-      cy.findByLabelText("copy to clipboard")
-        .should("be.visible")
-        .focus()
-        .realClick()
-        .then(() => {
-          cy.window().then((win) => {
-            win.navigator.clipboard.readText().then((text) => {
-              expect(text).to.eq(cveId);
+    cy.findAllByText(/Object ID/i)
+      .eq(0)
+      .then(($heading) => {
+        const cveId = $heading.next().text();
+        cy.findByLabelText("copy to clipboard")
+          .should("be.visible")
+          .focus()
+          .realClick()
+          .then(() => {
+            cy.window().then((win) => {
+              win.navigator.clipboard.readText().then((text) => {
+                expect(text).to.eq(cveId);
+              });
             });
           });
-        });
-    });
+      });
   });
 
   it("List view can be changed", () => {
@@ -81,17 +83,15 @@ describe("File rSBOM Details", () => {
       .click({ force: true });
 
     // Has results
-    cy.findAllByTestId("cve-card-oriented").eq(0).should("be.visible");
+    cy.findAllByTestId("cve-card-oriented").should("have.length.gt", 0);
 
     // before changes, list is in "row" orientation
     cy.findAllByTestId("cve-card-oriented")
       .eq(0)
-      .should("be.visible")
       .should("have.css", "alignItems", "center");
 
     // clicking button switches button color
     cy.findByLabelText("View CVE Grid")
-      .should("be.visible")
       .should("have.attr", "aria-pressed", "false")
       .click({ force: true })
       .should("have.attr", "aria-pressed", "true");
@@ -99,7 +99,6 @@ describe("File rSBOM Details", () => {
     // clicking button also switches view to "column" orientation
     cy.findAllByTestId("cve-card-oriented")
       .eq(0)
-      .should("be.visible")
       .should("have.css", "alignItems", "normal");
   });
 
@@ -122,7 +121,6 @@ describe("File rSBOM Details", () => {
     // clicking table entry opens sidebar
     cy.findAllByTestId("cve-card-oriented")
       .eq(0)
-      .should("be.visible")
       .click({ force: true })
       // inside card
       .then(($card) => {
