@@ -6,7 +6,7 @@ import { UserTable } from "./components/userTable";
 import { getOrgId, getUserId, logout } from "~/session.server";
 import {
   deleteOrganizationUsersById,
-  retrieveOrganizationUser,
+  retrieveActiveOrganizationUser,
   retrieveUsersOfOrganization,
 } from "~/models/organizationUsers.server";
 import { useActionData, useLoaderData } from "@remix-run/react";
@@ -33,7 +33,7 @@ export async function loader({ request }: LoaderArgs) {
       throw logout(request);
     }
 
-    const orgUser = await retrieveOrganizationUser({
+    const orgUser = await retrieveActiveOrganizationUser({
       organizationId,
       userId,
     });
@@ -80,7 +80,10 @@ export async function action({ request }: ActionArgs) {
     });
   }
 
-  const orgUser = await retrieveOrganizationUser({ organizationId, userId });
+  const orgUser = await retrieveActiveOrganizationUser({
+    organizationId,
+    userId,
+  });
 
   if (!orgUser) {
     return json({

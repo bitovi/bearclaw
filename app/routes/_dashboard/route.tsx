@@ -11,7 +11,7 @@ import { getOrgId, getUser, requireUser } from "~/session.server";
 import { validateUser } from "~/models/user.server";
 import {
   getOrgUserPermissions,
-  retrieveOrganizationUser,
+  retrieveActiveOrganizationUser,
 } from "~/models/organizationUsers.server";
 import type { OrganizationUsers } from "~/models/organizationUsers.server";
 import { safeRedirect } from "~/utils";
@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderArgs) {
   let orgUser: OrganizationUsers | null = null;
 
   if (organizationId) {
-    orgUser = await retrieveOrganizationUser({
+    orgUser = await retrieveActiveOrganizationUser({
       organizationId,
       userId: user?.id,
     });

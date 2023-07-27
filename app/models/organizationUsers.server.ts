@@ -183,7 +183,7 @@ export async function retrieveOrgUserOwner({ userId }: { userId: string }) {
   });
 }
 
-export async function retrieveOrganizationUser({
+export async function retrieveActiveOrganizationUser({
   organizationId,
   userId,
 }: {
@@ -196,6 +196,27 @@ export async function retrieveOrganizationUser({
         userId,
         organizationId,
         NOT: { accountStatus: { contains: AccountStatus.DELETED } },
+      },
+    });
+
+    return orgUser;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function retrieveOrganizationUser({
+  organizationId,
+  userId,
+}: {
+  organizationId: string;
+  userId: string;
+}) {
+  try {
+    const orgUser = await prisma.organizationUsers.findFirst({
+      where: {
+        userId,
+        organizationId,
       },
     });
 
