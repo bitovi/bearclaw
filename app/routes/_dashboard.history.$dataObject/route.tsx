@@ -19,16 +19,13 @@ import { ProcessingStatus } from "./types";
 import { NoVulnerabilitiesImage } from "./component/noVulnerabilitiesImage";
 import { ProcessingResultsImage } from "./component/processingResultsImage";
 import { DownloadButton } from "./component/downloadButton";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { getAllChildJobs } from "~/services/bigBear/getAllChildJobs.server";
 import ChildJobsTable from "~/components/table";
 import Chip from "@mui/material/Chip";
 import { toTitleCase } from "~/utils/string/toTitleCase";
 import NavigateNextSharpIcon from "@mui/icons-material/NavigateNextSharp";
 import { ProcessingStatusChipColor } from "~/components/table/types";
+import { AccordionTable } from "./component/accordionTable";
+import { getAllChildJobs } from "~/services/bigBear/getAllChildJobs.server";
 
 dayjs.extend(utc);
 
@@ -95,39 +92,6 @@ export async function loader({ request, params }: LoaderArgs) {
       error,
     });
   }
-}
-
-function AccordionTable({
-  heading,
-  subheading,
-  children,
-}: {
-  heading: string;
-  subheading: string;
-  children?: JSX.Element;
-}) {
-  return (
-    <Accordion
-      sx={{
-        marginY: 4,
-        "&:before": {
-          display: "none",
-        },
-      }}
-      elevation={0}
-      defaultExpanded={true}
-    >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Stack>
-          <Typography variant="h6">{heading}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {subheading}
-          </Typography>
-        </Stack>
-      </AccordionSummary>
-      <AccordionDetails>{children}</AccordionDetails>
-    </Accordion>
-  );
 }
 
 export default function Route() {
