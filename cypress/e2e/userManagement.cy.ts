@@ -34,7 +34,8 @@ describe("User Management & Invitation", () => {
   it("Invite user", () => {
     cy.createAndVerifyAccount(ownerAccount);
 
-    cy.findByRole("link", { name: /users/i })
+    cy.findAllByRole("link", { name: /users/i })
+      .first()
       .should("be.visible")
       .click({ force: true });
 
@@ -145,7 +146,8 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /users/i })
+    cy.findAllByRole("link", { name: /users/i })
+      .first()
       .should("be.visible")
       .click({ force: true });
 
@@ -216,7 +218,8 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /users/i })
+    cy.findAllByRole("link", { name: /users/i })
+      .first()
       .should("be.visible")
       .click({ force: true });
 
@@ -276,7 +279,8 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /users/i })
+    cy.findAllByRole("link", { name: /users/i })
+      .first()
       .should("be.visible")
       .click({ force: true });
 
@@ -343,7 +347,8 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByRole("link", { name: /users/i })
+    cy.findAllByRole("link", { name: /users/i })
+      .first()
       .should("be.visible")
       .click({ force: true });
 
