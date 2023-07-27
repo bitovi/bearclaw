@@ -1,8 +1,9 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { DataCircle } from "~/components/dataCircle";
 
+import { ChartRing } from "./chartRing";
+import { useTheme } from "@mui/material/styles";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import SourceIcon from "@mui/icons-material/Source";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -74,6 +75,7 @@ interface CVEBreakdownProps {
 
 export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
   const copy = usePageCopy("detail");
+  const theme = useTheme();
 
   return (
     <Stack
@@ -87,9 +89,40 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
         borderRadius: 3,
       }}
     >
-      <Stack direction="row" gap={3}>
+      <Stack direction="row" gap={3} alignItems="center">
         <Box>
-          <DataCircle />
+          <ChartRing
+            data={[
+              {
+                name: "Critical",
+                value: metadata.numberofCriticalWarnings,
+                color: theme.palette.red[800],
+              },
+              {
+                name: "High",
+                value: metadata.numberofHighWarnings,
+                color: theme.palette.red[600],
+              },
+              {
+                name: "Medium",
+                value: metadata.numberofMedWarnings,
+                color: theme.palette.orange[800],
+              },
+              {
+                name: "Low",
+                value: metadata.numberofLowWarnings,
+                color: theme.palette.purple[600],
+              },
+            ]}
+          >
+            <Typography color="white" variant="h3">
+              {metadata.numberofCriticalWarnings +
+                metadata.numberofHighWarnings +
+                metadata.numberofMedWarnings +
+                metadata.numberofLowWarnings}
+            </Typography>
+            <Typography color="white">CVEs</Typography>
+          </ChartRing>
         </Box>
         {!!metadata.totalVulnerabilitiesCaptured && (
           <Stack gap={2} sx={{ width: "33%" }} flex={1}>
