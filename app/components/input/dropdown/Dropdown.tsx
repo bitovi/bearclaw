@@ -44,8 +44,6 @@ export function Dropdown({
         {label}
       </InputLabel>
       <Select
-        labelId={domId}
-        label={label}
         id={`select-${domId}`}
         defaultValue={options.find((o) => o.selected)?.value}
         value={value}

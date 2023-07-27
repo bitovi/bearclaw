@@ -117,12 +117,12 @@ export function Onboarding({ redirectTo, questions }: Props) {
                           {formQuestion.questionType === "select" && (
                             <Dropdown
                               fullWidth
-                              variant="filled"
                               labelPosition={10}
                               label={formQuestion.label}
                               name={formQuestion.name}
                               required={formQuestion.required}
                               options={formQuestion.optionList}
+                              defaultValue=""
                               disabled={formQuestion.disabled}
                             />
                           )}
