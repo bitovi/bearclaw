@@ -25,6 +25,10 @@ if [ "$FLY_ENV" = "enabled" ]; then
   swapoff /swapfile
   rm /swapfile
 
+else
+  # Run migrations
+  npx prisma migrate deploy
+
 fi
 
 # Finally start the app
