@@ -54,4 +54,6 @@ COPY --from=build /myapp/package.json /myapp/package.json
 COPY --from=build /myapp/start.sh /myapp/start.sh
 COPY --from=build /myapp/prisma /myapp/prisma
 
+ENV FLY_ENV="enabled"
+
 ENTRYPOINT [ "./start.sh" ]
