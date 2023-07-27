@@ -1,3 +1,10 @@
+import { AccordionDetails } from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 export function AccordionTable({
   heading,
   subheading,
