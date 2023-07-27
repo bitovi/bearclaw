@@ -15,9 +15,13 @@ import type { SxProps, Theme } from "@mui/material";
 import { Link } from "../link";
 import { LinkPagination } from "./LinkPagination";
 import { useSorting } from "~/hooks/useSorting";
-import { useTextCopy } from "~/hooks/useTextCopy";
 import { useLocation, useNavigation } from "@remix-run/react";
+import type { ButtonProps } from "@mui/material/Button";
 
+type LinkIconProps = {
+  copyValue?: string;
+  buttonProps?: ButtonProps;
+};
 interface TableProps<T> {
   tableData: Array<T> | undefined;
   tableTitle?: string;
@@ -26,6 +30,7 @@ interface TableProps<T> {
   sortableFields?: Array<keyof T>;
   onRowClick?: (entry: T) => void;
   linkKey?: keyof T;
+  linkIcon?: (props: LinkIconProps) => JSX.Element;
   totalItems?: number;
 }
 
@@ -121,15 +126,12 @@ export function SkeletonTable({
 function TableRowLink<T>({
   entry,
   linkKey,
+  linkIcon,
 }: {
   entry: T extends Record<string, any> ? T : never;
   linkKey: keyof T;
+  linkIcon: TableProps<T>["linkIcon"];
 }) {
-  const CopyIcon = useTextCopy({
-    copyValue: entry[linkKey],
-    buttonProps: { sx: { color: "action.active" } },
-  });
-
   return (
     <TableRow
       component={Link}
@@ -203,7 +205,11 @@ function TableRowLink<T>({
                     {result}
                   </Box>
                 </Tooltip>
-                {CopyIcon}
+                {linkIcon &&
+                  linkIcon({
+                    copyValue: entry[linkKey],
+                    buttonProps: { sx: { color: "action.active" } },
+                  })}
               </Stack>
             ) : (
               <>{result}</>
@@ -253,6 +259,7 @@ export default function InvoiceTable<T>({
   onRowClick,
   linkKey,
   totalItems,
+  linkIcon,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const { currentSort, sortQuery } = useSorting();
   const { pathname } = useLocation();
@@ -318,7 +325,12 @@ export default function InvoiceTable<T>({
             <TableBody component={Box} role="rowgroup">
               {tableData.map((entry, i) => {
                 return linkKey ? (
-                  <TableRowLink linkKey={linkKey} key={i} entry={entry} />
+                  <TableRowLink
+                    linkKey={linkKey}
+                    key={i}
+                    entry={entry}
+                    linkIcon={linkIcon}
+                  />
                 ) : (
                   <TableRow
                     component={Box}

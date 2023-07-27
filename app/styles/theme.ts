@@ -129,10 +129,11 @@ const theme = createTheme({
       lineHeight: "133.4%",
     },
     h6: {
+      fontFamily: "Inter",
       fontStyle: "normal",
       fontWeight: 500,
       fontSize: "20px",
-      lineHeight: 1.6,
+      lineHeight: "32px",
       letterSpacing: "0.15px",
     },
     subtitle2: {
@@ -306,6 +307,31 @@ const theme = createTheme({
           color: "#0037FF",
         },
       },
+    },
+    MuiChip: {
+      variants: [
+        {
+          props: {
+            variant: "filled",
+            color: "primary",
+          },
+          style: {
+            backgroundColor: "#0288D1",
+            color: "#FFFFFF",
+          },
+        },
+        {
+          props: {
+            variant: "outlined",
+            color: "secondary",
+          },
+          style: {
+            backgroundColor: "transparent",
+            color: "#000000",
+            borderColor: "#BDBDBD",
+          },
+        },
+      ],
     },
   },
 });

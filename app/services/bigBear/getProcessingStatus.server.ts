@@ -26,7 +26,7 @@ type UploadStatusResponse = ApiResponseWrapper<
     dateAnalyzed: string;
     filename: string;
     size: number;
-    status: string;
+    status: "complete" | "running" | "not started";
     type: string;
   }>
 >;
@@ -36,7 +36,7 @@ export type UploadStatus = {
   analyzedAt: string;
   filename: string;
   size: number;
-  status: string; // TODO: make this an enum
+  status: "complete" | "running" | "not started";
   type: string; // TODO: make this an enum
 };
 
@@ -80,10 +80,12 @@ export const getProcessingStatusById = async ({
   organizationId: string;
 }) => {
   const response = await bearFetch(
-    `/claw/get_processing_status/${dataObject}?${buildApiSearchParams({
-      userId,
-      organizationId,
-    })}`
+    `/claw/get_processing_status/${dataObject}?showChildren=true&${buildApiSearchParams(
+      {
+        userId,
+        organizationId,
+      }
+    )}`
   );
 
   const json: UploadStatusResponse = await response.json();

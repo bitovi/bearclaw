@@ -6,11 +6,7 @@ import type { IconButtonProps } from "@mui/material/IconButton";
 import type { SvgIconProps } from "@mui/material/SvgIcon";
 import { copyText } from "~/utils/copyText";
 
-/**
- * A convenience hook that generates an MUI Icon Button which internally
- * manages a copy icon to copy success icon transition
- */
-export function useTextCopy({
+export function TextCopyIcon({
   delay = 500,
   copyValue,
   iconColor = "#FFF",
@@ -18,14 +14,26 @@ export function useTextCopy({
   buttonProps,
 }: {
   delay?: number;
-  copyValue: string;
+  copyValue?: string;
   iconColor?: string;
   iconProps?: SvgIconProps;
   buttonProps?: IconButtonProps;
 }) {
   const [textCopied, setTextCopied] = useState(false);
 
-  const CopyIcon = (
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if (textCopied) {
+      timer = setTimeout(() => {
+        setTextCopied(false);
+      }, delay);
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [textCopied, delay]);
+
+  return (
     <IconButton
       aria-label="copy to clipboard"
       title="Copy to clipboard"
@@ -49,18 +57,4 @@ export function useTextCopy({
       )}
     </IconButton>
   );
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout | undefined;
-    if (textCopied) {
-      timer = setTimeout(() => {
-        setTextCopied(false);
-      }, delay);
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [textCopied, delay]);
-
-  return CopyIcon;
 }

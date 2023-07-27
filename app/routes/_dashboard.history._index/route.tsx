@@ -18,6 +18,9 @@ import { toTitleCase } from "~/utils/string/toTitleCase";
 import Stack from "@mui/material/Stack";
 import { NavigationFilter } from "./components/NavigationFilter";
 import { usePageCopy } from "../_dashboard/copy";
+import { TextCopyIcon } from "~/components/textCopyIcon";
+import { ProcessingStatus } from "../_dashboard.history.$dataObject/types";
+import { ProcessingStatusChipColor } from "~/components/table/types";
 
 dayjs.extend(utc);
 
@@ -114,6 +117,12 @@ export default function Route() {
                     { label: "Object ID", value: "_id", sortable: false },
                   ]}
                   linkKey="_id"
+                  linkIcon={({ copyValue, buttonProps }) => (
+                    <TextCopyIcon
+                      copyValue={copyValue}
+                      buttonProps={buttonProps}
+                    />
+                  )}
                   totalItems={uploads?.metadata?.page.total}
                   tableData={uploads?.data.map((upload) => ({
                     filename: upload.filename,
@@ -134,7 +143,17 @@ export default function Route() {
                         </Typography>
                       </Box>
                     ),
-                    status: <Chip label={toTitleCase(upload.status)} />,
+                    status: (
+                      <Chip
+                        variant={
+                          upload.status === ProcessingStatus.COMPLETE
+                            ? "outlined"
+                            : "filled"
+                        }
+                        color={ProcessingStatusChipColor[upload.status]}
+                        label={toTitleCase(upload.status)}
+                      />
+                    ),
                     _id: upload._id,
                   }))}
                 />

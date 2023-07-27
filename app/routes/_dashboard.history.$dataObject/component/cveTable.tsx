@@ -41,7 +41,7 @@ export function CVETable({
       : { xs: "1fr" };
 
   return (
-    <Box paddingTop={4}>
+    <Box paddingY={4}>
       <Stack position="relative">
         <Typography variant="h6" color="text.primary">
           {copy?.content?.cveList}
