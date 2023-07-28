@@ -259,6 +259,7 @@ export default function Route() {
         formMethod={formMethod}
         onClose={() => setFormMethod(undefined)}
         selectedUsers={selected}
+        key={formMethod} // ensure the component state wipes via remount when the form submits
       />
 
       {/* TODO: Consider global context notification management */}
