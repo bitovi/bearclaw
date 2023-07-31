@@ -17,6 +17,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useHeaderMenuCopy } from "../../copy";
 import type { loader } from "../../route";
 import type { CopyLink } from "../../types";
+import { getUserFullName } from "~/utils/user/getUserFullName";
 
 const defaultMenu: Array<Omit<CopyLink, "_key" | "_type">> = [
   {
@@ -59,8 +60,7 @@ export default function AccountMenu() {
 
   const links = copy?.links && copy.links.length > 0 ? copy.links : defaultMenu;
 
-  // TODO: fix this type
-  const userFullName = (user as any)?.fullName as string;
+  const userFullName = user && getUserFullName(user);
 
   return (
     <Box display="flex" gap={2} alignItems="center">
@@ -123,7 +123,9 @@ export default function AccountMenu() {
             <Typography variant="body1">{userFullName}</Typography>
           ) : null}
           {user?.email ? (
-            <Typography variant="body2">{user.email}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {user.email}
+            </Typography>
           ) : null}
         </Box>
         <Box component={Divider} marginY={1} />
