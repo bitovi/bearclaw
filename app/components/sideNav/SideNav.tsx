@@ -80,7 +80,7 @@ export function SideNav({
                     <Typography fontSize="0.875rem">{item.text}</Typography>
                   </ListItemText>
                 </ListItemButton>
-                {dividerAfter && dividerAfter === index && (
+                {dividerAfter && dividerAfter === index + 1 && (
                   <Divider component="li" sx={{ marginY: 2 }} />
                 )}
               </React.Fragment>

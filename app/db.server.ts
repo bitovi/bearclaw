@@ -1,9 +1,24 @@
 import { PrismaClient } from "@prisma/client";
 
-let prisma: PrismaClient;
+function extendedPrismaClient() {
+  return new PrismaClient().$extends({
+    result: {
+      user: {
+        fullName: {
+          needs: { firstName: true, lastName: true },
+          compute(user) {
+            return `${user.firstName} ${user.lastName}`.trim();
+          },
+        },
+      },
+    },
+  });
+}
+
+let prisma: ReturnType<typeof extendedPrismaClient>;
 
 declare global {
-  var __db__: PrismaClient;
+  var __db__: ReturnType<typeof extendedPrismaClient>;
 }
 
 // this is needed because in development we don't want to restart
@@ -11,10 +26,10 @@ declare global {
 // create a new connection to the DB with every change either.
 // in production we'll have a single connection to the DB.
 if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient();
+  prisma = extendedPrismaClient();
 } else {
   if (!global.__db__) {
-    global.__db__ = new PrismaClient();
+    global.__db__ = extendedPrismaClient();
   }
   prisma = global.__db__;
   prisma.$connect();

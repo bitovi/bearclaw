@@ -1,11 +1,17 @@
 import { useMatches } from "@remix-run/react";
 import { getClient } from "~/services/sanity/getClient";
-import type { PageCopy, PageCopyKeyed, SideNavCopy } from "./types";
-import { isPageCopy, isSideNavCopy } from "./types";
+import type {
+  HeaderMenuCopy,
+  PageCopy,
+  PageCopyKeyed,
+  SideNavCopy,
+} from "./types";
+import { isHeaderMenuCopy, isPageCopy, isSideNavCopy } from "./types";
 
 export async function fetchDashboardCopy() {
   const query = `*[
     _id == "dashboardSideNav" ||
+    _id == "dashboardHeaderNav" ||
     _type == "page"
   ]{
     ...,
@@ -21,13 +27,25 @@ export async function fetchDashboardCopy() {
     const copy = await getClient().fetch<[SideNavCopy | PageCopy] | null>(
       query
     );
+    const headerMenuCopy = copy?.find(isHeaderMenuCopy);
     const sideNavCopy = copy?.find(isSideNavCopy);
     const pageCopy = copy?.filter(isPageCopy);
 
-    return { sideNavCopy, pageCopy };
+    return { headerMenuCopy, sideNavCopy, pageCopy };
   } catch (err) {
     console.log(err);
   }
+}
+
+/**
+ * Hook to access the header copy from the parent route
+ */
+export function useHeaderMenuCopy(): HeaderMenuCopy | null {
+  const matches = useMatches();
+  const copyMatch = matches.find((match) => match.data.copy?.headerMenuCopy)
+    ?.data.copy.headerMenuCopy;
+
+  return isHeaderMenuCopy(copyMatch) ? copyMatch : null;
 }
 
 /**

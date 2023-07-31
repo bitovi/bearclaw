@@ -192,7 +192,6 @@ function TableRowLink<T>({
                 >
                   <Box
                     aria-label={fieldValue}
-                    title={fieldValue}
                     sx={{
                       whiteSpace: "nowrap",
                       overflow: "hidden",
