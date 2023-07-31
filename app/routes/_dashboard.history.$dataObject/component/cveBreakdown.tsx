@@ -64,7 +64,7 @@ interface CVEBreakdownProps {
   id: string | undefined;
   type: string | undefined;
   date: string | undefined;
-  metadata: CVEMetaData;
+  metadata?: CVEMetaData | null;
 }
 
 export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
@@ -73,7 +73,7 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
 
   return (
     <Stack
-      direction="row"
+      direction={{ xs: "column", md: "row" }}
       gap={6}
       color="#FFF"
       sx={{
@@ -83,34 +83,41 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
         borderRadius: 3,
       }}
     >
-      <Stack direction="row" gap={3} alignItems="center">
-        <Box>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        gap={3}
+        alignItems={{ xs: "unset", md: "center" }}
+      >
+        <Box
+          minWidth={{ xs: "176px", md: "unset" }}
+          minHeight={{ xs: "220px", md: "unset" }}
+        >
           <ChartRing
             data={[
               {
                 name: "Critical",
-                value: metadata.numberofCriticalWarnings,
+                value: metadata?.numberofCriticalWarnings || 1,
                 color: theme.palette.red[800],
               },
               {
                 name: "High",
-                value: metadata.numberofHighWarnings,
+                value: metadata?.numberofHighWarnings || 2,
                 color: theme.palette.red[600],
               },
               {
                 name: "Medium",
-                value: metadata.numberofMedWarnings,
+                value: metadata?.numberofMedWarnings || 1,
                 color: theme.palette.orange[800],
               },
               {
                 name: "Low",
-                value: metadata.numberofLowWarnings,
+                value: metadata?.numberofLowWarnings || 3,
                 color: theme.palette.purple[600],
               },
             ]}
           >
             <Typography color="white" variant="h3">
-              {metadata.totalVulnerabilitiesCaptured}
+              {metadata?.totalVulnerabilitiesCaptured || "N/A"}
             </Typography>
             <Typography color="white">CVEs</Typography>
           </ChartRing>
@@ -118,7 +125,7 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
 
         <Stack gap={2} sx={{ width: "33%" }} flex={1}>
           <BreakdownEntry
-            title={`${metadata.numberofCriticalWarnings || 0} ${
+            title={`${metadata?.numberofCriticalWarnings || "N/A"} ${
               copy?.content?.criticalSeverityCVE
             } ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
@@ -128,7 +135,7 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
           />
 
           <BreakdownEntry
-            title={`${metadata.numberofHighWarnings || 0} ${
+            title={`${metadata?.numberofHighWarnings || "N/A"} ${
               copy?.content?.highSeverityCVE
             } ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
@@ -138,7 +145,7 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
           />
 
           <BreakdownEntry
-            title={`${metadata.numberofMedWarnings || 0} ${
+            title={`${metadata?.numberofMedWarnings || "N/A"} ${
               copy?.content?.mediumSeverityCVE
             } ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
@@ -151,7 +158,7 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
           />
 
           <BreakdownEntry
-            title={`${metadata.numberofLowWarnings || 0} ${
+            title={`${metadata?.numberofLowWarnings || "N/A"} ${
               copy?.content?.lowSeverityCVE
             } ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}

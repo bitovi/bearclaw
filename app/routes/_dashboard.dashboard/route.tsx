@@ -24,6 +24,8 @@ export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
 
+  console.log("userId", userId);
+  console.log("groupId", organizationId);
   const keyMetrics = getKeyMetrics({
     days: 7,
     userId,
