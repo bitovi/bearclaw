@@ -223,7 +223,7 @@ describe("User Management & Invitation", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/users/i);
+    cy.findAllByText(/users/i);
 
     cy.get("tbody").within(() => {
       // Two new users plus the owner
