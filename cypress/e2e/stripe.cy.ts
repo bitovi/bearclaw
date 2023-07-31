@@ -66,7 +66,7 @@ describe("Stripe", () => {
       cy.getStripeElement("Field-cvcInput").type("123");
       cy.getStripeElement("Field-postalCodeInput").type("90210");
 
-      cy.findByRole("button").click();
+      cy.findByRole("button", { name: /subscribe/i }).click();
       cy.wait(3000);
 
       // The Overview screen after successful payment
