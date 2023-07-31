@@ -14,7 +14,11 @@ export const Header = ({
   onToggleMobileNav: () => void;
 }) => {
   return (
-    <AppBar position="static" component={"header"}>
+    <AppBar
+      position="static"
+      component={"header"}
+      sx={{ padding: { xs: "0 8px", md: "4px 32px" } }}
+    >
       <Toolbar
         component={Stack}
         direction="row"
@@ -26,7 +30,6 @@ export const Header = ({
           <IconButton
             color="primary"
             aria-label="open drawer"
-            edge="start"
             onClick={onToggleMobileNav}
           >
             <MenuIcon />
