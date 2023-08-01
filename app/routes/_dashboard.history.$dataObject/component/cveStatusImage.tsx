@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import type { PageCopyKeyed } from "~/routes/_dashboard/types";
 
-export function NoVulnerabilitiesImage({
+export function CveStatusImage({
   image,
 }: {
   image?: PageCopyKeyed["images"][number];
@@ -10,16 +10,15 @@ export function NoVulnerabilitiesImage({
   if (!image) return null;
   return (
     <Stack
-      flexGrow={1}
+      justifyContent="center"
+      alignItems={"center"}
       flex={1}
-      alignItems={{ xs: "center", md: "flex-end" }}
-      justifyContent={{ xs: "flex-end" }}
+      flexGrow={1}
+      paddingTop={4}
     >
       <Box
-        height={{ xs: "unset", lg: "75%", xl: "100%" }}
-        width={{ xs: "75%", lg: "unset" }}
-        paddingTop={{ xs: 2, md: "unset" }}
-        minWidth="478px"
+        width="100%"
+        maxWidth="672px"
         component="img"
         src={image.url}
         alt={image.altText}

@@ -9,17 +9,21 @@ import { CVECard } from "./cveCard";
 import { useState } from "react";
 import type { CveData } from "~/models/rsbomTypes";
 import { usePageCopy } from "~/routes/_dashboard/copy";
+import { ProcessingStatus } from "../types";
+import { CveStatusImage } from "./cveStatusImage";
 
 interface CveTableProps {
   cveData: CveData[];
   orientation: "column" | "row";
   handleRowClick: (id: string) => void;
+  processingStatus?: "running" | "complete" | "not started";
 }
 
 export function CVETable({
   cveData,
   orientation: _orienation = "row",
   handleRowClick = () => {},
+  processingStatus,
 }: CveTableProps) {
   const [orientation, setOrientation] = useState<"row" | "column">(_orienation);
   const copy = usePageCopy("detail");
@@ -49,7 +53,12 @@ export function CVETable({
         <Typography variant="body2" color="text.secondary">
           {copy?.content?.tableSubheader}
         </Typography>
-        <Box position="absolute" bottom={0} right={0}>
+        <Box
+          paddingTop={{ xs: 2, md: "unset" }}
+          position={{ xs: "unset", md: "absolute" }}
+          bottom={0}
+          right={0}
+        >
           <ToggleButtonGroup
             value={orientation}
             onChange={handleToggle}
@@ -72,32 +81,40 @@ export function CVETable({
           </ToggleButtonGroup>
         </Box>
       </Stack>
-      <Box
-        display="grid"
-        gridTemplateColumns={gridTemplate}
-        gap={2}
-        paddingTop={2}
-      >
-        {cveData.map((cve, i) => {
-          return (
-            <CVECard
-              key={`${cve.name}-${i}`}
-              name={
-                cve.name ||
-                copy?.content?.cveTitleNotFound ||
-                "CVE Name Not Found"
-              }
-              rating={cve.rating}
-              score={cve.score}
-              subcomponentCount={cve.subcomponents?.length}
-              date={cve.date}
-              description={cve.description}
-              orientation={orientation}
-              onRowClick={handleRowClick}
-            />
-          );
-        })}
-      </Box>
+      {processingStatus === ProcessingStatus.COMPLETE ? (
+        cveData.length ? (
+          <Box
+            display="grid"
+            gridTemplateColumns={gridTemplate}
+            gap={2}
+            paddingTop={2}
+          >
+            {cveData.map((cve, i) => {
+              return (
+                <CVECard
+                  key={`${cve.name}-${i}`}
+                  name={
+                    cve.name ||
+                    copy?.content?.cveTitleNotFound ||
+                    "CVE Name Not Found"
+                  }
+                  rating={cve.rating}
+                  score={cve.score}
+                  subcomponentCount={cve.subcomponents?.length}
+                  date={cve.date}
+                  description={cve.description}
+                  orientation={orientation}
+                  onRowClick={handleRowClick}
+                />
+              );
+            })}
+          </Box>
+        ) : (
+          <CveStatusImage image={copy?.images?.noVulnerabilities} />
+        )
+      ) : (
+        <CveStatusImage image={copy?.images?.processingResults} />
+      )}
     </Box>
   );
 }

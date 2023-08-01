@@ -21,6 +21,7 @@ export function AccordionTable({
         "&:before": {
           display: "none",
         },
+        width: "100%",
       }}
       elevation={0}
       defaultExpanded={true}

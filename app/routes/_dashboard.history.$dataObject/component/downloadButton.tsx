@@ -20,8 +20,8 @@ export const DownloadButton = ({
   if (!expandedRSBOM) return null;
   return (
     <Box
-      paddingTop={{ xs: 3, lg: 1 }}
-      alignSelf={{ xs: "flex-start", lg: "center" }}
+      paddingTop={{ xs: 3, md: 1 }}
+      alignSelf={{ xs: "flex-start", md: "center" }}
     >
       <Button
         LinkComponent={Link}

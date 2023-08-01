@@ -16,8 +16,6 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { retrieveRSBOMDetails } from "~/models/rsboms.server";
 import { ProcessingStatus } from "./types";
-import { NoVulnerabilitiesImage } from "./component/noVulnerabilitiesImage";
-import { ProcessingResultsImage } from "./component/processingResultsImage";
 import { DownloadButton } from "./component/downloadButton";
 import ChildJobsTable from "~/components/table";
 import Chip from "@mui/material/Chip";
@@ -115,7 +113,7 @@ export default function Route() {
   return (
     <Stack height="100%" alignItems={{ xs: "center", md: "unset" }}>
       <Stack
-        direction={{ xs: "column", lg: "row" }}
+        direction={{ xs: "column", md: "row" }}
         justifyContent="space-between"
       >
         <Stack gap={1}>
@@ -139,16 +137,16 @@ export default function Route() {
           />
         )}
       </Stack>
-      {processingStatus?.status === ProcessingStatus.COMPLETE && metadata && (
-        <Box paddingTop={4}>
-          <CVEBreakdown
-            id={processingStatus?._id}
-            type={processingStatus?.type}
-            date={processingStatus?.analyzedAt}
-            metadata={metadata}
-          />
-        </Box>
-      )}
+
+      <Box paddingTop={4}>
+        <CVEBreakdown
+          id={processingStatus?._id}
+          type={processingStatus?.type}
+          date={processingStatus?.analyzedAt}
+          metadata={metadata}
+        />
+      </Box>
+
       <AccordionTable
         heading={`Subcomponents for '${
           processingStatus?.filename || "component"
@@ -202,25 +200,17 @@ export default function Route() {
           }))}
         />
       </AccordionTable>
-      {processingStatus?.status === ProcessingStatus.COMPLETE &&
-        !!vulnerabilities.length && (
-          <CVETable
-            orientation="row"
-            cveData={vulnerabilities}
-            handleRowClick={(id: string) => {
-              setSelectedCVE(vulnerabilities.find((cve) => cve.name === id));
-              setVisible(true);
-            }}
-          />
-        )}
-      {(processingStatus?.status === ProcessingStatus.RUNNING ||
-        processingStatus?.status === ProcessingStatus.NOT_STARTED) && (
-        <ProcessingResultsImage image={copy?.images?.processingResults} />
-      )}
-      {processingStatus?.status === ProcessingStatus.COMPLETE &&
-        !vulnerabilities.length && (
-          <NoVulnerabilitiesImage image={copy?.images?.noVullnerabilities} />
-        )}
+
+      <CVETable
+        processingStatus={processingStatus?.status}
+        orientation="row"
+        cveData={vulnerabilities}
+        handleRowClick={(id: string) => {
+          setSelectedCVE(vulnerabilities.find((cve) => cve.name === id));
+          setVisible(true);
+        }}
+      />
+
       <CVEDrawer
         open={visible}
         selectedCVE={selectedCVE}
