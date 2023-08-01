@@ -186,6 +186,8 @@ export default function AccountMenu() {
             component={Link}
             to={`/organizationSwap?redirectTo=${location.pathname}&organizationId=${organization.id}`}
             onClick={handleClose}
+            sx={{ "&.Mui-disabled": { opacity: 1 } }}
+            disabled={organization.id === orgUser?.organizationId}
             selected={organization.id === orgUser?.organizationId}
           >
             <ListItemIcon>
