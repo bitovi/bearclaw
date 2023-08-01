@@ -16,6 +16,8 @@ import {
 import type { OrganizationUsers } from "~/models/organizationUsers.server";
 import { safeRedirect } from "~/utils";
 import { fetchDashboardCopy } from "./copy";
+import { NavDrawer } from "./components/NavDrawer";
+import { useState } from "react";
 
 export async function loader({ request }: LoaderArgs) {
   const isLoggedIn = await getUser(request);
@@ -68,6 +70,8 @@ export async function loader({ request }: LoaderArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <Box
       display="flex"
@@ -78,7 +82,7 @@ export default function Index() {
         overflow: "hidden",
       }}
     >
-      <Box width="13.75rem">
+      <Box width="13.75rem" display={{ xs: "none", md: "initial" }}>
         <MainSideNav />
       </Box>
       <Box
@@ -89,13 +93,17 @@ export default function Index() {
         overflow="hidden"
         bgcolor={"#F5F5F5"}
       >
-        <Header />
+        <Header onToggleMobileNav={() => setMobileMenuOpen((prev) => !prev)} />
+        <NavDrawer
+          open={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+        />
         <Box
           component={Paper}
           height="100%"
           overflow="hidden auto"
           flex="1"
-          padding={6}
+          padding={{ xs: "1rem 0.75rem", md: 6 }}
           sx={{
             backgroundColor: "white",
             borderTopLeftRadius: { xs: "unset", md: "16px" },

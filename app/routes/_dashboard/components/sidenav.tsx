@@ -1,14 +1,8 @@
 import Box from "@mui/material/Box";
-import { useLoaderData } from "@remix-run/react";
-import { SideNav } from "~/components/sideNav/SideNav";
-import type { loader } from "../route";
-import { useSideNavCopy } from "../copy";
 import { Logo } from "~/components/logo/Logo";
+import { NavLinks } from "./NavLinks";
 
 export function MainSideNav() {
-  const { permissions } = useLoaderData<typeof loader>();
-  const copy = useSideNavCopy();
-
   return (
     <Box
       position="relative"
@@ -40,11 +34,7 @@ export function MainSideNav() {
         sx={{ overflowY: "auto" }}
       >
         <Logo variant="stacked" width="124px" />
-        <SideNav
-          userPermissions={permissions}
-          dividerAfter={copy?.dividerAfter}
-          navMenu={copy?.links || []}
-        />
+        <NavLinks />
       </Box>
     </Box>
   );
