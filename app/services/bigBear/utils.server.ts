@@ -1,9 +1,6 @@
 export type ApiResponseWrapper<T> = {
   data: T;
   metadata?: {
-    totalFilesAnalyzed: number;
-    totalVulnerabilitiesCaptured: number;
-    numberofCritialWarnings: number;
     page: {
       "current-page": number;
       "per-page": number;
@@ -11,7 +8,7 @@ export type ApiResponseWrapper<T> = {
       "last-page": number;
     };
   };
-  processingTime: number;
+  processingTime?: number;
 };
 
 export type ApiRequestParams = {

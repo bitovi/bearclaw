@@ -9,6 +9,7 @@ const fixture_getProcessingStatusById = require("./fixtures/getProcessingStatusB
 const fixture_getRSBOMDetail = require("./fixtures/getRSBOMDetail.js");
 const fixture_getMetadata = require("./fixtures/getMetadata.js");
 const fixture_getCVEData = require("./fixtures/getCVEData.js");
+const fixture_getAllChildJobs = require("./fixtures/getAllChildJobs.js");
 
 const paginateResults = require("./util/paginateResults.js");
 const sortResults = require("./util/sortResults.js");
@@ -50,6 +51,9 @@ const handlers = [
   }),
   rest.get(`${baseURL}/bear/get_cve_data/*`, (req, res, ctx) => {
     return res(ctx.json(fixture_getCVEData));
+  }),
+  rest.get(`${baseURL}/claw/get_all_child_jobs/*`, (req, res, ctx) => {
+    return res(ctx.json(fixture_getAllChildJobs));
   }),
   rest.post(`${baseURL}/claw/upload`, (req, res, ctx) => {
     return res(ctx.json({ status: 200 }));

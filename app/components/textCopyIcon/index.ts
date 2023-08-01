@@ -1,0 +1,1 @@
+export { TextCopyIcon } from "./textCopyIcon";

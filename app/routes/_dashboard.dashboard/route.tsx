@@ -16,6 +16,7 @@ import utc from "dayjs/plugin/utc";
 import { Suspense } from "react";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { KeyMetrics } from "./components/KeyMetrics";
+import { TextCopyIcon } from "~/components/textCopyIcon";
 
 dayjs.extend(utc);
 
@@ -93,6 +94,12 @@ export default function Index() {
                     { label: "Object ID", value: "_id", sortable: false },
                   ]}
                   linkKey="_id"
+                  linkIcon={({ copyValue, buttonProps }) => (
+                    <TextCopyIcon
+                      copyValue={copyValue}
+                      buttonProps={buttonProps}
+                    />
+                  )}
                   totalItems={uploads.metadata?.page.total}
                   tableData={uploads.data.map((upload) => ({
                     filename: upload.filename,

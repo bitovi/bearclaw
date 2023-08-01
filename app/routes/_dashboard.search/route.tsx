@@ -10,6 +10,7 @@ import { getOrgandUserId } from "~/session.server";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { Typography } from "@mui/material";
 import { usePageCopy } from "../_dashboard/copy";
+import { TextCopyIcon } from "~/components/textCopyIcon";
 
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -40,7 +41,7 @@ export async function loader({ request }: LoaderArgs) {
     return json({
       search,
       rsboms,
-      error: ""
+      error: "",
     });
   } catch (e) {
     const error = (e as Error).message;
@@ -67,10 +68,7 @@ const tableHeaders = [
 ];
 
 export function Results() {
-  const {
-    rsboms,
-    error,
-  } = useLoaderData<typeof loader>();
+  const { rsboms, error } = useLoaderData<typeof loader>();
 
   const navigation = useNavigation();
 
@@ -101,6 +99,9 @@ export function Results() {
       tableData={rsboms.data || undefined}
       totalItems={rsboms.metadata?.page.total}
       linkKey="dataObject"
+      linkIcon={({ copyValue, buttonProps }) => (
+        <TextCopyIcon copyValue={copyValue} buttonProps={buttonProps} />
+      )}
       tableTitle=""
       headers={tableHeaders}
       tableContainerStyles={{ maxHeight: "600px" }}
@@ -109,28 +110,32 @@ export function Results() {
 }
 
 export default function Route() {
-  const {
-    search,
-    error,
-    rsboms,
-  } = useLoaderData<typeof loader>();
-  const copy = usePageCopy("search")
+  const { search, error, rsboms } = useLoaderData<typeof loader>();
+  const copy = usePageCopy("search");
 
   const hasResults = !error && rsboms?.data.length;
   return (
     <Page>
       <PageHeader
-        headline={(
+        headline={
           <span>
             {copy?.headline || "Search"}:{" "}
-            <Typography fontSize="inherit" fontWeight="inherit" component="span" color="primary.main">
+            <Typography
+              fontSize="inherit"
+              fontWeight="inherit"
+              component="span"
+              color="primary.main"
+            >
               {search || ""}
             </Typography>
           </span>
-        )}
-        description={hasResults
-          ? copy?.content?.hasResults || "Here are the files we found based on your search."
-          : copy?.content?.noResults || "No matches found at this time. Please adjust your search query for better results."
+        }
+        description={
+          hasResults
+            ? copy?.content?.hasResults ||
+              "Here are the files we found based on your search."
+            : copy?.content?.noResults ||
+              "No matches found at this time. Please adjust your search query for better results."
         }
       />
       <Results />

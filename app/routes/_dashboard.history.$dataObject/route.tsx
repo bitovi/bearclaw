@@ -13,11 +13,21 @@ import { getOrgandUserId } from "~/session.server";
 import { getProcessingStatusById } from "~/services/bigBear/getProcessingStatus.server";
 import { getCVEData } from "~/services/bigBear/getCVEData.server";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { retrieveRSBOMDetails } from "~/models/rsboms.server";
 import { ProcessingStatus } from "./types";
 import { NoVulnerabilitiesImage } from "./component/noVulnerabilitiesImage";
 import { ProcessingResultsImage } from "./component/processingResultsImage";
 import { DownloadButton } from "./component/downloadButton";
+import ChildJobsTable from "~/components/table";
+import Chip from "@mui/material/Chip";
+import { toTitleCase } from "~/utils/string/toTitleCase";
+import NavigateNextSharpIcon from "@mui/icons-material/NavigateNextSharp";
+import { ProcessingStatusChipColor } from "~/components/table/types";
+import { AccordionTable } from "./component/accordionTable";
+import { getAllChildJobs } from "~/services/bigBear/getAllChildJobs.server";
+
+dayjs.extend(utc);
 
 export async function loader({ request, params }: LoaderArgs) {
   const { dataObject } = params;
@@ -36,6 +46,15 @@ export async function loader({ request, params }: LoaderArgs) {
     if (!processingStatus) {
       return redirect("/history");
     }
+
+    const url = new URL(request.url);
+    const page = url.searchParams.get("page") || "1";
+    const perPage = url.searchParams.get("perPage") || "10";
+
+    const childJobs = await getAllChildJobs({
+      params: { userId, organizationId, page, perPage },
+      dataObject,
+    });
 
     const { data: vulnerabilities, metadata } = await getCVEData({
       params: { userId, organizationId },
@@ -57,6 +76,7 @@ export async function loader({ request, params }: LoaderArgs) {
       },
       vulnerabilities,
       expandedRSBOM,
+      childJobs,
       metadata,
       error: "",
     });
@@ -67,6 +87,7 @@ export async function loader({ request, params }: LoaderArgs) {
       processingStatus: null,
       vulnerabilities: [],
       metadata: null,
+      childJobs: null,
       expandedRSBOM: null,
       error,
     });
@@ -74,8 +95,14 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export default function Route() {
-  const { processingStatus, vulnerabilities, expandedRSBOM, metadata, error } =
-    useLoaderData<typeof loader>();
+  const {
+    processingStatus,
+    vulnerabilities,
+    expandedRSBOM,
+    metadata,
+    childJobs,
+    error,
+  } = useLoaderData<typeof loader>();
   const copy = usePageCopy("detail");
   const [selectedCVE, setSelectedCVE] =
     useState<(typeof vulnerabilities)[number]>();
@@ -122,6 +149,59 @@ export default function Route() {
           />
         </Box>
       )}
+      <AccordionTable
+        heading={`Subcomponents for '${
+          processingStatus?.filename || "component"
+        }'`}
+        subheading="Select the component to which you wish to navigate"
+      >
+        <ChildJobsTable
+          headers={[
+            { label: "Component Name", value: "filename", sortable: false },
+            { label: "Type", value: "type", sortable: false },
+            { label: "Date", value: "dateAnalyzed", sortable: false },
+            {
+              label: "Status",
+              value: "status",
+              sortable: false,
+            },
+            { label: "Object ID", value: "id", sortable: false },
+          ]}
+          linkKey="id"
+          linkIcon={() => <NavigateNextSharpIcon />}
+          totalItems={childJobs?.metadata?.page.total}
+          tableData={childJobs?.data.map((job) => ({
+            ...job,
+            dateAnalyzed: (
+              <Box display="flex" flexDirection="column">
+                <Typography variant="body2">
+                  {dayjs
+                    .utc(new Date(job.dateAnalyzed))
+                    .local()
+                    .format("MM/DD/YY")}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {dayjs
+                    .utc(new Date(job.dateAnalyzed))
+                    .local()
+                    .format("HH:mm:ss")}
+                </Typography>
+              </Box>
+            ),
+            status: (
+              <Chip
+                variant={
+                  job.status === ProcessingStatus.COMPLETE
+                    ? "outlined"
+                    : "filled"
+                }
+                color={ProcessingStatusChipColor[job.status]}
+                label={toTitleCase(job.status)}
+              />
+            ),
+          }))}
+        />
+      </AccordionTable>
       {processingStatus?.status === ProcessingStatus.COMPLETE &&
         !!vulnerabilities.length && (
           <CVETable
