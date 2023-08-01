@@ -1,4 +1,4 @@
-import { AccordionDetails } from "@mui/material";
+import AccordionDetails from "@mui/material/AccordionDetails";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Stack from "@mui/material/Stack";
