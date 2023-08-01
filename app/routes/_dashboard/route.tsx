@@ -4,8 +4,8 @@ import { Outlet } from "@remix-run/react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
-import { Header } from "./components/header";
-import { MainSideNav } from "./components/sidenav";
+import { Header } from "./components/appFrame/header";
+import { MainSideNav } from "./components/appFrame/sidenav";
 
 import { getOrgId, getUser, requireUser } from "~/session.server";
 import { validateUser } from "~/models/user.server";

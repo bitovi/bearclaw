@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { Logo } from "~/components/logo/Logo";
-import { NavLinks } from "./NavLinks";
+import { NavLinks } from "../NavLinks";
 
 export function MainSideNav() {
   return (

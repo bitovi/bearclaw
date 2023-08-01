@@ -167,7 +167,6 @@ const theme = createTheme({
           style: {
             backgroundColor: "#F5F5F5",
             boxShadow: "none",
-            padding: "4px 32px",
           },
         },
       ],
