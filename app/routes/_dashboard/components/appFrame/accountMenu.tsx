@@ -135,8 +135,8 @@ export default function AccountMenu() {
           .filter((item) =>
             item.requiredPermissions
               ? item.requiredPermissions.every((permission) =>
-                  permissions.includes(permission)
-                )
+                permissions.includes(permission)
+              )
               : true
           )
           .map((item, index) =>
