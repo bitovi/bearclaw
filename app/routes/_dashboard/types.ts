@@ -24,10 +24,15 @@ export type HeaderMenuCopy = {
   _id: "dashboardHeaderNav";
   dividerAfter?: number;
   links: Array<CopyLink>;
+  content: Array<{
+    _type: "content";
+    key: string;
+    value: string;
+  }>;
 };
 
 export function isHeaderMenuCopy(copy: any): copy is HeaderMenuCopy {
-  return copy && copy._id === "dashboardHeaderNav";
+  return copy && copy._id === "dashboardHeaderMenu";
 }
 
 export type SideNavCopy = {

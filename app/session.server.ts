@@ -115,6 +115,27 @@ export async function requireUser(request: Request) {
   throw await logout(request);
 }
 
+export async function changeUserOrganizationSession({
+  request,
+  organizationId,
+  redirectTo,
+}: {
+  request: Request;
+  organizationId: string;
+  redirectTo: string;
+}) {
+  const session = await getSession(request);
+  session.set(ORGANIZATION_KEY, organizationId);
+
+  return redirect(redirectTo, {
+    headers: {
+      "Set-Cookie": await sessionStorage.commitSession(session, {
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      }),
+    },
+  });
+}
+
 export async function createUserSession({
   request,
   userId,

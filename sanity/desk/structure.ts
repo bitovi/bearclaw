@@ -73,9 +73,9 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext) {
                 .title('Header Menu')
                 .child(
                   S.editor()
-                    .title('Navigation')
-                    .schemaType('dashboardSideNav')
-                    .documentId('dashboardHeaderNav')
+                    .title('Header Menu')
+                    .schemaType('dashboardHeaderMenu')
+                    .documentId('dashboardHeaderMenu')
                 ),
               S.listItem()
                 .title('Side Navigation')

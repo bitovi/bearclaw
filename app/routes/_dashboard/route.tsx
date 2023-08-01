@@ -18,6 +18,7 @@ import { safeRedirect } from "~/utils";
 import { fetchDashboardCopy } from "./copy";
 import { NavDrawer } from "./components/NavDrawer";
 import { useState } from "react";
+import { getOrganizationsByUserId } from "~/models/organization.server";
 
 export async function loader({ request }: LoaderArgs) {
   const isLoggedIn = await getUser(request);
@@ -47,12 +48,16 @@ export async function loader({ request }: LoaderArgs) {
     });
   }
 
-  const copy = await fetchDashboardCopy();
-  const permissions = getOrgUserPermissions(orgUser);
   const result = await validateUser(user.id);
   if (result.error) {
     throw redirect(`/verify-email/${result.status}`);
   }
+
+  const [copy, permissions, userOrganizations] = await Promise.all([
+    fetchDashboardCopy(),
+    getOrgUserPermissions(orgUser),
+    getOrganizationsByUserId(user.id),
+  ]);
 
   if (redirectTo && redirectTo !== "/") {
     // Only redirect if an explicit redirect path was passed (don't use default)
@@ -63,6 +68,8 @@ export async function loader({ request }: LoaderArgs) {
       copy,
       isVerified: true,
       permissions,
+      orgUser,
+      userOrganizations,
     });
   }
 }
