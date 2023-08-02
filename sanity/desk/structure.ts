@@ -70,10 +70,18 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext) {
             .title('Dashboard')
             .items([
               S.listItem()
-                .title('Navigation')
+                .title('Header Menu')
                 .child(
                   S.editor()
                     .title('Navigation')
+                    .schemaType('dashboardSideNav')
+                    .documentId('dashboardHeaderNav')
+                ),
+              S.listItem()
+                .title('Side Navigation')
+                .child(
+                  S.editor()
+                    .title('Side Navigation')
                     .schemaType('dashboardSideNav')
                     .documentId('dashboardSideNav')
                 ),

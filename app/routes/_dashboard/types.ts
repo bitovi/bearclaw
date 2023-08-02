@@ -19,6 +19,17 @@ export type CopyLink = {
   >;
 };
 
+export type HeaderMenuCopy = {
+  _type: "dashboardSideNav";
+  _id: "dashboardHeaderNav";
+  dividerAfter?: number;
+  links: Array<CopyLink>;
+};
+
+export function isHeaderMenuCopy(copy: any): copy is HeaderMenuCopy {
+  return copy && copy._id === "dashboardHeaderNav";
+}
+
 export type SideNavCopy = {
   _type: "dashboardSideNav";
   _id: "dashboardSideNav";

@@ -32,6 +32,7 @@ interface TableProps<T> {
   linkKey?: keyof T;
   linkIcon?: (props: LinkIconProps) => JSX.Element;
   totalItems?: number;
+  linkBasePath?: string;
 }
 
 function SkeletonBody({ rows, columns }: { rows: number; columns: number }) {
@@ -127,17 +128,23 @@ function TableRowLink<T>({
   entry,
   linkKey,
   linkIcon,
+  linkBasePath: _linkBasePath,
 }: {
   entry: T extends Record<string, any> ? T : never;
   linkKey: keyof T;
   linkIcon: TableProps<T>["linkIcon"];
+  linkBasePath?: string;
 }) {
   const { pathname } = useLocation();
-
+  const linkBasePath = _linkBasePath
+    ? _linkBasePath.charAt(0) === "/"
+      ? _linkBasePath
+      : "/" + _linkBasePath
+    : undefined;
   return (
     <TableRow
       component={Link}
-      to={`${pathname}/${entry[linkKey]}`}
+      to={`${linkBasePath || pathname}/${entry[linkKey]}`}
       sx={{
         "&:last-child td, &:last-child th": { border: 0 },
         textDecoration: "unset",
@@ -261,6 +268,7 @@ export default function InvoiceTable<T>({
   linkKey,
   totalItems,
   linkIcon,
+  linkBasePath,
 }: TableProps<T extends Record<string, any> ? T : never>) {
   const { currentSort, sortQuery } = useSorting();
   const { pathname } = useLocation();
@@ -331,6 +339,7 @@ export default function InvoiceTable<T>({
                     key={i}
                     entry={entry}
                     linkIcon={linkIcon}
+                    linkBasePath={linkBasePath}
                   />
                 ) : (
                   <TableRow
