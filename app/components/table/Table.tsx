@@ -132,10 +132,12 @@ function TableRowLink<T>({
   linkKey: keyof T;
   linkIcon: TableProps<T>["linkIcon"];
 }) {
+  const { pathname } = useLocation();
+
   return (
     <TableRow
       component={Link}
-      to={`/history/${entry[linkKey]}`}
+      to={`${pathname}/${entry[linkKey]}`}
       sx={{
         "&:last-child td, &:last-child th": { border: 0 },
         textDecoration: "unset",

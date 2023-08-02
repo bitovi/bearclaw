@@ -19,8 +19,8 @@ import Stack from "@mui/material/Stack";
 import { NavigationFilter } from "./components/NavigationFilter";
 import { usePageCopy } from "../_dashboard/copy";
 import { TextCopyIcon } from "~/components/textCopyIcon";
-import { ProcessingStatus } from "../_dashboard.history.$dataObject/types";
 import { ProcessingStatusChipColor } from "~/components/table/types";
+import { ProcessingStatus } from "../_dashboard.history.$/types";
 
 dayjs.extend(utc);
 

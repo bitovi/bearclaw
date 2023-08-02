@@ -5,18 +5,46 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import GridViewIcon from "@mui/icons-material/GridView";
-import { CVECard } from "./cveCard";
+import { CVECard, SkeletonCard } from "./cveCard";
 import { useState } from "react";
 import type { CveData } from "~/models/rsbomTypes";
 import { usePageCopy } from "~/routes/_dashboard/copy";
 import { ProcessingStatus } from "../types";
 import { CveStatusImage } from "./cveStatusImage";
+import Skeleton from "@mui/material/Skeleton";
 
 interface CveTableProps {
-  cveData: CveData[];
+  cveData: CveData[] | undefined;
   orientation: "column" | "row";
   handleRowClick: (id: string) => void;
   processingStatus?: "running" | "complete" | "not started";
+}
+
+export function CVETableSkeleton() {
+  return (
+    <Box paddingY={4}>
+      <Stack position="relative">
+        <Typography variant="h6">
+          <Skeleton variant="text" animation="wave" width="300px" />
+        </Typography>
+        <Typography variant="body2">
+          <Skeleton variant="text" animation="wave" width="450px" />
+        </Typography>
+      </Stack>
+      <Box
+        display="grid"
+        gridTemplateColumns={{ xs: "1fr" }}
+        gap={2}
+        paddingTop={2}
+      >
+        {Array(3)
+          .fill("")
+          .map((_, row) => {
+            return <SkeletonCard key={row} />;
+          })}
+      </Box>
+    </Box>
+  );
 }
 
 export function CVETable({
@@ -82,7 +110,7 @@ export function CVETable({
         </Box>
       </Stack>
       {processingStatus === ProcessingStatus.COMPLETE ? (
-        cveData.length ? (
+        cveData?.length ? (
           <Box
             display="grid"
             gridTemplateColumns={gridTemplate}

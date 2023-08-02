@@ -26,7 +26,9 @@ const BreakdownEntry = ({
     <Stack direction="row" alignItems="center">
       {Icon}
       <Stack paddingX={1}>
-        <Typography variant="body2">{title}</Typography>
+        <Typography variant="body2" margin={0}>
+          {title}
+        </Typography>
         <Typography
           aria-label={details}
           title={details}
@@ -73,24 +75,24 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
 
   return (
     <Stack
-      direction={{ xs: "column", md: "row" }}
+      direction={{ xs: "column", lg: "row" }}
+      height={{ xs: "732px", lg: "256px" }}
       gap={6}
       color="#FFF"
       sx={{
         backgroundColor: "grey.900",
         padding: 3,
-        width: "fit-content",
         borderRadius: 3,
       }}
     >
       <Stack
-        direction={{ xs: "column", md: "row" }}
+        direction={{ xs: "column", lg: "row" }}
         gap={3}
-        alignItems={{ xs: "unset", md: "center" }}
+        alignItems={{ xs: "unset", lg: "center" }}
       >
         <Box
-          minWidth={{ xs: "176px", md: "unset" }}
-          minHeight={{ xs: "220px", md: "unset" }}
+          minWidth={{ xs: "176px", lg: "unset" }}
+          minHeight={{ xs: "220px", lg: "unset" }}
         >
           <ChartRing
             data={[

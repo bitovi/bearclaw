@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { SeverityTab } from "./severityTab";
 import { usePageCopy } from "~/routes/_dashboard/copy";
 import type { CveData } from "~/models/rsbomTypes";
+import Skeleton from "@mui/material/Skeleton";
 
 interface CVECardProps {
   name: string;
@@ -17,6 +18,41 @@ interface CVECardProps {
   onCheck?: (checked: boolean) => void;
   onRowClick?: (id: string) => void;
   orientation?: "row" | "column";
+}
+
+export function SkeletonCard() {
+  return (
+    <Card elevation={1}>
+      <Stack direction="row">
+        <Stack direction="row">
+          <Stack gap={1} paddingLeft={0.5} direction={"column"}>
+            <Typography variant="subtitle1">
+              <Skeleton width="126px" variant="text" animation="wave" />
+            </Typography>
+            <Typography variant="caption">
+              <Skeleton width="126px" variant="text" animation="wave" />
+            </Typography>
+          </Stack>
+        </Stack>
+        <Stack
+          padding="0px 16px 0px 48px"
+          direction={"column"}
+          gap="8px"
+          alignItems="flex-start"
+          flex="1 0 0"
+          alignSelf="stretch"
+          paddingBottom={1}
+        >
+          <Typography variant="subtitle1">
+            <Skeleton width="75px" variant="text" animation="wave" />
+          </Typography>
+          <Typography variant="caption">
+            <Skeleton width="400px" variant="text" animation="wave" />
+          </Typography>
+        </Stack>
+      </Stack>
+    </Card>
+  );
 }
 
 export function CVECard({
