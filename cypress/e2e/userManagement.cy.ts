@@ -226,6 +226,10 @@ describe("User Management & Invitation", () => {
       name: /ownerAccount-test's organization/i,
     }).should("have.class", "Mui-selected");
 
+    cy.findByRole("button", { name: /account settings/i }).click({
+      force: true,
+    });
+
     cy.findByRole("link", { name: /logout/i }).click({ force: true });
   });
 
