@@ -85,7 +85,7 @@ export default function Index() {
       width="100%"
       height="100%"
       sx={{
-        backgroundColor: "#F5F5F5",
+        backgroundColor: "background.default",
         overflow: "hidden",
       }}
     >
@@ -98,7 +98,7 @@ export default function Index() {
         height="100%"
         width="100%"
         overflow="hidden"
-        bgcolor={"#F5F5F5"}
+        bgcolor="background.paper"
       >
         <Header onToggleMobileNav={() => setMobileMenuOpen((prev) => !prev)} />
         <NavDrawer
@@ -112,7 +112,7 @@ export default function Index() {
           flex="1"
           padding={{ xs: "1rem 0.75rem", md: 6 }}
           sx={{
-            backgroundColor: "white",
+            backgroundColor: "background.paper",
             borderTopLeftRadius: { xs: "unset", md: "16px" },
           }}
         >

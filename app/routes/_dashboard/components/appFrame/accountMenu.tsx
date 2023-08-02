@@ -173,7 +173,7 @@ export default function AccountMenu() {
           <Typography
             color="text.secondary"
             fontSize="0.875rem"
-            font-weight="400"
+            fontWeight="400"
             lineHeight="1.5rem"
           >
             {copy?.content.find((item) => item.key === "organizationsHeader")

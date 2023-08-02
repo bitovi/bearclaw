@@ -4,6 +4,8 @@ import invariant from "tiny-invariant";
 
 import type { User } from "~/models/user.server";
 import { getUserById } from "~/models/user.server";
+import type { ColorMode } from "./styles/ThemeContext";
+import { isColorMode } from "./styles/ThemeContext";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
@@ -21,6 +23,7 @@ export const sessionStorage = createCookieSessionStorage({
 const USER_SESSION_KEY = "userId";
 const ORGANIZATION_KEY = "orgId";
 const MFA_STATUS_KEY = "mfaStatus";
+const COLOR_MODE_KEY = "colorMode";
 
 type MfaStatus = "success" | "pending" | null;
 
@@ -193,4 +196,22 @@ export async function logout(request: Request) {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },
   });
+}
+
+export async function setPreferredColorMode({
+  request,
+  colorMode,
+}: {
+  request: Request;
+  colorMode: ColorMode;
+}) {
+  const session = await getSession(request);
+  session.set(COLOR_MODE_KEY, colorMode);
+  return;
+}
+
+export async function getPreferredColorMode({ request }: { request: Request }) {
+  const session = await getSession(request);
+  const mode = session.get(COLOR_MODE_KEY);
+  return isColorMode(mode) ? mode : undefined;
 }

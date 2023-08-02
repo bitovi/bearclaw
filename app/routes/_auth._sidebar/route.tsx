@@ -6,6 +6,7 @@ import { useParentImageCopy, useParentSidebarCopy } from "../_auth/copy";
 import { Carousel } from "~/components/carousel";
 import { useMemo } from "react";
 import { Logo } from "~/components/logo/Logo";
+import { ColorModeToggle } from "~/styles/ColorModeToggle";
 
 export default function Index() {
   const copy = useParentSidebarCopy();
@@ -123,15 +124,17 @@ export default function Index() {
       <Box
         flex="2"
         display="flex"
+        flexDirection="column"
         justifyContent="center"
         alignItems="center"
         sx={{
-          backgroundColor: "white",
+          backgroundColor: "background.paper",
         }}
       >
         <Box maxWidth="700px" padding={{ xs: "5rem 1rem", lg: "unset" }}>
           <Outlet />
         </Box>
+        <ColorModeToggle />
       </Box>
     </Box>
   );

@@ -13,12 +13,11 @@ import { renderToPipeableStream } from "react-dom/server";
 import * as Sentry from "@sentry/remix";
 import { prisma } from "~/db.server";
 import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider } from "@mui/material/styles";
 import { CacheProvider } from "@emotion/react";
 import createEmotionServer from "@emotion/server/create-instance";
 
 import createEmotionCache from "./styles/createEmotionCache";
-import theme from "./styles/theme";
+import { ThemeProvider } from "./styles/ThemeContext";
 
 const ABORT_DELAY = 5_000;
 
@@ -110,7 +109,7 @@ function handleBrowserRequest(
   function MuiRemixServer() {
     return (
       <CacheProvider value={emotionCache}>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
           <RemixServer
@@ -123,7 +122,7 @@ function handleBrowserRequest(
     );
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(<MuiRemixServer />, {
       onShellReady() {
         const body = new PassThrough();
