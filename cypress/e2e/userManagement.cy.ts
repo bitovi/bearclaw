@@ -225,12 +225,6 @@ describe("User Management & Invitation", () => {
     cy.findByRole("menuitem", {
       name: /ownerAccount-test's organization/i,
     }).should("have.class", "Mui-selected");
-
-    cy.findByRole("button", { name: /account settings/i }).click({
-      force: true,
-    });
-
-    cy.findByRole("link", { name: /logout/i }).click({ force: true });
   });
 
   it("Confirm new users on owner org table & user deletion", () => {
