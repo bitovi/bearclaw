@@ -11,7 +11,7 @@ import { isHeaderMenuCopy, isPageCopy, isSideNavCopy } from "./types";
 export async function fetchDashboardCopy() {
   const query = `*[
     _id == "dashboardSideNav" ||
-    _id == "dashboardHeaderNav" ||
+    _id == "dashboardHeaderMenu" ||
     _type == "page"
   ]{
     ...,

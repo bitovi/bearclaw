@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import { useOptionalUser } from "~/utils";
 import { url } from "gravatar";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { useMemo } from "react";
 import { IconFromString } from "~/components/iconFromString/IconFromString";
 import IconButton from "@mui/material/IconButton";
@@ -41,8 +41,10 @@ const defaultMenu: Array<Omit<CopyLink, "_key" | "_type">> = [
 ];
 
 export default function AccountMenu() {
+  const location = useLocation();
   const user = useOptionalUser();
-  const { permissions } = useLoaderData<typeof loader>();
+  const { permissions, orgUser, userOrganizations } =
+    useLoaderData<typeof loader>();
   const copy = useHeaderMenuCopy();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -137,21 +139,71 @@ export default function AccountMenu() {
                 )
               : true
           )
-          .map((item, index) => {
-            return (
-              <React.Fragment key={index}>
-                <MenuItem component={Link} to={item.to} onClick={handleClose}>
+          .map((item, index) =>
+            item.to === "organizations" ? (
+              userOrganizations?.map((organization) => (
+                <MenuItem
+                  key={organization.id}
+                  component={Link}
+                  to={`/organizations/${organization.id}`}
+                  onClick={handleClose}
+                >
                   <ListItemIcon>
-                    <IconFromString icon={item.icon || ""} />
+                    <IconFromString icon={item.icon || "homeWork"} />
                   </ListItemIcon>
-                  {item.text}
+                  {organization.name}
                 </MenuItem>
-                {copy?.dividerAfter && copy.dividerAfter === index + 1 && (
-                  <Divider component="li" sx={{ marginY: 2 }} />
-                )}
-              </React.Fragment>
-            );
-          })}
+              ))
+            ) : (
+              <MenuItem
+                component={Link}
+                key={`${item.to}-${index}`}
+                to={item.to}
+                onClick={handleClose}
+              >
+                <ListItemIcon>
+                  <IconFromString icon={item.icon || ""} />
+                </ListItemIcon>
+                {item.text}
+              </MenuItem>
+            )
+          )}
+        <Divider component="li" sx={{ marginY: 2 }} />
+        <MenuItem>
+          <Typography
+            color="text.secondary"
+            fontSize="0.875rem"
+            font-weight="400"
+            lineHeight="1.5rem"
+          >
+            {copy?.content.find((item) => item.key === "organizationsHeader")
+              ?.value || "Organizations"}
+          </Typography>
+        </MenuItem>
+        {userOrganizations?.map((organization) => (
+          <MenuItem
+            key={organization.id}
+            component={Link}
+            to={`/organizationSwap?redirectTo=${location.pathname}&organizationId=${organization.id}`}
+            onClick={handleClose}
+            sx={{ "&.Mui-disabled": { opacity: 1 } }}
+            disabled={organization.id === orgUser?.organizationId}
+            selected={organization.id === orgUser?.organizationId}
+          >
+            <ListItemIcon>
+              <IconFromString icon={"homeWork"} />
+            </ListItemIcon>
+            {organization.name}
+          </MenuItem>
+        ))}
+        <Divider component="li" sx={{ marginY: 2 }} />
+        <MenuItem component={Link} to="/logout" onClick={handleClose}>
+          <ListItemIcon>
+            <IconFromString icon="logout" />
+          </ListItemIcon>
+          {copy?.content.find((item) => item.key === "logout")?.value ||
+            "Sign out"}
+        </MenuItem>
       </Menu>
     </Box>
   );

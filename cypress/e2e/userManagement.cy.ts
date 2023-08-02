@@ -197,9 +197,34 @@ describe("User Management & Invitation", () => {
       /You have successfully joined ownerAccount-test's organization/i
     );
 
-    cy.findByRole("link", { name: /logout/i })
-      .should("be.visible")
+    cy.findAllByRole("link", { name: /dashboard/i })
+      .first()
       .click({ force: true });
+    cy.findByRole("button", { name: /account settings/i }).click({
+      force: true,
+    });
+
+    cy.wait(1000);
+    cy.findAllByRole("menuitem", { name: /organization$/i }).should(
+      "have.length",
+      2
+    );
+
+    cy.findByRole("menuitem", {
+      name: /existingUserAccount-test's organization/i,
+    }).should("have.class", "Mui-selected");
+
+    cy.findByRole("menuitem", {
+      name: /ownerAccount-test's organization/i,
+    }).click();
+
+    cy.findByRole("button", { name: /account settings/i }).click({
+      force: true,
+    });
+
+    cy.findByRole("menuitem", {
+      name: /ownerAccount-test's organization/i,
+    }).should("have.class", "Mui-selected");
   });
 
   it("Confirm new users on owner org table & user deletion", () => {

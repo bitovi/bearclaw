@@ -1,3 +1,4 @@
+import dashboardHeaderMenu from './dashboardHeaderMenu'
 import dashboardSideNav from './dashboardSideNav'
 import content from './content'
 import link from './link'
@@ -11,6 +12,7 @@ import images from './images'
 export const schemaTypes = [
   authForm,
   content,
+  dashboardHeaderMenu,
   dashboardSideNav,
   link,
   page,
