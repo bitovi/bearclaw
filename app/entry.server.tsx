@@ -122,7 +122,7 @@ function handleBrowserRequest(
     );
   }
 
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(<MuiRemixServer />, {
       onShellReady() {
         const body = new PassThrough();

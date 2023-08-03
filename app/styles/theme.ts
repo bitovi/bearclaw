@@ -336,6 +336,27 @@ export function getTheme(mode: ColorMode = "dark") {
           },
         },
       },
+      MuiTableContainer: {
+        styleOverrides: {
+          root: {
+            borderRadius: "0.5rem",
+          },
+        },
+      },
+      MuiTableRow: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDarkMode ? "#333333" : "#FFFFFF",
+          },
+        },
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "unset",
+          },
+        },
+      },
     },
   });
 }

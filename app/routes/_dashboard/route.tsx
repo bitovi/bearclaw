@@ -98,7 +98,12 @@ export default function Index() {
         height="100%"
         width="100%"
         overflow="hidden"
-        bgcolor="background.paper"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === "dark"
+              ? "background.paper"
+              : "background.default",
+        }}
       >
         <Header onToggleMobileNav={() => setMobileMenuOpen((prev) => !prev)} />
         <NavDrawer
