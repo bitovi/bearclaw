@@ -99,6 +99,7 @@ export function Results() {
       tableData={rsboms.data || undefined}
       totalItems={rsboms.metadata?.page.total}
       linkKey="dataObject"
+      linkBasePath="history"
       linkIcon={({ copyValue, buttonProps }) => (
         <TextCopyIcon copyValue={copyValue} buttonProps={buttonProps} />
       )}

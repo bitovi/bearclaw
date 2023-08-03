@@ -127,6 +127,7 @@ const theme = createTheme({
       fontStyle: "normal",
       fontSize: "1.5rem",
       lineHeight: "133.4%",
+      fontFamily: "Inter",
     },
     h6: {
       fontFamily: "Inter",
