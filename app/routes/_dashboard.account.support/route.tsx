@@ -8,7 +8,7 @@ import type { ActionArgs } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { Banner } from "~/components/banner";
 import { Dropdown, TextInput } from "~/components/input";
-import { sendMail } from "~/services/mail/sendMail";
+import { sendMail } from "~/services/mail/sendMail.server";
 import { getUser } from "~/session.server";
 import { usePageCopy } from "../_dashboard/copy";
 import { Page } from "../_dashboard/components/page";

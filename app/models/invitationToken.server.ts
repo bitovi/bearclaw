@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { prisma } from "~/db.server";
-import { sendMail } from "~/services/mail/sendMail";
+import { sendMail } from "~/services/mail/sendMail.server";
 
 export async function generateInvitationToken(
   guestEmail: string,

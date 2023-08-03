@@ -2,7 +2,7 @@ import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
-import { sendMail } from "~/services/mail/sendMail";
+import { sendMail } from "~/services/mail/sendMail.server";
 import { createOrganization } from "./organization.server";
 import { createVerificationToken } from "./verificationToken.server";
 import { createSixCharacterCode } from "~/utils";

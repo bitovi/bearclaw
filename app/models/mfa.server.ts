@@ -2,7 +2,7 @@ import type { MfaMethod, User } from "@prisma/client";
 import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
-import { sendMail } from "~/services/mail/sendMail";
+import { sendMail } from "~/services/mail/sendMail.server";
 
 function generateMfaToken(length = 6) {
   let token = Math.random().toString().slice(-length);
