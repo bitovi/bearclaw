@@ -32,7 +32,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (mode === undefined) {
       const storedMode = localStorage.getItem("colorMode") || undefined;
-      console.log("storedMode", storedMode);
       if (isColorMode(storedMode)) {
         setMode(storedMode);
       } else if (prefersDarkMode) {
