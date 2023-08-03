@@ -86,6 +86,16 @@ export function getTheme(mode: ColorMode = "dark") {
         high: "#E53935",
         critical: "#b71c1c",
       },
+      red: {
+        600: "#E53935",
+        800: "#b71c1c",
+      },
+      orange: {
+        800: "#EF6C00",
+      },
+      purple: {
+        600: "#8E24AA",
+      },
     },
     typography: {
       fontFamily:
