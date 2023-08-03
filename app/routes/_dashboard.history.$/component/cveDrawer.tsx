@@ -1,6 +1,4 @@
 import Box from "@mui/material/Box";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
@@ -8,8 +6,6 @@ import { Button } from "~/components/button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import AlertTitle from "@mui/material/AlertTitle";
-import Accordion from "@mui/material/Accordion";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
 import OutboundIcon from "@mui/icons-material/Outbound";
 import ShareIcon from "@mui/icons-material/Share";
@@ -174,10 +170,15 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                   <ShareIcon />
                 </Button>
               </ButtonGroup>
+              {/*
+
+              TODO: Commenting out for the time-being [TD]
+                    May be re-added to support extra details found on the RSBOM
+
               <Typography variant="h6" color="#FFF" paddingY={3}>
                 {copy?.content?.sidebar_additionalInformation}
               </Typography>
-              <Accordion>
+             <Accordion>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
@@ -192,8 +193,8 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                     lobortis eget.
                   </Typography>
                 </AccordionDetails>
-              </Accordion>
-              <Accordion>
+              </Accordion> 
+               <Accordion>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
@@ -224,7 +225,7 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                     lobortis eget.
                   </Typography>
                 </AccordionDetails>
-              </Accordion>
+              </Accordion> */}
             </Box>
           </Box>
         </Stack>

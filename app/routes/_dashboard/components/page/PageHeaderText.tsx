@@ -5,12 +5,13 @@ import { Breadcrumbs } from "./Breadcrumbs";
 type Props = {
   headline: React.ReactNode;
   description: React.ReactNode;
+  detailPage?: boolean;
 };
 
-export function PageHeaderText({ headline, description }: Props) {
+export function PageHeaderText({ headline, description, detailPage }: Props) {
   return (
     <Box display="flex" flexDirection="column" gap="8px">
-      <Breadcrumbs />
+      <Breadcrumbs detailPage={detailPage} />
       <Typography variant="h3" component="h1">
         {headline}
       </Typography>

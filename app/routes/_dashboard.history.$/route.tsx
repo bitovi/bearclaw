@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import { defer, redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { Await, useLoaderData } from "@remix-run/react";
@@ -21,6 +20,7 @@ import { getAllChildJobs } from "~/services/bigBear/getAllChildJobs.server";
 import { Suspense, useState } from "react";
 import { Loading } from "~/components/loading/Loading";
 import type { CveData } from "~/models/rsbomTypes";
+import { Page, PageHeader } from "../_dashboard/components/page";
 
 dayjs.extend(utc);
 
@@ -130,23 +130,19 @@ export default function Route() {
     return <Box>{error}</Box>;
   }
   return (
-    <Stack height="100%" alignItems={{ xs: "center", md: "unset" }}>
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        justifyContent="space-between"
+    <Page>
+      <PageHeader
+        detailPage={true}
+        headline={
+          processingStatus?.status === ProcessingStatus.COMPLETE
+            ? `${copy?.content?.pageHeader}${" "}
+              ${processingStatus?.filename || "file upload"}`
+            : copy?.content?.analysisInProgress || "Analysis in progress..."
+        }
+        description={`${copy?.headline || "File uploaded"}${" "}${
+          processingStatus?.filename
+        }`}
       >
-        <Stack gap={1}>
-          <Typography variant="h3" color="text.primary">
-            {copy?.content?.pageHeader}{" "}
-            {processingStatus?.filename || "file upload"}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {processingStatus?.status === ProcessingStatus.COMPLETE
-              ? copy?.headline
-              : copy?.content?.analysisInProcess}
-          </Typography>
-        </Stack>
-
         {processingStatus?.status === ProcessingStatus.COMPLETE && (
           <DownloadButton
             expandedRSBOM={expandedRSBOM}
@@ -155,64 +151,96 @@ export default function Route() {
             label={copy?.content?.downloadRSBOM}
           />
         )}
-      </Stack>
-
-      <Box paddingTop={4}>
-        <Suspense
-          fallback={
-            <Stack
-              alignItems={"center"}
-              justifyContent="center"
-              width="100%"
-              height="256px"
-            >
-              <Loading />
-            </Stack>
-          }
+      </PageHeader>
+      <Stack height="100%" alignItems={{ xs: "center", md: "unset" }}>
+        {/* <Stack
+          direction={{ xs: "column", md: "row" }}
+          justifyContent="space-between"
         >
+          <Stack gap={1}>
+            <Typography variant="h3" color="text.primary">
+              {copy?.content?.pageHeader}{" "}
+              {processingStatus?.filename || "file upload"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {processingStatus?.status === ProcessingStatus.COMPLETE
+                ? copy?.headline
+                : copy?.content?.analysisInProcess}
+            </Typography>
+          </Stack>
+
+          {processingStatus?.status === ProcessingStatus.COMPLETE && (
+            <DownloadButton
+              expandedRSBOM={expandedRSBOM}
+              id={processingStatus._id}
+              filename={processingStatus.filename}
+              label={copy?.content?.downloadRSBOM}
+            />
+          )}
+        </Stack> */}
+
+        <Box paddingTop={4}>
+          <Suspense
+            fallback={
+              <Stack
+                alignItems={"center"}
+                justifyContent="center"
+                width="100%"
+                height="256px"
+              >
+                <Loading />
+              </Stack>
+            }
+          >
+            <Await resolve={cveData}>
+              {(cveData) => (
+                <CVEBreakdown
+                  status={processingStatus?.status}
+                  id={processingStatus?._id}
+                  type={processingStatus?.type}
+                  date={processingStatus?.analyzedAt}
+                  metadata={cveData?.metadata}
+                />
+              )}
+            </Await>
+          </Suspense>
+        </Box>
+
+        <ComponentBreakdownAccordion
+          status={processingStatus?.status}
+          childJobs={childJobs}
+          breadCrumbEntries={breadcrumbEntries}
+          tableHeading={`${
+            copy?.content?.subscomponentTableHeading || "Subcomponents for"
+          } '${processingStatus?.filename || "component"}'`}
+          tableSubheading={
+            copy?.content?.subscomponentTableSubheading ||
+            "Select the component to which you wish to navigate."
+          }
+        />
+
+        <Suspense fallback={<CVETableSkeleton />}>
           <Await resolve={cveData}>
             {(cveData) => (
-              <CVEBreakdown
-                id={processingStatus?._id}
-                type={processingStatus?.type}
-                date={processingStatus?.analyzedAt}
-                metadata={cveData?.metadata}
+              <CVETable
+                processingStatus={processingStatus?.status}
+                orientation="row"
+                cveData={cveData?.data}
+                handleRowClick={(id: string) => {
+                  setSelectedCVE(cveData?.data.find((cve) => cve.name === id));
+                  setVisible(true);
+                }}
               />
             )}
           </Await>
         </Suspense>
-      </Box>
 
-      <ComponentBreakdownAccordion
-        childJobs={childJobs}
-        breadCrumbEntries={breadcrumbEntries}
-        tableHeading={`Subcomponents for '${
-          processingStatus?.filename || "component"
-        }'`}
-        tableSubheading="Select the component to which you wish to navigate"
-      />
-
-      <Suspense fallback={<CVETableSkeleton />}>
-        <Await resolve={cveData}>
-          {(cveData) => (
-            <CVETable
-              processingStatus={processingStatus?.status}
-              orientation="row"
-              cveData={cveData?.data}
-              handleRowClick={(id: string) => {
-                setSelectedCVE(cveData?.data.find((cve) => cve.name === id));
-                setVisible(true);
-              }}
-            />
-          )}
-        </Await>
-      </Suspense>
-
-      <CVEDrawer
-        open={visible}
-        selectedCVE={selectedCVE}
-        onClose={() => setVisible(false)}
-      />
-    </Stack>
+        <CVEDrawer
+          open={visible}
+          selectedCVE={selectedCVE}
+          onClose={() => setVisible(false)}
+        />
+      </Stack>
+    </Page>
   );
 }
