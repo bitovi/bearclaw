@@ -107,13 +107,11 @@ export function ComponentBreakdownAccordion({
         <Stack direction="row" gap={2} flexWrap="wrap" paddingBottom={2}>
           <Suspense fallback={<BreadCrumbSkeletonRow />}>
             <Await resolve={breadCrumbEntries}>
-              {(breadCrumbEntries) => (
-                <>
-                  {breadCrumbEntries?.length ? (
-                    <BreadCrumbRow entries={breadCrumbEntries} />
-                  ) : null}
-                </>
-              )}
+              {(breadCrumbEntries) =>
+                breadCrumbEntries?.length ? (
+                  <BreadCrumbRow entries={breadCrumbEntries} />
+                ) : null
+              }
             </Await>
           </Suspense>
         </Stack>

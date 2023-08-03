@@ -135,16 +135,18 @@ function TableRowLink<T>({
   linkIcon: TableProps<T>["linkIcon"];
   linkBasePath?: string;
 }) {
-  const { pathname } = useLocation();
   const linkBasePath = _linkBasePath
     ? _linkBasePath.charAt(0) === "/"
       ? _linkBasePath
       : "/" + _linkBasePath
     : undefined;
+  const directTo = linkBasePath
+    ? `${linkBasePath}/${entry[linkKey]}`
+    : `${entry[linkKey]}`;
   return (
     <TableRow
       component={Link}
-      to={`${linkBasePath || pathname}/${entry[linkKey]}`}
+      to={directTo}
       sx={{
         "&:last-child td, &:last-child th": { border: 0 },
         textDecoration: "unset",
