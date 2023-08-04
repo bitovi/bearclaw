@@ -17,7 +17,7 @@ export async function sendMail(email: EmailType, fake = false) {
 export async function sendFakeMail(email: EmailType) {
   return prisma.fakeEmail.create({
     data: {
-      from: email.from || process.env.AWS_EMAIL_FROM || "system",
+      from: email.from || process.env.EMAIL_FROM || "system",
       ...email,
     },
   });
@@ -36,7 +36,7 @@ const transporter = nodemailer.createTransport({
 function sendSesMail(email: EmailType) {
   transporter.sendMail(
     {
-      from: email.from || process.env.AWS_EMAIL_FROM,
+      from: email.from || process.env.EMAIL_FROM,
       replyTo: email.replyTo,
       to: email.to,
       subject: email.subject,
