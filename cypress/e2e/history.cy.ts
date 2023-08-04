@@ -103,11 +103,8 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/results for/i).then(($title) => {
-      const result = $title
-        .text()
-        .split(/results for/i)[1]
-        .trim();
+    cy.findByText(/results/i).then(($title) => {
+      const result = $title.text().replace("Results: ", "").trim();
       cy.readFile(`cypress/downloads/${result}.json`, {});
     });
 
