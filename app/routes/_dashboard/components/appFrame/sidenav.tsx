@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import { Logo } from "~/components/logo/Logo";
 import { NavLinks } from "../NavLinks";
+import { ColorModeToggle } from "~/styles/ColorModeToggle";
 
 export function MainSideNav() {
   return (
@@ -9,7 +10,7 @@ export function MainSideNav() {
       height="100%"
       width="100%"
       sx={{
-        background: "#F5F5F5",
+        backgroundColor: "background.default",
       }}
     >
       <Box
@@ -26,7 +27,7 @@ export function MainSideNav() {
       />
       <Box
         padding="1.5rem 1rem"
-        maxHeight="100%"
+        height="100%"
         display="flex"
         flexDirection="column"
         alignItems="center"
@@ -35,6 +36,9 @@ export function MainSideNav() {
       >
         <Logo variant="stacked" width="124px" />
         <NavLinks />
+        <Box flex="1" display="flex" alignItems="end">
+          <ColorModeToggle />
+        </Box>
       </Box>
     </Box>
   );
