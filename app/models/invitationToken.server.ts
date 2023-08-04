@@ -35,7 +35,6 @@ export async function retrieveInvitationToken(id: string) {
 export function sendInvitationTokenEmail(email: string, token: string) {
   return sendMail({
     to: email,
-    from: "noreply@example.com",
     subject: "BEARCLAW -- Organization Invitation",
     html: `
       <p>Hi ${email},</p>

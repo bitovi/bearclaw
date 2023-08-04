@@ -1,6 +1,6 @@
 export type EmailType = {
   to: string;
-  from: string;
+  from?: string;
   replyTo?: string;
   subject: string;
   text?: string;

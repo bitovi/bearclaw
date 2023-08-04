@@ -45,7 +45,6 @@ export async function action({ request }: ActionArgs) {
     await sendMail(
       {
         to: "host",
-        from: `${user.email}`,
         subject,
         html: `
     <p>User support request: </p>

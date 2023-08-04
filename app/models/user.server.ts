@@ -31,7 +31,6 @@ export function sendEmailVerificationEmail({
     : "";
   return sendMail({
     to: user.email,
-    from: "noreply@example.com",
     subject: "Welcome to BearClaw! Please verify your email address.",
     html: `
       <p>Hi ${user.email},</p>
@@ -148,7 +147,6 @@ export async function verifyLogin(
 function sendPasswordResetEmail(user: User, token: string) {
   return sendMail({
     to: user.email,
-    from: "noreply@example.com",
     subject: "Reset your BearClaw password",
     html: `
       <p>Hi ${user.email},</p>

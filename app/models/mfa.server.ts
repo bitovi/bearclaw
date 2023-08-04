@@ -15,7 +15,6 @@ function generateMfaToken(length = 6) {
 export function sendMfaTokenEmail(email: string, token: string) {
   return sendMail({
     to: email,
-    from: "noreply@example.com",
     subject: "BEARCLAW MFA",
     html: `
       <p>Hi ${email},</p>
