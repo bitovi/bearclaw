@@ -63,7 +63,10 @@ const BreadCrumbRow = ({ entries }: { entries: BreadCrumbEntry[] }) => {
         return (
           <Chip
             draggable={false}
-            sx={{ marginBottom: "8px" }}
+            aria-label="Navigation breadcrumb for child component"
+            sx={{
+              marginBottom: "8px",
+            }}
             key={entry.id}
             variant={"outlined"}
             color={last ? "primary" : "secondary"}
@@ -223,10 +226,9 @@ export function ComponentBreakdownAccordion({
                 ) : status === ProcessingStatus.COMPLETE ? (
                   <CveStatusImage
                     maxWidth="160px"
-                    image={copy?.images?.noVulnerabilities}
+                    image={copy?.images?.noResults}
                     displayText={
-                      copy?.content?.noSubcomponents ||
-                      "No subcomponents found."
+                      copy?.content?.noSubcomponents || "No data to display."
                     }
                   />
                 ) : (

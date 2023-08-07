@@ -140,7 +140,7 @@ export function CVEBreakdown({
             {status === ProcessingStatus.COMPLETE &&
             !metadata?.totalVulnerabilitiesCaptured ? (
               <Typography color="white" variant="h3">
-                {copy?.content?.noCVEsFound || "Passed"}
+                {copy?.content?.passed || "Passed"}
               </Typography>
             ) : (
               <>

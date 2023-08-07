@@ -129,6 +129,7 @@ export default function Route() {
   if (error) {
     return <Box>{error}</Box>;
   }
+
   return (
     <Page>
       <PageHeader
@@ -153,32 +154,6 @@ export default function Route() {
         )}
       </PageHeader>
       <Stack height="100%" alignItems={{ xs: "center", md: "unset" }}>
-        {/* <Stack
-          direction={{ xs: "column", md: "row" }}
-          justifyContent="space-between"
-        >
-          <Stack gap={1}>
-            <Typography variant="h3" color="text.primary">
-              {copy?.content?.pageHeader}{" "}
-              {processingStatus?.filename || "file upload"}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {processingStatus?.status === ProcessingStatus.COMPLETE
-                ? copy?.headline
-                : copy?.content?.analysisInProcess}
-            </Typography>
-          </Stack>
-
-          {processingStatus?.status === ProcessingStatus.COMPLETE && (
-            <DownloadButton
-              expandedRSBOM={expandedRSBOM}
-              id={processingStatus._id}
-              filename={processingStatus.filename}
-              label={copy?.content?.downloadRSBOM}
-            />
-          )}
-        </Stack> */}
-
         <Box paddingTop={4}>
           <Suspense
             fallback={

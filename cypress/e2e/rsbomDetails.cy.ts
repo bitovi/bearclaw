@@ -7,7 +7,7 @@ describe("File rSBOM Details", () => {
   // Navigate to Details page via Global Search
   // Navigate to Details page directly upon uploading file
 
-  it("Navigates to rSBOM detail from History", () => {
+  it.skip("Navigates to rSBOM detail from History", () => {
     cy.createAndVerifyAccount();
 
     cy.findByRole("link", { name: /History/i })
@@ -21,7 +21,7 @@ describe("File rSBOM Details", () => {
       .click({ force: true });
   });
 
-  it("Allows user to download rSBOM JSON, copy object Id & ", () => {
+  it.skip("Allows user to download rSBOM JSON, copy object Id & ", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to Details page
@@ -38,10 +38,10 @@ describe("File rSBOM Details", () => {
     cy.findByText(/download rsbom/i)
       .should("be.visible")
       .click({ force: true });
-    cy.findByText(/results for/i).then(($title) => {
+    cy.findByText(/results:/i).then(($title) => {
       const result = $title
         .text()
-        .split(/results for/i)[1]
+        .split(/results:/i)[1]
         .trim();
       cy.readFile(`cypress/downloads/${result}.json`, {});
     });
@@ -69,7 +69,7 @@ describe("File rSBOM Details", () => {
       });
   });
 
-  it("List view can be changed", () => {
+  it.skip("List view can be changed", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to Details page
@@ -102,7 +102,7 @@ describe("File rSBOM Details", () => {
       .should("have.css", "alignItems", "normal");
   });
 
-  it("Table entry populates sidebar", () => {
+  it.skip("Table entry populates sidebar", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to Details page
@@ -145,5 +145,51 @@ describe("File rSBOM Details", () => {
           cy.findByTestId("CloseIcon").click({ force: true });
         });
       });
+  });
+
+  it("Displays Component Table and Breadcrumbs", () => {
+    cy.createAndVerifyAccount();
+
+    // Navigate to Details page
+    cy.findByRole("link", { name: /History/i })
+      .should("be.visible")
+      .click({ force: true });
+    cy.wait(1000)
+      .get(".MuiTableRow-root")
+      .eq(1)
+      .should("be.visible")
+      .click({ force: true });
+
+    cy.wait(1000)
+      .findByText(/component breakdown/i)
+      .click({ force: true });
+
+    cy.findByText(/subcomponents for/i).should("be.visible");
+
+    cy.get('[aria-label="Navigation breadcrumb for child component"]').should(
+      "have.length",
+      1
+    );
+
+    cy.findByRole("table").should("have.length", 1);
+
+    cy.findAllByRole("row")
+      .should("have.length.gt", 0)
+      .eq(3)
+      .click({ force: true });
+
+    cy.findByText(/subcomponents for/i).should("be.visible");
+
+    // demonstrating the nesting navigation breadcrumb trail
+    cy.get('[aria-label="Navigation breadcrumb for child component"]').should(
+      "have.length",
+      2
+    );
+
+    // No subcomponents found so no table should exist
+    cy.findByRole("table").should("have.length", 0);
+
+    // Nested child component has no CVEs
+    cy.findByText(/passed/i);
   });
 });

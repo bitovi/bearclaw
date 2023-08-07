@@ -139,7 +139,10 @@ export function CVETable({
             })}
           </Box>
         ) : (
-          <CveStatusImage image={copy?.images?.noVulnerabilities} />
+          <CveStatusImage
+            image={copy?.images?.processingResults}
+            displayText={copy?.content?.analyzing || "No CVEs found."}
+          />
         )
       ) : (
         <CveStatusImage
