@@ -7,7 +7,7 @@ describe("File rSBOM Details", () => {
   // Navigate to Details page via Global Search
   // Navigate to Details page directly upon uploading file
 
-  it.skip("Navigates to rSBOM detail from History", () => {
+  it("Navigates to rSBOM detail from History", () => {
     cy.createAndVerifyAccount();
 
     cy.findByRole("link", { name: /History/i })
@@ -21,7 +21,7 @@ describe("File rSBOM Details", () => {
       .click({ force: true });
   });
 
-  it.skip("Allows user to download rSBOM JSON, copy object Id & ", () => {
+  it("Allows user to download rSBOM JSON, copy object Id & ", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to Details page
@@ -69,7 +69,7 @@ describe("File rSBOM Details", () => {
       });
   });
 
-  it.skip("List view can be changed", () => {
+  it("List view can be changed", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to Details page
@@ -102,7 +102,7 @@ describe("File rSBOM Details", () => {
       .should("have.css", "alignItems", "normal");
   });
 
-  it.skip("Table entry populates sidebar", () => {
+  it("Table entry populates sidebar", () => {
     cy.createAndVerifyAccount();
 
     // Navigate to Details page
