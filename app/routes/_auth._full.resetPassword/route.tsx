@@ -13,7 +13,8 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import { resetPasswordByToken } from "~/models/user.server";
 import { TextInput } from "~/components/input";
-import { Stack, Typography } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { CodeValidationInput } from "~/components/codeValidationInput";
 import { verifyPasswordCode } from "~/utils/verifyDigitCode.server";

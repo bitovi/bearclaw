@@ -10,7 +10,8 @@ import { validateEmail } from "~/utils";
 import { forgotPassword } from "~/models/user.server";
 import { TextInput } from "~/components/input";
 import { useParentFormCopy } from "../_auth/copy";
-import { Stack, Typography } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { ButtonLoader } from "~/components/buttonLoader";
 
