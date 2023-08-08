@@ -1,8 +1,7 @@
 import type { User } from "@prisma/client";
 
-export function getUserFullName(user: User) {
-  if (user.firstName || user.lastName) {
-    return `${user.firstName || ""} ${user.lastName || ""}`.trim();
-  }
-  return "";
+export function getUserFullName(
+  user: Pick<User, "firstName" | "lastName">
+): string {
+  return [user.firstName, user.lastName].join(" ").trim();
 }
