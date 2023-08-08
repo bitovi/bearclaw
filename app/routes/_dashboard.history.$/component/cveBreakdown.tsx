@@ -205,7 +205,10 @@ export function CVEBreakdown({
                 ? metadata?.numberofLowWarnings
                 : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents} || vulnerable subcomponents`}
+            details={`0 ${
+              copy?.content?.vulnerableSubComponents ||
+              "vulnerable subcomponents"
+            }`}
             Icon={
               <CircleTwoToneIcon
                 sx={{ color: "purple.600" }}
