@@ -127,9 +127,12 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
 
         <Stack gap={2} sx={{ width: "33%" }} flex={1}>
           <BreakdownEntry
-            title={`${metadata?.numberofCriticalWarnings || "N/A"} ${
-              copy?.content?.criticalSeverityCVE
-            } ${copy?.content?.cve}`}
+            title={`${
+              metadata?.numberofCriticalWarnings === 0 ||
+              !!metadata?.numberofCriticalWarnings
+                ? metadata?.numberofCriticalWarnings
+                : "N/A"
+            } ${copy?.content?.criticalSeverityCVE} ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon sx={{ color: "red.800" }} fontSize="small" />
@@ -137,9 +140,12 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
           />
 
           <BreakdownEntry
-            title={`${metadata?.numberofHighWarnings || "N/A"} ${
-              copy?.content?.highSeverityCVE
-            } ${copy?.content?.cve}`}
+            title={`${
+              metadata?.numberofHighWarnings === 0 ||
+              !!metadata?.numberofHighWarnings
+                ? metadata?.numberofHighWarnings
+                : "N/A"
+            } ${copy?.content?.highSeverityCVE} ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon sx={{ color: "red.600" }} fontSize="small" />
@@ -147,9 +153,12 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
           />
 
           <BreakdownEntry
-            title={`${metadata?.numberofMedWarnings || "N/A"} ${
-              copy?.content?.mediumSeverityCVE
-            } ${copy?.content?.cve}`}
+            title={`${
+              metadata?.numberofMedWarnings === 0 ||
+              !!metadata?.numberofMedWarnings
+                ? metadata?.numberofMedWarnings
+                : "N/A"
+            } ${copy?.content?.mediumSeverityCVE} ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon
@@ -160,9 +169,12 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
           />
 
           <BreakdownEntry
-            title={`${metadata?.numberofLowWarnings || "N/A"} ${
-              copy?.content?.lowSeverityCVE
-            } ${copy?.content?.cve}`}
+            title={`${
+              metadata?.numberofLowWarnings === 0 ||
+              !!metadata?.numberofLowWarnings
+                ? metadata?.numberofLowWarnings
+                : "N/A"
+            } ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
               <CircleTwoToneIcon
