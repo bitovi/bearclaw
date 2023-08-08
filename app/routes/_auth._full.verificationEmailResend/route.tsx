@@ -21,10 +21,14 @@ export default function Route() {
   return (
     <div>
       <Typography>Verification email resent!</Typography>
-      <Typography>
-        TESTING: Email messaging is not connected yet.{" "}
-        <Link to="/fakeMail">View verification emails here</Link>
-      </Typography>
+      {window.ENV.EMAIL_USE_DEV ? (
+        <Typography mt={2}>
+          TESTING: Email messaging is not connected yet.{" "}
+          <Typography component={Link} to="/fakeMail" color="secondary.main">
+            View verification emails here
+          </Typography>
+        </Typography>
+      ) : null}
     </div>
   );
 }

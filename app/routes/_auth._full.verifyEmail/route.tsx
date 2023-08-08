@@ -137,15 +137,14 @@ export default function Route() {
           <KeyboardArrowLeftIcon />
           {formCopy?.returnToSignInCTA || "Return to Sign In"}
         </ButtonLink>
-        <br />
-        <br />
-        <br />
-        <Typography>
-          TESTING: Email messaging is not connected yet.{" "}
-          <Typography component={Link} to="/fakeMail" color="secondary.main">
-            View verification emails here
+        {window.ENV.EMAIL_USE_DEV ? (
+          <Typography mt={4}>
+            TESTING: Email messaging is not connected yet.{" "}
+            <Typography component={Link} to="/fakeMail" color="secondary.main">
+              View verification emails here
+            </Typography>
           </Typography>
-        </Typography>
+        ) : null}
       </Box>
     </Form>
   );
