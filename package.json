@@ -42,6 +42,8 @@
     "/sanity"
   ],
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.382.0",
+    "@aws-sdk/credential-provider-node": "^3.382.0",
     "@cyclonedx/cyclonedx-library": "2.0.0",
     "@emotion/cache": "^11.10.8",
     "@emotion/react": "^11.10.8",
@@ -68,6 +70,7 @@
     "isbot": "^3.6.7",
     "lodash": "^4.17.21",
     "msw": "^1.2.1",
+    "nodemailer": "^6.9.4",
     "patch-package": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -101,6 +104,7 @@
     "@types/eslint": "^8.21.2",
     "@types/gravatar": "^1.8.3",
     "@types/node": "^18.15.3",
+    "@types/nodemailer": "^6.4.9",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@types/spdx-expression-parse": "^3.0.2",

@@ -2,7 +2,7 @@ import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
-import { sendMail } from "~/services/mail/sendMail";
+import { sendMail } from "~/services/mail/sendMail.server";
 import { createOrganization } from "./organization.server";
 import { createVerificationToken } from "./verificationToken.server";
 import { createSixCharacterCode } from "~/utils";
@@ -31,7 +31,6 @@ export function sendEmailVerificationEmail({
     : "";
   return sendMail({
     to: user.email,
-    from: "noreply@example.com",
     subject: "Welcome to BearClaw! Please verify your email address.",
     html: `
       <p>Hi ${user.email},</p>
@@ -148,7 +147,6 @@ export async function verifyLogin(
 function sendPasswordResetEmail(user: User, token: string) {
   return sendMail({
     to: user.email,
-    from: "noreply@example.com",
     subject: "Reset your BearClaw password",
     html: `
       <p>Hi ${user.email},</p>
