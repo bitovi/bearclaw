@@ -60,6 +60,7 @@ export function KeyMetrics({
             "linear-gradient(189deg, rgba(51, 51, 51, 0.80) 0%, rgba(0, 0, 0, 0.80) 72.94%), lightgray 50% / cover no-repeat",
         }}
         position="relative"
+        overflow="hidden"
       >
         <Box
           component="img"
@@ -77,19 +78,16 @@ export function KeyMetrics({
             <Typography variant="h5">Workflows</Typography>
           </Box>
           <Typography variant="subtitle2">
-            Update plan to add more workflows.
+            Click below to view the workflow.
           </Typography>
           <Box display="flex" gap="1rem">
-            <Button variant="whiteOutlined" size="small">
-              Update plan
-            </Button>
             <Button size="small" variant="whiteOutlined">
               View
             </Button>
           </Box>
         </Box>
         <Box flex="1" display="flex" justifyContent="center" paddingTop={1}>
-          <Ellipse number={2} />
+          <Ellipse number={1} />
         </Box>
       </Box>
     </Box>

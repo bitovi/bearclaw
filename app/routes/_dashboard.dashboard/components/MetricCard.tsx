@@ -44,6 +44,7 @@ export const MetricCard = ({ variant, count, message, to }: Props) => {
         textDecoration: "none",
       }}
       position="relative"
+      overflow="hidden"
     >
       <Box
         component="img"

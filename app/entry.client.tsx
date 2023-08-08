@@ -15,11 +15,10 @@ import {
 import { hydrateRoot } from "react-dom/client";
 import * as Sentry from "@sentry/remix";
 import { CacheProvider } from "@emotion/react";
-import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import ClientStyleContext from "./styles/ClientStyleContext";
 import createEmotionCache from "./styles/createEmotionCache";
-import theme from "./styles/theme";
+import { ThemeProvider } from "./styles/ThemeContext";
 
 if (window.ENV?.SENTRY_DSN !== undefined) {
   Sentry.init({
@@ -67,7 +66,7 @@ startTransition(() => {
     document,
     <StrictMode>
       <ClientStylingCacheProvider>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider>
           <CssBaseline />
           <RemixBrowser />
         </ThemeProvider>
