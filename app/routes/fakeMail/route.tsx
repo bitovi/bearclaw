@@ -1,14 +1,17 @@
 import { useLoaderData } from "@remix-run/react";
 import { listMail } from "~/services/mail/listMail";
 import Box from "@mui/material/Box";
+import { json } from "@remix-run/server-runtime";
 
 export async function loader() {
+  if (process.env.EMAIL_USE_DEV) {
+    throw json(undefined, { status: 404 });
+  }
   const mail = await listMail();
 
-  return { mail };
+  return json({ mail });
 }
 
-// TODO: Replace this with a real email service, this page should not exist in the final app
 export default function DashboardFakeMailPage() {
   const { mail } = useLoaderData<typeof loader>();
 
