@@ -105,6 +105,7 @@ jobs:
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
       BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
       BEARCLAW_AUTH: ${{ secrets.BEARCLAW_AUTH }}
+      EMAIL_USE_DEV: ${{ secrets.EMAIL_USE_DEV }}
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -142,6 +143,7 @@ jobs:
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
           BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
           BEARCLAW_AUTH: ${{ secrets.BEARCLAW_AUTH }}
+          EMAIL_USE_DEV: ${{ secrets.EMAIL_USE_DEV }}
 
   build:
     name: 🐳 Build
@@ -156,6 +158,7 @@ jobs:
       STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET}}
       BEARCLAW_URL: ${{ secrets.BEARCLAW_URL }}
       BEARCLAW_AUTH: ${{ secrets.BEARCLAW_AUTH }}
+      EMAIL_USE_DEV: ${{ secrets.EMAIL_USE_DEV }}
 
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -205,11 +208,11 @@ jobs:
       - name: Configure AWS credentials from role.
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: 'arn:aws:iam::175069116911:role/bitovi-vbt-oidc-github'
-          aws-region: 'us-east-1'
+          role-to-assume: "arn:aws:iam::175069116911:role/bitovi-vbt-oidc-github"
+          aws-region: "us-east-1"
           role-duration-seconds: 3600
-          role-session-name: 'bitovi-vbt-oidc-github'
-          mask-aws-account-id: 'no'
+          role-session-name: "bitovi-vbt-oidc-github"
+          mask-aws-account-id: "no"
 
       - name: Login to Amazon ECR.
         id: login-ecr
