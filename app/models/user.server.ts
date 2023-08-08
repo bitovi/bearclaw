@@ -5,7 +5,11 @@ import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail";
 import { createOrganization } from "./organization.server";
 import { createVerificationToken } from "./verificationToken.server";
-import { createSixCharacterCode, validateEmail } from "~/utils";
+import {
+  createSixCharacterCode,
+  getUserPasswordError,
+  validateEmail,
+} from "~/utils";
 import { getUserFullName } from "~/utils/user/getUserFullName";
 
 export type { User } from "@prisma/client";
@@ -48,21 +52,6 @@ export function sendEmailVerificationEmail({
       <p><small>If you didn't sign up for BearClaw, please ignore this email.</small></p>
     `,
   });
-}
-
-export function getUserPasswordError(password?: string) {
-  if (typeof password !== "string" || password.length === 0) {
-    return "Password is required";
-  } else if (password.length < 12) {
-    return "Password is too short";
-  } else if (/[A-Z]/.test(password) === false) {
-    return "Password must contain at least one uppercase letter";
-  } else if (/[a-z]/.test(password) === false) {
-    return "Password must contain at least one lowercase letter";
-  } else if (/[^A-Za-z]/.test(password) === false) {
-    return "Password must contain at least one number or symbol";
-  }
-  return null;
 }
 
 export type NewUserValidationResult = {

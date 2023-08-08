@@ -148,7 +148,7 @@ describe("join and authenticate tests", () => {
       .eq(0)
       .should("be.visible")
       .click({ force: true });
-    cy.findByText(/user already exists with this email/i);
+    cy.wait(3000).findByText(/user already exists with this email/i);
     cy.findByRole("link", { name: /sign in/i });
   });
 

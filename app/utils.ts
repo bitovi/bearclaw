@@ -86,6 +86,21 @@ export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
 
+export function getUserPasswordError(password?: string) {
+  if (typeof password !== "string" || password.length === 0) {
+    return "Password is required";
+  } else if (password.length < 12) {
+    return "Password is too short";
+  } else if (/[A-Z]/.test(password) === false) {
+    return "Password must contain at least one uppercase letter";
+  } else if (/[a-z]/.test(password) === false) {
+    return "Password must contain at least one lowercase letter";
+  } else if (/[^A-Za-z]/.test(password) === false) {
+    return "Password must contain at least one number or symbol";
+  }
+  return null;
+}
+
 export function isNumber(number: unknown) {
   if (typeof number !== "number") return false;
   if (isNaN(number)) return false;
