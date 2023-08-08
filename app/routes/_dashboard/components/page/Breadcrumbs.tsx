@@ -24,13 +24,17 @@ function findSubNavMatch(
     (link) => link.to.split("/").pop()?.toLowerCase() === path.toLowerCase()
   );
 }
-
-export function Breadcrumbs() {
+/**
+ *
+ * @param detailPage supports the unique breadcrumb scenario wherein nested navigation stops at the File Results level and does not attempt to continue the pattern of nested page navigation logic
+ */
+export function Breadcrumbs({ detailPage }: { detailPage?: boolean }) {
   const sideNavCopy = useSideNavCopy();
   const location = useLocation();
-  const pathnames = location.pathname.split("/").filter((x) => x);
+  const pathnames = detailPage
+    ? ["history", "detail"]
+    : location.pathname.split("/").filter((x) => x);
   const pageCopy = usePageCopy(pathnames[0]);
-
   return (
     <MuiBreadcrumbs aria-label="breadcrumb">
       {pathnames.map((path, index) => {
@@ -40,8 +44,12 @@ export function Breadcrumbs() {
             ? null
             : findTopNavMatch(sideNavCopy, path) ||
               findSubNavMatch(pageCopy, path);
+
         const last = index === pathnames.length - 1;
-        const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+        const to =
+          path === "detail"
+            ? undefined
+            : `/${pathnames.slice(0, index + 1).join("/")}`;
 
         const linkProps = last
           ? ({ component: "div", underline: "none" } as const)
@@ -50,7 +58,7 @@ export function Breadcrumbs() {
         return (
           <Link
             {...linkProps}
-            key={to}
+            key={to || path}
             display="flex"
             gap="0.5rem"
             color="grey.800"

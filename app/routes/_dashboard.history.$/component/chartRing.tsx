@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import type { ReactNode } from "react";
-import { Cell, PieChart, Pie, ResponsiveContainer } from "recharts";
+import { Cell, PieChart, Pie } from "recharts";
 
 type Props = {
   data: Array<{
@@ -33,33 +33,31 @@ export function ChartRing({ children, data }: Props) {
       >
         {children}
       </Box>
-      <ResponsiveContainer width={176} height={176}>
-        <PieChart width={176} height={176}>
-          <Pie
-            data={data}
-            dataKey="value"
-            cx="50%"
-            cy="50%"
-            innerRadius={55}
-            outerRadius={87}
-            stroke="none"
-          >
-            {data.map((entry) => (
-              <Cell key={`cell-${entry.name}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <Pie
-            data={[{ value: 1 }]}
-            dataKey="value"
-            cx="50%"
-            cy="50%"
-            innerRadius={55}
-            outerRadius={61}
-            fill="rgba(255,255,255,0.25)"
-            stroke="none"
-          />
-        </PieChart>
-      </ResponsiveContainer>
+      <PieChart width={176} height={176}>
+        <Pie
+          data={data}
+          dataKey="value"
+          cx="50%"
+          cy="50%"
+          innerRadius={55}
+          outerRadius={87}
+          stroke="none"
+        >
+          {data.map((entry) => (
+            <Cell key={`cell-${entry.name}`} fill={entry.color} />
+          ))}
+        </Pie>
+        <Pie
+          data={[{ value: 1 }]}
+          dataKey="value"
+          cx="50%"
+          cy="50%"
+          innerRadius={55}
+          outerRadius={61}
+          fill="rgba(255,255,255,0.25)"
+          stroke="none"
+        />
+      </PieChart>
     </Stack>
   );
 }

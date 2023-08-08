@@ -44,15 +44,55 @@ const handlers = [
     return res(ctx.json(processParams(fixture_getAllParentJobs, req.url)));
   }),
   rest.get(`${baseURL}/claw/get_processing_status/*`, (req, res, ctx) => {
+    const id = req.url.pathname.split("/").slice(-1).join("");
+
+    if (id === "test_ChildDataObjectId") {
+      return res(
+        ctx.json({
+          data: [
+            {
+              dateAnalyzed: "2023-05-23 20:34:34.499000",
+              filename: "test_file_upload_child_component",
+              size: 5201,
+              status: "complete",
+              type: "unknown",
+              _id: "2024358c5fc8c09d44f71a7804c630ffb5243f4273ee48c6fe1e18b00a3c5741",
+            },
+          ],
+          processingTime: 0.2356843179986754,
+        })
+      );
+    }
     return res(ctx.json(fixture_getProcessingStatusById));
   }),
   rest.get(`${baseURL}/bear/get_metadata`, (req, res, ctx) => {
     return res(ctx.json(fixture_getMetadata));
   }),
   rest.get(`${baseURL}/bear/get_cve_data/*`, (req, res, ctx) => {
+    const id = req.url.pathname.split("/").slice(-1).join("");
+    if (id === "test_ChildDataObjectId") {
+      return res(
+        ctx.json({
+          cves: [],
+          metadata: {
+            totalVulnerabilitiesCaptured: 0,
+            numberofCriticalWarnings: 0,
+            numberofHighWarnings: 0,
+            numberofMedWarnings: 0,
+            numberofLowWarnings: 0,
+          },
+          processingTime: 0.00043534,
+        })
+      );
+    }
     return res(ctx.json(fixture_getCVEData));
   }),
   rest.get(`${baseURL}/claw/get_all_child_jobs/*`, (req, res, ctx) => {
+    const id = req.url.pathname.split("/").slice(-1).join("");
+
+    if (id === "test_ChildDataObjectId") {
+      return res(ctx.json([]));
+    }
     return res(ctx.json(fixture_getAllChildJobs));
   }),
   rest.post(`${baseURL}/claw/upload`, (req, res, ctx) => {

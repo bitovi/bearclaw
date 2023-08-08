@@ -76,10 +76,11 @@ export function CVETable({
     <Box paddingY={4}>
       <Stack position="relative">
         <Typography variant="h6" color="text.primary">
-          {copy?.content?.cveList}
+          {copy?.content?.cveTableHeader || "CVEs Found at This Level"}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {copy?.content?.tableSubheader}
+          {copy?.content?.cveTableSubheader ||
+            "Pin desired CVEs for quick refrence. This only works on the current level you are viewing."}
         </Typography>
         <Box
           paddingTop={{ xs: 2, md: "unset" }}
@@ -138,10 +139,18 @@ export function CVETable({
             })}
           </Box>
         ) : (
-          <CveStatusImage image={copy?.images?.noVulnerabilities} />
+          <CveStatusImage
+            image={copy?.images?.processingResults}
+            displayText={copy?.content?.analyzing || "No CVEs found."}
+          />
         )
       ) : (
-        <CveStatusImage image={copy?.images?.processingResults} />
+        <CveStatusImage
+          image={copy?.images?.processingResults}
+          displayText={
+            copy?.content?.analyzing || "Data is still being analyzed."
+          }
+        />
       )}
     </Box>
   );

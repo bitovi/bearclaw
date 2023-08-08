@@ -10,6 +10,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CircleTwoToneIcon from "@mui/icons-material/CircleTwoTone";
 import { usePageCopy } from "~/routes/_dashboard/copy";
 import { TextCopyIcon } from "~/components/textCopyIcon";
+import { ProcessingStatus } from "../types";
 
 const BreakdownEntry = ({
   title,
@@ -66,10 +67,17 @@ interface CVEBreakdownProps {
   id: string | undefined;
   type: string | undefined;
   date: string | undefined;
+  status: "complete" | "running" | "not started" | undefined;
   metadata?: CVEMetaData | null;
 }
 
-export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
+export function CVEBreakdown({
+  id,
+  type,
+  date,
+  metadata,
+  status,
+}: CVEBreakdownProps) {
   const copy = usePageCopy("detail");
   const theme = useTheme();
 
@@ -95,33 +103,55 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
           minHeight={{ xs: "220px", lg: "unset" }}
         >
           <ChartRing
-            data={[
-              {
-                name: "Critical",
-                value: metadata?.numberofCriticalWarnings || 1,
-                color: theme.palette.red[800],
-              },
-              {
-                name: "High",
-                value: metadata?.numberofHighWarnings || 2,
-                color: theme.palette.red[600],
-              },
-              {
-                name: "Medium",
-                value: metadata?.numberofMedWarnings || 1,
-                color: theme.palette.orange[800],
-              },
-              {
-                name: "Low",
-                value: metadata?.numberofLowWarnings || 3,
-                color: theme.palette.purple[600],
-              },
-            ]}
+            data={
+              status === ProcessingStatus.COMPLETE &&
+              !metadata?.totalVulnerabilitiesCaptured
+                ? [
+                    {
+                      name: "Passed",
+                      value: 1,
+                      color: theme.palette.green[600],
+                    },
+                  ]
+                : [
+                    {
+                      name: "Critical",
+                      value: metadata?.numberofCriticalWarnings || 1,
+                      color: theme.palette.red[800],
+                    },
+                    {
+                      name: "High",
+                      value: metadata?.numberofHighWarnings || 2,
+                      color: theme.palette.red[600],
+                    },
+                    {
+                      name: "Medium",
+                      value: metadata?.numberofMedWarnings || 1,
+                      color: theme.palette.orange[800],
+                    },
+                    {
+                      name: "Low",
+                      value: metadata?.numberofLowWarnings || 3,
+                      color: theme.palette.purple[600],
+                    },
+                  ]
+            }
           >
-            <Typography color="white" variant="h3">
-              {metadata?.totalVulnerabilitiesCaptured || "N/A"}
-            </Typography>
-            <Typography color="white">CVEs</Typography>
+            {status === ProcessingStatus.COMPLETE &&
+            !metadata?.totalVulnerabilitiesCaptured ? (
+              <Typography color="white" variant="h3">
+                {copy?.content?.passed || "Passed"}
+              </Typography>
+            ) : (
+              <>
+                <Typography color="white" variant="h3">
+                  {metadata?.totalVulnerabilitiesCaptured || "N/A"}
+                </Typography>
+                <Typography color="white">
+                  {copy?.content?.cves || "CVEs"}
+                </Typography>
+              </>
+            )}
           </ChartRing>
         </Box>
 
@@ -131,7 +161,7 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
               metadata?.numberofCriticalWarnings === 0 ||
               !!metadata?.numberofCriticalWarnings
                 ? metadata?.numberofCriticalWarnings
-                : "N/A"
+                : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.criticalSeverityCVE} ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
@@ -144,7 +174,7 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
               metadata?.numberofHighWarnings === 0 ||
               !!metadata?.numberofHighWarnings
                 ? metadata?.numberofHighWarnings
-                : "N/A"
+                : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.highSeverityCVE} ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
@@ -157,7 +187,7 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
               metadata?.numberofMedWarnings === 0 ||
               !!metadata?.numberofMedWarnings
                 ? metadata?.numberofMedWarnings
-                : "N/A"
+                : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.mediumSeverityCVE} ${copy?.content?.cve}`}
             details={`0 ${copy?.content?.vulnerableSubComponents}`}
             Icon={
@@ -173,9 +203,9 @@ export function CVEBreakdown({ id, type, date, metadata }: CVEBreakdownProps) {
               metadata?.numberofLowWarnings === 0 ||
               !!metadata?.numberofLowWarnings
                 ? metadata?.numberofLowWarnings
-                : "N/A"
+                : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents}`}
+            details={`0 ${copy?.content?.vulnerableSubComponents} || vulnerable subcomponents`}
             Icon={
               <CircleTwoToneIcon
                 sx={{ color: "purple.600" }}

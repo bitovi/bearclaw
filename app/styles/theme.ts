@@ -28,6 +28,9 @@ declare module "@mui/material/styles" {
     purple: {
       600: string;
     };
+    green: {
+      600: string;
+    };
   }
 
   interface PaletteOptions {
@@ -38,9 +41,10 @@ declare module "@mui/material/styles" {
       high: string;
       critical: string;
     };
-    red?: PaletteColorOptions;
-    orange?: PaletteColorOptions;
-    purple?: PaletteColorOptions;
+    red: PaletteColorOptions;
+    orange: PaletteColorOptions;
+    purple: PaletteColorOptions;
+    green: PaletteColorOptions;
   }
 }
 
@@ -95,6 +99,9 @@ export function getTheme(mode: ColorMode = "dark") {
       },
       purple: {
         600: "#8E24AA",
+      },
+      green: {
+        600: "#43A047",
       },
     },
     typography: {

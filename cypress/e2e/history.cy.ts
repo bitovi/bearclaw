@@ -80,7 +80,7 @@ describe("History", () => {
       });
 
     // we are on the RSBOM Details page
-    cy.findByText(/Results/i);
+    cy.findByText(/File Results/i);
   });
 
   it("Allows user to download rSBOM JSON", () => {
@@ -103,8 +103,11 @@ describe("History", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findByText(/results/i).then(($title) => {
-      const result = $title.text().replace("Results: ", "").trim();
+    cy.findByText(/results:/i).then(($title) => {
+      const result = $title
+        .text()
+        .split(/results:/i)[1]
+        .trim();
       cy.readFile(`cypress/downloads/${result}.json`, {});
     });
 
