@@ -5,7 +5,8 @@ import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail";
 import { createOrganization } from "./organization.server";
 import { createVerificationToken } from "./verificationToken.server";
-import { createSixCharacterCode } from "~/utils";
+import { createSixCharacterCode, validateEmail } from "~/utils";
+import { getUserFullName } from "~/utils/user/getUserFullName";
 
 export type { User } from "@prisma/client";
 
@@ -49,11 +50,120 @@ export function sendEmailVerificationEmail({
   });
 }
 
+export function getUserPasswordError(password?: string) {
+  if (typeof password !== "string" || password.length === 0) {
+    return "Password is required";
+  } else if (password.length < 12) {
+    return "Password is too short";
+  } else if (/[A-Z]/.test(password) === false) {
+    return "Password must contain at least one uppercase letter";
+  } else if (/[a-z]/.test(password) === false) {
+    return "Password must contain at least one lowercase letter";
+  } else if (/[^A-Za-z]/.test(password) === false) {
+    return "Password must contain at least one number or symbol";
+  }
+  return null;
+}
+
+export type NewUserValidationResult = {
+  success: boolean;
+  errors?: {
+    email: string | null;
+    password: string | null;
+    acceptTerms: string | null;
+    orgCreation: string | null;
+  };
+};
+
+export async function validateNewUser(
+  email?: string,
+  password?: string,
+  acceptTerms?: boolean
+): Promise<NewUserValidationResult> {
+  let errors: Partial<NewUserValidationResult["errors"]> = {};
+
+  if (!acceptTerms) {
+    errors.acceptTerms =
+      "You must accept the terms and conditions to continue.";
+  }
+
+  if (!validateEmail(email)) {
+    errors.email = "Email is invalid";
+  }
+
+  const passwordError = getUserPasswordError(password);
+  if (passwordError) {
+    errors.password = passwordError;
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return {
+      success: false,
+      errors: {
+        email: errors.email || null,
+        password: errors.password || null,
+        acceptTerms: errors.acceptTerms || null,
+        orgCreation: null,
+      },
+    };
+  }
+
+  const existingUser = email && (await getUserByEmail(email));
+  if (existingUser) {
+    // Add delay to make user enumeration more difficult
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    return {
+      success: false,
+      errors: {
+        email: "A user already exists with this email",
+        password: null,
+        acceptTerms: null,
+        orgCreation: null,
+      },
+    };
+  }
+
+  return {
+    success: true,
+  };
+}
+
 export async function createUser(
   email: User["email"],
   password: string,
+  acceptTerms: boolean,
   redirectTo?: string
-) {
+): Promise<
+  | {
+      user: User;
+      orgId: string;
+      errors: null;
+    }
+  | {
+      user: null;
+      orgId: null;
+      errors: {
+        email: string | null;
+        password: string | null;
+        acceptTerms: string | null;
+        orgCreation: string | null;
+      };
+    }
+> {
+  const newUserValidation = await validateNewUser(email, password, acceptTerms);
+  if (newUserValidation.success === false) {
+    return {
+      user: null,
+      orgId: null,
+      errors: {
+        email: newUserValidation.errors?.email || null,
+        password: newUserValidation.errors?.password || null,
+        acceptTerms: newUserValidation.errors?.acceptTerms || null,
+        orgCreation: newUserValidation.errors?.orgCreation || null,
+      },
+    };
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
@@ -69,11 +179,24 @@ export async function createUser(
 
   // For the time being, whenever we create a user we create an organization associated with that user, of which they are the owner. This will likely be expanded so that users created through invitation links can skip this step and register with a pre-existing organization
   const orgName = email.split("@")[0];
-  const { organization, error } = await createOrganization({
+  const { organization, error: orgCreateError } = await createOrganization({
     email,
     userId: user.id,
     name: `${orgName}'s Organization`,
   });
+
+  if (orgCreateError || !organization) {
+    return {
+      user: null,
+      orgId: null,
+      errors: {
+        email: null,
+        password: null,
+        acceptTerms: null,
+        orgCreation: "Server error",
+      },
+    };
+  }
 
   const verificationToken = await createVerificationToken(user.id);
   await sendEmailVerificationEmail({
@@ -82,7 +205,11 @@ export async function createUser(
     token: verificationToken.token,
   });
 
-  return { user, orgId: organization?.id, error };
+  return {
+    user,
+    orgId: organization.id,
+    errors: null,
+  };
 }
 
 export type EmailValidationResult = {
@@ -151,14 +278,16 @@ function sendPasswordResetEmail(user: User, token: string) {
     from: "noreply@example.com",
     subject: "Reset your BearClaw password",
     html: `
-      <p>Hi ${user.email},</p>
+      <p>Hi ${getUserFullName(user) || user.email},</p>
       <p>Someone requested a password reset for your BearClaw account. If this was you, please click the link below to reset your password. The link will expire in 24 hours.</p>
       <br />
       <br />
       <p data-testid="verification-token"><strong>${token}</strong></p>
       <br />
       <br />
-      <p><a href="/resetPassword?email=${user.email}">Enter your code here</a></p>
+      <p><a href="/resetPassword?email=${
+        user.email
+      }">Enter your code here</a></p>
       <p>Thanks,</p>
       <p>The BearClaw Team</p>
       <p><small>If you didn't request a password reset, please ignore this email.</small></p>

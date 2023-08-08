@@ -30,7 +30,8 @@ async function seedOrganization(ownerEmail: string, memberCount = "0") {
 
   const { user, orgId: organizationId } = await createUser(
     ownerEmail,
-    "myreallystrongpassword"
+    "myreallystrongpassword",
+    true
   );
 
   if (!organizationId) {
