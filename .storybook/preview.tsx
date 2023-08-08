@@ -1,8 +1,8 @@
 import React from "react";
 import type { Preview } from "@storybook/react";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import theme from "../app/styles/theme";
+import { CssBaseline } from "@mui/material";
 import { withRouter } from "storybook-addon-react-router-v6";
+import { ThemeProvider } from "../app/styles/ThemeContext";
 
 const preview: Preview = {
   parameters: {
@@ -17,7 +17,7 @@ const preview: Preview = {
   decorators: [
     withRouter,
     (Story) => (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider>
         <CssBaseline />
         <Story />
       </ThemeProvider>

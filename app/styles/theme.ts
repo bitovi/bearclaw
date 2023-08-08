@@ -59,7 +59,7 @@ declare module "@mui/material/Button" {
 }
 
 // Create a theme instance.
-export function getTheme(mode: ColorMode = "dark") {
+export function getTheme(mode?: ColorMode) {
   const isDarkMode = mode === "dark";
   return createTheme({
     palette: {
