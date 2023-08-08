@@ -163,7 +163,10 @@ export function CVEBreakdown({
                 ? metadata?.numberofCriticalWarnings
                 : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.criticalSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents}`}
+            details={`0 ${
+              copy?.content?.vulnerableSubComponents ||
+              "vulnerable subcomponents"
+            }`}
             Icon={
               <CircleTwoToneIcon sx={{ color: "red.800" }} fontSize="small" />
             }
@@ -176,7 +179,10 @@ export function CVEBreakdown({
                 ? metadata?.numberofHighWarnings
                 : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.highSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents}`}
+            details={`0 ${
+              copy?.content?.vulnerableSubComponents ||
+              "vulnerable subcomponents"
+            }`}
             Icon={
               <CircleTwoToneIcon sx={{ color: "red.600" }} fontSize="small" />
             }
@@ -189,7 +195,10 @@ export function CVEBreakdown({
                 ? metadata?.numberofMedWarnings
                 : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.mediumSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents}`}
+            details={`0 ${
+              copy?.content?.vulnerableSubComponents ||
+              "vulnerable subcomponents"
+            }`}
             Icon={
               <CircleTwoToneIcon
                 sx={{ color: "orange.800" }}
@@ -205,7 +214,10 @@ export function CVEBreakdown({
                 ? metadata?.numberofLowWarnings
                 : copy?.content?.notApplicable || "N/A"
             } ${copy?.content?.lowSeverityCVE} ${copy?.content?.cve}`}
-            details={`0 ${copy?.content?.vulnerableSubComponents} || vulnerable subcomponents`}
+            details={`0 ${
+              copy?.content?.vulnerableSubComponents ||
+              "vulnerable subcomponents"
+            }`}
             Icon={
               <CircleTwoToneIcon
                 sx={{ color: "purple.600" }}
