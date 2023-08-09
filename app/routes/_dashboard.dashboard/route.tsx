@@ -17,13 +17,18 @@ import { Suspense } from "react";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { KeyMetrics } from "./components/KeyMetrics";
 import { TextCopyIcon } from "~/components/textCopyIcon";
+import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
+import { InvalidOrgUser } from "../_dashboard/components/invalidOrgUser";
 
 dayjs.extend(utc);
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
   const { userId, organizationId } = await getOrgandUserId(request);
-
+  const orgUser = await retrieveActiveOrganizationUser({
+    userId,
+    organizationId,
+  });
   const keyMetrics = getKeyMetrics({
     days: 7,
     userId,
@@ -35,7 +40,7 @@ export async function loader({ request }: LoaderArgs) {
     perPage: "3",
   });
 
-  return defer({ user, keyMetrics, uploads, userId, organizationId });
+  return defer({ user, keyMetrics, uploads, userId, organizationId, orgUser });
 }
 
 export async function action(args: ActionArgs) {
@@ -45,7 +50,7 @@ export async function action(args: ActionArgs) {
 export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 
 export default function Index() {
-  const { userId, keyMetrics, organizationId, user, uploads } =
+  const { userId, keyMetrics, organizationId, user, uploads, orgUser } =
     useLoaderData<typeof loader>();
 
   return (
@@ -54,86 +59,101 @@ export default function Index() {
         headline={`Welcome ${user?.firstName || ""}`}
         description={"Here is the latest data on your account."}
       >
-        <Box border="4px solid rgba(0,0,0,0.12)" borderRadius="12px">
-          <Upload userId={userId} organizationId={organizationId} />
-        </Box>
+        {orgUser && (
+          <Box border="4px solid rgba(0,0,0,0.12)" borderRadius="12px">
+            <Upload userId={userId} organizationId={organizationId} />
+          </Box>
+        )}
       </PageHeader>
-      <Suspense fallback={<KeyMetrics />}>
-        <Await resolve={keyMetrics}>
-          {(metrics) => (
-            <KeyMetrics
-              totalFilesAnalyzed={metrics?.totalFilesAnalyzed || 0}
-              totalVulnerabilitiesCaptured={
-                metrics?.totalVulnerabilitiesCaptured || 0
-              }
-              numberofCriticalWarnings={metrics?.numberofCriticalWarnings || 0}
-            />
-          )}
-        </Await>
-      </Suspense>
-      <Box>
-        <Suspense
-          fallback={
-            <SkeletonTable
-              tableTitle="Recent Activity"
-              headers={["File Name", "Type", "Date", "Status", "Object ID"]}
-              rows={3}
-            />
-          }
-        >
-          <Await resolve={uploads}>
-            {(uploads) =>
-              uploads?.data && uploads.data.length > 0 ? (
-                <Table
-                  tableTitle="Recent Activity"
-                  headers={[
-                    { label: "File Name", value: "filename", sortable: true },
-                    { label: "Type", value: "type", sortable: true },
-                    { label: "Date", value: "analyzedAt", sortable: true },
-                    { label: "Status", value: "status", sortable: true },
-                    { label: "Object ID", value: "_id", sortable: false },
-                  ]}
-                  linkKey="_id"
-                  linkBasePath="history"
-                  linkIcon={({ copyValue, buttonProps }) => (
-                    <TextCopyIcon
-                      copyValue={copyValue}
-                      buttonProps={buttonProps}
-                    />
-                  )}
-                  totalItems={uploads.metadata?.page.total}
-                  tableData={uploads.data.map((upload) => ({
-                    filename: upload.filename,
-                    type: upload.type,
-                    analyzedAt: (
-                      <Box display="flex" flexDirection="column">
-                        <Typography variant="body2">
-                          {dayjs
-                            .utc(new Date(upload.analyzedAt))
-                            .local()
-                            .format("MM/DD/YY")}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {dayjs
-                            .utc(new Date(upload.analyzedAt))
-                            .local()
-                            .format("HH:mm:ss")}
-                        </Typography>
-                      </Box>
-                    ),
-                    status: <Chip label={toTitleCase(upload.status)} />,
-                    _id: upload._id,
-                  }))}
+      {!orgUser && <InvalidOrgUser />}
+      {orgUser && (
+        <>
+          <Suspense fallback={<KeyMetrics />}>
+            <Await resolve={keyMetrics}>
+              {(metrics) => (
+                <KeyMetrics
+                  totalFilesAnalyzed={metrics?.totalFilesAnalyzed || 0}
+                  totalVulnerabilitiesCaptured={
+                    metrics?.totalVulnerabilitiesCaptured || 0
+                  }
+                  numberofCriticalWarnings={
+                    metrics?.numberofCriticalWarnings || 0
+                  }
                 />
-              ) : (
-                <Box component={Paper} variant="outlined" padding={2}>
-                  <Typography fontStyle="italic">No activity yet</Typography>
-                </Box>
-              )
-            }
-          </Await>
-        </Suspense>
-      </Box>
+              )}
+            </Await>
+          </Suspense>
+          <Box>
+            <Suspense
+              fallback={
+                <SkeletonTable
+                  tableTitle="Recent Activity"
+                  headers={["File Name", "Type", "Date", "Status", "Object ID"]}
+                  rows={3}
+                />
+              }
+            >
+              <Await resolve={uploads}>
+                {(uploads) =>
+                  uploads?.data && uploads.data.length > 0 ? (
+                    <Table
+                      tableTitle="Recent Activity"
+                      headers={[
+                        {
+                          label: "File Name",
+                          value: "filename",
+                          sortable: true,
+                        },
+                        { label: "Type", value: "type", sortable: true },
+                        { label: "Date", value: "analyzedAt", sortable: true },
+                        { label: "Status", value: "status", sortable: true },
+                        { label: "Object ID", value: "_id", sortable: false },
+                      ]}
+                      linkKey="_id"
+                      linkBasePath="history"
+                      linkIcon={({ copyValue, buttonProps }) => (
+                        <TextCopyIcon
+                          copyValue={copyValue}
+                          buttonProps={buttonProps}
+                        />
+                      )}
+                      totalItems={uploads.metadata?.page.total}
+                      tableData={uploads.data.map((upload) => ({
+                        filename: upload.filename,
+                        type: upload.type,
+                        analyzedAt: (
+                          <Box display="flex" flexDirection="column">
+                            <Typography variant="body2">
+                              {dayjs
+                                .utc(new Date(upload.analyzedAt))
+                                .local()
+                                .format("MM/DD/YY")}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {dayjs
+                                .utc(new Date(upload.analyzedAt))
+                                .local()
+                                .format("HH:mm:ss")}
+                            </Typography>
+                          </Box>
+                        ),
+                        status: <Chip label={toTitleCase(upload.status)} />,
+                        _id: upload._id,
+                      }))}
+                    />
+                  ) : (
+                    <Box component={Paper} variant="outlined" padding={2}>
+                      <Typography fontStyle="italic">
+                        No activity yet
+                      </Typography>
+                    </Box>
+                  )
+                }
+              </Await>
+            </Suspense>
+          </Box>
+        </>
+      )}
     </Page>
   );
 }

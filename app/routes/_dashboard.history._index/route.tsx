@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Box from "@mui/material/Box";
 import HistoryTable, { SkeletonTable } from "../../components/table";
-import { defer } from "@remix-run/node";
+import { defer, redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { Await, useLoaderData } from "@remix-run/react";
 
@@ -21,12 +21,19 @@ import { usePageCopy } from "../_dashboard/copy";
 import { TextCopyIcon } from "~/components/textCopyIcon";
 import { ProcessingStatusChipColor } from "~/components/table/types";
 import { ProcessingStatus } from "../_dashboard.history.$/types";
+import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
 
 dayjs.extend(utc);
 
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
-
+  const orgUser = await retrieveActiveOrganizationUser({
+    userId,
+    organizationId,
+  });
+  if (!orgUser) {
+    throw redirect("/dashboard");
+  }
   try {
     const url = new URL(request.url);
     const page = url.searchParams.get("page") || "1";

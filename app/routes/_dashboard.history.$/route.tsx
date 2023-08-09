@@ -21,6 +21,7 @@ import { Suspense, useState } from "react";
 import { Loading } from "~/components/loading/Loading";
 import type { CveData } from "~/models/rsbomTypes";
 import { Page, PageHeader } from "../_dashboard/components/page";
+import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
 
 dayjs.extend(utc);
 
@@ -31,11 +32,17 @@ export async function loader({ request, params }: LoaderArgs) {
   }
 
   try {
+    const { userId, organizationId } = await getOrgandUserId(request);
+    const orgUser = await retrieveActiveOrganizationUser({
+      userId,
+      organizationId,
+    });
+    if (!orgUser) {
+      throw redirect("/dashboard");
+    }
     const dataObjectList = dataObjects.split("/");
 
     const targetDataObject = dataObjectList.slice(-1).join("");
-
-    const { userId, organizationId } = await getOrgandUserId(request);
 
     const processingStatus = await getProcessingStatusById({
       dataObject: targetDataObject,
