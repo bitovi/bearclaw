@@ -56,6 +56,5 @@ module.exports = function sortResults(data, url) {
     if (value === "desc") return `-${key}`;
     return key;
   });
-  console.log("fields", fields);
   return clonedData.sort(fieldSorter(fields));
 };
