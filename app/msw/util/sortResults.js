@@ -44,20 +44,20 @@ function _fieldSorter(fields) {
 }
 
 const compare = (a, b) => {
-  return a.localeCompare(b, undefined, {
+  const result = a.localeCompare(b, undefined, {
     numeric: true,
     sensitivity: "base",
   });
+  return result;
 };
 
 function fieldSorter(fields) {
   return (a, b) => {
     return fields
       .map((fieldString) => {
-        let dir = 1;
         if (fieldString[0] === "-") {
-          dir = -1;
           fieldString = fieldString.substring(1);
+          return -compare(a[fieldString], b[fieldString]);
         }
         return compare(a[fieldString], b[fieldString]);
       })
@@ -75,5 +75,6 @@ module.exports = function sortResults(data, url) {
     if (value === "desc") return `-${key}`;
     return key;
   });
+  console.log("fields", fields);
   return clonedData.sort(fieldSorter(fields));
 };
