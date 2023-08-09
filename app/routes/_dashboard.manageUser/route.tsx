@@ -39,11 +39,11 @@ export async function loader({ request }: LoaderArgs) {
     });
 
     if (!orgUser) {
-      throw redirect("/dashboard");
+      return redirect("/dashboard");
     }
     if (!orgUser.orgUsersView) {
       // if user does not have appropriate view privileges, redirect
-      throw redirect("/dashboard");
+      return redirect("/dashboard");
     }
     const urlParams = new URL(request.url).searchParams;
 
