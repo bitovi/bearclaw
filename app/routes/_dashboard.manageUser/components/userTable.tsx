@@ -210,7 +210,7 @@ export function UserTable({
 
                 return (
                   <TableRow
-                    hover
+                    hover={!row.owner}
                     onClick={
                       row.owner
                         ? () => {}
@@ -227,7 +227,7 @@ export function UserTable({
                     key={row.name}
                     selected={isItemSelected}
                     sx={{
-                      cursor: "pointer",
+                      cursor: row.owner ? "default" : "pointer",
                     }}
                   >
                     <TableCell padding="checkbox">
