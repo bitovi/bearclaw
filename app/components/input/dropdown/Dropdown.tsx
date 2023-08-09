@@ -48,6 +48,7 @@ export function Dropdown({
         id={`select-${domId}`}
         defaultValue={options.find((o) => o.selected)?.value}
         value={value}
+        label={label} // ensures notched styling takes effect
         {...props}
       >
         {placeholder && (
