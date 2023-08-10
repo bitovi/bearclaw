@@ -3,7 +3,13 @@ import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 
-export function InvalidOrgUser() {
+export function InvalidOrgUser({
+  header,
+  buttonLabel,
+}: {
+  header: string;
+  buttonLabel: string;
+}) {
   return (
     <Dialog
       maxWidth="xs"
@@ -20,11 +26,9 @@ export function InvalidOrgUser() {
       disableRestoreFocus
     >
       <Box padding={4} paddingBottom={2} textAlign={"center"}>
-        <Typography variant="h6">
-          User is no longer a member of this organization. Please log back in.
-        </Typography>
+        <Typography variant="h6">{header}</Typography>
         <ButtonLink to="/logout" sx={{ padding: 2, textAlign: "center" }}>
-          Login
+          {buttonLabel}
         </ButtonLink>
       </Box>
     </Dialog>

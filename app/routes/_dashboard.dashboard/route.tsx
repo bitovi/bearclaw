@@ -18,7 +18,8 @@ import { Page, PageHeader } from "../_dashboard/components/page";
 import { KeyMetrics } from "./components/KeyMetrics";
 import { TextCopyIcon } from "~/components/textCopyIcon";
 import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
-import { InvalidOrgUser } from "../_dashboard/components/invalidOrgUser";
+import { InvalidOrgUser } from "./components/invalidOrgUser";
+import { usePageCopy } from "../_dashboard/copy";
 
 dayjs.extend(utc);
 
@@ -52,7 +53,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Dashboard" }];
 export default function Index() {
   const { userId, keyMetrics, organizationId, user, uploads, orgUser } =
     useLoaderData<typeof loader>();
-
+  const copy = usePageCopy("dashboard");
   return (
     <Page>
       <PageHeader
@@ -65,7 +66,15 @@ export default function Index() {
           </Box>
         )}
       </PageHeader>
-      {!orgUser && <InvalidOrgUser />}
+      {!orgUser && (
+        <InvalidOrgUser
+          header={
+            copy?.content?.invalidOrgUser ||
+            "User is no longer a member of this organization. Please log back in."
+          }
+          buttonLabel={copy?.content?.login || "Login"}
+        />
+      )}
       {orgUser && (
         <>
           <Suspense fallback={<KeyMetrics />}>
