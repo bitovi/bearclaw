@@ -25,9 +25,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { unlink } from "fs/promises";
 import { bearFetch } from "~/services/bigBear/bearFetch.server";
+import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
 
 export const action = async ({ request }: ActionArgs) => {
   const { userId, organizationId } = await getOrgandUserId(request);
+
+  const orgUser = await retrieveActiveOrganizationUser({
+    userId,
+    organizationId,
+  });
+
+  if (!orgUser) {
+    return json({ success: false }, { status: 500 });
+  }
 
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({

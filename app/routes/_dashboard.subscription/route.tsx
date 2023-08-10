@@ -3,7 +3,7 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import Box from "@mui/material/Box";
 
 import { useState } from "react";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
   retrieveInvoicePreview,
   retrieveSubscriptionInvoiceHistory,
@@ -17,9 +17,22 @@ import { SideNav } from "~/components/sideNav/SideNav";
 import PersonIcon from "@mui/icons-material/Person";
 import StarsRoundedIcon from "@mui/icons-material/StarsRounded";
 import { InnerPage, Page, PageHeader } from "../_dashboard/components/page";
+import { getOrgandUserId } from "~/session.server";
+import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
 
 export async function loader({ request }: { request: Request }) {
   try {
+    const { userId, organizationId } = await getOrgandUserId(request);
+
+    const orgUser = await retrieveActiveOrganizationUser({
+      userId,
+      organizationId,
+    });
+
+    if (!orgUser) {
+      return redirect("/dashboard");
+    }
+
     const optionResults = await subscriptionOptionLookup();
     const organizationSubscription = await retrieveOrganizationSubscription(
       request
