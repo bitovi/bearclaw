@@ -8,7 +8,7 @@ import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { getOrgandUserId } from "~/session.server";
 import { Page, PageHeader } from "../_dashboard/components/page";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { usePageCopy } from "../_dashboard/copy";
 import { TextCopyIcon } from "~/components/textCopyIcon";
 
