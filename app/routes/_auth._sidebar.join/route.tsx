@@ -13,8 +13,8 @@ import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { getUser, createUserSession } from "~/session.server";
-import { createUser, getUserByEmail } from "~/models/user.server";
-import { safeRedirect, validateEmail } from "~/utils";
+import { createUser } from "~/models/user.server";
+import { safeRedirect } from "~/utils";
 import {
   getPasswordStrength,
   PasswordStrengthMeter,
@@ -24,6 +24,7 @@ import { useParentFormCopy } from "../_auth/copy";
 import { PortableText } from "@portabletext/react";
 import { AuthLogoHeader } from "~/components/authLogoHeader/AuthLogoHeader";
 import { ButtonLoader } from "~/components/buttonLoader";
+import { FormControl, FormHelperText } from "@mui/material";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -38,94 +39,20 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
+  const acceptTerms = Boolean(formData.get("acceptTerms"));
+  const email = formData.get("email")?.toString() || "";
+  const password = formData.get("password")?.toString() || "";
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
 
-  if (!validateEmail(email)) {
-    return json(
-      {
-        errors: {
-          email: "Email is invalid",
-          password: null,
-          orgCreation: null,
-        },
-      },
-      { status: 400 }
-    );
-  }
+  const { user, orgId, errors } = await createUser(
+    email,
+    password,
+    acceptTerms,
+    redirectTo
+  );
 
-  // Only allow emails from certain domains
-  // TODO: Remove this in production
-  if (!email.match(/@(bigbear.ai|verybigthings.com|bitovi.com)$/)) {
-    return json(
-      {
-        errors: {
-          email: "Email is not in approved list",
-          password: null,
-          orgCreation: null,
-        },
-      },
-      { status: 400 }
-    );
-  }
-
-  if (typeof password !== "string" || password.length === 0) {
-    return json(
-      {
-        errors: {
-          email: null,
-          password: "Password is required",
-          orgCreation: null,
-        },
-      },
-      { status: 400 }
-    );
-  }
-
-  if (password.length < 8) {
-    return json(
-      {
-        errors: {
-          email: null,
-          password: "Password is too short",
-          orgCreation: null,
-        },
-      },
-      { status: 400 }
-    );
-  }
-
-  const existingUser = await getUserByEmail(email);
-  if (existingUser) {
-    return json(
-      {
-        errors: {
-          email: "A user already exists with this email",
-          password: null,
-          orgCreation: null,
-        },
-      },
-      { status: 400 }
-    );
-  }
-
-  const { user, orgId, error } = await createUser(email, password, redirectTo);
-
-  if (error || !orgId) {
-    return json(
-      {
-        errors: {
-          email: null,
-          password: null,
-          orgCreation:
-            typeof error === "string"
-              ? error
-              : "An error occured creating new organization",
-        },
-      },
-      { status: 405 }
-    );
+  if (errors) {
+    return json({ errors }, { status: 400 });
   }
 
   return createUserSession({
@@ -216,15 +143,20 @@ export default function Join() {
               }}
               name="password"
               type="password"
+              required
               autoComplete="new-password"
               error={actionData?.errors?.password}
             />
             <Box padding="0.25rem 0.75rem">
               <PasswordStrengthMeter strength={passwordStrength} />
             </Box>
-            <Box textAlign="left" padding="0 0.75rem">
+            <FormControl
+              error={!!actionData?.errors?.acceptTerms}
+              sx={{ alignItems: "center" }}
+            >
               <FormControlLabel
-                control={<Checkbox defaultChecked />}
+                name="acceptTerms"
+                control={<Checkbox />}
                 label={
                   formCopy?.joinAcceptTermsLabel ? (
                     <PortableText value={formCopy?.joinAcceptTermsLabel} />
@@ -233,7 +165,8 @@ export default function Join() {
                   )
                 }
               />
-            </Box>
+              <FormHelperText>{actionData?.errors?.acceptTerms}</FormHelperText>
+            </FormControl>
           </Box>
           <input type="hidden" name="redirectTo" value={redirectTo} />
         </Box>
