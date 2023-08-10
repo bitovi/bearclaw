@@ -141,7 +141,7 @@ export function CVETable({
         ) : (
           <CveStatusImage
             image={copy?.images?.processingResults}
-            displayText={copy?.content?.analyzing || "No CVEs found."}
+            displayText={copy?.content?.noCVEsFound || "No CVEs found."}
           />
         )
       ) : (
