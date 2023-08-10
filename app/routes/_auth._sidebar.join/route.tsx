@@ -39,7 +39,6 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
-  console.log("acceptTerms", formData.get("acceptTerms"));
   const acceptTerms = Boolean(formData.get("acceptTerms"));
   const email = formData.get("email")?.toString() || "";
   const password = formData.get("password")?.toString() || "";
