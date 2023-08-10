@@ -24,18 +24,23 @@ function parseSortParam(sortString) {
   return obj;
 }
 
+const compare = (a, b) => {
+  const result = a.localeCompare(b, undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
+  return result;
+};
+
 function fieldSorter(fields) {
   return (a, b) => {
     return fields
       .map((fieldString) => {
-        let dir = 1;
         if (fieldString[0] === "-") {
-          dir = -1;
           fieldString = fieldString.substring(1);
+          return -compare(a[fieldString], b[fieldString]);
         }
-        if (a[fieldString] > b[fieldString]) return dir;
-        if (a[fieldString] < b[fieldString]) return -dir;
-        return 0;
+        return compare(a[fieldString], b[fieldString]);
       })
       .reduce((acc, curr) => {
         return acc ? acc : curr;
