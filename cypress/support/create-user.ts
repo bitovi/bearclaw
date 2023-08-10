@@ -22,7 +22,7 @@ async function createAndLogin(email: string) {
 
   const { user, orgId } = await createUser(
     email,
-    "myreallystrongpassword",
+    "MyReally$trongPassword1",
     true
   );
 

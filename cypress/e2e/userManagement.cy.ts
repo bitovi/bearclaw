@@ -1,26 +1,26 @@
 describe("User Management & Invitation", () => {
   const ownerAccount = {
     email: "ownerAccount-test@bigbear.ai",
-    password: "testPassword",
-    resetPassword: "testPassword2",
+    password: "MyReally$trongPassword1",
+    resetPassword: "MyReally$trongPassword2",
   };
 
   const newUserAccount = {
     email: "newUserAccount-test@bigbear.ai",
-    password: "testPassword",
-    resetPassword: "testPassword2",
+    password: "MyReally$trongPassword1",
+    resetPassword: "MyReally$trongPassword2",
   };
 
   const existingUserAccount = {
     email: "existingUserAccount-test@bigbear.ai",
-    password: "testPassword",
-    resetPassword: "testPassword2",
+    password: "MyReally$trongPassword1",
+    resetPassword: "MyReally$trongPassword2",
   };
 
   const differentOwnerAccount = {
     email: "differentOwnerAccount-test@bigbear.ai",
-    password: "myreallystrongpassword",
-    resetPassword: "myreallystrongpassword",
+    password: "MyReally$trongPassword2",
+    resetPassword: "MyReally$trongPassword2",
   };
 
   before(() => {
@@ -85,6 +85,8 @@ describe("User Management & Invitation", () => {
       .findByLabelText(/password/i)
       .should("be.visible")
       .type(newUserAccount.password);
+
+    cy.findByLabelText(/accept/i).check({ force: true });
 
     cy.findAllByRole("button", { name: /sign up/i })
       .eq(0)

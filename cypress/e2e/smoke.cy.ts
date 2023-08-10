@@ -144,6 +144,7 @@ describe("join and authenticate tests", () => {
     cy.visitAndCheck("/join");
     cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
+    cy.findByLabelText(/accept/i).check({ force: true });
     cy.findAllByRole("button", { name: /sign up/i })
       .eq(0)
       .should("be.visible")
@@ -229,7 +230,7 @@ describe("join and authenticate tests", () => {
     cy.findByRole("button", { name: /log in/i })
       .should("be.visible")
       .click({ force: true });
-    cy.findByText(/invalid email or password/i);
+    cy.findAllByText(/invalid email or password/i).should("have.length.gte", 2);
 
     // New password works
     cy.wait(500)
