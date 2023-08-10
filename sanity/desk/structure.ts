@@ -93,5 +93,8 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext) {
                 .child(S.documentList().title('Pages').filter('_type == "page"')),
             ])
         ),
+      S.listItem()
+        .title('Emails')
+        .child(S.documentList().title('Emails').filter('_type == "emailTemplate"')),
     ])
 }
