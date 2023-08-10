@@ -44,8 +44,7 @@ export async function loader({ request }: LoaderArgs) {
     const invitationToken = await validateInvitationToken(token, user.email);
     if (!invitationToken) {
       return json({
-        error:
-          "No valid invitation token found for this email. Please reach out to organization administrator to request a new invitation.",
+        error: `No valid invitation token found for ${user.email}. Please reach out to organization administrator to request a new invitation.`,
         organizationName: null,
       });
     }
