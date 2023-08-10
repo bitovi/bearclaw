@@ -18,7 +18,7 @@ import { safeRedirect } from "~/utils";
 import { fetchDashboardCopy } from "./copy";
 import { NavDrawer } from "./components/NavDrawer";
 import { useState } from "react";
-import { getOrganizationsByUserId } from "~/models/organization.server";
+import { getActiveOrganizationsByUserId } from "~/models/organization.server";
 
 export async function loader({ request }: LoaderArgs) {
   const isLoggedIn = await getUser(request);
@@ -56,7 +56,7 @@ export async function loader({ request }: LoaderArgs) {
   const [copy, permissions, userOrganizations] = await Promise.all([
     fetchDashboardCopy(),
     getOrgUserPermissions(orgUser),
-    getOrganizationsByUserId(user.id),
+    getActiveOrganizationsByUserId(user.id),
   ]);
 
   if (redirectTo && redirectTo !== "/") {
