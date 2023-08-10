@@ -65,6 +65,7 @@ export default function Index() {
             <Typography
               variant="body2"
               component={"div"}
+              zIndex={1}
               color="white"
               sx={{
                 textDecoration: "none",
@@ -81,8 +82,10 @@ export default function Index() {
             <Typography
               variant="body2"
               component={Link}
+              zIndex={1}
               to="/help"
               color="white"
+              sx={{ textDecoration: "none" }}
             >
               Need Help?
             </Typography>
