@@ -26,8 +26,10 @@ export async function loader({ request }: LoaderArgs) {
   return json({
     redirectTo,
     email: user?.email,
+    showFakeMail: process.env.EMAIL_USE_DEV,
   });
 }
+
 export async function action({ request }: ActionArgs) {
   const userId = await getUserId(request);
   const formData = await request.formData();
@@ -66,7 +68,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function Route() {
-  const { redirectTo, email } = useLoaderData<typeof loader>();
+  const { redirectTo, email, showFakeMail } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const formCopy = useParentFormCopy();
   const navigation = useNavigation();
@@ -137,7 +139,7 @@ export default function Route() {
           <KeyboardArrowLeftIcon />
           {formCopy?.returnToSignInCTA || "Return to Sign In"}
         </ButtonLink>
-        {window.ENV.EMAIL_USE_DEV ? (
+        {showFakeMail ? (
           <Typography mt={4}>
             TESTING: Email messaging is not connected yet.{" "}
             <Typography component={Link} to="/fakeMail" color="secondary.main">

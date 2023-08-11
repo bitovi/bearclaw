@@ -5,7 +5,7 @@ import { json } from "@remix-run/server-runtime";
 
 export async function loader() {
   if (!process.env.EMAIL_USE_DEV) {
-    throw new Response(null, {
+    throw json(null, {
       status: 404,
       statusText: "Not Found",
     });
