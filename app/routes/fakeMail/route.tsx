@@ -4,11 +4,13 @@ import Box from "@mui/material/Box";
 import { json } from "@remix-run/server-runtime";
 
 export async function loader() {
-  if (process.env.EMAIL_USE_DEV) {
-    throw json(undefined, { status: 404 });
+  if (!process.env.EMAIL_USE_DEV) {
+    throw new Response(null, {
+      status: 404,
+      statusText: "Not Found",
+    });
   }
   const mail = await listMail();
-
   return json({ mail });
 }
 
