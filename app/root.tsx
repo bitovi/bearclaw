@@ -46,6 +46,7 @@ declare global {
   interface Window {
     ENV: {
       SENTRY_DSN: string;
+      EMAIL_USE_DEV: boolean;
     };
   }
 }
