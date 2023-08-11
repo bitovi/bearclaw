@@ -1,0 +1,1 @@
+export { renderEmailFromTemplate } from "./renderEmailFromTemplate";

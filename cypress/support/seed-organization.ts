@@ -29,6 +29,7 @@ async function seedOrganization(ownerEmail: string, memberCount = "0") {
   }
 
   const { user, orgId: organizationId } = await createUser(
+    new Request("test://test"),
     ownerEmail,
     "MyReally$trongPassword2",
     true

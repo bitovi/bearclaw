@@ -4,13 +4,14 @@ import bcrypt from "bcryptjs";
 import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail.server";
 import { createOrganization } from "./organization.server";
-import { createVerificationToken } from "./verificationToken.server";
+import { sendVerificationToken } from "./verificationToken.server";
 import {
   createSixCharacterCode,
   getUserPasswordError,
   validateEmail,
 } from "~/utils";
 import { getUserFullName } from "~/utils/user/getUserFullName";
+import { renderEmailFromTemplate } from "~/services/sanity/emailTemplates";
 
 export type { User } from "@prisma/client";
 
@@ -22,34 +23,39 @@ export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-export function sendEmailVerificationEmail({
+export async function sendEmailVerificationEmail({
   user,
-  redirectTo,
+  link,
   token,
 }: {
   user: User;
-  redirectTo?: string | null;
+  link: string;
   token: string;
 }) {
-  const redirectParam = redirectTo
-    ? `&redirectTo=${encodeURIComponent(redirectTo)}`
-    : "";
+  const username = getUserFullName(user) || user.email;
+
+  const { html, subject } = await renderEmailFromTemplate({
+    key: "verifyEmailAddress",
+    variables: { username, token, link },
+    fallbackSubject: "Welcome to Troy! Please verify your email address.",
+    fallbackBody: `
+      <p>Hi {{username}},</p>
+      <p>Thanks for signing up for Troy! Please verify your email address by entering the provided 6-digit code at the link provided below. The code will expire in 24 hours.</p>
+      <br />
+      <br />
+      <p data-testid="verification-token"><strong>{{token}}</strong></p>
+      <br />
+      <br />
+      <p><a href="{{link}}">Enter code here</a></p>
+      <p>Thanks,</p>
+      <p>The Troy Team</p>
+      <p><small>If you didn't sign up for Troy, please ignore this email.</small></p>
+    `,
+  });
   return sendMail({
     to: user.email,
-    subject: "Welcome to BearClaw! Please verify your email address.",
-    html: `
-      <p>Hi ${user.email},</p>
-      <p>Thanks for signing up for BearClaw! Please verify your email address by entering the provided 6-digit code at the link provided below. The code will expire in 24 hours.</p>
-      <br />
-      <br />
-      <p data-testid="verification-token"><strong>${token}</strong></p>
-      <br />
-      <br />
-      <p><a href="/verifyEmail?${redirectParam}">Enter code here</a></p>
-      <p>Thanks,</p>
-      <p>The BearClaw Team</p>
-      <p><small>If you didn't sign up for BearClaw, please ignore this email.</small></p>
-    `,
+    subject,
+    html,
   });
 }
 
@@ -117,10 +123,10 @@ export async function validateNewUser(
 }
 
 export async function createUser(
+  request: Request,
   email: User["email"],
   password: string,
-  acceptTerms: boolean,
-  redirectTo?: string
+  acceptTerms: boolean
 ): Promise<
   | {
       user: User;
@@ -186,12 +192,7 @@ export async function createUser(
     };
   }
 
-  const verificationToken = await createVerificationToken(user.id);
-  await sendEmailVerificationEmail({
-    user,
-    redirectTo,
-    token: verificationToken.token,
-  });
+  await sendVerificationToken(request);
 
   return {
     user,
@@ -260,25 +261,30 @@ export async function verifyLogin(
   return userWithoutPassword;
 }
 
-function sendPasswordResetEmail(user: User, token: string) {
-  return sendMail({
-    to: user.email,
-    subject: "Reset your BearClaw password",
-    html: `
-      <p>Hi ${getUserFullName(user) || user.email},</p>
-      <p>Someone requested a password reset for your BearClaw account. If this was you, please click the link below to reset your password. The link will expire in 24 hours.</p>
+async function sendPasswordResetEmail(user: User, token: string) {
+  const username = getUserFullName(user) || user.email;
+  const { html, subject } = await renderEmailFromTemplate({
+    key: "passwordReset",
+    variables: { username, token, email: user.email },
+    fallbackSubject: "Reset your Troy password",
+    fallbackBody: `
+      <p>Hi {{username}},</p>
+      <p>Someone requested a password reset for your Troy account. If this was you, please click the link below to reset your password. The link will expire in 24 hours.</p>
       <br />
       <br />
-      <p data-testid="verification-token"><strong>${token}</strong></p>
+      <p data-testid="verification-token"><strong>{{token}}</strong></p>
       <br />
       <br />
-      <p><a href="/resetPassword?email=${
-        user.email
-      }">Enter your code here</a></p>
+      <p><a href="/resetPassword?email={{email}}">Enter your code here</a></p>
       <p>Thanks,</p>
-      <p>The BearClaw Team</p>
+      <p>The Troy Team</p>
       <p><small>If you didn't request a password reset, please ignore this email.</small></p>
     `,
+  });
+  return sendMail({
+    to: user.email,
+    subject,
+    html,
   });
 }
 

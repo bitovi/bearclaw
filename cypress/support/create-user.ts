@@ -21,6 +21,7 @@ async function createAndLogin(email: string) {
   }
 
   const { user, orgId } = await createUser(
+    new Request("test://test"),
     email,
     "MyReally$trongPassword1",
     true

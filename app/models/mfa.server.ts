@@ -3,6 +3,8 @@ import dayjs from "dayjs";
 
 import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail.server";
+import { renderEmailFromTemplate } from "~/services/sanity/emailTemplates";
+import { getUserFullName } from "~/utils/user/getUserFullName";
 
 function generateMfaToken(length = 6) {
   let token = Math.random().toString().slice(-length);
@@ -12,17 +14,24 @@ function generateMfaToken(length = 6) {
   return token;
 }
 
-export function sendMfaTokenEmail(email: string, token: string) {
-  return sendMail({
-    to: email,
-    subject: "BEARCLAW MFA",
-    html: `
-      <p>Hi ${email},</p>
+export async function sendMfaTokenEmail(user: User, token: string) {
+  const username = getUserFullName(user) || user.email;
+  const { html, subject } = await renderEmailFromTemplate({
+    key: "mfaTokenVerification",
+    variables: { username, token },
+    fallbackSubject: "TROY - MFA",
+    fallbackBody: `
+      <p>Hi {{username}},</p>
       <p>Please verify your login attempt with the code below. The code will expire in 5 minutes.</p>
-      <p><b><span data-testid="token">${token}</span></b></p>
+      <p><b><span data-testid="token">{{token}}</span></b></p>
       <p>Thanks,</p>
-      <p>The BearClaw Team</p>
+      <p>The Troy Team</p>
     `,
+  });
+  return sendMail({
+    to: user.email,
+    subject,
+    html,
   });
 }
 
@@ -90,7 +99,7 @@ export async function resetMfaToken({
   user: User;
 }) {
   const mfaToken = await createMfaToken({ type, user });
-  await sendMfaTokenEmail(user.email, mfaToken.token);
+  await sendMfaTokenEmail(user, mfaToken.token);
 }
 
 export async function updateUserMfaMethod({
@@ -119,7 +128,7 @@ export async function updateUserMfaMethod({
 
   if (active) {
     const mfaToken = await createMfaToken({ type, user });
-    await sendMfaTokenEmail(user.email, mfaToken.token);
+    await sendMfaTokenEmail(user, mfaToken.token);
   } else {
     await prisma.mfaToken.deleteMany({
       where: {

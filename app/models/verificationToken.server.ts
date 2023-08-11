@@ -1,7 +1,11 @@
 import { prisma } from "~/db.server";
-import type { User } from "@prisma/client";
-import { sendEmailVerificationEmail } from "./user.server";
-import { createSixCharacterCode } from "~/utils";
+import { createSixCharacterCode, safeRedirect } from "~/utils";
+import { getUser } from "~/session.server";
+import invariant from "tiny-invariant";
+import { getDomainUrl } from "~/utils/url.server";
+import { renderEmailFromTemplate } from "~/services/sanity/emailTemplates";
+import { getUserFullName } from "~/utils/user/getUserFullName";
+import { sendMail } from "~/services/mail/sendMail.server";
 
 export async function createVerificationToken(userId: string) {
   const token = createSixCharacterCode();
@@ -29,16 +33,42 @@ export async function deleteVerificationToken(id: string) {
   });
 }
 
-export async function resetVerificationToken(
-  user: User,
-  redirectTo?: string | null
-) {
-  const verificationToken = await createVerificationToken(user.id);
+export async function sendVerificationToken(request: Request) {
+  const user = await getUser(request);
+  invariant(user, "User is required");
+  const url = new URL(request.url);
+  const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
+  const redirectParam = redirectTo
+    ? `&redirectTo=${encodeURIComponent(redirectTo)}`
+    : "";
+  const { token } = await createVerificationToken(user.id);
+  const link = `${getDomainUrl(
+    request
+  )}/verify-email?token=${token}${redirectParam}`;
+  const username = getUserFullName(user) || user.email;
 
-  await sendEmailVerificationEmail({
-    user,
-    token: verificationToken.token,
-    redirectTo,
+  const { html, subject } = await renderEmailFromTemplate({
+    key: "verifyEmailAddress",
+    variables: { username, token, link },
+    fallbackSubject: "Welcome to Troy! Please verify your email address.",
+    fallbackBody: `
+      <p>Hi {{username}},</p>
+      <p>Thanks for signing up for Troy! Please verify your email address by entering the provided 6-digit code at the link provided below. The code will expire in 24 hours.</p>
+      <br />
+      <br />
+      <p data-testid="verification-token"><strong>{{token}}</strong></p>
+      <br />
+      <br />
+      <p><a href="{{link}}">Enter code here</a></p>
+      <p>Thanks,</p>
+      <p>The Troy Team</p>
+      <p><small>If you didn't sign up for Troy, please ignore this email.</small></p>
+    `,
+  });
+  return sendMail({
+    to: user.email,
+    subject,
+    html,
   });
 }
 

@@ -47,10 +47,10 @@ export async function action({ request }: ActionArgs) {
     to: formData.get("redirectTo"),
   });
   const { user, orgId, errors } = await createUser(
+    request,
     email,
     password,
-    acceptTerms,
-    redirectTo
+    acceptTerms
   );
 
   if (errors) {
