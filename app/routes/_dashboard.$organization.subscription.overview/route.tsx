@@ -22,7 +22,10 @@ const InvoiceTableHeaders = [
 export default function Route() {
   const navigate = useNavigate();
   const { organizationSubscription, invoicePreview, invoiceHistory } =
-    useMatches().find((root) => root.pathname === "/subscription")?.data as {
+    useMatches().find((root) => {
+      console.log("root", root);
+      return root.id === "routes/_dashboard.$organization.subscription";
+    })?.data as {
       optionResults: {
         subscriptionOptions: ExpandedPrice[] | undefined;
         error: string | undefined;
