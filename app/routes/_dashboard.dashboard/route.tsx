@@ -17,6 +17,7 @@ import { Suspense } from "react";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { KeyMetrics } from "./components/KeyMetrics";
 import { TextCopyIcon } from "~/components/textCopyIcon";
+import SeverityChip from "~/components/severityChip/severityChip";
 
 dayjs.extend(utc);
 
@@ -87,10 +88,11 @@ export default function Index() {
                 <Table
                   tableTitle="Recent Activity"
                   headers={[
-                    { label: "File Name", value: "filename", sortable: true },
-                    { label: "Type", value: "type", sortable: true },
-                    { label: "Date", value: "analyzedAt", sortable: true },
-                    { label: "Status", value: "status", sortable: true },
+                    { label: "File Name", value: "filename", sortable: false },
+                    { label: "Type", value: "type", sortable: false },
+                    { label: "Date", value: "analyzedAt", sortable: false },
+                    { label: "Status", value: "status", sortable: false },
+                    { label: "Severity", value: "severity", sortable: false },
                     { label: "Object ID", value: "_id", sortable: false },
                   ]}
                   linkKey="_id"
@@ -101,7 +103,6 @@ export default function Index() {
                       buttonProps={buttonProps}
                     />
                   )}
-                  totalItems={uploads.metadata?.page.total}
                   tableData={uploads.data.map((upload) => ({
                     filename: upload.filename,
                     type: upload.type,
@@ -122,6 +123,7 @@ export default function Index() {
                       </Box>
                     ),
                     status: <Chip label={toTitleCase(upload.status)} />,
+                    severity: <SeverityChip severity={upload.severity} />,
                     _id: upload._id,
                   }))}
                 />

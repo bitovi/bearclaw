@@ -57,7 +57,7 @@ export async function loader({ request, params }: LoaderArgs) {
     const page = url.searchParams.get("page") || "1";
     const perPage = url.searchParams.get("perPage") || "10";
 
-    const childJobs = getAllChildJobs({
+    const childJobs = await getAllChildJobs({
       params: { userId, organizationId, page, perPage },
       dataObject: targetDataObject,
     });

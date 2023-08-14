@@ -61,6 +61,7 @@ type ChildJob = {
   Status: "complete" | "running" | "not started";
   isParent: boolean;
   "Date Analyzed": string;
+  severity: "Critical" | "High" | "Medium" | "Low" | "Unknown" | "Passed";
 };
 
 export type ChildJobTransformed = {
@@ -68,6 +69,7 @@ export type ChildJobTransformed = {
   filename: string;
   type: string;
   dateAnalyzed: string;
+  severity: "Critical" | "High" | "Medium" | "Low" | "Unknown" | "Passed";
   status: "complete" | "running" | "not started";
 };
 
@@ -79,6 +81,7 @@ function transformChildJob(job: ChildJob) {
     type: job.Type,
     dateAnalyzed: job["Date Analyzed"],
     status: job.Status,
+    severity: job.severity || "Unknown",
     id: job._id,
   };
 }
