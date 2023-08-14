@@ -44,7 +44,9 @@ export async function renderEmailFromTemplate({
   fallbackSubject: string;
   variables: Record<string, string>;
 }) {
-  const emailTemplate = await fetchEmailTemplate(key);
+  const emailTemplate = process.env.EMAIL_USE_DEV
+    ? null
+    : await fetchEmailTemplate(key);
 
   return {
     subject: Mustache.render(

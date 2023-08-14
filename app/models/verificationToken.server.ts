@@ -48,7 +48,7 @@ export async function sendVerificationToken(
   const { token } = await createVerificationToken(user.id);
   const link = `${getDomainUrl(
     request
-  )}/verify-email?token=${token}${redirectParam}`;
+  )}/verifyEmail?token=${token}${redirectParam}`;
   const username = getUserFullName(user) || user.email;
 
   const { html, subject } = await renderEmailFromTemplate({

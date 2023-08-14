@@ -15,8 +15,8 @@ type LoginData = {
 function createLoginData(): LoginData {
   return {
     email: `${faker.internet.userName()}-test@bigbear.ai`,
-    password: faker.internet.password(),
-    resetPassword: faker.internet.password(),
+    password: "MyReally$trongPassword1",
+    resetPassword: "MyReally$trongPassword2",
   };
 }
 

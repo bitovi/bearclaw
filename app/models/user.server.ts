@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail.server";
 import { createOrganization } from "./organization.server";
-import { sendVerificationToken } from "./verificationToken.server";
 import {
   createSixCharacterCode,
   getUserPasswordError,
@@ -13,6 +12,7 @@ import {
 import { getUserFullName } from "~/utils/user/getUserFullName";
 import { renderEmailFromTemplate } from "~/services/sanity/emailTemplates";
 import { getDomainUrl } from "~/utils/url.server";
+import { sendVerificationToken } from "./verificationToken.server";
 
 export type { User } from "@prisma/client";
 
@@ -22,42 +22,6 @@ export async function getUserById(id: User["id"]) {
 
 export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
-}
-
-export async function sendEmailVerificationEmail({
-  user,
-  link,
-  token,
-}: {
-  user: User;
-  link: string;
-  token: string;
-}) {
-  const username = getUserFullName(user) || user.email;
-
-  const { html, subject } = await renderEmailFromTemplate({
-    key: "verifyEmailAddress",
-    variables: { username, token, link },
-    fallbackSubject: "Welcome to Troy! Please verify your email address.",
-    fallbackBody: `
-      <p>Hi {{username}},</p>
-      <p>Thanks for signing up for Troy! Please verify your email address by entering the provided 6-digit code at the link provided below. The code will expire in 24 hours.</p>
-      <br />
-      <br />
-      <p data-testid="verification-token"><strong>{{token}}</strong></p>
-      <br />
-      <br />
-      <p><a href="{{link}}">Enter code here</a></p>
-      <p>Thanks,</p>
-      <p>The Troy Team</p>
-      <p><small>If you didn't sign up for Troy, please ignore this email.</small></p>
-    `,
-  });
-  return sendMail({
-    to: user.email,
-    subject,
-    html,
-  });
 }
 
 export type NewUserValidationResult = {
