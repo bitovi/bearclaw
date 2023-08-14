@@ -1,7 +1,7 @@
 export default {
   name: 'emailTemplate',
   type: 'document',
-  title: 'Page',
+  title: 'Email Template',
   fields: [
     {
       name: 'key',

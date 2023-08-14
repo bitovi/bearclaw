@@ -12,6 +12,7 @@ import {
 } from "~/utils";
 import { getUserFullName } from "~/utils/user/getUserFullName";
 import { renderEmailFromTemplate } from "~/services/sanity/emailTemplates";
+import { getDomainUrl } from "~/utils/url.server";
 
 export type { User } from "@prisma/client";
 
@@ -192,7 +193,7 @@ export async function createUser(
     };
   }
 
-  await sendVerificationToken(request);
+  await sendVerificationToken(request, user);
 
   return {
     user,
@@ -261,11 +262,16 @@ export async function verifyLogin(
   return userWithoutPassword;
 }
 
-async function sendPasswordResetEmail(user: User, token: string) {
+async function sendPasswordResetEmail(
+  request: Request,
+  user: User,
+  token: string
+) {
   const username = getUserFullName(user) || user.email;
+  const link = `${getDomainUrl(request)}/resetPassword?email={{email}}`;
   const { html, subject } = await renderEmailFromTemplate({
     key: "passwordReset",
-    variables: { username, token, email: user.email },
+    variables: { username, token, link },
     fallbackSubject: "Reset your Troy password",
     fallbackBody: `
       <p>Hi {{username}},</p>
@@ -275,12 +281,13 @@ async function sendPasswordResetEmail(user: User, token: string) {
       <p data-testid="verification-token"><strong>{{token}}</strong></p>
       <br />
       <br />
-      <p><a href="/resetPassword?email={{email}}">Enter your code here</a></p>
+      <p><a href="{{link}}">Enter your code here</a></p>
       <p>Thanks,</p>
       <p>The Troy Team</p>
       <p><small>If you didn't request a password reset, please ignore this email.</small></p>
     `,
   });
+
   return sendMail({
     to: user.email,
     subject,
@@ -288,7 +295,7 @@ async function sendPasswordResetEmail(user: User, token: string) {
   });
 }
 
-export async function forgotPassword(email: User["email"]) {
+export async function forgotPassword(request: Request, email: User["email"]) {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     return null;
@@ -308,7 +315,7 @@ export async function forgotPassword(email: User["email"]) {
     },
   });
 
-  reset.token && (await sendPasswordResetEmail(user, reset.token));
+  reset.token && (await sendPasswordResetEmail(request, user, reset.token));
 
   return user;
 }

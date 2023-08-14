@@ -6,6 +6,7 @@ import { getDomainUrl } from "~/utils/url.server";
 import { renderEmailFromTemplate } from "~/services/sanity/emailTemplates";
 import { getUserFullName } from "~/utils/user/getUserFullName";
 import { sendMail } from "~/services/mail/sendMail.server";
+import type { User } from "@prisma/client";
 
 export async function createVerificationToken(userId: string) {
   const token = createSixCharacterCode();
@@ -33,8 +34,11 @@ export async function deleteVerificationToken(id: string) {
   });
 }
 
-export async function sendVerificationToken(request: Request) {
-  const user = await getUser(request);
+export async function sendVerificationToken(
+  request: Request,
+  user?: User | null
+) {
+  user = user || (await getUser(request));
   invariant(user, "User is required");
   const url = new URL(request.url);
   const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));

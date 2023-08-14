@@ -37,7 +37,7 @@ export async function action({ request }: ActionArgs) {
   }
   // if email is valid, send email with reset link
   // if email is invalid, do nothing. This is to prevent email enumeration
-  await forgotPassword(email);
+  await forgotPassword(request, email);
   return redirect(`/resetPassword?email=${email}`);
 }
 

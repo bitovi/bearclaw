@@ -1,9 +1,9 @@
 import type { PortableTextBlock } from "@portabletext/types";
-import { getClient } from "../getClient";
-import { toPlainText } from "@portabletext/react";
+import { toHTML } from "@portabletext/to-html";
 import Mustache from "mustache";
+import { getClient } from "../getClient";
 
-type EmailTemplate = {
+export type EmailTemplate = {
   _id: string;
   key: string;
   subject: string;
@@ -11,16 +11,17 @@ type EmailTemplate = {
 };
 
 function isEmailTemplate(copy: any): copy is EmailTemplate {
-  return copy?._id === "emailTemplate";
+  return copy?._type === "emailTemplate";
 }
 
 async function fetchEmailTemplate(key: string) {
   try {
-    const emailTemplateQuery = `*[_id == "emailTemplate"][0]{...}`;
-    const emailTemplate = await getClient().fetch<EmailTemplate | null>(
-      emailTemplateQuery
+    const emailTemplates = await getClient().fetch<EmailTemplate[] | null>(
+      `*[_type == "emailTemplate"]`
     );
-
+    const emailTemplate = emailTemplates?.find(
+      (template) => template.key === key
+    );
     if (!isEmailTemplate(emailTemplate)) {
       throw new Error(`Email template not found for key: ${key}`);
     }
@@ -51,7 +52,7 @@ export async function renderEmailFromTemplate({
       variables
     ),
     html: Mustache.render(
-      emailTemplate?.body ? toPlainText(emailTemplate.body) : fallbackBody,
+      emailTemplate?.body ? toHTML(emailTemplate.body) : fallbackBody,
       variables
     ),
   };
