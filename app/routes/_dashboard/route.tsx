@@ -21,14 +21,13 @@ import { useState } from "react";
 import { getActiveOrganizationsByUserId } from "~/models/organization.server";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 
-// whenever we find ourselves on a "/dashboard" route, revalidate
+// whenever navigating to an org protected page, re-run the Loader to determine navigation options and account menu org dropdown options
 export const shouldRevalidate: ShouldRevalidateFunction = function ({
-  nextUrl,
+  nextParams,
   defaultShouldRevalidate,
 }) {
-  if (nextUrl.pathname.includes("dashboard")) {
-    return true;
-  }
+  const { organization } = nextParams;
+  if (organization) return true;
   return defaultShouldRevalidate;
 };
 
@@ -82,6 +81,7 @@ export async function loader({ request }: LoaderArgs) {
       permissions,
       orgUser,
       userOrganizations,
+      organizationId,
     });
   }
 }

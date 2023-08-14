@@ -51,6 +51,7 @@ export default {
           {title: 'orgUsersView', value: 'orgUsersView'},
           {title: 'orgUsersEdit', value: 'orgUsersEdit'},
           {title: 'orgUsersCreate', value: 'orgUsersCreate'},
+          {title: 'viewOrgPage', value: 'viewOrgPage'},
         ],
       },
     },

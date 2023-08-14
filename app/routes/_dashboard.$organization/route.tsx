@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { Outlet, isRouteErrorResponse, useRouteError } from "@remix-run/react";
 import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderArgs) {
   });
 
   if (!orgUser) {
-    return redirect("/dashboard");
+    throw new Response("Not Found", { status: 404 });
   }
   return json({});
 }

@@ -274,14 +274,18 @@ export async function addOrganizationUser(
   return orgUser;
 }
 
+// an additional, none DB key, "viewOrgPage" which is "true" if an orgUser object is passed in that is not "null"
+// Blocks/hides any org protected pages that aren't otherwise covered by permissions (like Users and Subscription)
+type OrgUserPermissions = keyof Permissions | "viewOrgPage";
+
 export function getOrgUserPermissions(
   orgUser: OrganizationUsers | null
-): Array<keyof Permissions> {
+): Array<OrgUserPermissions> {
   if (!orgUser) {
     return [];
   }
 
-  let permissions: Array<keyof Permissions> = [];
+  let permissions: Array<OrgUserPermissions> = ["viewOrgPage"];
   if (orgUser.subscriptionView) permissions.push("subscriptionView");
   if (orgUser.subscriptionEdit) permissions.push("subscriptionEdit");
   if (orgUser.subscriptionCreate) permissions.push("subscriptionCreate");

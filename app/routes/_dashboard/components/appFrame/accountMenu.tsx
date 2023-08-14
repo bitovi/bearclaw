@@ -43,7 +43,7 @@ const defaultMenu: Array<Omit<CopyLink, "_key" | "_type">> = [
 export default function AccountMenu() {
   const location = useLocation();
   const user = useOptionalUser();
-  const { permissions, orgUser, userOrganizations } =
+  const { permissions, orgUser, userOrganizations, organizationId } =
     useLoaderData<typeof loader>();
   const copy = useHeaderMenuCopy();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -135,8 +135,8 @@ export default function AccountMenu() {
           .filter((item) =>
             item.requiredPermissions
               ? item.requiredPermissions.every((permission) =>
-                permissions.includes(permission)
-              )
+                  permissions.includes(permission)
+                )
               : true
           )
           .map((item, index) =>
@@ -184,7 +184,7 @@ export default function AccountMenu() {
           <MenuItem
             key={organization.id}
             component={Link}
-            to={`/organizationSwap?redirectTo=${location.pathname}&organizationId=${organization.id}`}
+            to={`/organizationSwap?redirectTo=${location.pathname}&organizationId=${organization.id}&prevOrgId=${organizationId}`}
             onClick={handleClose}
             sx={{ "&.Mui-disabled": { opacity: 1 } }}
             disabled={organization.id === orgUser?.organizationId}
