@@ -1,23 +1,32 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { Outlet, isRouteErrorResponse, useRouteError } from "@remix-run/react";
 import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
-import { getOrgandUserId } from "~/session.server";
+import { getUserId } from "~/session.server";
 import Box from "@mui/material/Box";
 
-export async function loader({ request }: LoaderArgs) {
-  const { userId, organizationId } = await getOrgandUserId(request);
+export async function loader({ request, params }: LoaderArgs) {
+  const { organization: organizationId } = params;
+  const userId = await getUserId(request);
+
+  if (!organizationId || !userId) {
+    throw new Response("Not Found", { status: 404 });
+  }
   const orgUser = await retrieveActiveOrganizationUser({
     organizationId,
     userId: userId,
   });
 
   if (!orgUser) {
-    throw new Response("Not Found", { status: 404 });
+    return redirect("/dashboard");
   }
   return json({});
+}
+
+export function shouldRevalidate() {
+  return true;
 }
 
 export function ErrorBoundary() {

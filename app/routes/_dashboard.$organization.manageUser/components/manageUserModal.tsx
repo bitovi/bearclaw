@@ -1,7 +1,7 @@
 import Dialog from "@mui/material/Dialog";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Form, useNavigation } from "@remix-run/react";
+import { Form, useLocation, useNavigation } from "@remix-run/react";
 import { TextInput } from "~/components/input";
 import PersonAddTwoToneIcon from "@mui/icons-material/PersonAddTwoTone";
 import PersonRemoveTwoToneIcon from "@mui/icons-material/PersonRemoveTwoTone";
@@ -19,6 +19,7 @@ export const ManageUserModal = ({
   selectedUsers: string[];
 }) => {
   const copy = usePageCopy("userManagement");
+  const { pathname } = useLocation();
 
   const navigation = useNavigation();
   const [inputValue, setInputValue] = useState<string>();
@@ -50,7 +51,7 @@ export const ManageUserModal = ({
       disableRestoreFocus
     >
       {!formMethod ? null : (
-        <Form method={formMethod} action="/manageUser">
+        <Form method={formMethod} action={pathname}>
           <input
             hidden
             name="userIds"

@@ -19,6 +19,18 @@ import { fetchDashboardCopy } from "./copy";
 import { NavDrawer } from "./components/NavDrawer";
 import { useState } from "react";
 import { getActiveOrganizationsByUserId } from "~/models/organization.server";
+import type { ShouldRevalidateFunction } from "@remix-run/react";
+
+// whenever we find ourselves on a "/dashboard" route, revalidate
+export const shouldRevalidate: ShouldRevalidateFunction = function ({
+  nextUrl,
+  defaultShouldRevalidate,
+}) {
+  if (nextUrl.pathname.includes("dashboard")) {
+    return true;
+  }
+  return defaultShouldRevalidate;
+};
 
 export async function loader({ request }: LoaderArgs) {
   const isLoggedIn = await getUser(request);
