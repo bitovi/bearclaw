@@ -3,7 +3,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { ChartRing } from "./chartRing";
-import { Theme, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import SourceIcon from "@mui/icons-material/Source";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
