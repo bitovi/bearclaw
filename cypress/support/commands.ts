@@ -183,7 +183,7 @@ function createLoginData(): LoginData {
 
 function createAndVerifyAccount(
   credentials?: LoginData,
-  destination = "/dashboard"
+  destination = "/home"
 ) {
   let _loginForm = credentials;
   if (!credentials) {
@@ -196,7 +196,7 @@ function createAndVerifyAccount(
   cy.viewport(1280, 800);
   cy.visitAndCheck(destination);
 
-  if (destination === "/dashboard") {
+  if (destination === "/home") {
     cy.findByRole("link", { name: /sign up/i })
       .should("be.visible")
       .click({ force: true });
