@@ -6,14 +6,26 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 import { IconFromString } from "~/components/iconFromString/IconFromString";
 import { usePageCopy, useSideNavCopy } from "~/routes/_dashboard/copy";
 import { toTitleCase } from "~/utils/string/toTitleCase";
+import { useParams } from "@remix-run/react";
 
 function findTopNavMatch(
   sideNavCopy: ReturnType<typeof useSideNavCopy>,
   path: string
 ) {
-  return sideNavCopy?.links.find(
-    (link) => link.to.match(/\w+/)?.[0]?.toLowerCase() === path.toLowerCase()
-  );
+  return sideNavCopy?.links.find((link) => {
+    const protectedPath = link.to.match(/\{\{\w+\}\}/);
+    if (protectedPath) {
+      // if this is a protected mustache'd path, first remove the placeholder variable and continue process
+      const filteredPath = link.to
+        .split("/")
+        .filter((val) => val && val !== protectedPath[0]);
+      return (
+        filteredPath.join("/").match(/\w+/)?.[0]?.toLowerCase() ===
+        path.toLowerCase()
+      );
+    }
+    return link.to.match(/\w+/)?.[0]?.toLowerCase() === path.toLowerCase();
+  });
 }
 
 function findSubNavMatch(
@@ -30,15 +42,17 @@ function findSubNavMatch(
  */
 export function Breadcrumbs({ detailPage }: { detailPage?: boolean }) {
   const sideNavCopy = useSideNavCopy();
+  const { organization: organizationId } = useParams();
   const location = useLocation();
   const pathnames = detailPage
     ? ["history", "detail"]
-    : location.pathname.split("/").filter((x) => x);
+    : location.pathname.split("/").filter((x) => x && x !== organizationId); // remove dynamic orgId value
   const pageCopy = usePageCopy(pathnames[0]);
   return (
     <MuiBreadcrumbs aria-label="breadcrumb">
       {pathnames.map((path, index) => {
         const page = index === 0 ? pageCopy : null;
+
         const navLink =
           page && page?.breadcrumb && page.breadcrumbIcon
             ? null
