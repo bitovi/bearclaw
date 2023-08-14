@@ -6,6 +6,8 @@ module.exports = [
     status: "complete",
     type: "application/zip",
     _id: "088269439d92bde842b67c9dfabec05b469db42a981c0ea67ecaab58a00b0dd5",
+    severity: "Critical",
+    severity_score: 9.8,
   },
   {
     dateAnalyzed: "2023-03-23 21:16:26.285000",
@@ -14,6 +16,8 @@ module.exports = [
     status: "running",
     type: "application/pdf",
     _id: "689284c32482b1313a604e7392a9bfd0d600ffa18b91f8f30090f925b2e48df0",
+    severity: "Unknown",
+    severity_score: 0,
   },
   {
     dateAnalyzed: "2023-05-23 00:09:19.939000",
@@ -22,6 +26,8 @@ module.exports = [
     status: "running",
     type: "unknown",
     _id: "af4f0395e04b9d1af50fa025cf099056d106ae3533d371a211187c46bc5658af",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-04-25 14:30:39.193000",
@@ -30,6 +36,8 @@ module.exports = [
     status: "complete",
     type: "application/x-executable",
     _id: "48fe3e4d5de5f76a0b5d5074f21b491d13a5faf86862d648aa5d499978f8da77",
+    severity: "Critical",
+    severity_score: 10.0,
   },
   {
     dateAnalyzed: "2023-03-01 14:13:09.173000",
@@ -38,6 +46,8 @@ module.exports = [
     status: "complete",
     type: "application/x-executable",
     _id: "ee7aa16bd8443a946286c9ab84a0af0cbc47aa53a8f00477bf8ada5c38580a36",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-03-02 18:42:57.354000",
@@ -46,6 +56,8 @@ module.exports = [
     status: "complete",
     type: "application/x-executable",
     _id: "8d84ab190de4cce89d68acd54933c56fe982506989ed76a2331589e59faad6ad",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-03-21 20:00:56.399000",
@@ -54,6 +66,8 @@ module.exports = [
     status: "complete",
     type: "application/x-msdownload",
     _id: "af46aec75ae4db2badf44dd22fd56120346c3af2a088ea5ca6484241c2df147a",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-03-22 17:28:29.857000",
@@ -62,6 +76,8 @@ module.exports = [
     status: "complete",
     type: "application/x-executable",
     _id: "c39d1e13e47cbb80cddbad7bd92a48185207f67590f710a2d71b38a54affb679",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-03-22 15:55:57.636000",
@@ -70,6 +86,8 @@ module.exports = [
     status: "complete",
     type: "application/x-executable",
     _id: "1e39354a6e481dac48375bfebb126fd96aed4e23bab3c53ed6ecf1c5e4d5736d",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-03-22 18:29:25.735000",
@@ -78,6 +96,8 @@ module.exports = [
     status: "complete",
     type: "application/x-executable",
     _id: "40ea53f38efe555c09a2c1c860379190e2af94427daaa68756874154c3fa1188",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-03-22 17:42:00.837000",
@@ -86,6 +106,8 @@ module.exports = [
     status: "complete",
     type: "application/x-executable",
     _id: "5d991b919776bb4bc926fe341492762004a334f301dcd62632bc3d87aa24cbf4",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-03-22 20:49:40.423000",
@@ -94,6 +116,8 @@ module.exports = [
     status: "running",
     type: "application/x-executable",
     _id: "c34c2887dcb5539b7a576ebd6ea8d3b708ec1395527a6f8b3dc0aa37c6646867",
+    severity: "Passed",
+    severity_score: 0,
   },
   {
     dateAnalyzed: "2023-03-30 01:46:53.704000",
@@ -102,6 +126,8 @@ module.exports = [
     status: "complete",
     type: "image/png",
     _id: "304ba3f8f5b8f169e3bc96698816711c2f097eff322f07e996e974b52eee10c7",
+    severity: "Passed",
+    severity_score: 0,
   },
   {
     dateAnalyzed: "2023-05-11 15:40:33.433000",
@@ -110,6 +136,8 @@ module.exports = [
     status: "running",
     type: "application/x-executable",
     _id: "bb2ee73832bf45e983e7e2850c25864524812a7bc8d9fdddb2e3f280886d5eb2",
+    severity: "Passed",
+    severity_score: 0,
   },
   {
     dateAnalyzed: "2023-05-22 16:14:27.820000",
@@ -118,6 +146,8 @@ module.exports = [
     status: "complete",
     type: "unknown",
     _id: "bfca1369dbe0ae058527787bcc4f23a99a685b8808025569c247eddb9224cd1a",
+    severity: "Passed",
+    severity_score: 0,
   },
   {
     dateAnalyzed: "2023-05-22 17:19:53.545000",
@@ -126,6 +156,8 @@ module.exports = [
     status: "complete",
     type: "image/jpeg",
     _id: "942d8f9952a62a614e0eb0574b3ba0b20bbc578a6c6c3cb8d7060570ef88c3fa",
+    severity: "Passed",
+    severity_score: 0,
   },
   {
     dateAnalyzed: "2023-05-22 17:20:31.506000",
@@ -134,6 +166,8 @@ module.exports = [
     status: "complete",
     type: "unknown",
     _id: "bec81a5bf61e7eb788e1642433a1ba310a7b255bb3463569fe9baf68877129ca",
+    severity: "Critical",
+    severity_score: 10.0,
   },
   {
     dateAnalyzed: "2023-05-22 18:18:44.124000",
@@ -142,6 +176,8 @@ module.exports = [
     status: "complete",
     type: "application/font-sfnt",
     _id: "8944da5a861ece00185fa173ea65324e7d4797aa863c6fa0f03e066805974b6c",
+    severity: "Critical",
+    severity_score: 10.0,
   },
   {
     dateAnalyzed: "2023-05-22 17:16:59.107000",
@@ -150,6 +186,8 @@ module.exports = [
     status: "complete",
     type: "image/gif",
     _id: "7e01c26fb193de2eeddce8d65710ba2f97e9c343ad85990d4c4f83c4a568fef3",
+    severity: "Critical",
+    severity_score: 10.0,
   },
   {
     dateAnalyzed: "2023-05-22 17:25:14.645000",
@@ -158,6 +196,8 @@ module.exports = [
     status: "complete",
     type: "unknown",
     _id: "a79046216f5cf6af7fa5738980bd63669e2dcb1aa91a8018211db85a8bbd4ad1",
+    severity: "Critical",
+    severity_score: 10.0,
   },
   {
     dateAnalyzed: "2023-05-24 15:40:37.826000",
@@ -166,6 +206,8 @@ module.exports = [
     status: "complete",
     type: "image/jpeg",
     _id: "aa0ffd73fe3d0081fc9291d62e8f2b84a64bed4888aff6d9412d963063559936",
+    severity: "Critical",
+    severity_score: 10.0,
   },
   {
     dateAnalyzed: "2023-05-24 23:22:48.827000",
@@ -174,6 +216,8 @@ module.exports = [
     status: "complete",
     type: "image/jpeg",
     _id: "7c3e547f447312099d851d8444f13859a033462c1739c9407f33cf1d91953675",
+    severity: "Critical",
+    severity_score: 10.0,
   },
   {
     dateAnalyzed: "2023-05-23 20:32:48.761000",
@@ -182,6 +226,8 @@ module.exports = [
     status: "complete",
     type: "image/png",
     _id: "659cfb30614603dd73ce70d301dfbf0819847852b95a90c254945a5a9581889c",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-05-23 20:33:21.435000",
@@ -190,6 +236,8 @@ module.exports = [
     status: "complete",
     type: "image/png",
     _id: "ea49f9fbc1d0b9e763e232691b9f48bc7da4acd6d1c73db3456f8f39cb594497",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-05-23 20:34:03.391000",
@@ -198,6 +246,8 @@ module.exports = [
     status: "complete",
     type: "unknown",
     _id: "87a68eb17ab51198503fa027a80b485eb4300232b8f1530ffe1eb72d6ee213f6",
+    severity: "High",
+    severity_score: 7.8,
   },
   {
     dateAnalyzed: "2023-05-23 20:34:34.499000",
@@ -206,5 +256,7 @@ module.exports = [
     status: "complete",
     type: "unknown",
     _id: "2024358c5fc8c09d44f71a7804c630ffb5243f4273ee48c6fe1e18b00a3c5741",
+    severity: "High",
+    severity_score: 7.8,
   },
 ];
