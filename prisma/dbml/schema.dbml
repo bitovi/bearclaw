@@ -50,7 +50,7 @@ Table OrganizationUsers {
 Table Organization {
   id String [pk]
   name String
-  paymentAccountId String [not null]
+  paymentAccountId String
   email String [not null]
   organizationUsers OrganizationUsers [not null]
   invitationTokens InvitationToken [not null]

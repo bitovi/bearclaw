@@ -71,7 +71,7 @@ model OrganizationUsers {
 model Organization {
   id               String  @id @default(cuid())
   name             String?
-  paymentAccountId String
+  paymentAccountId String?
   email            String
 
   organizationUsers   OrganizationUsers[]

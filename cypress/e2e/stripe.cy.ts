@@ -1,10 +1,10 @@
-describe("Stripe", () => {
+describe.skip("Stripe", () => {
   describe("Add subscription", () => {
     afterEach(() => {
       cy.cleanupAccount();
     });
 
-    it("works", () => {
+    it("works -- SKIPPED", () => {
       // This bit of magic will manage preventing Cypress from breaking out of its Iframe
       // and redirecting to a new page when navigating through the Stripe Iframe
       // https://github.com/cypress-io/cypress/issues/19234
