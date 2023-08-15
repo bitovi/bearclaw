@@ -36,9 +36,6 @@ export function MainSideNav() {
       >
         <Logo variant="stacked" width="124px" />
         <NavLinks />
-        <Box flex="1" display="flex" alignItems="end">
-          <ColorModeToggle />
-        </Box>
       </Box>
     </Box>
   );

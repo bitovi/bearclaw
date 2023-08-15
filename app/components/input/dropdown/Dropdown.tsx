@@ -5,6 +5,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Select from "@mui/material/Select";
 import type { SelectProps } from "@mui/material/Select";
 import { useId } from "react";
+import { OutlinedInput } from "@mui/material";
 
 export type DropdownOption = {
   value: string;
@@ -44,12 +45,10 @@ export function Dropdown({
         {label}
       </InputLabel>
       <Select
+        {...props}
         labelId={domId}
         id={`select-${domId}`}
-        defaultValue={options.find((o) => o.selected)?.value}
-        value={value}
-        label={label} // ensures notched styling takes effect
-        {...props}
+        input={<OutlinedInput label={label} />}
       >
         {placeholder && (
           <MenuItem disabled key="placeholder" value="">
