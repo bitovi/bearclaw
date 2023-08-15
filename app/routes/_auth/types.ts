@@ -1,4 +1,5 @@
 import type { PortableTextBlock } from "@portabletext/types";
+import type { QuestionType } from "~/services/sanity/copy/questions/types";
 
 export type AuthFormCopy = {
   _id: "authForm";
@@ -66,4 +67,39 @@ export type AuthImages = {
     name: string;
     location: "onboarding" | "auth";
   }[];
+};
+
+export type AuthPageCopy = {
+  _type: "page";
+  _id: string;
+  key: string;
+  title: string;
+  headline: string;
+  content?: Array<{
+    _type: "content";
+    key: string;
+    value: string;
+  }>;
+  images: Array<{
+    name: string;
+    hidden: boolean;
+    altText: string;
+    url: string;
+  }>;
+  inputs?: Array<QuestionType>;
+  richContent?: Array<{
+    _type: "content";
+    key: string;
+    value: PortableTextBlock[];
+  }>;
+};
+
+export type AuthPageCopyKeyed = Omit<
+  AuthPageCopy,
+  "content" | "richContent" | "inputs"
+> & {
+  content?: Record<string, string>;
+  richContent?: Record<string, PortableTextBlock[]>;
+  inputs?: Record<string, QuestionType>;
+  images?: Record<string, AuthPageCopy["images"][number]>;
 };

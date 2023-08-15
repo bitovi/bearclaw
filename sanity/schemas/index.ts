@@ -4,6 +4,7 @@ import content from './content'
 import link from './link'
 import authForm from './forms/authForm'
 import page from './page'
+import authPage from './authPage'
 import sidebarImages from './sidebarImages'
 import questions from './questions'
 import inputField from './forms/inputField'
@@ -16,6 +17,7 @@ export const schemaTypes = [
   dashboardSideNav,
   link,
   page,
+  authPage,
   sidebarImages,
   questions,
   inputField,

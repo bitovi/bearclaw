@@ -83,10 +83,11 @@ const SuccessView = () => {
         </Skeleton>
         <Box textAlign={"center"}>
           <Typography variant="h4" paddingBottom={1}>
-            {copy?.content?.successHeading}
+            {copy?.content?.successHeading || "Thank you"}
           </Typography>
           <Typography variant="body1" color="text.primary">
-            {copy?.content?.successMessage}
+            {copy?.content?.successMessage ||
+              "You will be hearing back from us soon!"}
           </Typography>
         </Box>
 
@@ -100,7 +101,7 @@ const SuccessView = () => {
             maxWidth: "660px",
           }}
         >
-          {copy?.content?.successNewFormButton}
+          {copy?.content?.successNewFormButton || "Submit another form"}
         </Button>
       </Stack>
     </Form>
@@ -131,10 +132,14 @@ export default function Route() {
                 {copy?.inputs?.selectCategory?.questionType === "select" && (
                   <Dropdown
                     fullWidth
-                    name={copy?.inputs?.selectCategory?.name}
-                    label={copy?.inputs?.selectCategory?.label}
+                    name={
+                      copy?.inputs?.selectCategory?.name || "selectCategory"
+                    }
+                    label={
+                      copy?.inputs?.selectCategory?.label || "Select Category"
+                    }
                     required={copy?.inputs?.selectCategory?.required}
-                    options={copy?.inputs?.selectCategory.optionList}
+                    options={copy?.inputs?.selectCategory.optionList || []}
                     disabled={copy?.inputs?.selectCategory?.disabled}
                     defaultValue={
                       copy?.inputs?.selectCategory?.optionList?.[0].value
@@ -143,9 +148,17 @@ export default function Route() {
                 )}
 
                 <TextInput
-                  name={copy?.inputs?.additionalDetails?.name}
-                  placeholder={copy?.inputs?.additionalDetails?.placeholder}
-                  label={copy?.inputs?.additionalDetails?.label}
+                  name={
+                    copy?.inputs?.additionalDetails?.name || "additionalDetails"
+                  }
+                  placeholder={
+                    copy?.inputs?.additionalDetails?.placeholder ||
+                    "How can we help?"
+                  }
+                  label={
+                    copy?.inputs?.additionalDetails?.label ||
+                    "Additional Details"
+                  }
                   required={copy?.inputs?.additionalDetails?.required}
                   fullWidth
                   InputLabelProps={{ required: true }}
@@ -156,7 +169,7 @@ export default function Route() {
                 />
                 <Box alignSelf={"flex-end"}>
                   <Button variant="buttonMedium" name="submit" type="submit">
-                    {copy?.content?.submitButton}
+                    {copy?.content?.submitButton || "Submit"}
                   </Button>
                 </Box>
               </Stack>

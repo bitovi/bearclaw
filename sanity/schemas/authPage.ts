@@ -1,0 +1,89 @@
+import {icons} from '../../app/components/iconFromString/IconFromString'
+
+export default {
+  name: 'authPage',
+  type: 'document',
+  title: 'Auth Page',
+  fields: [
+    {
+      name: 'key',
+      type: 'string',
+      title: 'Key',
+      description: 'Caution: Key used to lookup this content in the code.',
+    },
+    {
+      name: 'title',
+      type: 'string',
+      title: 'Title text',
+      description: 'Browser title text',
+    },
+    {
+      name: 'headline',
+      type: 'string',
+      title: 'Headline text',
+    },
+    {
+      name: 'inputs',
+      type: 'array',
+      title: 'Inputs',
+      description:
+        'Any input fields that might appear on the page, such as a textbox or a dropdown select',
+      of: [{type: 'inputField'}],
+    },
+    {
+      type: 'images',
+      name: 'images',
+    },
+    {
+      name: 'content',
+      title: 'Basic Content',
+      description: 'Key/value pairs for page content like button text and headers',
+      type: 'array',
+      of: [
+        {
+          type: 'document',
+          fields: [
+            {
+              name: 'key',
+              type: 'string',
+              title: 'Key',
+              description: 'The key for the content item',
+            },
+            {
+              name: 'value',
+              type: 'string',
+              title: 'Value',
+              description: 'The value for the content item',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'richContent',
+      title: 'Rich Content',
+      description: 'Rich page content with styles, images, and links',
+      type: 'array',
+      of: [
+        {
+          type: 'document',
+          fields: [
+            {
+              name: 'key',
+              type: 'string',
+              title: 'Key',
+              description: 'The key for the content item',
+            },
+            {
+              name: 'value',
+              title: 'Value',
+              description: 'The value for the content item',
+              type: 'array',
+              of: [{type: 'block'}],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}

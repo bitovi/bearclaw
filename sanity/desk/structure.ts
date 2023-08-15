@@ -61,6 +61,9 @@ export function deskStructure(S: StructureBuilder, ctx: StructureContext) {
                         ),
                     ])
                 ),
+              S.listItem()
+                .title('Auth Pages')
+                .child(S.documentList().title('Pages').filter('_type == "authPage"')),
             ])
         ),
       S.listItem()
