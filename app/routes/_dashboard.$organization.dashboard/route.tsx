@@ -29,7 +29,6 @@ export async function loader({ request }: LoaderArgs) {
 
   const keyMetrics = getKeyMetrics({
     days: 7,
-    userId,
     organizationId,
   });
   const uploads = getProcessingStatus({
