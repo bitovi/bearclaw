@@ -1,1 +1,1 @@
-export * from "./severityChip";
+export { default } from "./severityChip";

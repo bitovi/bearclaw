@@ -21,7 +21,7 @@ import { usePageCopy } from "../_dashboard/copy";
 import { TextCopyIcon } from "~/components/textCopyIcon";
 import { ProcessingStatusChipColor } from "~/components/table/types";
 import { ProcessingStatus } from "../_dashboard.history.$/types";
-import SeverityChip from "~/components/severityChip/severityChip";
+import SeverityChip from "~/components/severityChip";
 
 dayjs.extend(utc);
 

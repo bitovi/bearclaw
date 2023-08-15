@@ -17,7 +17,7 @@ import { Suspense } from "react";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { KeyMetrics } from "./components/KeyMetrics";
 import { TextCopyIcon } from "~/components/textCopyIcon";
-import SeverityChip from "~/components/severityChip/severityChip";
+import SeverityChip from "~/components/severityChip";
 
 dayjs.extend(utc);
 
@@ -30,6 +30,7 @@ export async function loader({ request }: LoaderArgs) {
     userId,
     organizationId,
   });
+  //hardcode pagination values to limit Dashboard "Recent Analysis" to three results
   const uploads = getProcessingStatus({
     organizationId,
     page: "1",

@@ -1,6 +1,6 @@
 module.exports = [
   {
-    _id: "f1d15ba84c84d35ef34fa0116206c449775b693cbe7aa044c7f5b2e0881fd5a2_cllazjki80001vtk3vk5su9wl",
+    _id: "test_ChildDataObjectId",
     Filename: "JNR3000.bin",
     Size: 8388608,
     Type: "application/octet-stream",
@@ -11,7 +11,7 @@ module.exports = [
     severity_score: 0,
   },
   {
-    _id: "5c6970c66d75152cc2fd8d5b461504406bee7f2eceb2f7c28d09dab9dbbff03b_cllazjki80001vtk3vk5su9wl",
+    _id: "test_ChildDataObjectId",
     Filename: "14C0",
     Size: 122896,
     Type: "application/octet-stream",
@@ -22,7 +22,7 @@ module.exports = [
     severity_score: 7.8,
   },
   {
-    _id: "8a89eec1e2ee86588f2f65f308946d2fbb9a146a2d892de6c28a1303bb290014_cllazjki80001vtk3vk5su9wl",
+    _id: "test_ChildDataObjectId",
     Filename: "22818",
     Size: 3943628,
     Type: "application/octet-stream",
