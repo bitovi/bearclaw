@@ -72,17 +72,14 @@ export const getProcessingStatus = async (params: ApiRequestParams) => {
 
 export const getProcessingStatusById = async ({
   dataObject,
-  userId,
   organizationId,
 }: {
   dataObject: string;
-  userId: string;
   organizationId: string;
 }) => {
   const response = await bearFetch(
     `/claw/get_processing_status/${dataObject}?showChildren=true&${buildApiSearchParams(
       {
-        userId,
         organizationId,
       }
     )}`
