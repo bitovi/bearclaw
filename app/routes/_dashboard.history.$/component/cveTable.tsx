@@ -78,10 +78,10 @@ export function CVETable({
         <Typography variant="h6" color="text.primary">
           {copy?.content?.cveTableHeader || "CVEs Found at This Level"}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        {/* <Typography variant="body2" color="text.secondary">
           {copy?.content?.cveTableSubheader ||
             "Pin desired CVEs for quick refrence. This only works on the current level you are viewing."}
-        </Typography>
+        </Typography> */}
         <Box
           paddingTop={{ xs: 2, md: "unset" }}
           position={{ xs: "unset", md: "absolute" }}

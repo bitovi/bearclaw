@@ -1,8 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
-import Checkbox from "@mui/material/Checkbox";
-import { useRef } from "react";
 import { SeverityTab } from "./severityTab";
 import { usePageCopy } from "~/routes/_dashboard/copy";
 import type { CveData } from "~/models/rsbomTypes";
@@ -55,6 +53,7 @@ export function SkeletonCard() {
   );
 }
 
+// Temporarily commenting out Checkbox logic for initial release 08/14/23 TD
 export function CVECard({
   name,
   rating,
@@ -63,10 +62,10 @@ export function CVECard({
   date,
   description,
   onRowClick = () => {},
-  onCheck = () => {},
+  // onCheck = () => {},
   orientation = "row",
 }: CVECardProps) {
-  const checkboxRef = useRef<HTMLInputElement>(null);
+  // const checkboxRef = useRef<HTMLInputElement>(null);
   const copy = usePageCopy("detail");
 
   return (
@@ -78,9 +77,10 @@ export function CVECard({
         },
       }}
       onClick={(e) => {
-        if (e.target !== checkboxRef.current) {
-          onRowClick(name);
-        }
+        onRowClick(name);
+        // if (e.target !== checkboxRef.current) {
+        //   onRowClick(name);
+        // }
       }}
     >
       <Stack>
@@ -121,10 +121,10 @@ export function CVECard({
             </Stack>
           </Stack>
 
-          <Checkbox
+          {/* <Checkbox
             inputRef={checkboxRef}
             onChange={(e) => onCheck?.(e.target.checked)}
-          />
+          /> */}
         </Stack>
         <Stack
           padding="0px 16px 0px 48px"

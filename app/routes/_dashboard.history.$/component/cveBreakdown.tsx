@@ -127,7 +127,7 @@ export function CVEBreakdown({
                     {
                       name: "Medium",
                       value: metadata?.numberofMedWarnings || 1,
-                      color: theme.palette.orange[800],
+                      color: theme.palette.orange[600],
                     },
                     {
                       name: "Low",
@@ -201,7 +201,7 @@ export function CVEBreakdown({
             }`}
             Icon={
               <CircleTwoToneIcon
-                sx={{ color: "orange.800" }}
+                sx={{ color: "orange.600" }}
                 fontSize="small"
               />
             }
