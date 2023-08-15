@@ -26,7 +26,7 @@ import SeverityChip from "~/components/severityChip";
 dayjs.extend(utc);
 
 export async function loader({ request }: LoaderArgs) {
-  const { userId, organizationId } = await getOrgandUserId(request);
+  const { organizationId } = await getOrgandUserId(request);
 
   try {
     const url = new URL(request.url);
@@ -35,7 +35,6 @@ export async function loader({ request }: LoaderArgs) {
     const filter = url.searchParams.get("filter");
     const sort = url.searchParams.get("sort");
     const processingResults = getProcessingStatus({
-      userId,
       organizationId,
       page,
       perPage,

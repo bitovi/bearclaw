@@ -35,11 +35,10 @@ export async function loader({ request, params }: LoaderArgs) {
 
     const targetDataObject = dataObjectList.slice(-1).join("");
 
-    const { userId, organizationId } = await getOrgandUserId(request);
+    const { organizationId } = await getOrgandUserId(request);
 
     const processingStatus = await getProcessingStatusById({
       dataObject: targetDataObject,
-      userId,
       organizationId,
     });
 
@@ -48,7 +47,6 @@ export async function loader({ request, params }: LoaderArgs) {
     }
 
     const expandedRSBOM = await retrieveRSBOMDetails({
-      userId,
       organizationId,
       dataObjectId: targetDataObject,
     });
@@ -58,12 +56,12 @@ export async function loader({ request, params }: LoaderArgs) {
     const perPage = url.searchParams.get("perPage") || "10";
 
     const childJobs = getAllChildJobs({
-      params: { userId, organizationId, page, perPage },
+      params: { organizationId, page, perPage },
       dataObject: targetDataObject,
     });
 
     const cveData = getCVEData({
-      params: { userId, organizationId },
+      params: { organizationId },
       dataObject: targetDataObject,
     });
 
@@ -71,7 +69,6 @@ export async function loader({ request, params }: LoaderArgs) {
       dataObjectList.map((id) => {
         return getProcessingStatusById({
           dataObject: id,
-          userId,
           organizationId,
         }).then((res) => {
           return res ? { filename: res.filename, id: res._id } : null;

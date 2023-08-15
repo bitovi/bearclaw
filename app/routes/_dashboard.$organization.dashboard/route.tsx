@@ -30,7 +30,6 @@ export async function loader({ request }: LoaderArgs) {
 
   const keyMetrics = getKeyMetrics({
     days: 7,
-    userId,
     organizationId,
   });
   //hardcode pagination values to limit Dashboard "Recent Analysis" to three results
