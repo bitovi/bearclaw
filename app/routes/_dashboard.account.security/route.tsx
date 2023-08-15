@@ -40,7 +40,6 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const form = formData.get("form");
   const token = formData.get("token");
-  console.log("form", form);
 
   switch (form) {
     case FORM.EMAIL_MFA_ENABLE:

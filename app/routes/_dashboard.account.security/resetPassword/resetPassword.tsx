@@ -26,7 +26,6 @@ export async function resetPasswordTokenAction(request: ActionArgs["request"]) {
 export function ResetPassword() {
   const response = useActionData();
 
-  console.log(response);
   if (
     (response?.success && response.form === FORM.CREATE_RESET_TOKEN) ||
     (response?.success === false && response.form === FORM.VALIDATE_RESET_TOKEN)
