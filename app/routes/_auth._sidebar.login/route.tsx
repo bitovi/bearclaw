@@ -89,7 +89,7 @@ export async function action({ request }: ActionArgs) {
       {
         errors: {
           email: "Invalid email or password",
-          password: null,
+          password: "Invalid email or password",
           organization: null,
         },
       },

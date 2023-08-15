@@ -176,8 +176,8 @@ function getStripeElement(fieldName: string, type?: string) {
 function createLoginData(): LoginData {
   return {
     email: `${faker.internet.userName()}-test@bigbear.ai`,
-    password: faker.internet.password(),
-    resetPassword: faker.internet.password(),
+    password: "MyReally$trongPassword1",
+    resetPassword: "MyReally$trongPassword2",
   };
 }
 
@@ -204,6 +204,7 @@ function createAndVerifyAccount(
 
   cy.findByRole("textbox", { name: /email/i }).type(loginForm.email);
   cy.findByLabelText(/password/i).type(loginForm.password);
+  cy.findByLabelText(/accept/i).check({ force: true });
   cy.wait(2000)
     .findAllByRole("button", { name: /sign up/i })
     .eq(0)
