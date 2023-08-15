@@ -23,6 +23,7 @@ import { Await, Link, useLocation } from "@remix-run/react";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { CveStatusImage } from "./cveStatusImage";
 import { usePageCopy } from "~/routes/_dashboard/copy";
+import SeverityChip from "~/components/severityChip";
 
 dayjs.extend(utc);
 
@@ -165,6 +166,7 @@ export function ComponentBreakdownAccordion({
                   "Type",
                   "Date",
                   "Status",
+                  "Severity",
                   "Object ID",
                 ]}
               />
@@ -187,6 +189,7 @@ export function ComponentBreakdownAccordion({
                         value: "status",
                         sortable: false,
                       },
+                      { label: "Severity", value: "severity", sortable: false },
                       { label: "Object ID", value: "id", sortable: false },
                     ]}
                     linkKey="id"
@@ -221,6 +224,7 @@ export function ComponentBreakdownAccordion({
                           label={toTitleCase(job.status)}
                         />
                       ),
+                      severity: <SeverityChip severity={job.severity} />,
                     }))}
                   />
                 ) : status === ProcessingStatus.COMPLETE ? (

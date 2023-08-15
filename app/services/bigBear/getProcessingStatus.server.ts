@@ -27,6 +27,7 @@ type UploadStatusResponse = ApiResponseWrapper<
     filename: string;
     size: number;
     status: "complete" | "running" | "not started";
+    severity: "Critical" | "High" | "Medium" | "Low" | "Unknown" | "Passed";
     type: string;
   }>
 >;
@@ -37,6 +38,7 @@ export type UploadStatus = {
   filename: string;
   size: number;
   status: "complete" | "running" | "not started";
+  severity: "Critical" | "High" | "Medium" | "Low" | "Unknown" | "Passed";
   type: string; // TODO: make this an enum
 };
 
@@ -49,6 +51,7 @@ function transformApiUploadStatus(
     filename: job.filename,
     size: job.size,
     status: job.status,
+    severity: job.severity,
     type: job.type,
   };
 }

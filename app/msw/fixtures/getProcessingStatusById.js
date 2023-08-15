@@ -7,6 +7,8 @@ module.exports = {
       status: "complete",
       type: "unknown",
       _id: "2024358c5fc8c09d44f71a7804c630ffb5243f4273ee48c6fe1e18b00a3c5741",
+      severity: "High",
+      severity_score: 7.8,
     },
   ],
   processingTime: 0.2356843179986754,

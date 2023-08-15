@@ -31,8 +31,8 @@ export function buildApiSearchParams(params: ApiRequestParams): string {
     const page = parseInt(params.page) || 1;
     const perPage = parseInt(params.perPage) || 10;
     const offset = (page - 1) * perPage;
-    searchParams.push(`page[offset]=${offset}`);
-    searchParams.push(`page[limit]=${perPage}`);
+    searchParams.push(`pageOffset=${offset}`);
+    searchParams.push(`pageLimit=${perPage}`);
   }
   if (params.search) {
     searchParams.push(`search=${params.search}`);

@@ -21,6 +21,7 @@ import { usePageCopy } from "../_dashboard/copy";
 import { TextCopyIcon } from "~/components/textCopyIcon";
 import { ProcessingStatusChipColor } from "~/components/table/types";
 import { ProcessingStatus } from "../_dashboard.$organization.history.$/types";
+import SeverityChip from "~/components/severityChip";
 
 dayjs.extend(utc);
 
@@ -41,7 +42,6 @@ export async function loader({ request }: LoaderArgs) {
       filter,
       sort,
     });
-
     return defer({ processingResults, error: "" });
   } catch (e) {
     const error = (e as Error).message;
@@ -97,7 +97,14 @@ export default function Route() {
       <Suspense
         fallback={
           <SkeletonTable
-            headers={["File Name", "Type", "Date", "Status", "Object ID"]}
+            headers={[
+              "File Name",
+              "Type",
+              "Date",
+              "Status",
+              "Severity",
+              "Object ID",
+            ]}
           />
         }
       >
@@ -114,6 +121,7 @@ export default function Route() {
                     { label: "Type", value: "type", sortable: true },
                     { label: "Date", value: "analyzedAt", sortable: true },
                     { label: "Status", value: "status", sortable: true },
+                    { label: "Severity", value: "severity", sortable: false },
                     { label: "Object ID", value: "_id", sortable: false },
                   ]}
                   linkKey="_id"
@@ -154,6 +162,7 @@ export default function Route() {
                         label={toTitleCase(upload.status)}
                       />
                     ),
+                    severity: <SeverityChip severity={upload.severity} />,
                     _id: upload._id,
                   }))}
                 />

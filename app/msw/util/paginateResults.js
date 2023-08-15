@@ -1,6 +1,6 @@
 module.exports = function paginateResults(data, url) {
-  const offset = parseInt(url.searchParams.get("page[offset]"));
-  const limit = parseInt(url.searchParams.get("page[limit]"));
+  const offset = parseInt(url.searchParams.get("pageOffset"));
+  const limit = parseInt(url.searchParams.get("pageLimit"));
   const perPage = limit || 10;
 
   return {
