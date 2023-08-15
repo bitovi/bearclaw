@@ -14,6 +14,7 @@ import {
 } from "~/models/mfa.server";
 import {
   getMfaStatus,
+  getOrgandUserId,
   getUser,
   mfaActivateUserSession,
 } from "~/session.server";
@@ -21,10 +22,12 @@ import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
+  const { organizationId } = await getOrgandUserId(request);
+
   if (!user) return redirect("/login");
 
   const mfaStatus = await getMfaStatus(request);
-  if (mfaStatus !== "pending") return redirect("/dashboard");
+  if (mfaStatus !== "pending") return redirect(`${organizationId}/dashboard`);
 
   const mfaMethods = await getUserMfaMethods(user);
   const activeMfaMethods = mfaMethods
@@ -36,6 +39,7 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: LoaderArgs) {
   const user = await getUser(request);
+
   if (!user) return redirect("/login");
 
   const formData = await request.formData();
@@ -58,7 +62,10 @@ export async function action({ request }: LoaderArgs) {
   }
 
   const token = formData.get("token");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
+  const redirectTo = safeRedirect({
+    to: formData.get("redirectTo"),
+    defaultRedirect: "/dashboard",
+  });
 
   if (
     token &&

@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 
-export function GlobalSearch() {
+export function GlobalSearch({ orgId }: { orgId: string | undefined }) {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const query = searchParams.get("query");
@@ -16,11 +16,12 @@ export function GlobalSearch() {
     }
   }, [query, location.pathname]);
 
+  if (!orgId) return null;
   return (
     <Box
       component={Form}
       method="get"
-      action="/search"
+      action={`${orgId}/search`}
       width="236px"
       margin="0"
     >

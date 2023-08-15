@@ -10,8 +10,11 @@ import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
+
   const url = new URL(request.url);
-  const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
+  const redirectTo = safeRedirect({
+    to: url.searchParams.get("redirectTo"),
+  });
   invariant(user, "User is required");
   await resetVerificationToken(user, redirectTo);
 

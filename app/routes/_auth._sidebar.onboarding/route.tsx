@@ -74,7 +74,7 @@ export default function Route() {
     <div>
       <Onboarding
         questions={copy?.questionList || []}
-        redirectTo={redirectTo || "/dashboard"}
+        redirectTo={redirectTo || "/"}
       />
     </div>
   );

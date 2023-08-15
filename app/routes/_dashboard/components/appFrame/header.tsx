@@ -7,12 +7,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { GlobalSearch } from "./globalSearch";
 import { Logo } from "~/components/logo/Logo";
 import AccountMenu from "./accountMenu";
-
+import { useLoaderData } from "@remix-run/react";
+import type { loader } from "../../route";
 export const Header = ({
   onToggleMobileNav,
 }: {
   onToggleMobileNav: () => void;
 }) => {
+  const { organizationId } = useLoaderData<typeof loader>();
   return (
     <AppBar
       position="static"
@@ -39,7 +41,7 @@ export const Header = ({
           <Logo variant="inline" width="124px" />
         </Box>
         <Box flex="1" display={{ xs: "none", md: "initial" }}>
-          <GlobalSearch />
+          <GlobalSearch orgId={organizationId} />
         </Box>
         <AccountMenu />
       </Toolbar>

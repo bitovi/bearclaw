@@ -24,11 +24,15 @@ declare module "@mui/material/styles" {
     };
     orange: {
       800: string;
+      600: string;
     };
     purple: {
       600: string;
     };
     green: {
+      600: string;
+    };
+    gray: {
       600: string;
     };
   }
@@ -45,6 +49,7 @@ declare module "@mui/material/styles" {
     orange: PaletteColorOptions;
     purple: PaletteColorOptions;
     green: PaletteColorOptions;
+    gray: PaletteColorOptions;
   }
 }
 
@@ -96,12 +101,16 @@ export function getTheme(mode?: ColorMode) {
       },
       orange: {
         800: "#EF6C00",
+        600: "#FB8C00",
       },
       purple: {
         600: "#8E24AA",
       },
       green: {
         600: "#43A047",
+      },
+      gray: {
+        600: "#bdbdbd",
       },
     },
     typography: {

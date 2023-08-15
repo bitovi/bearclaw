@@ -19,7 +19,7 @@ export function createSixCharacterCode(length = 6) {
   return result;
 }
 
-const DEFAULT_REDIRECT = "/dashboard";
+const DEFAULT_REDIRECT = "/";
 
 /**
  * This should be used any time the redirect path is user-provided
@@ -28,10 +28,13 @@ const DEFAULT_REDIRECT = "/dashboard";
  * @param {string} to The redirect destination
  * @param {string} defaultRedirect The redirect to use if the to is unsafe.
  */
-export function safeRedirect(
-  to: FormDataEntryValue | string | null | undefined,
-  defaultRedirect: string = DEFAULT_REDIRECT
-) {
+export function safeRedirect({
+  to,
+  defaultRedirect = DEFAULT_REDIRECT,
+}: {
+  to: FormDataEntryValue | string | null | undefined;
+  defaultRedirect?: string;
+}) {
   if (!to || typeof to !== "string") {
     return defaultRedirect;
   }

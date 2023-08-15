@@ -9,6 +9,7 @@ import { useLocation } from "@remix-run/react";
 import Divider from "@mui/material/Divider";
 import React from "react";
 import { IconFromString } from "../iconFromString/IconFromString";
+import Mustache from "mustache";
 
 export type NavItem = {
   text: string;
@@ -21,12 +22,14 @@ type Props = {
   navMenu: NavItem[];
   dividerAfter?: number;
   userPermissions?: string[];
+  orgId: string | undefined | null;
 };
 
 export function SideNav({
   navMenu,
   dividerAfter,
   userPermissions = [],
+  orgId,
 }: Props) {
   const location = useLocation();
   const currentPath = location?.pathname;
@@ -57,7 +60,7 @@ export function SideNav({
               <React.Fragment key={index}>
                 <ListItemButton
                   component={Link}
-                  to={item.to}
+                  to={Mustache.render(item.to, { orgId })}
                   prefix={
                     item.to && !item.to.match(/logout/i) ? "intent" : undefined
                   }

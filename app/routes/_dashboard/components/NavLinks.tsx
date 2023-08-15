@@ -4,7 +4,7 @@ import type { loader } from "../route";
 import { useSideNavCopy } from "../copy";
 
 export function NavLinks() {
-  const { permissions } = useLoaderData<typeof loader>();
+  const { permissions, orgUser } = useLoaderData<typeof loader>();
   const copy = useSideNavCopy();
 
   return (
@@ -12,6 +12,7 @@ export function NavLinks() {
       userPermissions={permissions}
       dividerAfter={copy?.dividerAfter}
       navMenu={copy?.links || []}
+      orgId={orgUser?.organizationId}
     />
   );
 }
