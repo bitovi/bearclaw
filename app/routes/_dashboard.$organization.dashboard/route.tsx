@@ -97,7 +97,7 @@ export default function Index() {
                     { label: "Object ID", value: "_id", sortable: false },
                   ]}
                   linkKey="_id"
-                  linkBasePath="history"
+                  linkBasePath={`/${organizationId}/history`}
                   linkIcon={({ copyValue, buttonProps }) => (
                     <TextCopyIcon
                       copyValue={copyValue}

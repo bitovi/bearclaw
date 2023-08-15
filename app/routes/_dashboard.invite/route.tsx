@@ -67,7 +67,7 @@ export async function loader({ request }: LoaderArgs) {
       existingOrgUser.accountStatus !== AccountStatus.DELETED
     ) {
       await destroyInviteToken(invitationToken.id);
-      throw redirect("/dashboard");
+      return redirect(`/${org.id}/dashboard`);
     }
 
     // if orgUser record previously existed, reactivate it; otherwise, make a new entry

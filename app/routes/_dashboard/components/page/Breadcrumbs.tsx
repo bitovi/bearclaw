@@ -63,7 +63,9 @@ export function Breadcrumbs({ detailPage }: { detailPage?: boolean }) {
         const to =
           path === "detail"
             ? undefined
-            : `/${pathnames.slice(0, index + 1).join("/")}`;
+            : `/${organizationId ? organizationId : ""}/${pathnames
+                .slice(0, index + 1)
+                .join("/")}`;
 
         const linkProps = last
           ? ({ component: "div", underline: "none" } as const)

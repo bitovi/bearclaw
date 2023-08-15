@@ -18,6 +18,7 @@ import { useHeaderMenuCopy } from "../../copy";
 import type { loader } from "../../route";
 import type { CopyLink } from "../../types";
 import { getUserFullName } from "~/utils/user/getUserFullName";
+import Mustache from "mustache";
 
 const defaultMenu: Array<Omit<CopyLink, "_key" | "_type">> = [
   {
@@ -158,7 +159,7 @@ export default function AccountMenu() {
               <MenuItem
                 component={Link}
                 key={`${item.to}-${index}`}
-                to={item.to}
+                to={Mustache.render(item.to, { orgId: organizationId })}
                 onClick={handleClose}
               >
                 <ListItemIcon>

@@ -1,17 +1,13 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useMatches, useNavigate } from "@remix-run/react";
-import type {
-  ExpandedPrice,
-  Subscription,
-  InvoicePreview,
-  InvoiceHistoryItem,
-} from "~/models/subscriptionTypes";
+import { useNavigate } from "@remix-run/react";
+import type { InvoiceHistoryItem } from "~/models/subscriptionTypes";
 import InvoiceTable from "../../components/table";
 import Card from "./components/card";
 import dayjs from "dayjs";
 import { useMemo } from "react";
+import { useSubscriptionInformation } from "../_dashboard.$organization.subscription/hooks/useSubscriptionInformation";
 
 const InvoiceTableHeaders = [
   { label: "Invoice ID", value: "Invoice_ID", sortable: false },
@@ -22,18 +18,7 @@ const InvoiceTableHeaders = [
 export default function Route() {
   const navigate = useNavigate();
   const { organizationSubscription, invoicePreview, invoiceHistory } =
-    useMatches().find((root) => {
-      console.log("root", root);
-      return root.id === "routes/_dashboard.$organization.subscription";
-    })?.data as {
-      optionResults: {
-        subscriptionOptions: ExpandedPrice[] | undefined;
-        error: string | undefined;
-      };
-      organizationSubscription: Subscription | null;
-      invoicePreview: InvoicePreview | null;
-      invoiceHistory: InvoiceHistoryItem[] | null;
-    };
+    useSubscriptionInformation();
 
   const planCardDetails = useMemo(() => {
     return [

@@ -4,13 +4,18 @@ import { json } from "@remix-run/node";
 import invariant from "tiny-invariant";
 import { Link } from "~/components/link";
 import { resetVerificationToken } from "~/models/verificationToken.server";
-import { getUser } from "~/session.server";
+import { getOrgandUserId, getUser } from "~/session.server";
 import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
+  const { organizationId } = await getOrgandUserId(request);
+
   const url = new URL(request.url);
-  const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
+  const redirectTo = safeRedirect({
+    to: url.searchParams.get("redirectTo"),
+    orgId: organizationId,
+  });
   invariant(user, "User is required");
   await resetVerificationToken(user, redirectTo);
 

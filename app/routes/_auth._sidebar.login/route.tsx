@@ -9,7 +9,7 @@ import {
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { createUserSession, getUser } from "~/session.server";
+import { createUserSession, getOrgandUserId, getUser } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
 import { safeRedirect, validateEmail } from "~/utils";
 import {
@@ -28,20 +28,19 @@ import { ButtonLoader } from "~/components/buttonLoader";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
-
   if (!user) return json({});
   if (user && !user.emailVerifiedAt) {
     redirect("/verifyEmail");
     return json({});
   }
-  return redirect("/dashboard");
+  const { organizationId } = await getOrgandUserId(request);
+  return redirect(`/${organizationId}/dashboard`);
 }
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
   const remember = formData.get("remember");
 
   if (!validateEmail(email)) {
@@ -140,6 +139,12 @@ export async function action({ request }: ActionArgs) {
     }
   }
 
+  const redirectTo = safeRedirect({
+    to: formData.get("redirectTo"),
+    defaultRedirect: "/dashboard",
+    orgId: org.id,
+  });
+
   return createUserSession({
     request,
     userId: user.id,
@@ -156,7 +161,10 @@ export default function LoginPage() {
   const formCopy = useParentFormCopy();
   const [searchParams] = useSearchParams();
   const navigation = useNavigation();
-  const redirectTo = safeRedirect(searchParams.get("redirectTo"), "/dashboard");
+  const redirectTo = safeRedirect({
+    to: searchParams.get("redirectTo"),
+    defaultRedirect: "/dashboard",
+  });
   const guestEmail = searchParams.get("email");
 
   const actionData = useActionData<typeof action>();

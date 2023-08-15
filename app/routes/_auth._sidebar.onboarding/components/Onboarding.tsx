@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import type { Question } from "~/services/sanity/copy/questions/types";
 import { useParentFormCopy } from "~/routes/_auth/copy";
 import { ButtonLoader } from "~/components/buttonLoader";
+import { redirect } from "@remix-run/server-runtime";
 
 type Props = {
   redirectTo?: string;
@@ -134,7 +135,7 @@ export function Onboarding({ redirectTo, questions }: Props) {
               ))}
             </Stack>
             <Box mt={2} display="flex" justifyContent="space-between">
-              <ButtonLink to={redirectTo ? redirectTo : "/dashboard"}>
+              <ButtonLink to={redirectTo || "/"}>
                 {copy?.profileBuilderSkipButton || "Skip"}
               </ButtonLink>
               <Box display="flex" gap={2}>

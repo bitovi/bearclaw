@@ -73,7 +73,12 @@ export async function loader({ request }: LoaderArgs) {
   if (redirectTo && redirectTo !== "/") {
     // Only redirect if an explicit redirect path was passed (don't use default)
     // for example to /invite/$token
-    throw redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
+    throw redirect(
+      safeRedirect({
+        to: `${redirectTo}?${url.searchParams}`,
+        orgId: organizationId,
+      })
+    );
   } else {
     return json({
       copy,

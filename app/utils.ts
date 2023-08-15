@@ -19,6 +19,16 @@ export function createSixCharacterCode(length = 6) {
   return result;
 }
 
+// If we're redirecting to an app route protected by Organization, ensure the organization ID is prepended to that route
+const orgProtectedRoutes = ["dashboard", "history", "manageUser"];
+export const appendRedirectWithOrgId = (redirect: string, orgId: string) => {
+  if (redirect.includes(orgId)) return redirect;
+  if (orgProtectedRoutes.find((route) => redirect.includes(route))) {
+    return `/${orgId}${redirect}`;
+  }
+  return redirect;
+};
+
 const DEFAULT_REDIRECT = "/dashboard";
 
 /**
@@ -28,19 +38,28 @@ const DEFAULT_REDIRECT = "/dashboard";
  * @param {string} to The redirect destination
  * @param {string} defaultRedirect The redirect to use if the to is unsafe.
  */
-export function safeRedirect(
-  to: FormDataEntryValue | string | null | undefined,
-  defaultRedirect: string = DEFAULT_REDIRECT
-) {
+export function safeRedirect({
+  to,
+  defaultRedirect = DEFAULT_REDIRECT,
+  orgId,
+}: {
+  to: FormDataEntryValue | string | null | undefined;
+  defaultRedirect?: string;
+  orgId?: string;
+}) {
   if (!to || typeof to !== "string") {
-    return defaultRedirect;
+    return orgId
+      ? appendRedirectWithOrgId(defaultRedirect, orgId)
+      : defaultRedirect;
   }
 
   if (!to.startsWith("/") || to.startsWith("//")) {
-    return defaultRedirect;
+    return orgId
+      ? appendRedirectWithOrgId(defaultRedirect, orgId)
+      : defaultRedirect;
   }
 
-  return to;
+  return orgId ? appendRedirectWithOrgId(to, orgId) : to;
 }
 
 /**

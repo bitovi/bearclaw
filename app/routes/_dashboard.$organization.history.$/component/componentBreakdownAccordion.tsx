@@ -48,7 +48,7 @@ type BreadCrumbEntry = {
 
 const BreadCrumbRow = ({ entries }: { entries: BreadCrumbEntry[] }) => {
   const { pathname } = useLocation();
-  const pagePath = pathname.split("/")[1];
+  const pagePath = pathname.split("/").slice(1, 3).join("/"); // this is specific to this component, slicing(1,3).join('/') returns "orgId/history"
   const entryIds = entries.map((entry) => entry.id);
 
   return (

@@ -4,6 +4,7 @@ import invariant from "tiny-invariant";
 
 import type { User } from "~/models/user.server";
 import { getUserById } from "~/models/user.server";
+import { appendRedirectWithOrgId } from "./utils";
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
 export const sessionStorage = createCookieSessionStorage({
@@ -141,7 +142,7 @@ export async function createUserSession({
   orgId,
   mfaEnabled,
   remember,
-  redirectTo,
+  redirectTo: _redirectTo,
 }: {
   request: Request;
   userId: string;
@@ -154,6 +155,8 @@ export async function createUserSession({
   session.set(USER_SESSION_KEY, userId);
   session.set(ORGANIZATION_KEY, orgId);
   mfaEnabled && session.set(MFA_STATUS_KEY, "pending");
+
+  const redirectTo = appendRedirectWithOrgId(_redirectTo, orgId);
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {

@@ -22,16 +22,19 @@ import { useState } from "react";
 
 import { getActiveSubscriptions } from "~/services/subscriptions/getActiveSubscriptions";
 import Box from "@mui/material/Box";
+import { getOrgandUserId } from "~/session.server";
 
 export async function loader({ params, request }: LoaderArgs) {
+  const { organizationId } = await getOrgandUserId(request);
+
   const { subscription: priceId } = params;
   if (!priceId) {
     console.error("No subscription Price ID found");
-    return redirect("/subscription");
+    return redirect(`${organizationId}/subscription`);
   }
   if (!process.env.STRIPE_PUBLISHABLE_KEY) {
     console.error("No Stripe Publishable Key found");
-    return redirect("/subscription");
+    return redirect(`${organizationId}/subscription`);
   }
 
   const { error: validateError, organization } = await validateCredentials(
@@ -69,10 +72,11 @@ export async function loader({ params, request }: LoaderArgs) {
         paymentIntentId,
         STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
         priceId,
+        organizationId,
       });
   }
 
-  return redirect("/subscription");
+  return redirect(`${organizationId}/subscription`);
 }
 
 function FormComponent() {
@@ -94,6 +98,7 @@ function FormComponent() {
     paymentIntentId,
     subscriptionId,
     priceId,
+    organizationId,
   } = data;
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
@@ -117,7 +122,7 @@ function FormComponent() {
           elements,
           clientSecret,
           confirmParams: {
-            return_url: `${window.location.origin}/subscription/pay/success?subscription_id=${subscriptionId}&payment_intent=${paymentIntentId}&planId=${priceId}`,
+            return_url: `${window.location.origin}/${organizationId}/subscription/pay/success?subscription_id=${subscriptionId}&payment_intent=${paymentIntentId}&planId=${priceId}`,
           },
         });
         if (error) throw new Error(error.message);

@@ -5,7 +5,7 @@ import { prisma } from "~/db.server";
 import { sendMail } from "~/services/mail/sendMail.server";
 import { createOrganization } from "./organization.server";
 import { createVerificationToken } from "./verificationToken.server";
-import { createSixCharacterCode } from "~/utils";
+import { appendRedirectWithOrgId, createSixCharacterCode } from "~/utils";
 
 export type { User } from "@prisma/client";
 
@@ -74,10 +74,15 @@ export async function createUser(
     name: `${orgName}'s Organization`,
   });
 
+  let safeRedirect;
+  if (redirectTo && organization) {
+    safeRedirect = appendRedirectWithOrgId(redirectTo, organization.id);
+  }
+
   const verificationToken = await createVerificationToken(user.id);
   await sendEmailVerificationEmail({
     user,
-    redirectTo,
+    redirectTo: safeRedirect,
     token: verificationToken.token,
   });
 

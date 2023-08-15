@@ -90,12 +90,12 @@ export default function Route() {
             navMenu={[
               {
                 text: "Overview",
-                to: "/subscription/overview",
+                to: "/{{orgId}}/subscription/overview",
                 icon: <PersonIcon />,
               },
               {
                 text: "Subscription",
-                to: "/subscription/manage",
+                to: "/{{orgId}}/subscription/manage",
                 icon: <StarsRoundedIcon />,
               },
             ]}

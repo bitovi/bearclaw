@@ -40,7 +40,10 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/dashboard");
+  const redirectTo = safeRedirect({
+    to: formData.get("redirectTo"),
+    defaultRedirect: "/dashboard",
+  });
 
   if (!validateEmail(email)) {
     return json(
