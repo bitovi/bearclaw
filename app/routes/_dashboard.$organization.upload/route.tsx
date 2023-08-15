@@ -104,11 +104,23 @@ export const Upload: React.FC<Props> = () => {
     useDropzone({ onDrop });
 
   useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
     if (actionData?.success === true) {
+      acceptedFiles.length = 0;
       setUploadMessage("File uploaded successfully");
+      timer = setTimeout(() => {
+        setUploadMessage("");
+      }, 2000);
     } else if (actionData?.success === false) {
+      acceptedFiles.length = 0;
       setUploadMessage("File uploaded failed");
+      timer = setTimeout(() => {
+        setUploadMessage("");
+      }, 2000);
     }
+    return () => {
+      clearTimeout(timer);
+    };
   }, [actionData, setUploadMessage]);
 
   if (navigation.state === "submitting") {
