@@ -5,7 +5,10 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
-import { Upload, uploadAction } from "~/routes/_dashboard.upload/route";
+import {
+  Upload,
+  uploadAction,
+} from "~/routes/_dashboard.$organization.upload/route";
 import { getOrgandUserId, getUser } from "~/session.server";
 import Table, { SkeletonTable } from "~/components/table/Table";
 import { getKeyMetrics } from "../../services/bigBear/getKeyMetrics.server";
@@ -94,7 +97,7 @@ export default function Index() {
                     { label: "Object ID", value: "_id", sortable: false },
                   ]}
                   linkKey="_id"
-                  linkBasePath="history"
+                  linkBasePath={`/${organizationId}/history`}
                   linkIcon={({ copyValue, buttonProps }) => (
                     <TextCopyIcon
                       copyValue={copyValue}

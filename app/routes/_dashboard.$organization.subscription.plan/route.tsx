@@ -5,16 +5,16 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { Button } from "~/components/button";
-import { useLoaderData, useMatches, useNavigate } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import { useCallback, useMemo, useState } from "react";
-import type { Subscription } from "@prisma/client";
-import type { ExpandedPrice, InvoicePreview } from "~/models/subscriptionTypes";
 import { json, redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import SubscriptionPlanModal from "./components/subscriptionPlanModal";
 import dayjs from "dayjs";
 import FeatureBox from "./components/featureBox";
 import { Banner } from "~/components/banner";
+import { useSubscriptionInformation } from "../_dashboard.$organization.subscription/hooks/useSubscriptionInformation";
+import { getOrgandUserId } from "~/session.server";
 
 const featuresFixture = [
   "Suscipit lacus elit lobortis ultrices a diam. Diam eu est vel mollis ut. At mi id morbi blandit pharetra in neque. Enim adipiscing dui sed urna at vivamus. Nisl nisl id vitae non sed. Risus ut viverra nulla urna posuere varius.",
@@ -24,6 +24,7 @@ const featuresFixture = [
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
+  const { organizationId } = await getOrgandUserId(request);
   const priceId = url.searchParams.get("subscription");
   const error = url.searchParams.get("error");
 
@@ -31,7 +32,7 @@ export async function loader({ request }: LoaderArgs) {
     console.error("No subscription Price ID found");
     return redirect("/subscription");
   }
-  return json({ priceId, error });
+  return json({ priceId, error, organizationId });
 }
 
 export default function Route() {
@@ -39,16 +40,8 @@ export default function Route() {
   const [modalOpen, setModalOpen] = useState(false);
   const [subscriptionError, setSubscriptionError] = useState(!!error);
   const { priceId } = useLoaderData<typeof loader>();
-  const { optionResults, organizationSubscription } = useMatches().find(
-    (root) => root.pathname === "/subscription"
-  )?.data as {
-    optionResults: {
-      subscriptionOptions: ExpandedPrice[] | undefined;
-      error: string | undefined;
-    } | null;
-    organizationSubscription: Subscription | null;
-    invoicePreview: InvoicePreview | null;
-  };
+  const { optionResults, organizationSubscription } =
+    useSubscriptionInformation();
   const navigate = useNavigate();
 
   const subscriptionOption = useMemo(() => {

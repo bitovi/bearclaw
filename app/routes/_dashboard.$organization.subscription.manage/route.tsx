@@ -1,29 +1,33 @@
-import { useMatches, useNavigate } from "@remix-run/react";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 import { cancelSubscription, updateSubscription } from "~/payment.server";
-import type {
-  ExpandedPrice,
-  InvoicePreview,
-  Subscription,
-} from "~/models/subscriptionTypes";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useCallback, useMemo } from "react";
 import { json, redirect } from "@remix-run/node";
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { prisma } from "~/db.server";
 import type Stripe from "stripe";
 import dayjs from "dayjs";
 
 import PlanCard from "./components/planCard";
+import { useSubscriptionInformation } from "../_dashboard.$organization.subscription/hooks/useSubscriptionInformation";
+import { getOrgId } from "~/session.server";
+
+export async function loader({ request }: LoaderArgs) {
+  const orgId = await getOrgId(request);
+  if (!orgId) throw new Response("Organization Not Found", { status: 404 });
+  return json({ orgId });
+}
 
 export async function action({ request }: ActionArgs) {
+  const orgId = await getOrgId(request);
+  if (!orgId) throw new Response("Organization Not Found", { status: 404 });
   const method = request.method;
   const formData = await request.formData();
   const priceId = formData.get("planId");
   const subscriptionId = formData.get("subId");
   const invoiceTimeStamp = formData.get("invoiceTimeStamp");
-
   switch (method) {
     case "DELETE":
       if (!subscriptionId) {
@@ -45,7 +49,7 @@ export async function action({ request }: ActionArgs) {
             cancellationDate: cancelledSubscription.cancel_at,
           },
         });
-        return redirect("/subscription/overview");
+        return redirect(`/${orgId}/subscription/overview`);
       } catch (e) {
         console.error(e);
         return json({ error: "Subscription not found" }, { status: 404 });
@@ -85,27 +89,21 @@ export async function action({ request }: ActionArgs) {
             cancellationDate: null,
           },
         });
-        return redirect("/subscription/overview");
+        return redirect(`/${orgId}/subscription/overview`);
       } catch (e) {
         console.error(e);
         return json({ error: "Subscription not found" }, { status: 404 });
       }
     case "POST":
-      return redirect(`/subscription/form/${priceId}`);
+      return redirect(`/${orgId}/subscription/form/${priceId}`);
   }
 }
 
 export default function Route() {
+  const { orgId } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const { optionResults, organizationSubscription, invoicePreview } =
-    useMatches().find((root) => root.pathname === "/subscription")?.data as {
-      optionResults: {
-        subscriptionOptions: ExpandedPrice[] | undefined;
-        error: string | undefined;
-      } | null;
-      organizationSubscription: Subscription | null;
-      invoicePreview: InvoicePreview | null;
-    };
+    useSubscriptionInformation();
 
   const invoicePreviewDueDate = useMemo(() => {
     return invoicePreview?.dueDate
@@ -117,9 +115,9 @@ export default function Route() {
 
   const handlePlanClick = useCallback(
     (planId: string) => {
-      navigate(`/subscription/plan?subscription=${planId}`);
+      navigate(`/${orgId}/subscription/plan?subscription=${planId}`);
     },
-    [navigate]
+    [navigate, orgId]
   );
 
   if (optionResults?.error) {

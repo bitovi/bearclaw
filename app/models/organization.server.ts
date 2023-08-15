@@ -1,5 +1,6 @@
 import { prisma } from "~/db.server";
 import {
+  AccountStatus,
   countOrganizationUserInstances,
   createOrganizationUser,
 } from "./organizationUsers.server";
@@ -8,7 +9,7 @@ import type { Organization } from "@prisma/client";
 
 export type { Organization } from "@prisma/client";
 
-export async function getOrganizationsByUserId(
+export async function getActiveOrganizationsByUserId(
   userId: string
 ): Promise<Organization[] | undefined> {
   return (
@@ -18,6 +19,13 @@ export async function getOrganizationsByUserId(
       },
       include: {
         userOrganizations: {
+          where: {
+            NOT: {
+              accountStatus: {
+                contains: AccountStatus.DELETED,
+              },
+            },
+          },
           include: {
             organization: true,
           },

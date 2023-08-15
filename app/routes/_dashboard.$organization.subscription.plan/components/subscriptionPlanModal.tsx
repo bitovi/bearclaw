@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
-import { Form } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loading } from "~/components/loading/Loading";
@@ -13,6 +13,7 @@ import type {
   Subscription,
 } from "~/models/subscriptionTypes";
 import { previewSubscriptionUpdate } from "~/services/subscriptions/previewSubscription";
+import type { loader } from "../route";
 
 enum ModalAction {
   UPDATE = "Update",
@@ -108,7 +109,7 @@ export default function SubscriptionPlanModal({
   onClose: () => void;
 }) {
   const [invoiceTimeStamp, setInvoiceTimeStamp] = useState<number>();
-
+  const { organizationId } = useLoaderData<typeof loader>();
   const userHasPlan = useMemo(() => {
     return currentSubscription?.activeStatus === SubscriptionStatus.ACTIVE;
   }, [currentSubscription]);
@@ -156,7 +157,10 @@ export default function SubscriptionPlanModal({
         alignItems="flex-start"
         padding={2}
       >
-        <Form method={FormAction[modalAction]} action="/subscription/manage">
+        <Form
+          method={FormAction[modalAction]}
+          action={`/${organizationId}/subscription/manage`}
+        >
           <Typography variant="subtitle2">{modalTitle}</Typography>
           <Typography variant="subtitle2" paddingY={2}>
             {subscriptionPlanOption.product.name} - $

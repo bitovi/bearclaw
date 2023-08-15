@@ -22,7 +22,10 @@ import { ButtonLoader } from "~/components/buttonLoader";
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const user = await getUser(request);
-  const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
+
+  const redirectTo = safeRedirect({
+    to: url.searchParams.get("redirectTo"),
+  });
   return json({
     redirectTo,
     email: user?.email,

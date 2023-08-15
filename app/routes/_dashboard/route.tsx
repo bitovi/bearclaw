@@ -18,7 +18,18 @@ import { safeRedirect } from "~/utils";
 import { fetchDashboardCopy } from "./copy";
 import { NavDrawer } from "./components/NavDrawer";
 import { useState } from "react";
-import { getOrganizationsByUserId } from "~/models/organization.server";
+import { getActiveOrganizationsByUserId } from "~/models/organization.server";
+import type { ShouldRevalidateFunction } from "@remix-run/react";
+
+// whenever navigating to an org protected page, re-run the Loader to determine navigation options and account menu org dropdown options
+export const shouldRevalidate: ShouldRevalidateFunction = function ({
+  nextParams,
+  defaultShouldRevalidate,
+}) {
+  const { organization } = nextParams;
+  if (organization) return true;
+  return defaultShouldRevalidate;
+};
 
 export async function loader({ request }: LoaderArgs) {
   const isLoggedIn = await getUser(request);
@@ -56,13 +67,17 @@ export async function loader({ request }: LoaderArgs) {
   const [copy, permissions, userOrganizations] = await Promise.all([
     fetchDashboardCopy(),
     getOrgUserPermissions(orgUser),
-    getOrganizationsByUserId(user.id),
+    getActiveOrganizationsByUserId(user.id),
   ]);
 
   if (redirectTo && redirectTo !== "/") {
     // Only redirect if an explicit redirect path was passed (don't use default)
     // for example to /invite/$token
-    throw redirect(safeRedirect(`${redirectTo}?${url.searchParams}`));
+    throw redirect(
+      safeRedirect({
+        to: `${redirectTo}?${url.searchParams}`,
+      })
+    );
   } else {
     return json({
       copy,
@@ -70,6 +85,7 @@ export async function loader({ request }: LoaderArgs) {
       permissions,
       orgUser,
       userOrganizations,
+      organizationId,
     });
   }
 }

@@ -154,6 +154,7 @@ export async function createUserSession({
   session.set(USER_SESSION_KEY, userId);
   session.set(ORGANIZATION_KEY, orgId);
   mfaEnabled && session.set(MFA_STATUS_KEY, "pending");
+
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {

@@ -17,9 +17,12 @@ import { SideNav } from "~/components/sideNav/SideNav";
 import PersonIcon from "@mui/icons-material/Person";
 import StarsRoundedIcon from "@mui/icons-material/StarsRounded";
 import { InnerPage, Page, PageHeader } from "../_dashboard/components/page";
+import { getOrgId } from "~/session.server";
 
 export async function loader({ request }: { request: Request }) {
   try {
+    const orgId = await getOrgId(request);
+
     const optionResults = await subscriptionOptionLookup();
     const organizationSubscription = await retrieveOrganizationSubscription(
       request
@@ -40,6 +43,7 @@ export async function loader({ request }: { request: Request }) {
       );
 
       return json({
+        orgId,
         optionResults,
         organizationSubscription,
         invoicePreview,
@@ -48,6 +52,7 @@ export async function loader({ request }: { request: Request }) {
       });
     }
     return json({
+      orgId,
       optionResults,
       organizationSubscription,
       invoicePreview: null,
@@ -57,6 +62,7 @@ export async function loader({ request }: { request: Request }) {
   } catch (e) {
     console.error("ERROR: ", (e as Error).message);
     return json({
+      orgId: null,
       optionResults: null,
       organizationSubscription: null,
       invoicePreview: null,
@@ -67,7 +73,7 @@ export async function loader({ request }: { request: Request }) {
 }
 
 export default function Route() {
-  const { organizationSubscription } = useLoaderData<typeof loader>();
+  const { organizationSubscription, orgId } = useLoaderData<typeof loader>();
   const [errorVisible, setErrorVisible] = useState(
     organizationSubscription
       ? badSubscriptionStatus(organizationSubscription.activeStatus)
@@ -80,15 +86,16 @@ export default function Route() {
       <InnerPage
         navigation={
           <SideNav
+            orgId={orgId}
             navMenu={[
               {
                 text: "Overview",
-                to: "/subscription/overview",
+                to: "/{{orgId}}/subscription/overview",
                 icon: <PersonIcon />,
               },
               {
                 text: "Subscription",
-                to: "/subscription/manage",
+                to: "/{{orgId}}/subscription/manage",
                 icon: <StarsRoundedIcon />,
               },
             ]}
