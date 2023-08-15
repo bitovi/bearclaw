@@ -35,7 +35,7 @@ export async function loader({ request, params }: LoaderArgs) {
 
     const targetDataObject = dataObjectList.slice(-1).join("");
 
-    const { userId, organizationId } = await getOrgandUserId(request);
+    const { organizationId } = await getOrgandUserId(request);
 
     const processingStatus = await getProcessingStatusById({
       dataObject: targetDataObject,
