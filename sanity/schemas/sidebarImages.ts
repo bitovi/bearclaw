@@ -22,7 +22,7 @@ export default {
             {
               name: 'location',
               title: 'Location',
-              description: 'Which sidebar to dispaly image on',
+              description: 'Which sidebar to display image on',
               type: 'string',
               options: {
                 list: [

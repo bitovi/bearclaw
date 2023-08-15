@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { PortableText } from "@portabletext/react";
 import { useParentImageCopy, useParentSidebarCopy } from "../_auth/copy";
-import { Carousel } from "~/components/carousel";
 import { useMemo } from "react";
 import { Logo } from "~/components/logo/Logo";
 import { ColorModeToggle } from "~/styles/ColorModeToggle";
@@ -113,7 +112,14 @@ export default function Index() {
             gap={2}
           >
             <Stack alignItems="center" width="320">
-              <Carousel images={authImages} />
+              <Box maxWidth="480px">
+                <img
+                  height="auto"
+                  width="100%"
+                  src={authImages?.[0].url}
+                  alt={authImages?.[0].altText}
+                />
+              </Box>
               <Box paddingTop={4}>
                 <PortableText value={copy?.content} />
               </Box>
