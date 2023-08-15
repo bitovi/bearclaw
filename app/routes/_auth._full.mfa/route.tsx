@@ -37,7 +37,10 @@ export async function loader({ request }: LoaderArgs) {
 
   if (activeMfaMethods.length === 0) {
     const url = new URL(request.url);
-    const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
+    const redirectTo = safeRedirect({
+      to: url.searchParams.get("redirectTo"),
+      defaultRedirect: "/dashboard",
+    });
     return await mfaActivateUserSession({ request, redirectTo });
   }
 
