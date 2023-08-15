@@ -13,7 +13,7 @@ import type {
   Subscription,
 } from "~/models/subscriptionTypes";
 import { previewSubscriptionUpdate } from "~/services/subscriptions/previewSubscription";
-import { loader } from "../route";
+import type { loader } from "../route";
 
 enum ModalAction {
   UPDATE = "Update",

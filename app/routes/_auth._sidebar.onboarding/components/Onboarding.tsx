@@ -12,7 +12,6 @@ import Typography from "@mui/material/Typography";
 import type { Question } from "~/services/sanity/copy/questions/types";
 import { useParentFormCopy } from "~/routes/_auth/copy";
 import { ButtonLoader } from "~/components/buttonLoader";
-import { redirect } from "@remix-run/server-runtime";
 
 type Props = {
   redirectTo?: string;
