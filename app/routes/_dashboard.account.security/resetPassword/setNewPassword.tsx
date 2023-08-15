@@ -2,40 +2,45 @@ import type { ActionArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import invariant from "tiny-invariant";
 import { resetPasswordByToken } from "~/models/user.server";
-import { validateVerificationToken } from "~/models/verificationToken.server";
 import { requireUser } from "~/session.server";
 import { FORM } from "../route";
 import { Form, useActionData } from "@remix-run/react";
 import { Button } from "~/components/button";
-import { TextInput } from "~/components/input";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { validateTokenAction } from "./validateToken";
+import { getUserPasswordError } from "~/utils";
+import { PasswordInput } from "./passwordInput";
 
-export async function resetPasswordAction(request: ActionArgs["request"]) {
+export async function resetPasswordAction(
+  request: ActionArgs["request"],
+  formData: FormData
+) {
   const user = await requireUser(request);
-  const formData = await request.formData();
   const form = formData.get("form");
   const token = formData.get("token");
-  const password = formData.get("password");
+  const newPassword = formData.get("newPassword");
   const confirmPassword = formData.get("confirmPassword");
   invariant(form === FORM.RESET_PASSWORD, "Invalid form");
 
   if (
-    token && typeof token === "string" &&
-    password && typeof password === "string" &&
-    confirmPassword && typeof confirmPassword === "string" &&
-    password !== confirmPassword
+    token &&
+    typeof token === "string" &&
+    newPassword &&
+    typeof newPassword === "string" &&
+    confirmPassword &&
+    typeof confirmPassword === "string" &&
+    newPassword === confirmPassword
   ) {
-    const validatedToken = await validateVerificationToken(user.id, token);
-    if (!validatedToken) {
+    const passwordError = getUserPasswordError(newPassword);
+    if (passwordError) {
       return json(
         {
           form,
           errors: {
-            token: "Invalid token",
-            password: null,
+            token: null,
+            newPassword: passwordError,
             confirmPassword: null,
           },
           success: false,
@@ -43,23 +48,42 @@ export async function resetPasswordAction(request: ActionArgs["request"]) {
         { status: 400 }
       );
     }
-    await resetPasswordByToken(user, token, password);
+
+    const updatedUser = await resetPasswordByToken(user, token, newPassword);
+    if (!updatedUser) {
+      return json(
+        {
+          form,
+          errors: {
+            token: "Invalid token",
+            newPassword: null,
+            confirmPassword: null,
+          },
+          success: false,
+        },
+        { status: 400 }
+      );
+    }
     return json({
       form,
       errors: {
         token: null,
-        password: null,
+        newPassword: null,
         confirmPassword: null,
       },
-      success: true
+      success: true,
     });
-  } else if (password && confirmPassword && password !== confirmPassword) {
+  } else if (
+    newPassword &&
+    confirmPassword &&
+    newPassword !== confirmPassword
+  ) {
     return json(
       {
         form,
         errors: {
           token: null,
-          password: "Passwords do not match",
+          newPassword: "Passwords do not match",
           confirmPassword: "Passwords do not match",
         },
         success: false,
@@ -71,9 +95,16 @@ export async function resetPasswordAction(request: ActionArgs["request"]) {
       {
         form,
         errors: {
-          token: !token && typeof token !== "string" ? "Token is required" : null,
-          password: !password && typeof password !== "string" ? "Password is required" : null,
-          confirmPassword: !confirmPassword && typeof confirmPassword !== "string" ? "Confirm password is required" : null,
+          token:
+            !token || typeof token !== "string" ? "Token is required" : null,
+          newPassword:
+            !newPassword || typeof newPassword !== "string"
+              ? "Password is required"
+              : null,
+          confirmPassword:
+            !confirmPassword || typeof confirmPassword !== "string"
+              ? "Confirm password is required"
+              : null,
         },
         success: false,
       },
@@ -82,25 +113,27 @@ export async function resetPasswordAction(request: ActionArgs["request"]) {
   }
 }
 
-export function ResetPassword() {
-  const response = useActionData<typeof resetPasswordAction | typeof validateTokenAction>();
+export function SetNewPassword() {
+  const response = useActionData<
+    typeof resetPasswordAction | typeof validateTokenAction
+  >();
 
   let token;
   let errors;
   if (response?.form === FORM.VALIDATE_RESET_TOKEN) {
-    token = response.token || ""
+    token = response.token || "";
     errors = {};
   } else {
-    token = response?.errors?.token || ""
-    errors = response?.errors
+    errors = response?.errors;
   }
 
   return (
     <Stack spacing={2}>
       <Box>
-        <Typography variant="h5">Reset your password</Typography>
+        <Typography variant="h5">Reset Password</Typography>
         <Typography variant="body2">
-          Enter your new password. You will be asked to sign in after this process to ensure your account is secure.
+          Enter your new password. You will be asked to sign in after this
+          process to ensure your account is secure.
         </Typography>
       </Box>
 
@@ -108,19 +141,25 @@ export function ResetPassword() {
         <input type="hidden" name="form" value={FORM.RESET_PASSWORD} />
         <input type="hidden" name="token" value={token} />
         <Stack spacing={2}>
-          <TextInput
+          <PasswordInput
+            showStrength
             label="New Password"
             name="newPassword"
-            type="password"
-            error={errors?.password}
+            error={errors?.newPassword}
+            autoComplete="new-password"
+            required
           />
-          <TextInput
+          <PasswordInput
             label="Confirm Password"
             name="confirmPassword"
-            type="password"
             error={errors?.confirmPassword}
+            required
           />
-          <Button type="submit">Reset Password</Button>
+          <Box>
+            <Button type="submit" variant="contained">
+              Reset Password
+            </Button>
+          </Box>
         </Stack>
       </Form>
     </Stack>

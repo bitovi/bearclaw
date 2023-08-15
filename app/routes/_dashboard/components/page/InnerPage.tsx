@@ -12,6 +12,7 @@ export function InnerPage({ children, navigation }: Props) {
       display="grid"
       gridTemplateColumns={{ xs: "1fr", lg: "2fr 10fr" }}
       gap="1.5rem"
+      paddingBottom={8}
     >
       {navigation ? <Box>{navigation}</Box> : null}
       <Box overflow="hidden auto">{children}</Box>

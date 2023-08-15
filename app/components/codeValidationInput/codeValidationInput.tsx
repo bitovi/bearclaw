@@ -5,17 +5,21 @@ import type { BoxProps } from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
 export const CodeValidationInput = ({
+  name = "tokenCode",
   autoFocus = false,
   colorVariant = "light",
   containerProps,
 }: {
+  name?: string;
   autoFocus?: boolean;
   colorVariant?: "light" | "dark";
   containerProps?: BoxProps;
 }) => {
   const digit1Ref = useRef<HTMLInputElement>(null);
-  const inputBorder = colorVariant === "light" ? "0.1rem solid #FFFFFF" : "0.1rem solid #555555";
-  const color = colorVariant === "light" ? "#FFFFFF" : "#555555";
+  const inputBorder = "0.1rem solid";
+  const inputBorderColor =
+    colorVariant === "light" ? "white" : "text.secondary";
+  const color = colorVariant === "light" ? "white" : "text.primary";
 
   return (
     <Stack
@@ -36,10 +40,10 @@ export const CodeValidationInput = ({
         <Box
           position="absolute"
           top="0.5rem"
-          // left={{ xs: "0.7rem", lg: "unset" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
           border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -49,6 +53,7 @@ export const CodeValidationInput = ({
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
           border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -58,6 +63,7 @@ export const CodeValidationInput = ({
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
           border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -67,6 +73,7 @@ export const CodeValidationInput = ({
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
           border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -76,6 +83,7 @@ export const CodeValidationInput = ({
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
           border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -85,12 +93,13 @@ export const CodeValidationInput = ({
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
           border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <TextField
           type="text"
           variant="standard"
-          name="tokenCode"
+          name={name}
           placeholder={"------"}
           autoFocus={autoFocus}
           inputRef={digit1Ref}
@@ -117,7 +126,7 @@ export const CodeValidationInput = ({
               `,
               fontSize: "16px",
               fontStyle: "normal",
-              fontWeight: 400,
+              fontWeight: 600,
               lineHeight: { xs: "16px", lg: "24px" },
               letterSpacing: { xs: "2.5rem", lg: "4.375rem" },
               padding: "0",

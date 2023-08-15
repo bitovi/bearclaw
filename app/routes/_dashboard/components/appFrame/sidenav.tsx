@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import { Logo } from "~/components/logo/Logo";
 import { NavLinks } from "../NavLinks";
-import { ColorModeToggle } from "~/styles/ColorModeToggle";
 
 export function MainSideNav() {
   return (

@@ -5,7 +5,6 @@ import { PortableText } from "@portabletext/react";
 import { useParentImageCopy, useParentSidebarCopy } from "../_auth/copy";
 import { useMemo } from "react";
 import { Logo } from "~/components/logo/Logo";
-import { ColorModeToggle } from "~/styles/ColorModeToggle";
 
 export default function Index() {
   const copy = useParentSidebarCopy();
@@ -140,7 +139,6 @@ export default function Index() {
         <Box maxWidth="700px" padding={{ xs: "5rem 1rem", lg: "unset" }}>
           <Outlet />
         </Box>
-        <ColorModeToggle />
       </Box>
     </Box>
   );

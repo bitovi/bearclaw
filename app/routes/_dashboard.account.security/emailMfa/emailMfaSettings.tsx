@@ -1,11 +1,11 @@
 import { Form, useLoaderData } from "@remix-run/react";
-import type { loader } from "../route";
+import { FORM, type loader } from "../route";
 import { MFA_TYPE } from "~/models/mfa";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { VerifyEmailMfa } from "./enableEmailMfa";
 import { Button } from "~/components/button";
 import DisableEmailMfa from "./disableEmailMfa";
+import { Stack } from "@mui/material";
 
 export function EmailMfaSettings() {
   const { mfaMethods } = useLoaderData<typeof loader>();
@@ -18,23 +18,26 @@ export function EmailMfaSettings() {
     !mfaEmail || !mfaEmail.active
       ? "off"
       : mfaEmail.verifiedAt
-        ? "active"
-        : "not verified";
+      ? "active"
+      : "not verified";
 
   return (
-    <Box>
+    <Stack spacing={2}>
       <Typography variant="h5">Two-factor authentication</Typography>
-      <Typography>Email 2FA: {mfaEmailStatus.toUpperCase()}</Typography>
-
+      <Typography variant="body2">
+        Email 2FA: {mfaEmailStatus.toUpperCase()}
+      </Typography>
       <VerifyEmailMfa mfaEmailStatus={mfaEmailStatus} />
       {mfaEmail?.active ? (
         <DisableEmailMfa />
       ) : (
         <Form method="post">
-          <input type="hidden" name="form" value="emailMfaEnable" />
-          <Button type="submit" variant="outlined">Enable Email MFA</Button>
+          <input type="hidden" name="form" value={FORM.EMAIL_MFA_ENABLE} />
+          <Button type="submit" variant="contained">
+            Enable Email MFA
+          </Button>
         </Form>
       )}
-    </Box>
+    </Stack>
   );
 }

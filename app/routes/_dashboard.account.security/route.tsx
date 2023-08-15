@@ -7,14 +7,16 @@ import {
   enableEmailMfaAction,
   verifyEmailMfaAction,
 } from "./emailMfa/enableEmailMfa";
-import {
-  disableEmailMfaAction,
-} from "./emailMfa/disableEmailMfa";
-import emailImage from "./email.png";
+import { disableEmailMfaAction } from "./emailMfa/disableEmailMfa";
 import { EmailMfaSettings } from "./emailMfa/emailMfaSettings";
-import { ResetPassword, resetPasswordTokenAction } from "./resetPassword/resetPassword";
+import {
+  ResetPassword,
+  resetPasswordTokenAction,
+} from "./resetPassword/resetPassword";
 import { validateTokenAction } from "./resetPassword/validateToken";
 import { resetPasswordAction } from "./resetPassword/setNewPassword";
+// import emailImage from "./email.png";
+import { LockImage } from "./lock.svg";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireUser(request);
@@ -50,9 +52,9 @@ export async function action({ request }: ActionArgs) {
     case FORM.CREATE_RESET_TOKEN:
       return await resetPasswordTokenAction(request);
     case FORM.VALIDATE_RESET_TOKEN:
-      return await validateTokenAction(request);
+      return await validateTokenAction(request, formData);
     case FORM.RESET_PASSWORD:
-      return await resetPasswordAction(request);
+      return await resetPasswordAction(request, formData);
     case FORM.CANCEL:
       return json({ form: null, success: true });
   }
@@ -60,12 +62,11 @@ export async function action({ request }: ActionArgs) {
   return json({ form, success: false });
 }
 
-
-
 export default function Security() {
   return (
     <Stack spacing={8} alignItems="center" textAlign="center" maxWidth={540}>
-      <img src={emailImage} alt="email" width={174} />
+      {/* <img src={emailImage} alt="email" width={174} /> */}
+      <LockImage />
       <ResetPassword />
       <EmailMfaSettings />
     </Stack>
