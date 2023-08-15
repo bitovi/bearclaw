@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 
 import { ChartRing } from "./chartRing";
 import { useTheme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import SourceIcon from "@mui/icons-material/Source";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
@@ -71,6 +72,65 @@ interface CVEBreakdownProps {
   metadata?: CVEMetaData | null;
 }
 
+enum MetaDataLabelEnum {
+  numberofCriticalWarnings = "Critical",
+  numberofHighWarnings = "High",
+  numberofMedWarnings = "Medium",
+  numberofLowWarnings = "Low",
+}
+
+enum MetaDataColorEnum {
+  numberofCriticalWarnings = "#b71c1c",
+  numberofHighWarnings = "#E53935",
+  numberofMedWarnings = "#EF6C00",
+  numberofLowWarnings = "#8E24AA",
+}
+
+const isMetaDataKey = (key: any): key is keyof typeof MetaDataLabelEnum => {
+  if (key in MetaDataLabelEnum) return true;
+  return false;
+};
+
+const generateWarningSlices = (
+  metadata: CVEMetaData | undefined | null,
+  status: CVEBreakdownProps["status"],
+  theme: Theme
+) => {
+  const results = [];
+  if (!metadata) {
+    return [
+      {
+        name: "N/A",
+        value: 1,
+        color: theme.palette.grey[600],
+      },
+    ];
+  }
+  if (status === "complete" && !metadata?.totalVulnerabilitiesCaptured) {
+    return [
+      {
+        name: "Passed",
+        value: 1,
+        color: theme.palette.green[600],
+      },
+    ];
+  }
+  for (const key in metadata) {
+    if (
+      key !== "totalVulnerabilitiesCaptured" &&
+      isMetaDataKey(key) &&
+      metadata[key]
+    ) {
+      results.push({
+        name: MetaDataLabelEnum[key],
+        value: metadata[key],
+        color: MetaDataColorEnum[key],
+      });
+    }
+  }
+  return results;
+};
+
 export function CVEBreakdown({
   id,
   type,
@@ -103,39 +163,7 @@ export function CVEBreakdown({
           minHeight={{ xs: "220px", lg: "unset" }}
         >
           <ChartRing
-            data={
-              status === ProcessingStatus.COMPLETE &&
-              !metadata?.totalVulnerabilitiesCaptured
-                ? [
-                    {
-                      name: "Passed",
-                      value: 1,
-                      color: theme.palette.green[600],
-                    },
-                  ]
-                : [
-                    {
-                      name: "Critical",
-                      value: metadata?.numberofCriticalWarnings || 1,
-                      color: theme.palette.red[800],
-                    },
-                    {
-                      name: "High",
-                      value: metadata?.numberofHighWarnings || 2,
-                      color: theme.palette.red[600],
-                    },
-                    {
-                      name: "Medium",
-                      value: metadata?.numberofMedWarnings || 1,
-                      color: theme.palette.orange[800],
-                    },
-                    {
-                      name: "Low",
-                      value: metadata?.numberofLowWarnings || 3,
-                      color: theme.palette.purple[600],
-                    },
-                  ]
-            }
+            data={generateWarningSlices(metadata, status, theme) || []}
           >
             {status === ProcessingStatus.COMPLETE &&
             !metadata?.totalVulnerabilitiesCaptured ? (

@@ -31,6 +31,9 @@ declare module "@mui/material/styles" {
     green: {
       600: string;
     };
+    gray: {
+      600: string;
+    };
   }
 
   interface PaletteOptions {
@@ -45,6 +48,7 @@ declare module "@mui/material/styles" {
     orange: PaletteColorOptions;
     purple: PaletteColorOptions;
     green: PaletteColorOptions;
+    gray: PaletteColorOptions;
   }
 }
 
@@ -102,6 +106,9 @@ export function getTheme(mode?: ColorMode) {
       },
       green: {
         600: "#43A047",
+      },
+      gray: {
+        600: "#bdbdbd",
       },
     },
     typography: {
