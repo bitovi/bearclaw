@@ -65,9 +65,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         <GlobalStyles
           styles={{
             body: {
-              transition: "opacity ease 0.2s, transform ease 0.15s",
+              transition: "opacity ease 0.2s",
               opacity: mode ? 1 : 0,
-              transform: mode ? "translateX(0)" : "translateX(-10%)",
             },
           }}
         />
