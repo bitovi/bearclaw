@@ -1,14 +1,10 @@
 import Box from "@mui/material/Box";
-import ButtonGroup from "@mui/material/ButtonGroup";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import { Button } from "~/components/button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import AlertTitle from "@mui/material/AlertTitle";
 import CloseIcon from "@mui/icons-material/Close";
-import OutboundIcon from "@mui/icons-material/Outbound";
-import ShareIcon from "@mui/icons-material/Share";
 import { SeverityTab } from "./severityTab";
 import type { CveData } from "~/models/rsbomTypes";
 import { usePageCopy } from "~/routes/_dashboard/copy";
@@ -147,6 +143,9 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                   </Typography>
                 </>
               )}
+              {/* 
+                   TODO: Commenting out for the time-being [TD]
+                    May be re-added to support extra details found on the RSBOM
               <Typography variant="h6" color="#FFF" paddingY={3}>
                 {copy?.content?.sidebar_resources}
               </Typography>
@@ -169,11 +168,9 @@ export function CVEDrawer({ selectedCVE, onClose, open }: CVEDrawerProps) {
                   </Typography>
                   <ShareIcon />
                 </Button>
-              </ButtonGroup>
-              {/*
+              </ButtonGroup> 
 
-              TODO: Commenting out for the time-being [TD]
-                    May be re-added to support extra details found on the RSBOM
+         
 
               <Typography variant="h6" color="#FFF" paddingY={3}>
                 {copy?.content?.sidebar_additionalInformation}

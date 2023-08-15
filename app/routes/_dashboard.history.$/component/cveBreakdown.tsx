@@ -82,7 +82,7 @@ enum MetaDataLabelEnum {
 enum MetaDataColorEnum {
   numberofCriticalWarnings = "#b71c1c",
   numberofHighWarnings = "#E53935",
-  numberofMedWarnings = "#EF6C00",
+  numberofMedWarnings = "#FB8C00",
   numberofLowWarnings = "#8E24AA",
 }
 
@@ -229,7 +229,7 @@ export function CVEBreakdown({
             }`}
             Icon={
               <CircleTwoToneIcon
-                sx={{ color: "orange.800" }}
+                sx={{ color: "orange.600" }}
                 fontSize="small"
               />
             }

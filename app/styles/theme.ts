@@ -24,6 +24,7 @@ declare module "@mui/material/styles" {
     };
     orange: {
       800: string;
+      600: string;
     };
     purple: {
       600: string;
@@ -100,6 +101,7 @@ export function getTheme(mode?: ColorMode) {
       },
       orange: {
         800: "#EF6C00",
+        600: "#FB8C00",
       },
       purple: {
         600: "#8E24AA",

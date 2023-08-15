@@ -116,7 +116,7 @@ describe("File rSBOM Details", () => {
       .click({ force: true });
 
     //sidebar closed initially
-    cy.findByText(/resources/i).should("not.exist");
+    cy.findByText(/base score/i).should("not.exist");
 
     // clicking table entry opens sidebar
     cy.findAllByTestId("cve-card-oriented")
@@ -124,7 +124,7 @@ describe("File rSBOM Details", () => {
       .click({ force: true })
       // inside card
       .then(($card) => {
-        cy.findByText(/resources/i).should("be.visible");
+        cy.findByText(/base score/i).should("be.visible");
 
         // within sidebar
         cy.findByRole("presentation").within(() => {
@@ -137,11 +137,7 @@ describe("File rSBOM Details", () => {
           // New Headings all Present in sidebar
           cy.findAllByText(/Source/i);
           cy.findByText(/Description/i);
-          cy.findByText(/Resources/i);
 
-          // buttons all there
-          cy.findByText(/more details/i);
-          cy.findByText(/share/i);
           cy.findByTestId("CloseIcon").click({ force: true });
         });
       });
