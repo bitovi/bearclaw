@@ -19,6 +19,7 @@ import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { CodeValidationInput } from "~/components/codeValidationInput";
 import { verifyPasswordCode } from "~/utils/verifyDigitCode.server";
 import { ButtonLoader } from "~/components/buttonLoader";
+import { requireUser } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -27,6 +28,7 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export async function action({ request }: ActionArgs) {
+  const user = await requireUser(request);
   const formData = await request.formData();
   const password = formData.get("password")?.toString();
   const confirmPassword = formData.get("confirmPassword")?.toString();
@@ -101,7 +103,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  const { isValid, error, code } = await verifyPasswordCode(formData);
+  const { isValid, error, code } = await verifyPasswordCode(user, formData);
 
   if (!isValid) {
     return json(
@@ -123,7 +125,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  await resetPasswordByToken(code, password);
+  await resetPasswordByToken(user, code, password);
 
   return json({
     errors: { password: null, email: null, token: null },

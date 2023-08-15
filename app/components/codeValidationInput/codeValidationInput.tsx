@@ -6,12 +6,16 @@ import TextField from "@mui/material/TextField";
 
 export const CodeValidationInput = ({
   autoFocus = false,
+  colorVariant = "light",
   containerProps,
 }: {
   autoFocus?: boolean;
+  colorVariant?: "light" | "dark";
   containerProps?: BoxProps;
 }) => {
   const digit1Ref = useRef<HTMLInputElement>(null);
+  const inputBorder = colorVariant === "light" ? "0.1rem solid #FFFFFF" : "0.1rem solid #555555";
+  const color = colorVariant === "light" ? "#FFFFFF" : "#555555";
 
   return (
     <Stack
@@ -35,7 +39,7 @@ export const CodeValidationInput = ({
           // left={{ xs: "0.7rem", lg: "unset" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
           borderRadius="8px"
         />
         <Box
@@ -44,7 +48,7 @@ export const CodeValidationInput = ({
           left={{ xs: "3rem", lg: "5rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
           borderRadius="8px"
         />
         <Box
@@ -53,7 +57,7 @@ export const CodeValidationInput = ({
           left={{ xs: "6rem", lg: "10rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
           borderRadius="8px"
         />
         <Box
@@ -62,7 +66,7 @@ export const CodeValidationInput = ({
           left={{ xs: "9rem", lg: "15rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
           borderRadius="8px"
         />
         <Box
@@ -71,7 +75,7 @@ export const CodeValidationInput = ({
           left={{ xs: "12rem", lg: "20rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
           borderRadius="8px"
         />
         <Box
@@ -80,7 +84,7 @@ export const CodeValidationInput = ({
           left={{ xs: "15rem", lg: "25rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
           borderRadius="8px"
         />
         <TextField
@@ -96,17 +100,30 @@ export const CodeValidationInput = ({
             autoComplete: "off",
             sx: {
               backgroundColor: "transparent",
-              color: "#FFF",
-              fontFamily: "Inter",
+              color: color,
+              fontFamily: `
+                ui-monospace, 
+                Menlo, Monaco, 
+                "Cascadia Mono", 
+                "Segoe UI Mono", 
+                "Roboto Mono", 
+                "Oxygen Mono", 
+                "Ubuntu Monospace", 
+                "Source Code Pro",
+                "Fira Mono", 
+                "Droid Sans Mono", 
+                "Courier New", 
+                monospace
+              `,
               fontSize: "16px",
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: { xs: "16px", lg: "24px" },
-              letterSpacing: { xs: "2.5rem", lg: "4.5rem" },
+              letterSpacing: { xs: "2.5rem", lg: "4.375rem" },
               padding: "0",
               width: "130%",
               zIndex: "10",
-              overflow: "hidedn",
+              overflow: "hidden",
             },
           }}
           inputProps={{
@@ -114,7 +131,7 @@ export const CodeValidationInput = ({
             maxLength: 6,
             width: "100%",
             sx: {
-              textIndent: { xs: "1.15rem", lg: "1.5rem" },
+              textIndent: { xs: "1.15rem", lg: "1.68755rem" },
               caretColor: "transparent",
               padding: 0,
               "&::selection": {
@@ -132,7 +149,7 @@ export const CodeValidationInput = ({
             left: 0,
             paddingTop: {
               xs: "1rem",
-              lg: "1.65rem",
+              lg: "1.75rem",
             },
           }}
         />

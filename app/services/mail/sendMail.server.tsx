@@ -5,8 +5,10 @@ let aws = require("@aws-sdk/client-ses");
 let { defaultProvider } = require("@aws-sdk/credential-provider-node");
 
 export async function sendMail(email: EmailType, fake = false) {
+  console.log("sendMail", email, fake);
   if (fake) return;
 
+  return await sendSesMail(email);
   if (process.env.EMAIL_USE_DEV) {
     return await sendFakeMail(email);
   } else {

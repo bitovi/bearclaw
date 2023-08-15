@@ -30,9 +30,16 @@ export async function loader({ request }: LoaderArgs) {
   if (mfaStatus !== "pending") return redirect(`${organizationId}/dashboard`);
 
   const mfaMethods = await getUserMfaMethods(user);
+
   const activeMfaMethods = mfaMethods
     .filter((mfa) => mfa.active && mfa.verifiedAt)
     .map((mfa) => mfa.type);
+
+  if (activeMfaMethods.length === 0) {
+    const url = new URL(request.url);
+    const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
+    return await mfaActivateUserSession({ request, redirectTo });
+  }
 
   return json({ activeMfaMethods });
 }
@@ -103,6 +110,7 @@ export default function Mfa() {
 
   return (
     <div>
+      {JSON.stringify(activeMfaMethods)}
       <h1>Login</h1>
       {activeMfaMethods.includes("email") ? (
         <Box display="flex" flexDirection="column" gap="1rem">

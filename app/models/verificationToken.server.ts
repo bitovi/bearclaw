@@ -122,3 +122,21 @@ export async function retrieveVerificationToken(
     error: "",
   };
 }
+
+export async function validateVerificationToken(token: string, userId: string) {
+  const verificationToken = await prisma.verificationToken.findFirst({
+    where: {
+      token,
+      userId,
+      expiresAt: {
+        gte: new Date(),
+      },
+    },
+  });
+
+  if (!verificationToken) {
+    return false;
+  }
+
+  return verificationToken;
+}
