@@ -4,16 +4,35 @@ import { json } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { Outlet, isRouteErrorResponse, useRouteError } from "@remix-run/react";
 import { retrieveActiveOrganizationUser } from "~/models/organizationUsers.server";
-import { getUserId } from "~/session.server";
+import {
+  changeUserOrganizationSession,
+  getOrgandUserId,
+} from "~/session.server";
 import Box from "@mui/material/Box";
 
 export async function loader({ request, params }: LoaderArgs) {
-  const { organization: organizationId } = params;
-  const userId = await getUserId(request);
+  const url = request.url;
+  const { organization: organizationIdParam } = params;
+  const { userId, organizationId } = await getOrgandUserId(request);
 
-  if (!organizationId || !userId) {
+  if (!organizationIdParam || !userId) {
     throw new Response("Not Found", { status: 404 });
   }
+
+  if (organizationIdParam !== organizationId) {
+    const otherOrgUser = await retrieveActiveOrganizationUser({
+      organizationId: organizationIdParam,
+      userId: userId,
+    });
+    if (!otherOrgUser) throw new Response("Not Found", { status: 404 });
+    const redirect = await changeUserOrganizationSession({
+      request,
+      organizationId: organizationIdParam,
+      redirectTo: url,
+    });
+    return redirect;
+  }
+
   const orgUser = await retrieveActiveOrganizationUser({
     organizationId,
     userId: userId,

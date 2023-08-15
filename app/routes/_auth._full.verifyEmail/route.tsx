@@ -13,7 +13,7 @@ import { Link } from "~/components/link";
 import { validateUser } from "~/models/user.server";
 import { safeRedirect } from "~/utils";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
-import { getOrgandUserId, getUser, getUserId } from "~/session.server";
+import { getUser, getUserId } from "~/session.server";
 import { useParentFormCopy } from "../_auth/copy";
 import { CodeValidationInput } from "~/components/codeValidationInput";
 import { verifyValidationCode } from "~/utils/verifyDigitCode.server";
@@ -22,11 +22,9 @@ import { ButtonLoader } from "~/components/buttonLoader";
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
   const user = await getUser(request);
-  const { organizationId } = await getOrgandUserId(request);
 
   const redirectTo = safeRedirect({
     to: url.searchParams.get("redirectTo"),
-    orgId: organizationId,
   });
   return json({
     redirectTo,

@@ -141,8 +141,6 @@ export async function action({ request }: ActionArgs) {
 
   const redirectTo = safeRedirect({
     to: formData.get("redirectTo"),
-    defaultRedirect: "/dashboard",
-    orgId: org.id,
   });
 
   return createUserSession({
@@ -163,7 +161,6 @@ export default function LoginPage() {
   const navigation = useNavigation();
   const redirectTo = safeRedirect({
     to: searchParams.get("redirectTo"),
-    defaultRedirect: "/dashboard",
   });
   const guestEmail = searchParams.get("email");
 

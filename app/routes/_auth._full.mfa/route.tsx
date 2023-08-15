@@ -39,7 +39,6 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: LoaderArgs) {
   const user = await getUser(request);
-  const { organizationId } = await getOrgandUserId(request);
 
   if (!user) return redirect("/login");
 
@@ -66,7 +65,6 @@ export async function action({ request }: LoaderArgs) {
   const redirectTo = safeRedirect({
     to: formData.get("redirectTo"),
     defaultRedirect: "/dashboard",
-    orgId: organizationId,
   });
 
   if (

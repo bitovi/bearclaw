@@ -76,7 +76,6 @@ export async function loader({ request }: LoaderArgs) {
     throw redirect(
       safeRedirect({
         to: `${redirectTo}?${url.searchParams}`,
-        orgId: organizationId,
       })
     );
   } else {

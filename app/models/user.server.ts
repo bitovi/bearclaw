@@ -6,7 +6,6 @@ import { sendMail } from "~/services/mail/sendMail.server";
 import { createOrganization } from "./organization.server";
 import { createVerificationToken } from "./verificationToken.server";
 import {
-  appendRedirectWithOrgId,
   createSixCharacterCode,
   getUserPasswordError,
   validateEmail,
@@ -186,14 +185,11 @@ export async function createUser(
       },
     };
   }
-  let safeRedirect;
-  if (redirectTo) {
-    safeRedirect = appendRedirectWithOrgId(redirectTo, organization.id);
-  }
+
   const verificationToken = await createVerificationToken(user.id);
   await sendEmailVerificationEmail({
     user,
-    redirectTo: safeRedirect,
+    redirectTo,
     token: verificationToken.token,
   });
 

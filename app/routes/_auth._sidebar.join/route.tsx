@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { getUser, createUserSession } from "~/session.server";
+import { getUser, createUserSession, getOrgandUserId } from "~/session.server";
 import { createUser } from "~/models/user.server";
 import { safeRedirect } from "~/utils";
 import {
@@ -28,13 +28,14 @@ import { FormControl, FormHelperText } from "@mui/material";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
-
   if (!user) return json({});
   if (user && !user.emailVerifiedAt) {
     redirect("/verifyEmail");
     return json({});
   }
-  return redirect("/dashboard");
+  const { organizationId } = await getOrgandUserId(request);
+
+  return redirect(`${organizationId}/dashboard`);
 }
 
 export async function action({ request }: ActionArgs) {
@@ -44,7 +45,6 @@ export async function action({ request }: ActionArgs) {
   const password = formData.get("password")?.toString() || "";
   const redirectTo = safeRedirect({
     to: formData.get("redirectTo"),
-    defaultRedirect: "/dashboard",
   });
   const { user, orgId, errors } = await createUser(
     email,
