@@ -55,7 +55,7 @@ describe("join and authenticate tests", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findAllByRole("link", { name: /Settings/i })
+    cy.findAllByRole("link", { name: /Security/i })
       .first()
       .should("be.visible")
       .click({ force: true });
@@ -73,7 +73,7 @@ describe("join and authenticate tests", () => {
 
         cy.go("back");
         cy.wait(1000);
-        cy.findByRole("textbox", { name: /mfa token/i }).type(token, {
+        cy.findByRole("textbox", { name: /token/i }).type(token, {
           force: true,
         });
         cy.findByRole("button", { name: /verify/i })
@@ -121,7 +121,7 @@ describe("join and authenticate tests", () => {
       .should("be.visible")
       .click({ force: true });
 
-    cy.findAllByRole("link", { name: /Settings/i })
+    cy.findAllByRole("link", { name: /Security/i })
       .first()
       .should("be.visible")
       .click({ force: true });

@@ -3,7 +3,11 @@ import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Button } from "~/components/button/Button";
 import { requireUser } from "~/session.server";
-import { updateUserMfaMethod, verifyMfaMethod } from "~/models/mfa.server";
+import {
+  resetMfaToken,
+  updateUserMfaMethod,
+  verifyMfaMethod,
+} from "~/models/mfa.server";
 import { MFA_TYPE } from "~/models/mfa";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -32,6 +36,16 @@ export async function enableEmailMfaAction(request: ActionArgs["request"]) {
   });
 
   return json({ form: FORM.EMAIL_MFA_ENABLE, success: true });
+}
+
+export async function resendEmailMfaAction(request: ActionArgs["request"]) {
+  const user = await requireUser(request);
+  const token = await resetMfaToken({
+    user,
+    type: MFA_TYPE.EMAIL,
+  });
+  console.log("resendEmailMfaAction", token);
+  return json({ form: FORM.EMAIL_MFA_RESEND, success: true });
 }
 
 export async function verifyEmailMfaAction(
@@ -90,7 +104,7 @@ export function VerifyEmailMfa({ mfaEmailStatus }: { mfaEmailStatus: string }) {
           </Stack>
         </Form>
         <Form method="post">
-          <input type="hidden" name="action" value={FORM.EMAIL_MFA_ENABLE} />
+          <input type="hidden" name="form" value={FORM.EMAIL_MFA_RESEND} />
           <Box
             display="flex"
             justifyContent="center"

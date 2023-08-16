@@ -5,6 +5,7 @@ import { getUserMfaMethods } from "~/models/mfa.server";
 import { requireUser } from "~/session.server";
 import {
   enableEmailMfaAction,
+  resendEmailMfaAction,
   verifyEmailMfaAction,
 } from "./emailMfa/enableEmailMfa";
 import { disableEmailMfaAction } from "./emailMfa/disableEmailMfa";
@@ -29,6 +30,7 @@ export const FORM = {
   EMAIL_MFA_ENABLE: "emailMfaEnable",
   EMAIL_MFA_VERIFY: "emailMfaVerify",
   EMAIL_MFA_DISABLE: "emailMfaDisable",
+  EMAIL_MFA_RESEND: "emailMfaResend",
   CREATE_RESET_TOKEN: "createResetToken",
   VALIDATE_RESET_TOKEN: "validateResetToken",
   RESET_PASSWORD: "resetPassword",
@@ -40,6 +42,7 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const form = formData.get("form");
   const token = formData.get("token");
+  console.log(form);
 
   switch (form) {
     case FORM.EMAIL_MFA_ENABLE:
@@ -48,6 +51,8 @@ export async function action({ request }: ActionArgs) {
       return await verifyEmailMfaAction(user, token);
     case FORM.EMAIL_MFA_DISABLE:
       return await disableEmailMfaAction(request);
+    case FORM.EMAIL_MFA_RESEND:
+      return await resendEmailMfaAction(request);
     case FORM.CREATE_RESET_TOKEN:
       return await resetPasswordTokenAction(request);
     case FORM.VALIDATE_RESET_TOKEN:
