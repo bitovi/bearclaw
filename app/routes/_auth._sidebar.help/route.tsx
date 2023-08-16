@@ -43,6 +43,7 @@ export async function action({ request }: ActionArgs) {
       html: `
     <p>User support request: </p>
     <p>${details}</p>
+    <p>User email: ${email}</p>
     `,
     });
     return json({ success: true, error: "" });
