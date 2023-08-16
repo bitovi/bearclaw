@@ -1,77 +1,79 @@
-import { Outlet, useLoaderData } from "@remix-run/react";
+// import { Outlet, useLoaderData } from "@remix-run/react";
 
-import Box from "@mui/material/Box";
+// import Box from "@mui/material/Box";
 
-import { useState } from "react";
-import { json } from "@remix-run/node";
-import {
-  retrieveInvoicePreview,
-  retrieveSubscriptionInvoiceHistory,
-  subscriptionOptionLookup,
-} from "~/payment.server";
-import { retrieveOrganizationSubscription } from "~/account.server";
-import { Banner } from "~/components/banner";
-import { badSubscriptionStatus } from "./utils/badSubscriptionStatus";
-import { SideNav } from "~/components/sideNav/SideNav";
+// import { useState } from "react";
+import { redirect } from "@remix-run/node";
+// import {
+//   retrieveInvoicePreview,
+//   retrieveSubscriptionInvoiceHistory,
+//   subscriptionOptionLookup,
+// } from "~/payment.server";
+// import { retrieveOrganizationSubscription } from "~/account.server";
+// import { Banner } from "~/components/banner";
+// import { badSubscriptionStatus } from "./utils/badSubscriptionStatus";
+// import { SideNav } from "~/components/sideNav/SideNav";
 
-import PersonIcon from "@mui/icons-material/Person";
-import StarsRoundedIcon from "@mui/icons-material/StarsRounded";
-import { InnerPage, Page, PageHeader } from "../_dashboard/components/page";
-import { getOrgId } from "~/session.server";
+// import PersonIcon from "@mui/icons-material/Person";
+// import StarsRoundedIcon from "@mui/icons-material/StarsRounded";
+// import { InnerPage, Page, PageHeader } from "../_dashboard/components/page";
+// import { getOrgId } from "~/session.server";
 
-export async function loader({ request }: { request: Request }) {
-  try {
-    const orgId = await getOrgId(request);
+// Commenting out Subscription logic
+export async function loader() {
+  return redirect("/");
+  // try {
+  //   const orgId = await getOrgId(request);
 
-    const optionResults = await subscriptionOptionLookup();
-    const organizationSubscription = await retrieveOrganizationSubscription(
-      request
-    );
+  //   const optionResults = await subscriptionOptionLookup();
+  //   const organizationSubscription = await retrieveOrganizationSubscription(
+  //     request
+  //   );
 
-    if (organizationSubscription) {
-      let invoicePreview = null;
-      let error = undefined;
-      try {
-        invoicePreview = await retrieveInvoicePreview(
-          organizationSubscription?.id
-        );
-      } catch (e) {
-        error = (e as Error).message;
-      }
-      const invoiceHistory = await retrieveSubscriptionInvoiceHistory(
-        organizationSubscription.id
-      );
+  //   if (organizationSubscription) {
+  //     let invoicePreview = null;
+  //     let error = undefined;
+  //     try {
+  //       invoicePreview = await retrieveInvoicePreview(
+  //         organizationSubscription?.id
+  //       );
+  //     } catch (e) {
+  //       error = (e as Error).message;
+  //     }
+  //     const invoiceHistory = await retrieveSubscriptionInvoiceHistory(
+  //       organizationSubscription.id
+  //     );
 
-      return json({
-        orgId,
-        optionResults,
-        organizationSubscription,
-        invoicePreview,
-        invoiceHistory,
-        error,
-      });
-    }
-    return json({
-      orgId,
-      optionResults,
-      organizationSubscription,
-      invoicePreview: null,
-      invoiceHistory: null,
-      error: undefined,
-    });
-  } catch (e) {
-    console.error("ERROR: ", (e as Error).message);
-    return json({
-      orgId: null,
-      optionResults: null,
-      organizationSubscription: null,
-      invoicePreview: null,
-      invoiceHistory: null,
-      error: (e as Error).message,
-    });
-  }
+  //     return json({
+  //       orgId,
+  //       optionResults,
+  //       organizationSubscription,
+  //       invoicePreview,
+  //       invoiceHistory,
+  //       error,
+  //     });
+  //   }
+  //   return json({
+  //     orgId,
+  //     optionResults,
+  //     organizationSubscription,
+  //     invoicePreview: null,
+  //     invoiceHistory: null,
+  //     error: undefined,
+  //   });
+  // } catch (e) {
+  //   console.error("ERROR: ", (e as Error).message);
+  //   return json({
+  //     orgId: null,
+  //     optionResults: null,
+  //     organizationSubscription: null,
+  //     invoicePreview: null,
+  //     invoiceHistory: null,
+  //     error: (e as Error).message,
+  //   });
+  // }
 }
-
+/*
 export default function Route() {
   const { organizationSubscription, orgId } = useLoaderData<typeof loader>();
   const [errorVisible, setErrorVisible] = useState(
@@ -122,3 +124,4 @@ export default function Route() {
     </Page>
   );
 }
+*/

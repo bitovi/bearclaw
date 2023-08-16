@@ -28,12 +28,6 @@ const defaultMenu: Array<Omit<CopyLink, "_key" | "_type">> = [
     requiredPermissions: [],
   },
   {
-    to: "subscription/overview",
-    text: "Subscription",
-    icon: "workspace",
-    requiredPermissions: [],
-  },
-  {
     to: "/logout",
     text: "Sign out",
     icon: "logout",

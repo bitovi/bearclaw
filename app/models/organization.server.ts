@@ -4,7 +4,7 @@ import {
   countOrganizationUserInstances,
   createOrganizationUser,
 } from "./organizationUsers.server";
-import { createPaymentVendorCustomer } from "~/payment.server";
+// import { createPaymentVendorCustomer } from "~/payment.server";
 import type { Organization } from "@prisma/client";
 
 export type { Organization } from "@prisma/client";
@@ -83,11 +83,10 @@ export async function createOrganization({
       throw new Error("User already belongs to an organization.");
     }
 
-    const paymentAccount = await createPaymentVendorCustomer({ email });
+    // const paymentAccount = await createPaymentVendorCustomer({ email });
 
     const organization = await prisma.organization.create({
       data: {
-        paymentAccountId: paymentAccount.id,
         name,
         email,
       },

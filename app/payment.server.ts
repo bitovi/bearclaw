@@ -163,7 +163,7 @@ export const retrieveStripeCustomerId = async (organization: Organization) => {
 
     try {
       stripeAccount = await serverStripe.customers.retrieve(
-        organization.paymentAccountId
+        organization.paymentAccountId! //TODO REMOVE NON-NULL WHEN RE-ESTABLISHING SUBSCRIPTION
       );
     } catch (e) {
       // There is no longer a Stripe account associated with the provided ID
@@ -317,7 +317,7 @@ export async function previewSubscription({
     subscription: subscriptionId,
     subscription_items: items,
     subscription_proration_date: proration_date,
-    customer: organization.paymentAccountId,
+    customer: organization.paymentAccountId!, //TODO REMOVE NON-NULL WHEN RE-ESTABLISHING SUBSCRIPTION,
   });
 
   const periodEnd = previewedSubscription.period_end;
