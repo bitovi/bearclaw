@@ -32,7 +32,7 @@ export const CodeValidationInput = ({
       onClick={() => digit1Ref.current?.focus()}
     >
       <Box
-        width={{ xs: "20.5rem", lg: "28rem" }}
+        width={{ xs: "17.5rem", lg: "28rem" }}
         height="4rem"
         position="relative"
         {...containerProps}
@@ -128,9 +128,9 @@ export const CodeValidationInput = ({
               fontStyle: "normal",
               fontWeight: 600,
               lineHeight: { xs: "16px", lg: "24px" },
-              letterSpacing: { xs: "2.5rem", lg: "4.375rem" },
+              letterSpacing: { xs: "2.42rem", lg: "4.375rem" },
               padding: "0",
-              width: "130%",
+              width: "100%",
               zIndex: "10",
               overflow: "hidden",
             },
@@ -141,7 +141,7 @@ export const CodeValidationInput = ({
             maxLength: 6,
             width: "100%",
             sx: {
-              textIndent: { xs: "1.15rem", lg: "1.68755rem" },
+              textIndent: { xs: "0.875rem", lg: "1.68755rem" },
               caretColor: "transparent",
               padding: 0,
               "&::selection": {
@@ -158,7 +158,7 @@ export const CodeValidationInput = ({
             position: "absolute",
             left: 0,
             paddingTop: {
-              xs: "1rem",
+              xs: "1.05rem",
               lg: "1.75rem",
             },
           }}
