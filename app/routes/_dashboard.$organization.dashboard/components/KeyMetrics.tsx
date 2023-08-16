@@ -31,19 +31,16 @@ export function KeyMetrics({
         variant="files"
         count={totalFilesAnalyzed}
         message="Total files analyzed"
-        to="/history"
       />
       <MetricCard
         variant="vulnerabilities"
         count={totalVulnerabilitiesCaptured}
         message="Total vulnerabilities captured"
-        to="/history?sort=totalVulnerabilitiesCaptured"
       />
       <MetricCard
         variant="cves"
         count={numberofCriticalWarnings}
         message="CVEs with critical scores"
-        to="/history?sort=numberofCriticalWarnings"
       />
       <Box
         minWidth="22.5rem"
