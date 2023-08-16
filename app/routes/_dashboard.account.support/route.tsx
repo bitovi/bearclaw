@@ -42,17 +42,17 @@ export async function action({ request }: ActionArgs) {
   }
 
   try {
-    await sendMail(
-      {
-        to: "host",
-        subject,
-        html: `
+    await sendMail({
+      to: process.env.EMAIL_SUPPORT || "host",
+      from: process.env.EMAIL_FROM,
+      replyTo: user.email,
+      subject,
+      html: `
     <p>User support request: </p>
     <p>${details}</p>
+    <p>User email: ${user.email}</p>
     `,
-      },
-      true
-    );
+    });
     return json({ success: true, error: "" });
   } catch (e) {
     console.error((e as Error).message);
