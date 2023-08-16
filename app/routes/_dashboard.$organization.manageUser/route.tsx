@@ -119,7 +119,7 @@ export async function action({ request }: ActionArgs) {
           key: null,
           result: null,
         });
-      await inviteUser(stringEmail, orgId);
+      await inviteUser(request, stringEmail, orgId);
       return json({
         error: null,
         key: "USER_INVITED",

@@ -9,6 +9,7 @@ import sidebarImages from './sidebarImages'
 import questions from './questions'
 import inputField from './forms/inputField'
 import images from './images'
+import emailTemplate from './emailTemplate'
 
 export const schemaTypes = [
   authForm,
@@ -22,4 +23,5 @@ export const schemaTypes = [
   questions,
   inputField,
   images,
+  emailTemplate,
 ]

@@ -61,7 +61,7 @@ export async function loader({ request }: LoaderArgs) {
 
   const result = await validateUser(user.id);
   if (result.error) {
-    throw redirect(`/verify-email/${result.status}`);
+    throw redirect(`/verifyEmail/${result.status}`);
   }
 
   const [copy, permissions, userOrganizations] = await Promise.all([
