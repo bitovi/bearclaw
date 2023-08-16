@@ -5,6 +5,9 @@ import { Button } from "~/components/button";
 import { MetricCard } from "./MetricCard";
 import { Ellipse } from "./Ellipse.svg";
 import background from "./background.png";
+import { Link, useLoaderData } from "@remix-run/react";
+import { ButtonLink } from "~/components/buttonLink/ButtonLink";
+import { loader } from "../route";
 
 export function KeyMetrics({
   totalFilesAnalyzed,
@@ -15,6 +18,7 @@ export function KeyMetrics({
   totalVulnerabilitiesCaptured?: number;
   numberofCriticalWarnings?: number;
 }) {
+  const { organizationId } = useLoaderData<typeof loader>();
   return (
     <Box
       display="grid"
@@ -81,9 +85,13 @@ export function KeyMetrics({
             Click below to view the workflow.
           </Typography>
           <Box display="flex" gap="1rem">
-            <Button size="small" variant="whiteOutlined">
+            <ButtonLink
+              to={`/${organizationId}/workflows`}
+              size="small"
+              variant="whiteOutlined"
+            >
               View
-            </Button>
+            </ButtonLink>
           </Box>
         </Box>
         <Box flex="1" display="flex" justifyContent="center" paddingTop={1}>

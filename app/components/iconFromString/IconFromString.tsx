@@ -18,6 +18,7 @@ import AddchartTwoToneIcon from "@mui/icons-material/AddchartTwoTone";
 import SearchTwoToneIcon from "@mui/icons-material/SearchTwoTone";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import DocumentScannerTwoToneIcon from "@mui/icons-material/DocumentScannerTwoTone";
+import SchemaTwoToneIcon from "@mui/icons-material/SchemaTwoTone";
 
 export const icons = {
   dashboard: <DashboardTwoToneIcon />,
