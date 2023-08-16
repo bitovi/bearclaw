@@ -101,7 +101,7 @@ export const Upload: React.FC<Props> = () => {
     [setUploadMessage]
   );
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
-    useDropzone({ onDrop });
+    useDropzone({ onDrop, maxFiles: 1 });
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
