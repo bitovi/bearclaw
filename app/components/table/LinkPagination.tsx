@@ -91,7 +91,15 @@ export function LinkPagination({
   } = usePagination({ totalItems, perPageOptions });
 
   return (
-    <Toolbar sx={{ display: "flex", justifyContent: "right", gap: 2 }}>
+    <Toolbar
+      sx={{
+        display: "flex",
+        backgroundColor: (theme) =>
+          theme.palette.mode === "dark" ? "#333333" : "#FFFFFF",
+        justifyContent: "right",
+        gap: 2,
+      }}
+    >
       <Typography>Rows per page:</Typography>
       <Select value={perPage} variant="standard" aria-label="Rows per page">
         {optionLinks.map(({ key, value, link }) => (
