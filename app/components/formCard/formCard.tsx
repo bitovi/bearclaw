@@ -26,7 +26,15 @@ export function FormCard<
   const fetcher = useFetcher<typeof onboardingAction>();
 
   return (
-    <Card variant="outlined" sx={{ padding: 2, paddingBottom: 0 }}>
+    <Card
+      variant="outlined"
+      sx={{
+        padding: 2,
+        paddingBottom: 0,
+        backgroundColor: (theme) =>
+          theme.palette.mode === "dark" ? "#333333" : "#FFFFFF",
+      }}
+    >
       <fetcher.Form action={action || ""} method={"POST"}>
         {redirectTo && (
           <input type="hidden" name="redirectTo" value={redirectTo} />
