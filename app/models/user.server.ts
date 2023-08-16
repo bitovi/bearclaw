@@ -232,7 +232,7 @@ async function sendPasswordResetEmail(
   token: string
 ) {
   const username = getUserFullName(user) || user.email;
-  const link = `${getDomainUrl(request)}/resetPassword?email={{email}}`;
+  const link = `${getDomainUrl(request)}/resetPassword?email=${user.email}`;
   const { html, subject } = await renderEmailFromTemplate({
     key: "passwordReset",
     variables: { username, token, link },
@@ -281,7 +281,7 @@ export async function forgotPassword(request: Request, email: User["email"]) {
   if (!user) {
     return null;
   }
-  const reset = await createResetPasswordToken(user)
+  const reset = await createResetPasswordToken(user);
 
   reset.token && (await sendPasswordResetEmail(request, user, reset.token));
 
@@ -301,7 +301,11 @@ export async function isResetPasswordTokenValid(user: User, token: string) {
   return reset ? true : false;
 }
 
-export async function resetPasswordByToken(user: User, token: string, newPassword: string) {
+export async function resetPasswordByToken(
+  user: User,
+  token: string,
+  newPassword: string
+) {
   const valid = isResetPasswordTokenValid(user, token);
 
   if (!valid) {
