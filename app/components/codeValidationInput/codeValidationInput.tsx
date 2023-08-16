@@ -111,18 +111,18 @@ export const CodeValidationInput = ({
               backgroundColor: "transparent",
               color: color,
               fontFamily: `
-                ui-monospace, 
-                Menlo, Monaco, 
-                "Cascadia Mono", 
-                "Segoe UI Mono", 
-                "Roboto Mono", 
-                "Oxygen Mono", 
-                "Ubuntu Monospace", 
-                "Source Code Pro",
-                "Fira Mono", 
-                "Droid Sans Mono", 
-                "Courier New", 
-                monospace
+              ui-monospace, 
+              Menlo, Monaco, 
+              "Cascadia Mono", 
+              "Segoe UI Mono", 
+              "Roboto Mono", 
+              "Oxygen Mono", 
+              "Ubuntu Monospace", 
+              "Source Code Pro",
+              "Fira Mono", 
+              "Droid Sans Mono", 
+              "Courier New", 
+              monospace
               `,
               fontSize: "16px",
               fontStyle: "normal",
@@ -136,6 +136,7 @@ export const CodeValidationInput = ({
             },
           }}
           inputProps={{
+            "aria-label": "token",
             height: "100%",
             maxLength: 6,
             width: "100%",

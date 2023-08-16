@@ -23,9 +23,9 @@ export function EmailMfaSettings() {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="h5">Two-factor authentication</Typography>
+      <Typography variant="h5">Multi-factor authentication</Typography>
       <Typography variant="body2">
-        Email 2FA: {mfaEmailStatus.toUpperCase()}
+        Email MFA: {mfaEmailStatus.toUpperCase()}
       </Typography>
       <VerifyEmailMfa mfaEmailStatus={mfaEmailStatus} />
       {mfaEmail?.active ? (

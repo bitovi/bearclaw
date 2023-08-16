@@ -28,7 +28,7 @@ export async function loader({ request }: LoaderArgs) {
   if (!user) return redirect("/login");
 
   const mfaStatus = await getMfaStatus(request);
-  if (mfaStatus !== "pending") return redirect(`${organizationId}/dashboard`);
+  if (mfaStatus !== "pending") return redirect(`/${organizationId}/dashboard`);
 
   const mfaMethods = await getUserMfaMethods(user);
 
@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderArgs) {
     const url = new URL(request.url);
     const redirectTo = safeRedirect({
       to: url.searchParams.get("redirectTo"),
-      defaultRedirect: `${organizationId}/dashboard`,
+      defaultRedirect: `/${organizationId}/dashboard`,
     });
     return await mfaActivateUserSession({ request, redirectTo });
   }
@@ -76,7 +76,7 @@ export async function action({ request }: LoaderArgs) {
   const token = formData.get("token");
   const redirectTo = safeRedirect({
     to: formData.get("redirectTo"),
-    defaultRedirect: `${organizationId}/dashboard`,
+    defaultRedirect: `/${organizationId}/dashboard`,
   });
 
   if (

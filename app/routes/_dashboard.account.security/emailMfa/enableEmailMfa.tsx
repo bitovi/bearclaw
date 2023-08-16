@@ -40,11 +40,11 @@ export async function enableEmailMfaAction(request: ActionArgs["request"]) {
 
 export async function resendEmailMfaAction(request: ActionArgs["request"]) {
   const user = await requireUser(request);
-  const token = await resetMfaToken({
+  await resetMfaToken({
     user,
     type: MFA_TYPE.EMAIL,
   });
-  console.log("resendEmailMfaAction", token);
+
   return json({ form: FORM.EMAIL_MFA_RESEND, success: true });
 }
 

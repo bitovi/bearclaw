@@ -187,8 +187,7 @@ export async function mfaActivateUserSession({
 
 export async function logout(request: Request) {
   const session = await getSession(request);
-  const searchParams = new URLSearchParams([["redirectTo", request.url]]);
-  return redirect(`/login?${searchParams}`, {
+  throw redirect("/login", {
     headers: {
       "Set-Cookie": await sessionStorage.destroySession(session),
     },

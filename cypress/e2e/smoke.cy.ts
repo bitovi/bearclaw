@@ -33,7 +33,6 @@ describe("join and authenticate tests", () => {
     cy.findByRole("link", { name: /support/i });
 
     // Logout shows the login screen
-    cy.wait(3000);
     cy.findAllByRole("link", { name: /logout/i })
       .first()
       .should("be.visible")
@@ -77,6 +76,7 @@ describe("join and authenticate tests", () => {
           force: true,
         });
         cy.findByRole("button", { name: /verify/i })
+          .scrollIntoView()
           .should("be.visible")
           .click({ force: true });
         cy.findByText(/Email MFA Enabled/i);
@@ -104,15 +104,13 @@ describe("join and authenticate tests", () => {
         const token = t.text();
 
         cy.go("back");
-        cy.wait(1000);
+        cy.wait(2000);
         cy.findByRole("textbox", { name: /token/i }).type(token, {
           force: true,
         });
         cy.findByRole("button", { name: /complete/i })
           .should("be.visible")
           .click({ force: true });
-
-        cy.findAllByRole("link", { name: /logout/i });
       });
 
     // Disable MFA
@@ -123,14 +121,17 @@ describe("join and authenticate tests", () => {
 
     cy.findAllByRole("link", { name: /Security/i })
       .first()
+      .scrollIntoView()
       .should("be.visible")
       .click({ force: true });
 
     cy.findByRole("button", { name: /Disable Email MFA/i })
+      .scrollIntoView()
       .should("be.visible")
       .click({ force: true });
     cy.findByText(/Are you sure you want to disable email MFA/i);
     cy.findByRole("button", { name: /Disable/i })
+      .scrollIntoView()
       .should("be.visible")
       .click({ force: true });
     cy.findByText(/Email MFA: Off/i);
@@ -166,7 +167,7 @@ describe("join and authenticate tests", () => {
     cy.findByRole("link", { name: /forgot password/i })
       .should("be.visible")
       .click({ force: true });
-    cy.wait(500).findByRole("textbox").type(loginForm.email);
+    cy.wait(1000).findByRole("textbox").type(loginForm.email);
     cy.findByRole("button", { name: /reset password/i })
       .should("be.visible")
       .click({ force: true });
@@ -187,11 +188,14 @@ describe("join and authenticate tests", () => {
           });
       });
 
-    cy.wait(2000).findByTestId("passwordInput").as("password").type("bad");
+    cy.wait(2000)
+      .findByTestId("passwordInput")
+      .as("password")
+      .type("ThisPa$$wordIsAGood1");
 
     cy.findByTestId("confirmPasswordInput")
       .as("confirmPassword")
-      .type("nogood");
+      .type("ThisPa$$wordIsNotAGood1");
 
     cy.findByRole("button", { name: /reset password/i })
       .should("be.visible")
@@ -199,7 +203,8 @@ describe("join and authenticate tests", () => {
 
     cy.findByText(/passwords do not match/i);
 
-    cy.wait(500).get("@confirmPassword").clear().type("bad");
+    cy.wait(500).get("@password").clear().type("tooshort");
+    cy.wait(500).get("@confirmPassword").clear().type("tooshort");
 
     cy.findByRole("button", { name: /reset password/i })
       .should("be.visible")
