@@ -130,7 +130,7 @@ export const CodeValidationInput = ({
               lineHeight: { xs: "16px", lg: "24px" },
               letterSpacing: { xs: "2.42rem", lg: "4.375rem" },
               padding: "0",
-              width: "100%",
+              width: "130%",
               zIndex: "10",
               overflow: "hidden",
             },
