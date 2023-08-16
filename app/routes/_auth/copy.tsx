@@ -26,7 +26,15 @@ function isAuthPageCopy(copy: any): copy is AuthPageCopy {
 
 export async function fetchAuthCopy() {
   try {
-    const authCopyQuery = `*[_id == "authSidebar" || _id == "authForm" || _type == "authPage"]{...}`;
+    const authCopyQuery = `*[_id == "authSidebar" || _id == "authForm" || _type == "authPage"]{
+      ...,
+      "images": images[] {
+      altText,
+      name,
+      hidden,
+      'url': asset->url
+    }
+    }`;
     const authImagesQuery = `*[_id == 'sidebarImages']{
       _id,
      "imageURLs": imageContent[] {
@@ -42,6 +50,7 @@ export async function fetchAuthCopy() {
     const pageCopy = await getClient().fetch<
       [AuthSidebarCopy | AuthFormCopy | AuthPageCopy]
     >(authCopyQuery);
+
     const pageImages = await getClient().fetch<[AuthImages]>(authImagesQuery);
 
     const sidebarCopy = pageCopy?.find(isAuthSidebarCopy);
