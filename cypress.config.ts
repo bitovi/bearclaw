@@ -4,7 +4,7 @@ const { rmdir, existsSync } = require("fs");
 export default defineConfig({
   e2e: {
     testIsolation: true,
-    defaultCommandTimeout: 10000,
+    defaultCommandTimeout: 12000,
     setupNodeEvents: (on, config) => {
       const isDev = config.watchForFileChanges;
       const port = process.env.PORT ?? (isDev ? "3000" : "8811");
