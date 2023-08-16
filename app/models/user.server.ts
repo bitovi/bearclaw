@@ -232,7 +232,7 @@ async function sendPasswordResetEmail(
   token: string
 ) {
   const username = getUserFullName(user) || user.email;
-  const link = `${getDomainUrl(request)}/resetPassword?email={{email}}`;
+  const link = `${getDomainUrl(request)}/resetPassword?email=${user.email}`;
   const { html, subject } = await renderEmailFromTemplate({
     key: "passwordReset",
     variables: { username, token, link },
@@ -259,14 +259,10 @@ async function sendPasswordResetEmail(
   });
 }
 
-export async function forgotPassword(request: Request, email: User["email"]) {
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    return null;
-  }
+export async function createResetPasswordToken(user: User) {
   const token = createSixCharacterCode();
 
-  const reset = await prisma.resetPasswordToken.upsert({
+  return await prisma.resetPasswordToken.upsert({
     where: { userId: user.id },
     create: {
       userId: user.id,
@@ -278,16 +274,25 @@ export async function forgotPassword(request: Request, email: User["email"]) {
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
     },
   });
+}
+
+export async function forgotPassword(request: Request, email: User["email"]) {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    return null;
+  }
+  const reset = await createResetPasswordToken(user);
 
   reset.token && (await sendPasswordResetEmail(request, user, reset.token));
 
   return user;
 }
 
-export async function isResetPasswordTokenValid(token: string) {
+export async function isResetPasswordTokenValid(user: User, token: string) {
   const reset = await prisma.resetPasswordToken.findFirst({
     where: {
       token,
+      userId: user.id,
       expiresAt: {
         gt: new Date(),
       },
@@ -296,29 +301,19 @@ export async function isResetPasswordTokenValid(token: string) {
   return reset ? true : false;
 }
 
-export async function resetPasswordByToken(token: string, newPassword: string) {
-  const reset = await prisma.resetPasswordToken.findFirst({
-    where: {
-      token,
-      expiresAt: {
-        gt: new Date(),
-      },
-    },
-    include: {
-      user: true,
-    },
-  });
+export async function resetPasswordByToken(
+  user: User,
+  token: string,
+  newPassword: string
+) {
+  const valid = isResetPasswordTokenValid(user, token);
 
-  if (!reset || !reset.user || !reset.expiresAt) {
-    return null;
-  }
-
-  if (reset.expiresAt < new Date()) {
+  if (!valid) {
     return null;
   }
 
   return prisma.user.update({
-    where: { id: reset.user.id },
+    where: { id: user.id },
     data: {
       password: {
         update: {

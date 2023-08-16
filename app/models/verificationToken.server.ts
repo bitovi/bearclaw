@@ -8,6 +8,26 @@ import { getUserFullName } from "~/utils/user/getUserFullName";
 import { sendMail } from "~/services/mail/sendMail.server";
 import type { User } from "@prisma/client";
 
+export async function sendVerificationTokenEmail(email: string, token: string) {
+  const { html, subject } = await renderEmailFromTemplate({
+    key: "verifyEmailAddress",
+    variables: { email, token },
+    fallbackSubject: "Troy MFA",
+    fallbackBody: `
+      <p>Hi {{email}},</p>
+      <p>Please verify your changes with code below. The code will expire in 5 minutes.</p>
+      <p><b><span data-testid="token">{{token}}</span></b></p>
+      <p>Thanks,</p>
+      <p>The Troy Team</p>
+    `,
+  });
+  return sendMail({
+    to: email,
+    subject,
+    html,
+  });
+}
+
 export async function createVerificationToken(userId: string) {
   const token = createSixCharacterCode();
   return await prisma.verificationToken.upsert({
@@ -101,4 +121,22 @@ export async function retrieveVerificationToken(
     token: true,
     error: "",
   };
+}
+
+export async function validateVerificationToken(token: string, userId: string) {
+  const verificationToken = await prisma.verificationToken.findFirst({
+    where: {
+      token,
+      userId,
+      expiresAt: {
+        gte: new Date(),
+      },
+    },
+  });
+
+  if (!verificationToken) {
+    return false;
+  }
+
+  return verificationToken;
 }

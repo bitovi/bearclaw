@@ -16,6 +16,7 @@ export const TextInput: React.FC<InputProps> = ({
     <TextField
       error={hasError}
       helperText={hasError ? error : null}
+      variant="outlined"
       {...props}
       inputRef={inputRef}
     />

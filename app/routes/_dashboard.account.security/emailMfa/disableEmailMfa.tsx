@@ -5,9 +5,10 @@ import { Button } from "~/components/button/Button";
 import { requireUser } from "~/session.server";
 import { updateUserMfaMethod } from "~/models/mfa.server";
 import { MFA_TYPE } from "~/models/mfa";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { useState } from "react";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireUser(request);
@@ -30,26 +31,35 @@ export default function DisableEmailMfa() {
   const [showDisableEmailMfa, setShowDisableEmailMfa] = useState(false);
 
   return (
-    <Box my={2}>
+    <Stack spacing={2}>
       {showDisableEmailMfa ? (
         <>
-          <Typography fontWeight="700">Disable Email MFA</Typography>
-          <Typography>Are you sure you want to disable email MFA?</Typography>
+          <Typography variant="h6">Disable Email MFA</Typography>
+          <Typography variant="body2">
+            Are you sure you want to disable email MFA?
+          </Typography>
           <Form method="post">
-            <input type="hidden" name="form" value="emailMfaDisable" />
-            <Button type="submit" variant="outlined">
-              Disable
-            </Button>
-            <Button type="button" onClick={() => setShowDisableEmailMfa(false)}>
-              Cancel
-            </Button>
+            <Box display="flex" gap="1rem" justifyContent="center">
+              <input type="hidden" name="form" value="emailMfaDisable" />
+              <Button
+                type="button"
+                onClick={() => setShowDisableEmailMfa(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" variant="outlined">
+                Disable
+              </Button>
+            </Box>
           </Form>
         </>
       ) : (
-        <Button type="button" onClick={() => setShowDisableEmailMfa(true)}>
-          Disable Email MFA
-        </Button>
+        <Box display="flex" gap="1rem" justifyContent="center">
+          <Button type="button" onClick={() => setShowDisableEmailMfa(true)}>
+            Disable Email MFA
+          </Button>
+        </Box>
       )}
-    </Box>
+    </Stack>
   );
 }

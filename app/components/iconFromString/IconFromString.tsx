@@ -18,28 +18,30 @@ import AddchartTwoToneIcon from "@mui/icons-material/AddchartTwoTone";
 import SearchTwoToneIcon from "@mui/icons-material/SearchTwoTone";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import DocumentScannerTwoToneIcon from "@mui/icons-material/DocumentScannerTwoTone";
+import LockTwoToneIcon from "@mui/icons-material/LockTwoTone";
 
 export const icons = {
+  accountBox: <AccountBoxIcon />,
+  addChartTwoTone: <AddchartTwoToneIcon />,
+  biotech: <BiotechIcon />,
+  check: <CheckIcon />,
+  checkCircleOutline: <CheckCircleOutlineIcon />,
   dashboard: <DashboardTwoToneIcon />,
   history: <HistoryIcon />,
-  schema: <SchemaIcon />,
-  biotech: <BiotechIcon />,
+  homeWork: <HomeWorkIcon />,
+  infoOutlined: <InfoOutlinedIcon />,
   link: <LinkIcon />,
-  workspace: <WorkspacePremiumTwoToneIcon />,
-  accountBox: <AccountBoxIcon />,
-  support: <SupportTwoToneIcon />,
+  lock: <LockTwoToneIcon />,
   logout: <LogoutIcon />,
   person: <PersonIcon />,
   personSearch: <PersonSearchTwoToneIcon />,
-  infoOutlined: <InfoOutlinedIcon />,
-  warning: <WarningAmberIcon />,
-  check: <CheckIcon />,
-  checkCircleOutline: <CheckCircleOutlineIcon />,
-  starTwoTone: <StarTwoToneIcon />,
-  addChartTwoTone: <AddchartTwoToneIcon />,
-  search: <SearchTwoToneIcon />,
-  homeWork: <HomeWorkIcon />,
   scanner: <DocumentScannerTwoToneIcon />,
+  schema: <SchemaIcon />,
+  search: <SearchTwoToneIcon />,
+  starTwoTone: <StarTwoToneIcon />,
+  support: <SupportTwoToneIcon />,
+  warning: <WarningAmberIcon />,
+  workspace: <WorkspacePremiumTwoToneIcon />,
 } as const;
 
 function isIcon(icon: string): icon is keyof typeof icons {

@@ -15,8 +15,8 @@ installGlobals();
 function createLoginData() {
   return {
     email: `${faker.internet.userName()}-@example.com`,
-    password: faker.internet.password(),
-    resetPassword: faker.internet.password(),
+    password: "MyReally$trongPassword1",
+    resetPassword: "MyReally$trongPassword2",
   };
 }
 
