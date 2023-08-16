@@ -1,13 +1,12 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { IconFromString } from "~/components/iconFromString/IconFromString";
-import { Button } from "~/components/button";
 import { MetricCard } from "./MetricCard";
 import { Ellipse } from "./Ellipse.svg";
 import background from "./background.png";
-import { Link, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
-import { loader } from "../route";
+import type { loader } from "../route";
 
 export function KeyMetrics({
   totalFilesAnalyzed,

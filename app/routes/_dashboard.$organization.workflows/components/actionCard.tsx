@@ -11,7 +11,8 @@ import { useState } from "react";
 import { Button } from "~/components/button";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import Paper from "@mui/material/Paper";
-import { Action, WorkflowIconEnum } from "../types";
+import { WorkflowIconEnum } from "../types";
+import type { Action } from "../types";
 
 export function ActionCard({
   options,

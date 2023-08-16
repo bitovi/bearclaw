@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ActionCard } from "./actionCard";
-import { WorkflowProcess } from "../types";
+import type { WorkflowProcess } from "../types";
 
 export function WorkflowModule({
   title,
