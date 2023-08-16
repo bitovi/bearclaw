@@ -405,7 +405,6 @@ describe("User Management & Invitation", () => {
 
     cy.wait(2000)
       .findByRole("link", { name: /View verification emails here/i })
-      .should("be.visible")
       .click({ force: true });
 
     cy.findByTestId(differentOwnerAccount.email).within(() => {

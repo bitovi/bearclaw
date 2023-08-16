@@ -50,7 +50,7 @@ export async function fetchAuthCopy() {
     const pageCopy = await getClient().fetch<
       [AuthSidebarCopy | AuthFormCopy | AuthPageCopy]
     >(authCopyQuery);
-    console.log("page Copy", pageCopy);
+
     const pageImages = await getClient().fetch<[AuthImages]>(authImagesQuery);
 
     const sidebarCopy = pageCopy?.find(isAuthSidebarCopy);

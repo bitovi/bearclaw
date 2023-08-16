@@ -76,7 +76,6 @@ export default function Route() {
   const formCopy = useParentFormCopy();
   const copy = useAuthPageCopy("verifyEmail");
   const navigation = useNavigation();
-  console.log("copy", copy);
   return (
     <Form method="POST" action="/verifyEmail">
       <Box
