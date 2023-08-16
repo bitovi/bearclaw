@@ -41,7 +41,7 @@ export async function sendVerificationToken(
   user = user || (await getUser(request));
   invariant(user, "User is required");
   const url = new URL(request.url);
-  const redirectTo = safeRedirect(url.searchParams.get("redirectTo"));
+  const redirectTo = safeRedirect({ to: url.searchParams.get("redirectTo") });
   const redirectParam = redirectTo
     ? `&redirectTo=${encodeURIComponent(redirectTo)}`
     : "";
