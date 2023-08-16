@@ -14,6 +14,11 @@ describe("Help", () => {
 
     cy.findByText(/^help$/i);
 
+    cy.wait(1000)
+      .findByLabelText(/your email/i)
+      .click({ force: true })
+      .type("sampleemail@email.com");
+
     cy.get("input[name='selectCategory']")
       .as("selectField")
       .should("have.value", "general");

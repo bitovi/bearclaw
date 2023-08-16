@@ -10,7 +10,7 @@ export async function sendMail(email: EmailType, fake = false) {
   if (process.env.EMAIL_USE_DEV) {
     return await sendFakeMail(email);
   } else {
-    return await sendSesMail(email);
+    return sendSesMail(email);
   }
 }
 

@@ -17,12 +17,15 @@ export async function action({ request }: ActionArgs) {
 
   const subject = formData.get("selectCategory");
   const details = formData.get("additionalDetails");
+  const email = formData.get("email");
 
   if (
     !subject ||
     typeof subject !== "string" ||
     !details ||
-    typeof details !== "string"
+    typeof details !== "string" ||
+    !email ||
+    typeof email !== "string"
   ) {
     return json({
       success: false,
@@ -32,17 +35,16 @@ export async function action({ request }: ActionArgs) {
   }
 
   try {
-    await sendMail(
-      {
-        to: "host",
-        subject,
-        html: `
+    await sendMail({
+      to: process.env.EMAIL_SUPPORT || "host",
+      from: process.env.EMAIL_FROM,
+      replyTo: email,
+      subject,
+      html: `
     <p>User support request: </p>
     <p>${details}</p>
     `,
-      },
-      true
-    );
+    });
     return json({ success: true, error: "" });
   } catch (e) {
     console.error((e as Error).message);
@@ -126,7 +128,7 @@ export default function Route() {
                 fullWidth
                 name={copy?.inputs?.selectCategory?.name || "selectCategory"}
                 label={copy?.inputs?.selectCategory?.label || "Select Category"}
-                required={copy?.inputs?.selectCategory?.required}
+                required={true}
                 options={copy?.inputs?.selectCategory.optionList || []}
                 disabled={copy?.inputs?.selectCategory?.disabled}
                 defaultValue={
@@ -134,7 +136,15 @@ export default function Route() {
                 }
               />
             )}
-
+            <TextInput
+              name={copy?.inputs?.email.name || "email"}
+              placeholder={
+                copy?.inputs?.email.placeholder || "YourEmail@email.com"
+              }
+              label={copy?.inputs?.email.label || "Your email"}
+              required={true}
+              InputLabelProps={{ required: true }}
+            />
             <TextInput
               name={
                 copy?.inputs?.additionalDetails?.name || "additionalDetails"
@@ -146,7 +156,7 @@ export default function Route() {
               label={
                 copy?.inputs?.additionalDetails?.label || "Additional Details"
               }
-              required={copy?.inputs?.additionalDetails?.required}
+              required={true}
               fullWidth
               InputLabelProps={{ required: true }}
               minRows={4}
