@@ -24,9 +24,6 @@ async function seedOrganization(ownerEmail: string, memberCount = "0") {
   if (!ownerEmail) {
     throw new Error("email required for login");
   }
-  if (!ownerEmail.endsWith("@bigbear.ai")) {
-    throw new Error("All test emails must end in @bigbear.ai");
-  }
 
   const { user, orgId: organizationId } = await createUser(
     new Request("test://test"),
