@@ -355,17 +355,29 @@ export function getTheme(mode?: ColorMode) {
           },
         ],
       },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            "&.Mui-selected": {
+              backgroundColor: isDarkMode
+                ? "rgba(133, 165, 255, 0.16)"
+                : undefined,
+            },
+          },
+        },
+      },
       MuiListItemIcon: {
         styleOverrides: {
           root: {
-            color: "#0037FF",
+            color: isDarkMode ? "#85A5FF" : "#0037FF",
           },
         },
       },
       MuiTableContainer: {
         styleOverrides: {
           root: {
-            borderRadius: "0.5rem",
+            borderTopLeftRadius: "0.5rem",
+            borderTopRightRadius: "0.5rem",
           },
         },
       },
