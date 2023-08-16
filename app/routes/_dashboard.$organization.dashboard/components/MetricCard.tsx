@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import { FolderIcon } from "./FolderIcon.svg";
 import { ShieldIcon } from "./ShieldIcon.svg";
 import { WarningIcon } from "./WarningIcon.svg";
-import { Link } from "@remix-run/react";
 import background from "./background.png";
 
 const variants = {
@@ -25,14 +24,11 @@ type Props = {
   variant: keyof typeof variants;
   count?: number;
   message: string;
-  to: string;
 };
 
-export const MetricCard = ({ variant, count, message, to }: Props) => {
+export const MetricCard = ({ variant, count, message }: Props) => {
   return (
     <Box
-      component={Link}
-      to={to}
       padding="1rem"
       display="flex"
       gap={1}

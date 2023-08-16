@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import { Logo } from "~/components/logo/Logo";
 import { NavLinks } from "../NavLinks";
-import { ColorModeToggle } from "~/styles/ColorModeToggle";
 
 export function MainSideNav() {
   return (
@@ -36,9 +35,6 @@ export function MainSideNav() {
       >
         <Logo variant="stacked" width="124px" />
         <NavLinks />
-        <Box flex="1" display="flex" alignItems="end">
-          <ColorModeToggle />
-        </Box>
       </Box>
     </Box>
   );

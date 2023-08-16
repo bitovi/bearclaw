@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import { useParentFormCopy } from "../_auth/copy";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
-import { resetPasswordByToken } from "~/models/user.server";
+import { getUserByEmail, resetPasswordByToken } from "~/models/user.server";
 import { TextInput } from "~/components/input";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -19,6 +19,7 @@ import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { CodeValidationInput } from "~/components/codeValidationInput";
 import { verifyPasswordCode } from "~/utils/verifyDigitCode.server";
 import { ButtonLoader } from "~/components/buttonLoader";
+import { getUserPasswordError } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   const url = new URL(request.url);
@@ -73,11 +74,12 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  if (typeof password !== "string" || password.length === 0) {
+  const passwordError = getUserPasswordError(password);
+  if (passwordError) {
     return json(
       {
         errors: {
-          password: "Password is required",
+          password: passwordError,
           email: null,
           token: null,
         },
@@ -87,13 +89,15 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  if (password.length < 8) {
+  const user = await getUserByEmail(email);
+  if (!user) {
+    const error = "Incorrect email or token";
     return json(
       {
         errors: {
-          password: "Password is too short",
-          email: null,
-          token: null,
+          password: null,
+          email: error,
+          token: error,
         },
         success: false,
       },
@@ -101,7 +105,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  const { isValid, error, code } = await verifyPasswordCode(formData);
+  const { isValid, error, code } = await verifyPasswordCode(user, formData);
 
   if (!isValid) {
     return json(
@@ -123,7 +127,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  await resetPasswordByToken(code, password);
+  await resetPasswordByToken(user, code, password);
 
   return json({
     errors: { password: null, email: null, token: null },

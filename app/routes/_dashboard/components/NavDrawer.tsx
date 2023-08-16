@@ -2,7 +2,6 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import { NavLinks } from "./NavLinks";
 import { Logo } from "~/components/logo/Logo";
-import { ColorModeToggle } from "~/styles/ColorModeToggle";
 
 export function NavDrawer({
   open,
@@ -36,9 +35,6 @@ export function NavDrawer({
         >
           <Logo variant="stacked" width="62px" />
           <NavLinks />
-          <Box flex="1" display="flex" alignItems="end">
-            <ColorModeToggle />
-          </Box>
         </Box>
       </Drawer>
     </Box>

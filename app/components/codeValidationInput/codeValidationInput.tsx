@@ -5,13 +5,21 @@ import type { BoxProps } from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
 export const CodeValidationInput = ({
+  name = "tokenCode",
   autoFocus = false,
+  colorVariant = "light",
   containerProps,
 }: {
+  name?: string;
   autoFocus?: boolean;
+  colorVariant?: "light" | "dark";
   containerProps?: BoxProps;
 }) => {
   const digit1Ref = useRef<HTMLInputElement>(null);
+  const inputBorder = "0.1rem solid";
+  const inputBorderColor =
+    colorVariant === "light" ? "white" : "text.secondary";
+  const color = colorVariant === "light" ? "white" : "text.primary";
 
   return (
     <Stack
@@ -24,7 +32,7 @@ export const CodeValidationInput = ({
       onClick={() => digit1Ref.current?.focus()}
     >
       <Box
-        width={{ xs: "20.5rem", lg: "28rem" }}
+        width={{ xs: "17.5rem", lg: "28rem" }}
         height="4rem"
         position="relative"
         {...containerProps}
@@ -32,10 +40,10 @@ export const CodeValidationInput = ({
         <Box
           position="absolute"
           top="0.5rem"
-          // left={{ xs: "0.7rem", lg: "unset" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -44,7 +52,8 @@ export const CodeValidationInput = ({
           left={{ xs: "3rem", lg: "5rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -53,7 +62,8 @@ export const CodeValidationInput = ({
           left={{ xs: "6rem", lg: "10rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -62,7 +72,8 @@ export const CodeValidationInput = ({
           left={{ xs: "9rem", lg: "15rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -71,7 +82,8 @@ export const CodeValidationInput = ({
           left={{ xs: "12rem", lg: "20rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <Box
@@ -80,13 +92,14 @@ export const CodeValidationInput = ({
           left={{ xs: "15rem", lg: "25rem" }}
           height={{ xs: "2.50rem", lg: "4rem" }}
           width={{ xs: "2.50rem", lg: "4rem" }}
-          border="0.1rem solid #FFF"
+          border={inputBorder}
+          borderColor={inputBorderColor}
           borderRadius="8px"
         />
         <TextField
           type="text"
           variant="standard"
-          name="tokenCode"
+          name={name}
           placeholder={"------"}
           autoFocus={autoFocus}
           inputRef={digit1Ref}
@@ -96,25 +109,39 @@ export const CodeValidationInput = ({
             autoComplete: "off",
             sx: {
               backgroundColor: "transparent",
-              color: "#FFF",
-              fontFamily: "Inter",
+              color: color,
+              fontFamily: `
+              ui-monospace, 
+              Menlo, Monaco, 
+              "Cascadia Mono", 
+              "Segoe UI Mono", 
+              "Roboto Mono", 
+              "Oxygen Mono", 
+              "Ubuntu Monospace", 
+              "Source Code Pro",
+              "Fira Mono", 
+              "Droid Sans Mono", 
+              "Courier New", 
+              monospace
+              `,
               fontSize: "16px",
               fontStyle: "normal",
-              fontWeight: 400,
+              fontWeight: 600,
               lineHeight: { xs: "16px", lg: "24px" },
-              letterSpacing: { xs: "2.5rem", lg: "4.5rem" },
+              letterSpacing: { xs: "2.42rem", lg: "4.375rem" },
               padding: "0",
               width: "130%",
               zIndex: "10",
-              overflow: "hidedn",
+              overflow: "hidden",
             },
           }}
           inputProps={{
+            "aria-label": "token",
             height: "100%",
             maxLength: 6,
             width: "100%",
             sx: {
-              textIndent: { xs: "1.15rem", lg: "1.5rem" },
+              textIndent: { xs: "0.875rem", lg: "1.68755rem" },
               caretColor: "transparent",
               padding: 0,
               "&::selection": {
@@ -131,8 +158,8 @@ export const CodeValidationInput = ({
             position: "absolute",
             left: 0,
             paddingTop: {
-              xs: "1rem",
-              lg: "1.65rem",
+              xs: "1.05rem",
+              lg: "1.75rem",
             },
           }}
         />
