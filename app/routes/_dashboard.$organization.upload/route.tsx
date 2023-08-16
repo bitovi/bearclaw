@@ -101,15 +101,30 @@ export const Upload: React.FC<Props> = () => {
     [setUploadMessage]
   );
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
-    useDropzone({ onDrop });
+    useDropzone({ onDrop, maxFiles: 1 });
 
   useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    // directly mutating acceptedFiles.length in order to clear the list of selected files after an upload submission
     if (actionData?.success === true) {
+      acceptedFiles.length = 0;
       setUploadMessage("File uploaded successfully");
+      timer = setTimeout(() => {
+        setUploadMessage("");
+      }, 2000);
     } else if (actionData?.success === false) {
+      acceptedFiles.length = 0;
       setUploadMessage("File uploaded failed");
+      timer = setTimeout(() => {
+        setUploadMessage("");
+      }, 2000);
     }
-  }, [actionData, setUploadMessage]);
+    return () => {
+      clearTimeout(timer);
+    };
+    // TODO refactor to avoid disabling exhaustive deps check and directly mutating state
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionData]);
 
   if (navigation.state === "submitting") {
     return (
