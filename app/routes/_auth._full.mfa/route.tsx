@@ -1,11 +1,9 @@
-import { useRef } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Form, useLoaderData, useActionData } from "@remix-run/react";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { redirect, json } from "@remix-run/server-runtime";
 import { Button } from "~/components/button/Button";
-import { TextInput } from "~/components/input/text/TextInput";
 import { MFA_TYPE, isMfaType } from "~/models/mfa";
 import {
   getUserMfaMethods,
@@ -19,6 +17,9 @@ import {
   mfaActivateUserSession,
 } from "~/session.server";
 import { safeRedirect } from "~/utils";
+import { CodeValidationInput } from "~/components/codeValidationInput";
+import FormHelperText from "@mui/material/FormHelperText";
+import Stack from "@mui/material/Stack";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -39,7 +40,7 @@ export async function loader({ request }: LoaderArgs) {
     const url = new URL(request.url);
     const redirectTo = safeRedirect({
       to: url.searchParams.get("redirectTo"),
-      defaultRedirect: "/dashboard",
+      defaultRedirect: `${organizationId}/dashboard`,
     });
     return await mfaActivateUserSession({ request, redirectTo });
   }
@@ -49,6 +50,7 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: LoaderArgs) {
   const user = await getUser(request);
+  const { organizationId } = await getOrgandUserId(request);
 
   if (!user) return redirect("/login");
 
@@ -74,7 +76,7 @@ export async function action({ request }: LoaderArgs) {
   const token = formData.get("token");
   const redirectTo = safeRedirect({
     to: formData.get("redirectTo"),
-    defaultRedirect: "/dashboard",
+    defaultRedirect: `${organizationId}/dashboard`,
   });
 
   if (
@@ -109,52 +111,57 @@ export async function action({ request }: LoaderArgs) {
 export default function Mfa() {
   const { activeMfaMethods } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-  const tokenRef = useRef<HTMLInputElement>(null);
-
+  const error = actionData?.errors?.token || "";
   return (
     <div>
-      {JSON.stringify(activeMfaMethods)}
-      <h1>Login</h1>
       {activeMfaMethods.includes("email") ? (
-        <Box display="flex" flexDirection="column" gap="1rem">
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="1rem"
+          alignItems="center"
+        >
           <Typography variant="h3">Email MFA</Typography>
           <Typography>
             You have been sent a 6 digit token to your email address. Please
             enter it below to complete the login process.
           </Typography>
           <Form method="post">
-            <TextInput
-              name="token"
-              label="MFA Token"
-              inputRef={tokenRef}
-              autoFocus={true}
-              error={actionData?.errors?.token || ""}
-            />
-            <input type="hidden" name="type" value={MFA_TYPE.EMAIL} />
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ display: "block", mt: "1rem" }}
-            >
-              Complete
-            </Button>
+            <Stack spacing={4} alignItems="center">
+              <CodeValidationInput name="token" autoFocus={true} />
+              {error && <FormHelperText error>{error}</FormHelperText>}
+              <input type="hidden" name="type" value={MFA_TYPE.EMAIL} />
+              <Box>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ display: "block", mt: "1rem" }}
+                >
+                  Complete
+                </Button>
+              </Box>
+            </Stack>
           </Form>
           <Form method="post">
-            <input type="hidden" name="type" value={MFA_TYPE.EMAIL} />
-            <input type="hidden" name="reset" value="true" />
-            <Button
-              type="submit"
-              variant="outlined"
-              sx={{ display: "block", mt: "1rem" }}
-            >
-              Resend MFA Token
-            </Button>
-            <Typography variant="caption">
-              This will invalidate any previously sent tokens.
-            </Typography>
-            {actionData?.reset === true && (
-              <Typography variant="caption">New token sent.</Typography>
-            )}
+            <Stack spacing={2} alignItems="center">
+              <input type="hidden" name="type" value={MFA_TYPE.EMAIL} />
+              <input type="hidden" name="reset" value="true" />
+              <Box>
+                <Button
+                  type="submit"
+                  variant="text"
+                  sx={{ color: "white", mt: "1rem" }}
+                >
+                  Resend MFA Token
+                </Button>
+              </Box>
+              <Typography variant="caption">
+                This will invalidate any previously sent tokens.
+              </Typography>
+              {actionData?.reset === true && (
+                <Typography variant="caption">New token sent.</Typography>
+              )}
+            </Stack>
           </Form>
         </Box>
       ) : (
