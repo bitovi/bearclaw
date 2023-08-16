@@ -14,7 +14,7 @@ import { validateUser } from "~/models/user.server";
 import { safeRedirect } from "~/utils";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
 import { getUser, getUserId } from "~/session.server";
-import { useParentFormCopy } from "../_auth/copy";
+import { useAuthPageCopy, useParentFormCopy } from "../_auth/copy";
 import { CodeValidationInput } from "~/components/codeValidationInput";
 import { verifyValidationCode } from "~/utils/verifyDigitCode.server";
 import { ButtonLoader } from "~/components/buttonLoader";
@@ -74,8 +74,9 @@ export default function Route() {
   const { redirectTo, email, showFakeMail } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const formCopy = useParentFormCopy();
+  const copy = useAuthPageCopy("verifyEmail");
   const navigation = useNavigation();
-
+  console.log("copy", copy);
   return (
     <Form method="POST" action="/verifyEmail">
       <Box
@@ -87,6 +88,14 @@ export default function Route() {
         justifyContent="center"
         gap={1}
       >
+        <Box
+          component="img"
+          height="auto"
+          width="auto"
+          src={copy?.images.verifyEmail.url}
+          alt={copy?.images.verifyEmail.altText}
+          paddingBottom={3}
+        />
         <Typography variant="h5">
           {formCopy?.checkYourEmail || "Please check your email!"}
         </Typography>
@@ -114,6 +123,7 @@ export default function Route() {
           type="submit"
           variant="buttonLarge"
           color="primary"
+          sx={{ minWidth: "288px", marginTop: 3 }}
         >
           {formCopy?.verifyEmailButton || "VERIFY"}
         </ButtonLoader>
