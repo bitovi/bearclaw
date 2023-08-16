@@ -25,6 +25,7 @@ export async function loader({ request }: LoaderArgs) {
       search: "",
       error: "",
       rsboms: null,
+      organizationId: null,
     });
   }
 
@@ -39,6 +40,7 @@ export async function loader({ request }: LoaderArgs) {
     });
 
     return json({
+      organizationId,
       search,
       rsboms,
       error: "",
@@ -47,6 +49,7 @@ export async function loader({ request }: LoaderArgs) {
     const error = (e as Error).message;
     console.error("ERROR: ", error);
     return json({
+      organizationId: null,
       error,
       search,
       rsboms: null,
@@ -68,7 +71,7 @@ const tableHeaders = [
 ];
 
 export function Results() {
-  const { rsboms, error } = useLoaderData<typeof loader>();
+  const { rsboms, error, organizationId } = useLoaderData<typeof loader>();
 
   const navigation = useNavigation();
 
@@ -99,7 +102,7 @@ export function Results() {
       tableData={rsboms.data || undefined}
       totalItems={rsboms.metadata?.page.total}
       linkKey="dataObject"
-      linkBasePath="history"
+      linkBasePath={`${organizationId}/history`}
       linkIcon={({ copyValue, buttonProps }) => (
         <TextCopyIcon copyValue={copyValue} buttonProps={buttonProps} />
       )}
