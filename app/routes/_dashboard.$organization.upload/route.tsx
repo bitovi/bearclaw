@@ -105,6 +105,7 @@ export const Upload: React.FC<Props> = () => {
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
+    // directly mutating acceptedFiles.length in order to clear the list of selected files after an upload submission
     if (actionData?.success === true) {
       acceptedFiles.length = 0;
       setUploadMessage("File uploaded successfully");
@@ -121,7 +122,9 @@ export const Upload: React.FC<Props> = () => {
     return () => {
       clearTimeout(timer);
     };
-  }, [actionData, setUploadMessage]);
+    // TODO refactor to avoid disabling exhaustive deps check and directly mutating state
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionData]);
 
   if (navigation.state === "submitting") {
     return (
