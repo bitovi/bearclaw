@@ -67,9 +67,7 @@ export function SideNav({
                   selected={bestRouteMatch === item.to}
                   sx={{ borderRadius: "4px" }}
                 >
-                  <ListItemIcon
-                    sx={{ color: "primary.main", minWidth: "32px" }}
-                  >
+                  <ListItemIcon sx={{ minWidth: "32px" }}>
                     {item.icon && typeof item.icon === "string" ? (
                       <IconFromString
                         icon={item.icon || ""}
