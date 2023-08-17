@@ -97,9 +97,10 @@ export async function getAllChildJobs({
     `/claw/get_all_child_jobs/${dataObject}?${buildApiSearchParams(params)}`
   );
 
-  const json: ChildJobsResponse = await response.json();
+  const json: ApiResponseWrapper<ChildJobsResponse> = await response.json();
 
   return {
-    data: json.map((d) => transformChildJob(d)),
+    ...json,
+    data: json.data.map((d) => transformChildJob(d)),
   };
 }
