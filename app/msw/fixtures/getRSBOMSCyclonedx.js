@@ -7,7 +7,8 @@ module.exports = {
       dataObject:
         "48fe3e4d5de5f76a0b5d5074f21b491d13a5faf86862d648aa5d499978f8da77",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "d4d18e6aa54d4ccb833850b306b44eab",
@@ -16,7 +17,8 @@ module.exports = {
       dataObject:
         "adf13426a99daf6dee251d513a9ecc67881e7d49627dd1870bb51cc280e91c5f",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "ce4f5a6983e848b8af4518219c1ef9c7",
@@ -25,7 +27,8 @@ module.exports = {
       dataObject:
         "726b1fa1d7c76df2cb20ab856a016da185640ab80a149e11795ede4f4571e931",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "d16e7bd200514e6f8e46a60fb95a39de",
@@ -34,7 +37,8 @@ module.exports = {
       dataObject:
         "c596a0bd274c0c9bb12d59a6d651d7112de35d7615aebb3df682ee5d1bb4ad04",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "82e32bea735a4a0ca8bd1f6fd26416fa",
@@ -43,7 +47,8 @@ module.exports = {
       dataObject:
         "af46aec75ae4db2badf44dd22fd56120346c3af2a088ea5ca6484241c2df147a",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "485c5bddd27e4a0885f9a91124be2d24",
@@ -52,7 +57,8 @@ module.exports = {
       dataObject:
         "5fba162ae4fb8654c5168bb6c3e30c2cc7cf7f5de25ec2dacc2d84b9d2999bf7",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "970d29e88d6145a58134ac5d3992369e",
@@ -61,7 +67,8 @@ module.exports = {
       dataObject:
         "9a95e8d73b47a3be43e33bbb6f0db6cc3e8f9db21affcf75517d10b267822046",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "1b5e15d21d514be0b81b7f80fe900fcd",
@@ -70,7 +77,8 @@ module.exports = {
       dataObject:
         "4d064f17595d9ae6cbb822b5245ae375d1880ed20c95ae30416cc5d87164648c",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "45fbad0fb28e4c2988beb76c126ac80b",
@@ -79,7 +87,8 @@ module.exports = {
       dataObject:
         "c601529e69d092e991435ea0ca90c02f99bd32dd5623ee11765375b13125ac1d",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "4bc3462491c0491fa819fc56b40dccc4",
@@ -88,7 +97,8 @@ module.exports = {
       dataObject:
         "a9c5171e5f855abf16d50591d7d1da87cf39ec418dac288e4e35b6b9c91b2896",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "ca662d1a348e4d6f964745dc4c354cae",
@@ -97,7 +107,8 @@ module.exports = {
       dataObject:
         "9a2310af1c572c7177ec3fe8abe9dfd256b0808089a21d0968f6714dc7a6687f",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "3e10560025d347f18032ceff264d0867",
@@ -106,7 +117,8 @@ module.exports = {
       dataObject:
         "20ef8e75f1d377069fe393253e5800789b95571c48eec39f88f67a27aa5fe333",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "243d6b8a93364cc4b8bf9313192ad254",
@@ -115,7 +127,8 @@ module.exports = {
       dataObject:
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "0c0e7ae8bbc94df9bedc541441167ef2",
@@ -124,7 +137,8 @@ module.exports = {
       dataObject:
         "2dc817ebeae287033a780589e4ad9f57e9052c989f78c05e8c19e82884a9507f",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
     {
       id: "6b77515db95a4861855a0815b1c64dd2",
@@ -133,7 +147,8 @@ module.exports = {
       dataObject:
         "6655c92da1de923c9f2803014ffdb7c9f36238dae089333620d62108e5d356e6",
       "mime-type": "pdf",
-      completedStatus: "Completed",
+      completed: "Completed",
+      severity: "Passed",
     },
   ],
   processingTime: 0.013744159950874746,
