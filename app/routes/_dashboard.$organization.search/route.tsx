@@ -3,6 +3,8 @@ import { json } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData, useNavigation } from "@remix-run/react";
 import { NoResults } from "./components/noResults";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import SearchTable, { SkeletonTable } from "~/components/table";
 import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
@@ -11,6 +13,13 @@ import { Page, PageHeader } from "../_dashboard/components/page";
 import Typography from "@mui/material/Typography";
 import { usePageCopy } from "../_dashboard/copy";
 import { TextCopyIcon } from "~/components/textCopyIcon";
+import SeverityChip from "~/components/severityChip";
+import Chip from "@mui/material/Chip";
+import { ProcessingStatus } from "../_dashboard.$organization.history.$/types";
+import { toTitleCase } from "~/utils/string/toTitleCase";
+import { ProcessingStatusChipColor } from "~/components/table/types";
+
+dayjs.extend(utc);
 
 export async function loader({ request }: LoaderArgs) {
   const { userId, organizationId } = await getOrgandUserId(request);
@@ -38,7 +47,6 @@ export async function loader({ request }: LoaderArgs) {
       search,
       sort,
     });
-
     return json({
       organizationId,
       search,
@@ -58,16 +66,12 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 const tableHeaders = [
-  {
-    label: "Id",
-    value: "id",
-    sortable: false,
-  },
   { label: "Filename", value: "filename", sortable: true },
-  { label: "Date", value: "@timestamp", sortable: true },
-  { label: "Object Id", value: "dataObject", sortable: true },
   { label: "Type", value: "mime-type", sortable: true },
-  { label: "Status", value: "completedStatus", sortable: true },
+  { label: "Date", value: "@timestamp", sortable: false },
+  { label: "Status", value: "completed", sortable: false },
+  { label: "Severity", value: "severity", sortable: false },
+  { label: "Object ID", value: "dataObject", sortable: false },
 ];
 
 export function Results() {
@@ -86,20 +90,19 @@ export function Results() {
     return (
       <SkeletonTable
         headers={[
-          "Id",
           "Filename",
-          "Timestamp",
-          "Data Object",
           "Type",
+          "Date",
           "Status",
+          "Severity",
+          "Object ID",
         ]}
       />
     );
   }
 
   return (
-    <SearchTable<RSBOMListEntry>
-      tableData={rsboms.data || undefined}
+    <SearchTable
       totalItems={rsboms.metadata?.page.total}
       linkKey="dataObject"
       linkBasePath={`${organizationId}/history`}
@@ -108,6 +111,37 @@ export function Results() {
       )}
       tableTitle=""
       headers={tableHeaders}
+      tableData={rsboms.data.map((entry) => ({
+        filename: entry.filename,
+        ["mime-type"]: entry["mime-type"],
+        "@timestamp": (
+          <Box display="flex" flexDirection="column">
+            <Typography variant="body2">
+              {dayjs
+                .utc(new Date(entry["@timestamp"]))
+                .local()
+                .format("MM/DD/YY")}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {dayjs
+                .utc(new Date(entry["@timestamp"]))
+                .local()
+                .format("HH:mm:ss")}
+            </Typography>
+          </Box>
+        ),
+        completed: (
+          <Chip
+            variant={
+              entry.status === ProcessingStatus.COMPLETE ? "outlined" : "filled"
+            }
+            color={ProcessingStatusChipColor[entry.status]}
+            label={toTitleCase(entry.status)}
+          />
+        ),
+        severity: <SeverityChip severity={entry.severity} />,
+        dataObject: entry.dataObject,
+      }))}
       tableContainerStyles={{ maxHeight: "600px" }}
     />
   );

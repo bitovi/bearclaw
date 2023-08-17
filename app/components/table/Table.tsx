@@ -153,18 +153,6 @@ function TableRowLink<T>({
     >
       {Object.entries(entry).map(([field, fieldValue], i) => {
         let result = fieldValue;
-        if (field.toLowerCase() === "@timestamp") {
-          result = (
-            <>
-              <Typography variant="body2" color="text.primary">
-                {fieldValue.date}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {fieldValue.time}
-              </Typography>
-            </>
-          );
-        }
         if (i === 0) {
           return (
             <TableCell
