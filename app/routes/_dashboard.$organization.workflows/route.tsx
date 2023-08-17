@@ -4,21 +4,6 @@ import { WorkflowModule } from "./components/workflowModule";
 import type { WorkflowIconEnum } from "./types";
 import { usePageCopy } from "../_dashboard/copy";
 
-const fixture_Options = [
-  {
-    description: "Integrate open CVE data",
-    id: "234ddfsd",
-  },
-  {
-    description: "Search for component vulnerabilities",
-    id: "dsafdsafsdfs",
-  },
-  {
-    description: "Reveal supply chain insights",
-    id: "2335t4erfgd",
-  },
-];
-
 const fixture_CoreData = [
   {
     title: "Strings",
