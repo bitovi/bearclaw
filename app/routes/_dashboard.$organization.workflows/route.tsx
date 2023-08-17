@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import { Page, PageHeader } from "../_dashboard/components/page";
 import { WorkflowModule } from "./components/workflowModule";
 import type { WorkflowIconEnum } from "./types";
+import { usePageCopy } from "../_dashboard/copy";
 
 const fixture_Options = [
   {
@@ -73,11 +74,15 @@ const fixture_DataStore = [
 ];
 
 export default function Route() {
+  const copy = usePageCopy("workflows");
   return (
     <Page>
       <PageHeader
-        headline="Worfklow"
-        description="These are the predefined processes your uploads undergo during analysis."
+        headline={copy?.title || "Worfklows"}
+        description={
+          copy?.headline ||
+          "These are the predefined processes your uploads undergo during analysis."
+        }
       />
       <Stack
         direction={{ xs: "column", lg: "row" }}
