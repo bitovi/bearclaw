@@ -27,7 +27,8 @@ export function NoResults() {
           {copy?.content?.noResultsHeadline || "No results found"}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          {copy?.content?.noResults || "Please check your query and try again."}
+          {copy?.content?.noResultsDetails ||
+            "Please check your query and try again."}
         </Typography>
         <ButtonLink
           variant="buttonMedium"
