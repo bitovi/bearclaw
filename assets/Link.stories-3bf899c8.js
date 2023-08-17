@@ -1,4 +1,0 @@
-import{j as n,a as s}from"./jsx-runtime-84fe5346.js";import{L as i}from"./Link-1df7c6b7.js";import"./index-de62f0e0.js";import"./components-8c3dac2a.js";import"./index-8216d442.js";import"./iframe-436bb867.js";import"../sb-preview/runtime.js";const u={title:"Components/Link",component:i,tags:["component","link"],parameters:{layout:"centered"}},a=()=>n("div",{children:["Click ",s(i,{to:"/",children:"Link Here"}),"."]}),e=a.bind({});var r,o,t;e.parameters={...e.parameters,docs:{...(r=e.parameters)==null?void 0:r.docs,source:{originalSource:`() => <div>
-    Click <Link to="/">Link Here</Link>.
-  </div>`,...(t=(o=e.parameters)==null?void 0:o.docs)==null?void 0:t.source}}};const x=["_Link"];export{e as _Link,x as __namedExportsOrder,u as default};
-//# sourceMappingURL=Link.stories-3bf899c8.js.map
