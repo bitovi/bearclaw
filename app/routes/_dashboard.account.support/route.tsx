@@ -2,7 +2,6 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Skeleton from "@mui/material/Skeleton";
 import { json } from "@remix-run/node";
 import type { ActionArgs } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
@@ -62,25 +61,21 @@ export async function action({ request }: ActionArgs) {
 
 const SuccessView = () => {
   const copy = usePageCopy("support");
+  const sentImage = copy?.images?.messageSent;
 
   return (
     <Form method="get">
       <Stack alignItems="center" gap={4}>
-        <Skeleton
-          animation={false}
-          variant="rectangular"
-          width="128px"
-          height="128px"
-          sx={{ display: "flex" }}
-          component={Box}
-          justifyContent={"center"}
-          alignItems="center"
-          borderRadius="32px"
-        >
-          <Typography component="span" visibility={"visible"}>
-            Graphic
-          </Typography>
-        </Skeleton>
+        {sentImage && (
+          <Box maxWidth="480px">
+            <img
+              height="auto"
+              width="100%"
+              src={sentImage.url}
+              alt={sentImage.altText}
+            />
+          </Box>
+        )}
         <Box textAlign={"center"}>
           <Typography variant="h4" paddingBottom={1}>
             {copy?.content?.successHeading || "Thank you"}

@@ -77,7 +77,7 @@ describe("Global Search", () => {
     // Check pagination and filtering
 
     // Global search textbox
-    cy.get("@globalSearch").clear().type("a{enter}");
+    cy.get("@globalSearch").clear().wait(1000).type("a{enter}");
 
     cy.wait(1000).findByText(/search:/i);
 

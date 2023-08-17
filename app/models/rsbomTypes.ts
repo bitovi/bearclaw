@@ -4,7 +4,9 @@ export interface RSBOMListEntry {
   "@timestamp": string;
   dataObject: string;
   filename: string;
-  id: string;
+  severity: "Critical" | "High" | "Medium" | "Low" | "Unkonwn" | "Passed";
+  completed: "complete" | "running" | "not started";
+  "mime-type": string;
 }
 
 export interface TableEnhancedRSBOMListEntry

@@ -1,35 +1,34 @@
-import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
+import { usePageCopy } from "~/routes/_dashboard/copy";
 
 export function NoResults() {
+  const copy = usePageCopy("search");
+  const noResultsImage = copy?.images?.noResultsFound;
+
   return (
-    <Stack height="100%" justifyContent="center" paddingBottom={2}>
+    <Stack height="100%" justifyContent="center" paddingY={8}>
       <Stack alignItems="center" gap={2}>
-        <Skeleton
-          animation={false}
-          variant="rectangular"
-          width="100px"
-          height="100px"
-          sx={{ display: "flex" }}
-          component={Box}
-          justifyContent={"center"}
-          alignItems="center"
-          borderRadius="32px"
-        >
-          <Typography component="span" visibility={"visible"}>
-            Graphic
-          </Typography>
-        </Skeleton>
+        {noResultsImage && (
+          <Box width="60%" maxWidth="480px">
+            <img
+              height="auto"
+              width="100%"
+              src={noResultsImage.url}
+              alt={noResultsImage.altText}
+            />
+          </Box>
+        )}
         <Typography variant="h5" color="text.primary">
-          Sorry, no results found
+          {copy?.content?.noResultsHeadline || "No results found"}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          We couldn't find what you are looking for
+          {copy?.content?.noResultsDetails ||
+            "Please check your query and try again."}
         </Typography>
         <ButtonLink
           variant="buttonMedium"
