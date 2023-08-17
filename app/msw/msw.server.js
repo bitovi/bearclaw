@@ -93,7 +93,7 @@ const handlers = [
     if (id === "test_ChildDataObjectId") {
       return res(ctx.json([]));
     }
-    return res(ctx.json(fixture_getAllChildJobs));
+    return res(ctx.json(processParams(fixture_getAllChildJobs, req.url)));
   }),
   rest.post(`${baseURL}/claw/upload`, (req, res, ctx) => {
     return res(ctx.json({ status: 200 }));
