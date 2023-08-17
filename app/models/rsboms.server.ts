@@ -10,7 +10,7 @@ function transformData(entry: RSBOMListEntry) {
   return {
     filename: entry.filename,
     "mime-type": entry["mime-type"],
-    ["@timestamp"]: entry["@timestamp"],
+    "@timestamp": entry["@timestamp"],
     status: entry.completed,
     severity: entry.severity,
     dataObject: entry.dataObject,

@@ -6,7 +6,6 @@ import { NoResults } from "./components/noResults";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import SearchTable, { SkeletonTable } from "~/components/table";
-import type { RSBOMListEntry } from "~/models/rsbomTypes";
 import { retrieveRSBOMList } from "~/models/rsboms.server";
 import { getOrgandUserId } from "~/session.server";
 import { Page, PageHeader } from "../_dashboard/components/page";
@@ -113,7 +112,7 @@ export function Results() {
       headers={tableHeaders}
       tableData={rsboms.data.map((entry) => ({
         filename: entry.filename,
-        ["mime-type"]: entry["mime-type"],
+        "mime-type": entry["mime-type"],
         "@timestamp": (
           <Box display="flex" flexDirection="column">
             <Typography variant="body2">
