@@ -91,7 +91,7 @@ const handlers = [
     const id = req.url.pathname.split("/").slice(-1).join("");
 
     if (id === "test_ChildDataObjectId") {
-      return res(ctx.json([]));
+      return res(ctx.json({ data: [], metadata: null }));
     }
     return res(ctx.json(processParams(fixture_getAllChildJobs, req.url)));
   }),
