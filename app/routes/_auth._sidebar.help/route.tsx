@@ -7,7 +7,6 @@ import Button from "@mui/material/Button";
 import { sendMail } from "~/services/mail/sendMail.server";
 
 import { useAuthPageCopy } from "../_auth/copy";
-import Skeleton from "@mui/material/Skeleton";
 import { json } from "@remix-run/node";
 import type { ActionArgs } from "@remix-run/node";
 import { ButtonLink } from "~/components/buttonLink/ButtonLink";
@@ -55,25 +54,21 @@ export async function action({ request }: ActionArgs) {
 
 const SuccessView = () => {
   const copy = useAuthPageCopy("help");
+  const sentImage = copy?.images?.messageSent;
 
   return (
     <Form method="get">
       <Stack alignItems="center" gap={4}>
-        <Skeleton
-          animation={false}
-          variant="rectangular"
-          width="128px"
-          height="128px"
-          sx={{ display: "flex" }}
-          component={Box}
-          justifyContent={"center"}
-          alignItems="center"
-          borderRadius="32px"
-        >
-          <Typography component="span" visibility={"visible"}>
-            Graphic
-          </Typography>
-        </Skeleton>
+        {sentImage && (
+          <Box maxWidth="480px">
+            <img
+              height="auto"
+              width="100%"
+              src={sentImage.url}
+              alt={sentImage.altText}
+            />
+          </Box>
+        )}
         <Box textAlign={"center"}>
           <Typography variant="h4" paddingBottom={1}>
             {copy?.content?.successHeading || "Thank you"}
